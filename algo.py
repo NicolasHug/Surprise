@@ -6,11 +6,16 @@ import random as rd
 import common as cmn
 
 class Algo:
+    """Abstract Algo class where is defined the basic behaviour of a recomender
+    algorithm"""
     def __init__(self, rm, movieBased=False):
-        self.ub = not movieBased
+        self.ub = not movieBased # whether the algo will be based on users
+        # if the algo is user based, x denotes a user and y a movie
+        # if the algo is movie based, x denotes a movie and y a user
+
 
         if self.ub:
-            self.rm = rm.T
+            self.rm = rm.T # we take the transpose of the rating matrix
             self.lastXi = cmn.lastUi
             self.lastYi = cmn.lastMi
         else:
@@ -18,14 +23,16 @@ class Algo:
             self.lastYi = cmn.lastUi
             self.rm = rm
 
-        self.est = 0
-        self.preds = []
-        self.mae = self.rmse = self.accRate = 0
+        self.est = 0 # set by the estimate method of the child classes
+        self.preds = [] # list of (estimation, r0) so far
+        self.nImp = 0 # number of impossible predictions
+        self.mae = self.rmse = self.accRate = 0 # statistics
 
     def constructSimMat(self):
+        """construct the simlarity matrix. measure = cosine sim"""
         # open or precalculate the similarity matrix if it does not exist yet
         try:
-            #print('Opening simFile')
+            print('Opening simFile')
             if self.ub:
                 simFile = open('simCosUsers', 'rb')
                 self.simMat = np.load(simFile)
@@ -47,7 +54,8 @@ class Algo:
                 np.save(simFile, self.simMat)
 
     def simCos(self, a, b):
-        """ returns the similarity between two users or movies using cosine distance"""
+        """ return the similarity between two users or movies using cosine
+        distance"""
         # movies rated by a and b or users having rated a and b
         Yab = [y for y in range(1, self.lastYi + 1) if self.rm[a, y] > 0 and
             self.rm[b, y] > 0]
@@ -64,52 +72,60 @@ class Algo:
         
 
     def getx0y0(self, u0, m0):
+        """return x0 and y0 based on the self.ub variable (see constructor)"""
         if self.ub:
             return u0, m0
         else:
             return m0, u0
 
     def updatePreds(self, r0, output=True):
-        self.preds.append((self.est, r0))
+        """update preds list and print some info if required
         
+        should be called right after the estimate method
+        """
         if output:
             if self.est == 0:
                 print(cmn.Col.FAIL + 'Impossible to predict' + cmn.Col.ENDC)
-                self.est = 3 # default value
             if self.est == r0:
                 print(cmn.Col.OKGREEN + 'OK' + cmn.Col.ENDC)
             else:
                 print(cmn.Col.FAIL + 'KO ' + cmn.Col.ENDC + str(self.est))
 
+        if self.est == 0:
+            self.nImp += 1
+            self.est = 3 # default value
+
+        self.preds.append((self.est, r0))
+        
+
     def makeStats(self, output=True):
-        nOK = nKO = nImp = 0
+        """compute some statistics (RMSE) on the already predicted ratings"""
+        nOK = nKO = 0
             
         sumSqErr = 0
         sumAbsErr = 0
 
         for est, r0 in self.preds:
-            if est == 0:
-                nImp += 1
-            else:
-                sumSqErr += (r0 - est)**2
-                sumAbsErr += abs(r0 - est)
+            sumSqErr += (r0 - est)**2
+            sumAbsErr += abs(r0 - est)
 
-                if est == r0:
-                    nOK += 1
-                else:
-                    nKO += 1
+            if est == r0:
+                nOK += 1
+            else:
+                nKO += 1
         
         self.rmse = np.sqrt(sumSqErr / (nOK + nKO))
         self.mae = np.sqrt(sumAbsErr / (nOK + nKO))
         self.accRate = nOK / (nOK + nKO)
 
         if output:
-            print('Nb impossible predictions:', nImp)
+            print('Nb impossible predictions:', self.nImp)
             print('RMSE:', self.rmse)
             print('MAE:', self.mae)
             print('Accuracy rate:', self.accRate)
 
 class AlgoRandom(Algo):
+    """predict a random rating based on the distribution of the training set"""
     
     def __init__(self, rm):
         super().__init__(rm)
@@ -123,15 +139,19 @@ class AlgoRandom(Algo):
         fqs = [fq/sum(fqs) for fq in fqs]
         self.distrib = rv_discrete(values=([1, 2, 3, 4, 5], fqs))
 
-
     def estimate(self, u0, m0):
         self.est = self.distrib.rvs()
 
 class AlgoBasicCollaborative(Algo):
+    """Basic collaborative filtering algorithm
+    
+    est = (weighted) average of ratings from the KNN
+    Similarity = cosine similarity
+    """
 
     def __init__(self, rm, movieBased=False):
         super().__init__(rm, movieBased)
-        self.constructSimMat()
+        self.constructSimMat() # we'll need the similiarities
 
     def estimate(self, u0, m0):
         x0, y0 = self.getx0y0(u0, m0)
@@ -144,6 +164,7 @@ class AlgoBasicCollaborative(Algo):
             self.est = 0
             return
 
+        # sort simX0 by similarity
         simX0 = sorted(simX0, key=lambda x:x[1], reverse=True)
 
         # let the KNN vote
@@ -158,6 +179,7 @@ class AlgoBasicCollaborative(Algo):
 
 
 class AlgoConf(Algo):
+    """recommender inspired by the conformal prediction framework"""
     def __init__(self, rm, confMeasure, movieBased=False):
         super().__init__(rm, movieBased)
         self.constructSimMat()
@@ -168,21 +190,27 @@ class AlgoConf(Algo):
 
         confs = {}
         for rConf in [1, 2, 3, 4, 5]:
+            # temporarily set r0 as rConf
             self.rm[x0, y0] = rConf
+            # get the group of examples on which we want to know how much we
+            # are conform to
             confGroup = self.getConfGroup(rConf, x0, y0, k=10)
+            # compute conformality to group
             confs[rConf] = self.confMeasure(self, x0, y0, confGroup)
-        self.rm[x0, y0] = 0
+        self.rm[x0, y0] = 0 # reset r0 as unknown
 
         # check if no conf was computable
         if all(conf == float('-inf') for conf in confs.values()):
             self.est = 0
         else:
+            # est = the rConf that made our example the most conform to its
+            # group
             sortedConfs = sorted(confs.keys(), key=lambda x:confs[x], reverse=True)
             print(sortedConfs)
             self.est = sortedConfs[0]
 
     def getConfGroup(self, rConf, x0, y0, k=10):
-        """ return the k most similar users/movies to u0/m0 such that rating =
+        """return the k most similar users/movies to u0/m0 such that rating =
         rConf
         """
 
@@ -197,6 +225,7 @@ class AlgoConf(Algo):
         return confGroup
 
     def maxIdHd(self, x0, y0, confGroup):
+        """a conf measure based on analogy"""
         if len(confGroup) < 3:
             return float('-inf')
             
@@ -216,7 +245,8 @@ class AlgoConf(Algo):
                                 b = (self.rm[xb, y] - 1) / 4
                                 c = (self.rm[xc, y] - 1) / 4
                                 d = (self.rm[x0, y] - 1) / 4
-                                conf += max(cmn.idty(a, b, c, d), cmn.hd1(a, b, c, d))
+                                conf += max(cmn.idty(a, b, c, d), cmn.hd1(a, b,
+                                    c, d))
         try:
             conf = conf / nConfs 
         except ZeroDivisionError:
@@ -224,6 +254,7 @@ class AlgoConf(Algo):
         return conf
 
     def idSymb(self, x0, confGroup):
+        """another conf measure"""
         x0Y = [y for (y, r) in enumerate(self.rm[x0, :]) if r > 0]
 
         conf = 0
@@ -244,6 +275,7 @@ class AlgoConf(Algo):
         return conf
 
 class AlgoAnalogy(Algo):
+    """analogy based recommender"""
     def __init__(self, rm, movieBased=False):
         super().__init__(rm, movieBased)
         self.constructSimMat()
@@ -288,64 +320,9 @@ class AlgoAnalogy(Algo):
                 rabc0 = [self.rm[xa, y], self.rm[xb, y], self.rm[xc, y],
                     self.rm[x0, y]]
                 rabc0 = [(r - 1) / 4 for r in rabc0]
-                #tv.append(cmn.tvAStar(*rabc0))
-                tv.append(cmn.tvA(*rabc0))
+                tv.append(cmn.tvAStar(*rabc0))
+                #tv.append(cmn.tvA(*rabc0))
         return tv
-
-    def estimate1(self, u0, m0):
-        x0, y0 = self.getx0y0(u0, m0)
-
-        # list (x, r) for y0
-        y0Xs = [(x, r) for (x, r) in enumerate(self.rm[:, y0]) if r > 0]
-        # list of y for x0
-        x0Ys = [y for (y, r) in enumerate(self.rm[x0, :]) if r > 0]
-
-        if not y0Xs:
-            self.est = 3
-            return
-
-        triplets = []
-        for i in range(1000):
-            xa, ra = rd.choice(y0Xs)
-            xb, rb = rd.choice(y0Xs)
-            xc, rc = rd.choice(y0Xs)
-            if xa != xb != xc and xa != xc and self.isSolvable(ra, rb, rc):
-                triplets.append((xa, xb, xc))
-
-        if not triplets:
-            self.est = 3
-            return
-
-        d = dict()
-        for xa, xb, xc in triplets:
-            tv = []
-            for y in x0Ys:
-                if self.rm[xa, y] and self.rm[xb, y] and self.rm[xc, y]:
-                    rabc0 = [self.rm[xa, y], self.rm[xb, y], self.rm[xc, y],
-                    self.rm[x0, y]]
-                    rabc0 = [(r - 1) / 4 for r in rabc0]
-                    #tv.append(cmn.tvAStar(*rabc0))
-                    tv.append(cmn.tvA(*rabc0))
-            d[(xa, xb, xc)] = tv
-
-
-
-        longestTv = max(len(l) for l in d.values())
-        print('longest tv vector size:', longestTv)
-        for t in d.keys():
-            d[t].extend([0.5] * (longestTv - len(d[t]) ))
-            d[t].sort(reverse=True)
-
-        # sort triplets with leximax
-        bestTriplets = list(d.keys())
-        bestTriplets = sorted(d.keys(), key=lambda x:d[x], reverse=True)
-
-        ests = []
-        for (xa, xb, xc) in bestTriplets[:11]:
-            ests.append(int(cmn.solveAstar(self.rm[xa, y0], self.rm[xb, y0],
-            self.rm[xc, y0])))
-
-        self.est = int(round(np.average(ests)))
 
 
     def isSolvable(self, ra, rb, rc):
@@ -353,6 +330,7 @@ class AlgoAnalogy(Algo):
 
 
 class AlgoGilles(Algo):
+    """geometrical analogy based recommender"""
     def __init__(self, rm, movieBased=False):
         super().__init__(rm, movieBased)
 
@@ -373,7 +351,8 @@ class AlgoGilles(Algo):
             if xa != xb != xc and xa != xc and self.isSolvable(xa, xb, xc, y0):
                 (nYabc0, nrm) = self.getParall(xa, xb, xc, x0)
                 if nrm < 1.5 * np.sqrt(nYabc0):
-                    candidates.append((self.solve(xa, xb, xc, y0), nrm, nYabc0))
+                    candidates.append((self.solve(xa, xb, xc, y0), nrm,
+                        nYabc0))
 
         if candidates:
             ratings = [r for (r, _, _) in candidates]

@@ -4,6 +4,10 @@ syntax: glob
 *.elc
 *.pyc
 *~
+*.swp
+
+simCosMovies
+simCosUsers
 
 # switch to regexp syntax.
 syntax: regexp
