@@ -399,3 +399,22 @@ class AlgoGilles(Algo):
         x0Rs = np.array([self.rm[x0, y] for y in Yabc0])
         nrm = np.linalg.norm((xaRs - xbRs) - (xcRs - x0Rs))
         return len(Yabc0), nrm
+
+class AlgoBaselineOnly(Algo):
+    """ Algo using only basic baseline from 5.2.1 of RS handbook"""
+
+    def __init__(self, rm, movieBased=False):
+        super().__init__(rm, movieBased)
+        self.mu = np.mean([r for l in self.rm for r in l if r > 0])
+        self.lambda2 = 25
+        self.lambda3 = 10
+
+    def estimate(self, u0, m0):
+        # list of deviations from average for m0
+        devI = [r - self.mu for r in self.rm[:, m0] if r > 0]
+        bi  = sum(devI) / (self.lambda2 + len(devI))
+        # list of deviations from average for u0
+        devU = [r - self.mu for r in self.rm[u0, :] if r > 0]
+        bu  = sum(devU) / (self.lambda3 + len(devU))
+
+        self.est = self.mu + bi + bu
