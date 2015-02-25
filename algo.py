@@ -8,7 +8,7 @@ import common as cmn
 class Algo:
     """Abstract Algo class where is defined the basic behaviour of a recomender
     algorithm"""
-    def __init__(self, rm, movieBased=False):
+    def __init__(self, rm, movieBased=False, needBaseline=False):
         self.ub = not movieBased # whether the algo will be based on users
         # if the algo is user based, x denotes a user and y a movie
         # if the algo is movie based, x denotes a movie and y a user
@@ -27,6 +27,28 @@ class Algo:
         self.preds = [] # list of (estimation, r0) so far
         self.nImp = 0 # number of impossible predictions
         self.mae = self.rmse = self.accRate = 0 # statistics
+
+        if needBaseline:
+            # mean of all ratings from training set
+            self.mu = np.mean([r for l in self.rm for r in l if r > 0])
+            # normalization constants for baseline estimation
+            if self.ub:
+                self.lambda2 = 10.
+                self.lambda3 = 25.
+            else:
+                self.lambda2 = 25.
+                self.lambda3 = 10.
+
+    def getBaseline(self, x0, y0):
+        """ return baseline calulted from 5.2.1 of RS handbook (almost...)"""
+        # list of deviations from average for x0
+        devX = [r - self.mu for r in self.rm[x0, :] if r > 0]
+        bx  = sum(devX) / (self.lambda2 + len(devX))
+        # list of deviations from average for y0
+        devY = [r - self.mu for r in self.rm[:, y0] if r > 0]
+        by  = sum(devY) / (self.lambda3 + len(devY))
+
+        return self.mu + bx + by
 
     def constructSimMat(self):
         """construct the simlarity matrix. measure = cosine sim"""
@@ -401,20 +423,11 @@ class AlgoGilles(Algo):
         return len(Yabc0), nrm
 
 class AlgoBaselineOnly(Algo):
-    """ Algo using only basic baseline from 5.2.1 of RS handbook"""
+    """ Algo using only baseline""" 
 
     def __init__(self, rm, movieBased=False):
-        super().__init__(rm, movieBased)
-        self.mu = np.mean([r for l in self.rm for r in l if r > 0])
-        self.lambda2 = 25
-        self.lambda3 = 10
+        super().__init__(rm, movieBased, needBaseline=True)
 
     def estimate(self, u0, m0):
-        # list of deviations from average for m0
-        devI = [r - self.mu for r in self.rm[:, m0] if r > 0]
-        bi  = sum(devI) / (self.lambda2 + len(devI))
-        # list of deviations from average for u0
-        devU = [r - self.mu for r in self.rm[u0, :] if r > 0]
-        bu  = sum(devU) / (self.lambda3 + len(devU))
-
-        self.est = self.mu + bi + bu
+        x0, y0 = self.getx0y0(u0, m0)
+        self.est = self.getBaseline(x0, y0)
