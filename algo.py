@@ -43,16 +43,20 @@ class Algo:
                 self.lambda2 = 25.
                 self.lambda3 = 10.
 
-    def getBaseline(self, x, y):
-        """ return baseline calulted from 5.2.1 of RS handbook (almost...)"""
-        # list of deviations from average for x
-        devX = [r - self.mu for r in self.rm[x, :] if r > 0]
-        bx  = sum(devX) / (self.lambda2 + len(devX))
-        # list of deviations from average for y
-        devY = [r - self.mu for r in self.rm[:, y] if r > 0]
-        by  = sum(devY) / (self.lambda3 + len(devY))
+            # pre calculate biase (5.2.1 of RS handbook (almost...))
+            self.xBiases = np.empty(self.lastXi + 1)
+            self.yBiases = np.empty(self.lastYi + 1)
+            for x in range(1, self.lastXi + 1):
+                # list of deviations from average for x
+                devX = [r - self.mu for (_, r) in self.xr[x]]
+                self.xBiases[x] = sum(devX) / (self.lambda2 + len(devX))
+            for y in range(1, self.lastYi + 1):
+                # list of deviations from average for y
+                devY = [r - self.mu for (_, r) in self.yr[y]]
+                self.yBiases[y] = sum(devY) / (self.lambda3 + len(devY))
 
-        return self.mu + bx + by
+    def getBaseline(self, x, y):
+        return self.mu + self.xBiases[x] + self.yBiases[y]
 
     def constructSimMat(self):
         """construct the simlarity matrix. measure = cosine sim"""
@@ -429,17 +433,19 @@ class AlgoGilles(Algo):
 class AlgoBaselineOnly(Algo):
     """ Algo using only baseline""" 
 
-    def __init__(self, rm, movieBased=False):
-        super().__init__(rm, movieBased, needBaseline=True)
+    def __init__(self, rm, ur, mr, movieBased=False):
+        super().__init__(rm, ur, mr, movieBased, needBaseline=True)
 
     def estimate(self, u0, m0):
         x0, y0 = self.getx0y0(u0, m0)
         self.est = self.getBaseline(x0, y0)
 
 class AlgoNeighborhoodWithBaseline(Algo):
-    """ Algo baseline AND deviation from baseline of the neighbors"""
-    def __init__(self, rm, movieBased=False):
-        super().__init__(rm, movieBased, needBaseline=True)
+    """ Algo baseline AND deviation from baseline of the neighbors
+        
+        simlarity measure = cos"""
+    def __init__(self, rm, ur, mr, movieBased=False):
+        super().__init__(rm, ur, mr, movieBased, needBaseline=True)
         self.constructSimMat() # we'll need the similiarities
 
     def estimate(self, u0, m0):
@@ -465,3 +471,20 @@ class AlgoNeighborhoodWithBaseline(Algo):
             self.est += np.average(ratNeighboors, weights=simNeighboors)
         except ZeroDivisionError:
             return # just baseline
+
+class AlgoKNNBelkor(Algo):
+    """ Not yet finished """
+    def __init__(self, rm, ur, mr, movieBased=False):
+        super().__init__(rm, ur, mr, movieBased)
+        self.lambda10 = 0.002
+        self.gamma = 0.005
+        self.nIter = 15
+        # mean of all ratings from training set
+        self.mu = np.mean([r for l in self.rm for r in l if r > 0])
+
+    def estimate(self, u0, m0):
+        bx = by = 0.
+        wij = [0. for x in self.ry]
+        est = self.mu + bx + by 
+
+

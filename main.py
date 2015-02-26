@@ -27,19 +27,21 @@ for line in base:
 #a = al.AlgoConf(rm, confMeasure=al.AlgoConf.prop, movieBased=True)
 #a = al.AlgoAnalogy(rm, movieBased=False)
 #a = al.AlgoGilles(rm, movieBased=False)
-#a = al.AlgoBaselineOnly(rm)
-a = al.AlgoNeighborhoodWithBaseline(rm, movieBased=True)
+#a = al.AlgoBaselineOnly(rm, ur, mr)
+a = al.AlgoNeighborhoodWithBaseline(rm, ur, mr, movieBased=True)
+#a = al.AlgoKNNBelkor(rm, ur, mr)
+
 
 rd.seed(0)
 testSet = []
 for line in test:
     testSet.append(line.split())
 
+"""
 for _ in range(100):
     u0, m0, r0, _ = rd.choice(testSet)
     """
 for u0, m0, r0, _ in testSet:
-"""
     u0 = int(u0); m0 = int(m0); r0 = int(r0)
 
     print(u0, m0, r0)
