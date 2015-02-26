@@ -8,7 +8,7 @@ import common as cmn
 class Algo:
     """Abstract Algo class where is defined the basic behaviour of a recomender
     algorithm"""
-    def __init__(self, rm, movieBased=False, needBaseline=False):
+    def __init__(self, rm, ur=None, mr=None, movieBased=False, needBaseline=False):
         self.ub = not movieBased # whether the algo will be based on users
         # if the algo is user based, x denotes a user and y a movie
         # if the algo is movie based, x denotes a movie and y a user
@@ -18,10 +18,14 @@ class Algo:
             self.rm = rm.T # we take the transpose of the rating matrix
             self.lastXi = cmn.lastUi
             self.lastYi = cmn.lastMi
+            self.xr = ur
+            self.yr = mr
         else:
             self.lastXi = cmn.lastMi
             self.lastYi = cmn.lastUi
             self.rm = rm
+            self.xr = mr
+            self.yr = ur
 
         self.est = 0 # set by the estimate method of the child classes
         self.preds = [] # list of (estimation, r0) so far
@@ -39,13 +43,13 @@ class Algo:
                 self.lambda2 = 25.
                 self.lambda3 = 10.
 
-    def getBaseline(self, x0, y0):
+    def getBaseline(self, x, y):
         """ return baseline calulted from 5.2.1 of RS handbook (almost...)"""
-        # list of deviations from average for x0
-        devX = [r - self.mu for r in self.rm[x0, :] if r > 0]
+        # list of deviations from average for x
+        devX = [r - self.mu for r in self.rm[x, :] if r > 0]
         bx  = sum(devX) / (self.lambda2 + len(devX))
-        # list of deviations from average for y0
-        devY = [r - self.mu for r in self.rm[:, y0] if r > 0]
+        # list of deviations from average for y
+        devY = [r - self.mu for r in self.rm[:, y] if r > 0]
         by  = sum(devY) / (self.lambda3 + len(devY))
 
         return self.mu + bx + by
@@ -431,3 +435,33 @@ class AlgoBaselineOnly(Algo):
     def estimate(self, u0, m0):
         x0, y0 = self.getx0y0(u0, m0)
         self.est = self.getBaseline(x0, y0)
+
+class AlgoNeighborhoodWithBaseline(Algo):
+    """ Algo baseline AND deviation from baseline of the neighbors"""
+    def __init__(self, rm, movieBased=False):
+        super().__init__(rm, movieBased, needBaseline=True)
+        self.constructSimMat() # we'll need the similiarities
+
+    def estimate(self, u0, m0):
+        x0, y0 = self.getx0y0(u0, m0)
+        self.est = self.getBaseline(x0, y0)
+
+        # list of (x, sim(x0, x)) for u having rated m0 or for m rated by x0
+        simX0 = [(x, self.simMat[x0, x]) for x in range(1, self.lastXi + 1) if
+            self.rm[x, y0] > 0]
+
+        # if there is nobody on which predict the rating...
+        if not simX0:
+            return # result will be just the baseline
+
+        # sort simX0 by similarity
+        simX0 = sorted(simX0, key=lambda x:x[1], reverse=True)
+
+        # let the KNN vote
+        k = 40
+        simNeighboors = [sim for (_, sim) in simX0[:k]]
+        ratNeighboors = [self.rm[x, y0] - self.getBaseline(x, y0) for (x, _) in simX0[:k]]
+        try:
+            self.est += np.average(ratNeighboors, weights=simNeighboors)
+        except ZeroDivisionError:
+            return # just baseline
