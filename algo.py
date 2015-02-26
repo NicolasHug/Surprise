@@ -452,9 +452,8 @@ class AlgoNeighborhoodWithBaseline(Algo):
         x0, y0 = self.getx0y0(u0, m0)
         self.est = self.getBaseline(x0, y0)
 
-        # list of (x, sim(x0, x)) for u having rated m0 or for m rated by x0
-        simX0 = [(x, self.simMat[x0, x]) for x in range(1, self.lastXi + 1) if
-            self.rm[x, y0] > 0]
+
+        simX0 = [(x, self.simMat[x0, x], r) for (x, r) in self.yr[y0]]
 
         # if there is nobody on which predict the rating...
         if not simX0:
@@ -465,10 +464,11 @@ class AlgoNeighborhoodWithBaseline(Algo):
 
         # let the KNN vote
         k = 40
-        simNeighboors = [sim for (_, sim) in simX0[:k]]
-        ratNeighboors = [self.rm[x, y0] - self.getBaseline(x, y0) for (x, _) in simX0[:k]]
+        simNeighboors = [sim for (_, sim, _) in simX0[:k]]
+        diffRatNeighboors = [r - self.getBaseline(x, y0) 
+            for (x, _, r) in simX0[:k]]
         try:
-            self.est += np.average(ratNeighboors, weights=simNeighboors)
+            self.est += np.average(diffRatNeighboors, weights=simNeighboors)
         except ZeroDivisionError:
             return # just baseline
 
