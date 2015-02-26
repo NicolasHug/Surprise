@@ -500,18 +500,53 @@ class AlgoNeighborhoodWithBaseline(AlgoWithBaseline):
             return # just baseline
 
 class AlgoKNNBelkor(AlgoWithBaseline):
-    """ Not yet finished """
+    """ KNN learning interpolating weights from the training data. see 5.1.1
+    from reco system handbook"""
     def __init__(self, rm, ur, mr, movieBased=False, method='opt'):
         super().__init__(rm, ur, mr, movieBased, method)
-        self.lambda10 = 0.002
-        self.gamma = 0.005
-        self.nIter = 15
-        # mean of all ratings from training set
-        self.mu = np.mean([r for l in self.rm for r in l if r > 0])
+        self.weights = np.zeros((self.lastXi + 1, self.lastXi + 1),
+        dtype='double')
+
+        nIter = 20
+        gamma = 0.005
+        lambda10 = 0.002
+
+        for i in range(nIter):
+            print("optimizing...", nIter - i, "iteration left")
+            for x, xRatings in self.xr.items():
+                for y, rxy in xRatings:
+                    est = sum((r - self.getBaseline(x2, y)) *
+                        self.weights[x, x2] for (x2, r) in self.yr[y])
+                    est /= np.sqrt(len(self.yr[y]))
+                    est += self.mu + self.xBiases[x] + self.yBiases[y]
+
+                    err = rxy - est
+
+                    # update x bias
+                    self.xBiases[x] += gamma * (err - lambda10 *
+                        self.xBiases[x])
+
+                    # update y bias
+                    self.yBiases[y] += gamma * (err - lambda10 *
+                        self.yBiases[y])
+
+                    # update weights
+                    for x2, rx2y in self.yr[y]:
+                        bx2y = self.getBaseline(x2, y)
+                        wxx2 = self.weights[x, x2]
+                        self.weights[x, x2] += gamma * ((err * (rx2y -
+                            bx2y)/np.sqrt(len(self.yr[y]))) - (lambda10 * wxx2))
+
 
     def estimate(self, u0, m0):
-        bx = by = 0.
-        wij = [0. for x in self.ry]
-        est = self.mu + bx + by 
+        x0, y0 = self.getx0y0(u0, m0)
+        
+        self.est = sum((r - self.getBaseline(x2, y0)) *
+            self.weights[x0, x2] for (x2, r) in self.yr[y0])
+        self.est /= np.sqrt(len(self.yr[y0]))
+        self.est += self.getBaseline(x0, y0)
+
+        self.est = min(5, self.est)
+        self.est = max(1, self.est)
 
 

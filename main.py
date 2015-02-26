@@ -28,8 +28,8 @@ for line in base:
 #a = al.AlgoAnalogy(rm, movieBased=False)
 #a = al.AlgoGilles(rm, movieBased=False)
 #a = al.AlgoBaselineOnly(rm, ur, mr, method='opt')
-a = al.AlgoNeighborhoodWithBaseline(rm, ur, mr, movieBased=True, method='opt')
-#a = al.AlgoKNNBelkor(rm, ur, mr)
+#a = al.AlgoNeighborhoodWithBaseline(rm, ur, mr, movieBased=False, method='opt')
+a = al.AlgoKNNBelkor(rm, ur, mr, method='opt', movieBased=False)
 
 
 rd.seed(0)
