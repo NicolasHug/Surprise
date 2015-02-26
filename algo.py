@@ -8,7 +8,7 @@ import common as cmn
 class Algo:
     """Abstract Algo class where is defined the basic behaviour of a recomender
     algorithm"""
-    def __init__(self, rm, ur=None, mr=None, movieBased=False, needBaseline=False):
+    def __init__(self, rm, ur=None, mr=None, movieBased=False):
         self.ub = not movieBased # whether the algo will be based on users
         # if the algo is user based, x denotes a user and y a movie
         # if the algo is movie based, x denotes a movie and y a user
@@ -32,31 +32,6 @@ class Algo:
         self.nImp = 0 # number of impossible predictions
         self.mae = self.rmse = self.accRate = 0 # statistics
 
-        if needBaseline:
-            # mean of all ratings from training set
-            self.mu = np.mean([r for l in self.rm for r in l if r > 0])
-            # normalization constants for baseline estimation
-            if self.ub:
-                self.lambda2 = 10.
-                self.lambda3 = 25.
-            else:
-                self.lambda2 = 25.
-                self.lambda3 = 10.
-
-            # pre calculate biase (5.2.1 of RS handbook (almost...))
-            self.xBiases = np.empty(self.lastXi + 1)
-            self.yBiases = np.empty(self.lastYi + 1)
-            for x in range(1, self.lastXi + 1):
-                # list of deviations from average for x
-                devX = [r - self.mu for (_, r) in self.xr[x]]
-                self.xBiases[x] = sum(devX) / (self.lambda2 + len(devX))
-            for y in range(1, self.lastYi + 1):
-                # list of deviations from average for y
-                devY = [r - self.mu for (_, r) in self.yr[y]]
-                self.yBiases[y] = sum(devY) / (self.lambda3 + len(devY))
-
-    def getBaseline(self, x, y):
-        return self.mu + self.xBiases[x] + self.yBiases[y]
 
     def constructSimMat(self):
         """construct the simlarity matrix. measure = cosine sim"""
@@ -430,22 +405,74 @@ class AlgoGilles(Algo):
         nrm = np.linalg.norm((xaRs - xbRs) - (xcRs - x0Rs))
         return len(Yabc0), nrm
 
-class AlgoBaselineOnly(Algo):
+class AlgoWithBaseline(Algo):
+    """Abstract class for algos that need a baseline"""
+    def __init__(self, rm, ur=None, mr=None, movieBased=False, method='opt'):
+        super().__init__(rm, ur, mr, movieBased)
+
+        #compute users and items biases
+        # see from 5.2.1 of RS handbook
+
+        # mean of all ratings from training set
+        self.mu = np.mean([r for l in self.rm for r in l if r > 0])
+
+        self.xBiases = np.zeros(self.lastXi + 1)
+        self.yBiases = np.zeros(self.lastYi + 1)
+
+        if method == 'opt':
+            # using stochastic gradient descent optimisation
+            lambda4 = 0.02
+            gamma = 0.005
+            nIter = 20
+            for i in range(nIter):
+                for x, xRatings in self.xr.items():
+                    for y, r in xRatings:
+                        err = r - (self.mu + self.xBiases[x] + self.yBiases[y])
+                        # update xBiases 
+                        self.xBiases[x] += gamma * (err - lambda4 *
+                            self.xBiases[x])
+                        # udapte yBiases
+                        self.yBiases[y] += gamma * (err - lambda4 *
+                            self.yBiases[y])
+        else:
+            # using a more basic method 
+            if self.ub:
+                lambda2 = 10.
+                lambda3 = 25.
+            else:
+                lambda2 = 25.
+                lambda3 = 10.
+
+            for x in range(1, self.lastXi + 1):
+                # list of deviations from average for x
+                devX = [r - self.mu for (_, r) in self.xr[x]]
+                self.xBiases[x] = sum(devX) / (lambda2 + len(devX))
+            for y in range(1, self.lastYi + 1):
+                # list of deviations from average for y
+                devY = [r - self.mu for (_, r) in self.yr[y]]
+                self.yBiases[y] = sum(devY) / (lambda3 + len(devY))
+
+
+    def getBaseline(self, x, y):
+        return self.mu + self.xBiases[x] + self.yBiases[y]
+
+
+class AlgoBaselineOnly(AlgoWithBaseline):
     """ Algo using only baseline""" 
 
-    def __init__(self, rm, ur, mr, movieBased=False):
-        super().__init__(rm, ur, mr, movieBased, needBaseline=True)
+    def __init__(self, rm, ur, mr, movieBased=False, method='opt'):
+        super().__init__(rm, ur, mr, movieBased, method)
 
     def estimate(self, u0, m0):
         x0, y0 = self.getx0y0(u0, m0)
         self.est = self.getBaseline(x0, y0)
 
-class AlgoNeighborhoodWithBaseline(Algo):
+class AlgoNeighborhoodWithBaseline(AlgoWithBaseline):
     """ Algo baseline AND deviation from baseline of the neighbors
         
         simlarity measure = cos"""
-    def __init__(self, rm, ur, mr, movieBased=False):
-        super().__init__(rm, ur, mr, movieBased, needBaseline=True)
+    def __init__(self, rm, ur, mr, movieBased=False, method='opt'):
+        super().__init__(rm, ur, mr, movieBased, method)
         self.constructSimMat() # we'll need the similiarities
 
     def estimate(self, u0, m0):
@@ -472,10 +499,10 @@ class AlgoNeighborhoodWithBaseline(Algo):
         except ZeroDivisionError:
             return # just baseline
 
-class AlgoKNNBelkor(Algo):
+class AlgoKNNBelkor(AlgoWithBaseline):
     """ Not yet finished """
-    def __init__(self, rm, ur, mr, movieBased=False):
-        super().__init__(rm, ur, mr, movieBased)
+    def __init__(self, rm, ur, mr, movieBased=False, method='opt'):
+        super().__init__(rm, ur, mr, movieBased, method)
         self.lambda10 = 0.002
         self.gamma = 0.005
         self.nIter = 15
