@@ -336,29 +336,31 @@ class AlgoAnalogy(Algo):
 
 class AlgoGilles(Algo):
     """geometrical analogy based recommender"""
-    def __init__(self, rm, movieBased=False):
-        super().__init__(rm, movieBased)
+    def __init__(self, rm, ur, mr, movieBased=False):
+        super().__init__(rm, ur, mr, movieBased)
 
     def estimate(self, u0, m0):
         x0, y0 = self.getx0y0(u0, m0)
 
-        y0Xs = [x for x in range(1, self.lastXi) if self.rm[x, y0] > 0]
-
-        if not y0Xs :
+        # if there is no ratings for y0, prediction is impossible
+        if not self.yr[y0]:
             self.est = 0
             return
 
-        candidates= []
+        candidates= [] # solutions to analogical equations
         for i in range(1000):
-            xa = rd.choice(y0Xs)
-            xb = rd.choice(y0Xs)
-            xc = rd.choice(y0Xs)
-            if xa != xb != xc and xa != xc and self.isSolvable(xa, xb, xc, y0):
+            # randomly choose a, b, and c
+            xa, ra = rd.choice(self.yr[y0])
+            xb, rb = rd.choice(self.yr[y0])
+            xc, rc = rd.choice(self.yr[y0])
+            if xa != xb != xc and xa != xc and self.isSolvable(ra, rb, rc):
+                # get info about the abcd 'paralellogram'
                 (nYabc0, nrm) = self.getParall(xa, xb, xc, x0)
-                if nrm < 1.5 * np.sqrt(nYabc0):
-                    candidates.append((self.solve(xa, xb, xc, y0), nrm,
+                if nrm < 1.5 * np.sqrt(nYabc0): # we allow some margin
+                    candidates.append((self.solve(ra, rb, rc), nrm,
                         nYabc0))
 
+        # if there are candidates, estimate rating as a weighted average
         if candidates:
             ratings = [r for (r, _, _) in candidates]
             norms = [1/(nrm + 1) for (_, nrm, _) in candidates]
@@ -372,37 +374,37 @@ class AlgoGilles(Algo):
         else:
             self.est = 0
 
-    def isSolvable(self, xa, xb, xc, y0):
-        return (self.rm[xa, y0] == self.rm[xb, y0] or self.rm[xa, y0] ==
-        self.rm[xc, y0])
+    def isSolvable(self, ra, rb, rc):
+        """return true if analogical equation is solvable else false"""
+        return (ra == rb) or (ra == rc)
 
-    """
-    def solve(self, xa, xb, xc, y0):
-        return (self.rm[xb, y0] if self.rm[xa, y0] == self.rm[xc, y0] else
-        self.rm[xc, y0])
+    def solve(self, ra, rb, rc):
+        """solve analogical equation"""
+        return rc - ra + rb
 
-    """
-    def solve(self, xa, xb, xc, y0):
-        return self.rm[xc, y0] - self.rm[xa, y0] + self.rm[xb, y0]
-
-
-    """
-    def isSolvable(self, xa, xb, xc, y0):
-        return (0 < self.solve(xa, xb, xc, y0) < 6)
-    """
 
     def getParall(self, xa, xb, xc, x0):
-        Yabc0 = [y for y in range(1, self.lastYi) if self.rm[xa, y] and
-            self.rm[xb, y] and self.rm[xc, y] and self.rm[x0, y]]
+        """return information about the parallelogram formed by xs: number of
+        ratings in common and norm of the differences (see formula)"""
 
+        # list of ys that xa, xb, xc, and x0 have commonly rated
+        Yabc0 = [y for (y, _) in self.xr[xa] if (self.rm[xb, y] and self.rm[xc, y]
+            and self.rm[x0, y])]
+
+        # if there is no common rating
         if not Yabc0:
             return 0, float('inf')
 
+        # lists of ratings for common ys
         xaRs = np.array([self.rm[xa, y] for y in Yabc0])
         xbRs = np.array([self.rm[xb, y] for y in Yabc0])
         xcRs = np.array([self.rm[xc, y] for y in Yabc0])
         x0Rs = np.array([self.rm[x0, y] for y in Yabc0])
+
+        # the closer the norm to zero, the more abcd is in a paralellogram
+        # shape
         nrm = np.linalg.norm((xaRs - xbRs) - (xcRs - x0Rs))
+
         return len(Yabc0), nrm
 
 class AlgoWithBaseline(Algo):

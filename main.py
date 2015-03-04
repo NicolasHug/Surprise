@@ -26,10 +26,10 @@ for line in base:
 #a = al.AlgoBasicCollaborative(rm, movieBased=False)
 #a = al.AlgoConf(rm, confMeasure=al.AlgoConf.prop, movieBased=True)
 #a = al.AlgoAnalogy(rm, movieBased=False)
-#a = al.AlgoGilles(rm, movieBased=False)
+#a = al.AlgoGilles(rm, ur, mr, movieBased=False)
 #a = al.AlgoBaselineOnly(rm, ur, mr, method='opt')
 #a = al.AlgoNeighborhoodWithBaseline(rm, ur, mr, movieBased=False, method='opt')
-a = al.AlgoKNNBelkor(rm, ur, mr, method='opt', movieBased=False)
+#a = al.AlgoKNNBelkor(rm, ur, mr, method='opt', movieBased=False)
 
 
 rd.seed(0)
