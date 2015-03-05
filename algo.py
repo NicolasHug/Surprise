@@ -182,10 +182,42 @@ class AlgoBasicCollaborative(Algo):
         except ZeroDivisionError:
             self.est = 0
 
-class AlgoAnalogy(Algo):
+class AlgoUsingAnalogy(Algo):
+    """Abstract class for algos that use an analogy framework"""
+    def __init__(self, rm, ur, mr, movieBased=False):
+        super().__init__(rm, ur, mr, movieBased)
+
+    def isSolvable(self, ra, rb, rc):
+        """return true if analogical equation is solvable else false"""
+        return (ra == rb) or (ra == rc)
+
+    def solve(self, ra, rb, rc):
+        """ solve A*(a, b, c, x). Undefined if equation not solvable."""
+        return rc - ra + rb
+
+    def tvAStar (self, ra, rb, rc, rd):
+        """return the truth value of A*(ra, rb, rc, rd)"""
+
+        # map ratings into [0, 1]
+        ra = (ra-1)/4.; rb = (rb-1)/4.; rc = (rc-1)/4.; rd = (rd-1)/4.; 
+        return min(1 - abs(max(ra, rd) - max(rb, rc)), 1 - abs(min(ra, rd) -
+            min(rb, rc)))
+
+    def tvA(self, ra, rb, rc, rd):
+        """return the truth value of A(ra, rb, rc, rd)"""
+
+        # map ratings into [0, 1]
+        ra = (ra-1)/4.; rb = (rb-1)/4.; rc = (rc-1)/4.; rd = (rd-1)/4.; 
+        if (ra >= rb and rc >= rd) or (ra <= rb and rc <= rd):
+            return 1 - abs((ra-rb) - (rc-rd))
+        else:
+            return 1 - max(abs(ra-rb), abs(rc-rd))
+    
+class AlgoAnalogy(AlgoUsingAnalogy):
     """analogy based recommender"""
     def __init__(self, rm, ur, mr, movieBased=False):
         super().__init__(rm, ur, mr, movieBased)
+
 
     def estimate(self, u0, m0):
         x0, y0 = self.getx0y0(u0, m0)
@@ -204,7 +236,7 @@ class AlgoAnalogy(Algo):
             if xa != xb != xc and xa != xc and self.isSolvable(ra, rb, rc):
                 tv = self.getTvVector(xa, xb, xc, x0)
                 if tv:
-                    sols.append((cmn.solveAstar(ra, rb, rc), np.mean(tv)))
+                    sols.append((self.solve(ra, rb, rc), np.mean(tv)))
 
         ratings = [r for (r, _) in sols]
         weights = [w for (_, w) in sols]
@@ -213,9 +245,6 @@ class AlgoAnalogy(Algo):
             self.est = 0
             return
         self.est = int(round(np.average(ratings, weights=weights)))
-
-
-                        
 
     def getTvVector(self, xa, xb, xc, x0):
         tv = []
@@ -226,15 +255,14 @@ class AlgoAnalogy(Algo):
             and self.rm[x0, y])]
 
         for ra, rb, rc, rd in Yabc0:
-            tv.append(cmn.tvAStar((ra-1)/4., (rb-1)/4., (rc-1)/4., (rd-1)/4.))
+            #tv.append(self.tvAStar(ra, rb, rc, rd))
+            tv.append(self.tvA(ra, rb, rc, rd))
 
         return tv
 
 
-    def isSolvable(self, ra, rb, rc):
-        return ra == rb or ra == rc
 
-class AlgoGilles(Algo):
+class AlgoGilles(AlgoUsingAnalogy):
     """geometrical analogy based recommender"""
     def __init__(self, rm, ur, mr, movieBased=False):
         super().__init__(rm, ur, mr, movieBased)
@@ -273,14 +301,6 @@ class AlgoGilles(Algo):
             self.est = int(round(np.average(ratings)))
         else:
             self.est = 0
-
-    def isSolvable(self, ra, rb, rc):
-        """return true if analogical equation is solvable else false"""
-        return (ra == rb) or (ra == rc)
-
-    def solve(self, ra, rb, rc):
-        """solve analogical equation"""
-        return rc - ra + rb
 
 
     def getParall(self, xa, xb, xc, x0):
