@@ -184,29 +184,25 @@ class AlgoBasicCollaborative(Algo):
 
 class AlgoAnalogy(Algo):
     """analogy based recommender"""
-    def __init__(self, rm, movieBased=False):
-        super().__init__(rm, movieBased)
-        self.constructSimMat()
+    def __init__(self, rm, ur, mr, movieBased=False):
+        super().__init__(rm, ur, mr, movieBased)
 
     def estimate(self, u0, m0):
         x0, y0 = self.getx0y0(u0, m0)
 
-        # list (x, r) for y0
-        y0Xs = [(x, r) for (x, r) in enumerate(self.rm[:, y0]) if r > 0]
-        # list of y for x0
-        x0Ys = [y for (y, r) in enumerate(self.rm[x0, :]) if r > 0]
-
-        if not y0Xs:
+        # if there are no ratings for y0, prediction is impossible
+        if not self.yr[y0]:
             self.est = 0
             return
 
-        sols = []
+        sols = [] # solutions to analogical equation
         for i in range(1000):
-            xa, ra = rd.choice(y0Xs)
-            xb, rb = rd.choice(y0Xs)
-            xc, rc = rd.choice(y0Xs)
+            # randomly choose a, b, and c
+            xa, ra = rd.choice(self.yr[y0])
+            xb, rb = rd.choice(self.yr[y0])
+            xc, rc = rd.choice(self.yr[y0])
             if xa != xb != xc and xa != xc and self.isSolvable(ra, rb, rc):
-                tv = self.getTvVector(xa, xb, xc, x0, x0Ys)
+                tv = self.getTvVector(xa, xb, xc, x0)
                 if tv:
                     sols.append((cmn.solveAstar(ra, rb, rc), np.mean(tv)))
 
@@ -221,21 +217,22 @@ class AlgoAnalogy(Algo):
 
                         
 
-    def getTvVector(self, xa, xb, xc, x0, x0Ys):
+    def getTvVector(self, xa, xb, xc, x0):
         tv = []
-        for y in x0Ys:
-            if self.rm[xa, y] and self.rm[xb, y] and self.rm[xc, y]:
-                rabc0 = [self.rm[xa, y], self.rm[xb, y], self.rm[xc, y],
-                    self.rm[x0, y]]
-                rabc0 = [(r - 1) / 4 for r in rabc0]
-                tv.append(cmn.tvAStar(*rabc0))
-                #tv.append(cmn.tvA(*rabc0))
+
+        # list of ys that xa, xb, xc, and x0 have commonly rated
+        Yabc0 = [(self.rm[xa, y], self.rm[xb, y], self.rm[xc, y], self.rm[x0,
+            y]) for (y, _) in self.xr[xa] if (self.rm[xb, y] and self.rm[xc, y]
+            and self.rm[x0, y])]
+
+        for ra, rb, rc, rd in Yabc0:
+            tv.append(cmn.tvAStar((ra-1)/4., (rb-1)/4., (rc-1)/4., (rd-1)/4.))
+
         return tv
 
 
     def isSolvable(self, ra, rb, rc):
         return ra == rb or ra == rc
-
 
 class AlgoGilles(Algo):
     """geometrical analogy based recommender"""
@@ -245,7 +242,7 @@ class AlgoGilles(Algo):
     def estimate(self, u0, m0):
         x0, y0 = self.getx0y0(u0, m0)
 
-        # if there is no ratings for y0, prediction is impossible
+        # if there are no ratings for y0, prediction is impossible
         if not self.yr[y0]:
             self.est = 0
             return

@@ -27,16 +27,3 @@ def tvA(a, b, c, d):
 def solveAstar(a, b, c):
     """ solve A*(a, b, c, x). Undefined if equation not solvable."""
     return c if a == b else b
-
-def idty(a, b, c, d):
-    return 1 - (max(a, b, c, d) - min(a, b, c, d))
-
-def diff(x, y):
-    return abs(x - y)
-
-def eq(x, y, z):  
-    return 1 - abs(max(x, y, z) - min(x, y, z))
-
-def hd1(a, b, c, d):
-    return max(min(eq(a, b, d), diff(d, c)), min(eq(a, c, d), diff(d, b)),
-            min(eq(b, c, d), diff(d, a)))    
