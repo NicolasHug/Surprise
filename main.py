@@ -4,7 +4,6 @@ import numpy as np
 import random as rd
 from collections import defaultdict
 
-
 import algo as al
 import common as c
 
