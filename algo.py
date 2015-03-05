@@ -2,17 +2,20 @@ from scipy.stats import rv_discrete
 from scipy.spatial.distance import cosine
 import numpy as np
 import random as rd
+import pickle
+import time
+import os
 
 import common as cmn
 
 class Algo:
     """Abstract Algo class where is defined the basic behaviour of a recomender
     algorithm"""
-    def __init__(self, rm, ur=None, mr=None, movieBased=False):
-        self.ub = not movieBased # whether the algo will be based on users
+    def __init__(self, rm, ur=None, mr=None, movieBased=False, withDump=True):
+        # whether the algo will be based on users
         # if the algo is user based, x denotes a user and y a movie
         # if the algo is movie based, x denotes a movie and y a user
-
+        self.ub = not movieBased 
 
         if self.ub:
             self.rm = rm.T # we take the transpose of the rating matrix
@@ -32,6 +35,21 @@ class Algo:
         self.nImp = 0 # number of impossible predictions
         self.mae = self.rmse = self.accRate = 0 # statistics
 
+        self.withDump = withDump
+        self.infos = {}
+        self.infos['name'] = 'undefined'
+        self.infos['params'] = {} 
+        self.infos['params']['based on '] = 'users' if self.ub else 'movies'
+        self.infos['ests'] = [] 
+
+    def dumpInfos(self):
+        if not self.withDump:
+            return
+        if not os.path.exists('./dumps'):
+            os.makedirs('./dumps')
+        
+        date = time.strftime('%y%m%d-%H:%M:%S', time.localtime())
+        pickle.dump(self.infos, open('dumps/' + self.infos['name'] + date, 'wb'))
 
     def constructSimMat(self):
         """construct the simlarity matrix. measure = cosine sim"""
@@ -74,7 +92,6 @@ class Algo:
         bR = [self.rm[b, y] for y in Yab]
 
         return 1 - cosine(aR, bR)
-        
 
     def getx0y0(self, u0, m0):
         """return x0 and y0 based on the self.ub variable (see constructor)"""
@@ -134,6 +151,7 @@ class AlgoRandom(Algo):
     
     def __init__(self, rm):
         super().__init__(rm)
+        self.infos['name'] = 'random'
 
         # estimation of the distribution
         fqs = [0, 0, 0, 0, 0]
@@ -158,6 +176,12 @@ class AlgoBasicCollaborative(Algo):
         super().__init__(rm, movieBased)
         self.constructSimMat() # we'll need the similiarities
 
+        self.k = 40
+
+        self.infos['name'] = 'basicCollaborative'
+        self.infos['params']['similarity measure'] = 'cosine'
+        self.infos['params']['k'] = self.k
+
     def estimate(self, u0, m0):
         x0, y0 = self.getx0y0(u0, m0)
         # list of (x, sim(x0, x)) for u having rated m0 or for m rated by x0
@@ -173,9 +197,8 @@ class AlgoBasicCollaborative(Algo):
         simX0 = sorted(simX0, key=lambda x:x[1], reverse=True)
 
         # let the KNN vote
-        k = 50
-        simNeighboors = [sim for (_, sim) in simX0[:k]]
-        ratNeighboors = [self.rm[x, y0] for (x, _) in simX0[:k]]
+        simNeighboors = [sim for (_, sim) in simX0[:self.k]]
+        ratNeighboors = [self.rm[x, y0] for (x, _) in simX0[:self.k]]
         try:
             self.est = int(round(np.average(ratNeighboors,
                 weights=simNeighboors)))
@@ -217,6 +240,7 @@ class AlgoAnalogy(AlgoUsingAnalogy):
     """analogy based recommender"""
     def __init__(self, rm, ur, mr, movieBased=False):
         super().__init__(rm, ur, mr, movieBased)
+        self.infos['name'] = 'algoAnalogy'
 
 
     def estimate(self, u0, m0):
@@ -266,6 +290,7 @@ class AlgoGilles(AlgoUsingAnalogy):
     """geometrical analogy based recommender"""
     def __init__(self, rm, ur, mr, movieBased=False):
         super().__init__(rm, ur, mr, movieBased)
+        self.infos['name'] = 'algoGilles'
 
     def estimate(self, u0, m0):
         x0, y0 = self.getx0y0(u0, m0)
@@ -384,6 +409,7 @@ class AlgoBaselineOnly(AlgoWithBaseline):
 
     def __init__(self, rm, ur, mr, movieBased=False, method='opt'):
         super().__init__(rm, ur, mr, movieBased, method)
+        self.infos['name'] = 'algoBaselineOnly'
 
     def estimate(self, u0, m0):
         x0, y0 = self.getx0y0(u0, m0)
@@ -396,6 +422,7 @@ class AlgoNeighborhoodWithBaseline(AlgoWithBaseline):
     def __init__(self, rm, ur, mr, movieBased=False, method='opt'):
         super().__init__(rm, ur, mr, movieBased, method)
         self.constructSimMat() # we'll need the similiarities
+        self.infos['name'] = 'neighborhoodWithBaseline'
 
     def estimate(self, u0, m0):
         x0, y0 = self.getx0y0(u0, m0)
@@ -432,6 +459,8 @@ class AlgoKNNBelkor(AlgoWithBaseline):
         nIter = 20
         gamma = 0.005
         lambda10 = 0.002
+
+        self.infos['name'] = 'KNNBellkor'
 
         for i in range(nIter):
             print("optimizing...", nIter - i, "iteration left")

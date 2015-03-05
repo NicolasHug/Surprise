@@ -9,6 +9,8 @@ syntax: glob
 simCosMovies
 simCosUsers
 
+dumps/*
+
 # switch to regexp syntax.
 syntax: regexp
 ^\.pc/

@@ -23,8 +23,7 @@ for line in base:
 
 #a = al.AlgoRandom(rm)
 #a = al.AlgoBasicCollaborative(rm, movieBased=False)
-#a = al.AlgoConf(rm, confMeasure=al.AlgoConf.prop, movieBased=True)
-a = al.AlgoAnalogy(rm, ur, mr, movieBased=False)
+#a = al.AlgoAnalogy(rm, ur, mr, movieBased=False)
 #a = al.AlgoGilles(rm, ur, mr, movieBased=False)
 #a = al.AlgoBaselineOnly(rm, ur, mr, method='opt')
 #a = al.AlgoNeighborhoodWithBaseline(rm, ur, mr, movieBased=False, method='opt')
@@ -51,3 +50,4 @@ for u0, m0, r0, _ in testSet:
 
 print('-' * 20)
 a.makeStats()
+a.dumpInfos()
