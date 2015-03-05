@@ -182,103 +182,6 @@ class AlgoBasicCollaborative(Algo):
         except ZeroDivisionError:
             self.est = 0
 
-
-class AlgoConf(Algo):
-    """recommender inspired by the conformal prediction framework"""
-    def __init__(self, rm, confMeasure, movieBased=False):
-        super().__init__(rm, movieBased)
-        self.constructSimMat()
-        self.confMeasure = confMeasure
-
-    def estimate(self, u0, m0):
-        x0, y0 = self.getx0y0(u0, m0)
-
-        confs = {}
-        for rConf in [1, 2, 3, 4, 5]:
-            # temporarily set r0 as rConf
-            self.rm[x0, y0] = rConf
-            # get the group of examples on which we want to know how much we
-            # are conform to
-            confGroup = self.getConfGroup(rConf, x0, y0, k=10)
-            # compute conformality to group
-            confs[rConf] = self.confMeasure(self, x0, y0, confGroup)
-        self.rm[x0, y0] = 0 # reset r0 as unknown
-
-        # check if no conf was computable
-        if all(conf == float('-inf') for conf in confs.values()):
-            self.est = 0
-        else:
-            # est = the rConf that made our example the most conform to its
-            # group
-            sortedConfs = sorted(confs.keys(), key=lambda x:confs[x], reverse=True)
-            print(sortedConfs)
-            self.est = sortedConfs[0]
-
-    def getConfGroup(self, rConf, x0, y0, k=10):
-        """return the k most similar users/movies to u0/m0 such that rating =
-        rConf
-        """
-
-        confGroup = [(x, self.simMat[x0, x]) for (x, r) in enumerate(self.rm[:,
-            y0]) if r == rConf and x != x0]
-
-        confGroup = sorted(confGroup, key=lambda x:x[1], reverse=True)
-        if k == 0:
-            k = len(confGroup)
-        confGroup = [u for (u, _) in confGroup[:k]]
-
-        return confGroup
-
-    def maxIdHd(self, x0, y0, confGroup):
-        """a conf measure based on analogy"""
-        if len(confGroup) < 3:
-            return float('-inf')
-            
-        x0Y = [y for (y, r) in enumerate(self.rm[x0, :]) if r > 0]
-
-        conf = 0
-        nConfs = 0
-        for xa in confGroup:
-            for xb in confGroup:
-                for xc in confGroup:
-                    if xa != xc != xb and xa != xb:
-                        for y in x0Y:
-                            if (self.rm[xa, y] and self.rm[xb, y] and 
-                                self.rm[xc, y]):
-                                nConfs += 1
-                                a = (self.rm[xa, y] - 1) / 4
-                                b = (self.rm[xb, y] - 1) / 4
-                                c = (self.rm[xc, y] - 1) / 4
-                                d = (self.rm[x0, y] - 1) / 4
-                                conf += max(cmn.idty(a, b, c, d), cmn.hd1(a, b,
-                                    c, d))
-        try:
-            conf = conf / nConfs 
-        except ZeroDivisionError:
-            conf = float('-inf')
-        return conf
-
-    def idSymb(self, x0, confGroup):
-        """another conf measure"""
-        x0Y = [y for (y, r) in enumerate(self.rm[x0, :]) if r > 0]
-
-        conf = 0
-        nConfs = 0
-        for xa in confGroup:
-            for xb in confGroup:
-                if xa != xb:
-                    for y in x0Y:
-                        if self.rm[xa, y] and  self.rm[xb, y]:
-                            nConfs += 1
-                            if (self.rm[xa, y] == self.rm[x0, y] or 
-                                self.rm[xb, y] == self.rm[x0, y]):
-                                conf += 1
-        try:
-            conf = conf / nConfs 
-        except ZeroDivisionError:
-            conf = float('-inf')
-        return conf
-
 class AlgoAnalogy(Algo):
     """analogy based recommender"""
     def __init__(self, rm, movieBased=False):
@@ -550,5 +453,4 @@ class AlgoKNNBelkor(AlgoWithBaseline):
 
         self.est = min(5, self.est)
         self.est = max(1, self.est)
-
 
