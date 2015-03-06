@@ -11,7 +11,7 @@ import common as cmn
 class Algo:
     """Abstract Algo class where is defined the basic behaviour of a recomender
     algorithm"""
-    def __init__(self, rm, ur=None, mr=None, movieBased=False, withDump=True):
+    def __init__(self, rm, ur, mr, movieBased=False, withDump=True):
 
         # handle multiple inheritance of algorithms...
         if hasattr(self, 'initialized'):
@@ -45,8 +45,9 @@ class Algo:
         self.infos = {}
         self.infos['name'] = 'undefined'
         self.infos['params'] = {} 
-        self.infos['params']['based on '] = 'users' if self.ub else 'movies'
+        self.infos['params']['Based on '] = 'users' if self.ub else 'movies'
         self.infos['ests'] = [] 
+
 
     def dumpInfos(self):
         if not self.withDump:
@@ -55,7 +56,7 @@ class Algo:
             os.makedirs('./dumps')
         
         date = time.strftime('%y%m%d-%H:%M:%S', time.localtime())
-        pickle.dump(self.infos, open('dumps/' + self.infos['name'] + date, 'wb'))
+        pickle.dump(self.infos, open('dumps/' + date + '-' + self.infos['name'], 'wb'))
 
     def getx0y0(self, u0, m0):
         """return x0 and y0 based on the self.ub variable (see constructor)"""
@@ -64,11 +65,12 @@ class Algo:
         else:
             return m0, u0
 
-    def updatePreds(self, r0, output=True):
+    def updatePreds(self, u0, m0, r0, output=True):
         """update preds list and print some info if required
         
         should be called right after the estimate method
         """
+
         if output:
             if self.est == 0:
                 print(cmn.Col.FAIL + 'Impossible to predict' + cmn.Col.ENDC)
@@ -77,9 +79,23 @@ class Algo:
             else:
                 print(cmn.Col.FAIL + 'KO ' + cmn.Col.ENDC + str(self.est))
 
+        predInfo = {}
         if self.est == 0:
             self.nImp += 1
+            predInfo['wasImpossible'] = True
             self.est = 3 # default value
+        else:
+            predInfo['wasImpossible'] = False
+
+        if self.withDump:
+            predInfo['u0'] = u0 ; predInfo['m0'] = m0; predInfo['r0'] = r0
+            predInfo['est'] = self.est
+            ur = self.xr if self.ub else self.yr
+            mr = self.yr if self.ub else self.xr
+            predInfo['u0Ratings'] = ur[u0]
+            predInfo['m0Ratings'] = mr[m0]
+
+            self.infos['ests'].append(predInfo)
 
         self.preds.append((self.est, r0))
         
@@ -113,8 +129,8 @@ class Algo:
 class AlgoRandom(Algo):
     """predict a random rating based on the distribution of the training set"""
     
-    def __init__(self, rm):
-        super().__init__(rm)
+    def __init__(self, rm, ur, mr):
+        super().__init__(rm, ur, mr)
         self.infos['name'] = 'random'
 
         # estimation of the distribution
@@ -131,8 +147,8 @@ class AlgoRandom(Algo):
 
 class AlgoUsingCosineSim(Algo):
     """Abstract class for algos using cosine similarity"""
-    def __init__(self, rm, movieBased=False):
-        Algo.__init__(self,rm, movieBased)
+    def __init__(self, rm, ur, mr, movieBased=False):
+        Algo.__init__(self, rm, ur, mr, movieBased)
         self.constructSimMat() # we'll need the similiarities
 
     def constructSimMat(self):
@@ -184,8 +200,8 @@ class AlgoBasicCollaborative(AlgoUsingCosineSim):
     Similarity = cosine similarity
     """
 
-    def __init__(self, rm, movieBased=False):
-        super().__init__(rm, movieBased)
+    def __init__(self, rm, ur, mr, movieBased=False):
+        super().__init__(rm, ur, mr, movieBased)
 
         self.k = 40
 
@@ -433,7 +449,7 @@ class AlgoNeighborhoodWithBaseline(AlgoWithBaseline, AlgoUsingCosineSim):
         simlarity measure = cos"""
     def __init__(self, rm, ur, mr, movieBased=False, method='opt'):
         AlgoWithBaseline.__init__(self, rm, ur, mr, movieBased, method)
-        AlgoUsingCosineSim.__init__(self, rm, movieBased)
+        AlgoUsingCosineSim.__init__(self, rm, ur, mr,  movieBased)
         self.infos['name'] = 'neighborhoodWithBaseline'
 
     def estimate(self, u0, m0):

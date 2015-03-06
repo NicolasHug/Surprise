@@ -21,10 +21,10 @@ for line in base:
     ur[ui].append((mi, r))
     mr[mi].append((ui, r))
 
-#a = al.AlgoRandom(rm)
-a = al.AlgoBasicCollaborative(rm, movieBased=False)
+#a = al.AlgoRandom(rm, ur, mr)
+#a = al.AlgoBasicCollaborative(rm, ur, mr, movieBased=False)
 #a = al.AlgoAnalogy(rm, ur, mr, movieBased=False)
-#a = al.AlgoGilles(rm, ur, mr, movieBased=False)
+a = al.AlgoGilles(rm, ur, mr, movieBased=False)
 #a = al.AlgoBaselineOnly(rm, ur, mr, method='opt')
 #a = al.AlgoNeighborhoodWithBaseline(rm, ur, mr, movieBased=False, method='opt')
 #a = al.AlgoKNNBelkor(rm, ur, mr, method='opt', movieBased=False)
@@ -44,7 +44,7 @@ for u0, m0, r0, _ in testSet:
 
     print(u0, m0, r0)
     a.estimate(u0, m0)
-    a.updatePreds(r0)
+    a.updatePreds(u0, m0, r0)
 
     print('-' * 20)
 
