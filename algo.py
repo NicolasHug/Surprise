@@ -12,6 +12,12 @@ class Algo:
     """Abstract Algo class where is defined the basic behaviour of a recomender
     algorithm"""
     def __init__(self, rm, ur=None, mr=None, movieBased=False, withDump=True):
+
+        # handle multiple inheritance of algorithms...
+        if hasattr(self, 'initialized'):
+            return
+        self.initialized = True
+
         # whether the algo will be based on users
         # if the algo is user based, x denotes a user and y a movie
         # if the algo is movie based, x denotes a movie and y a user
@@ -50,48 +56,6 @@ class Algo:
         
         date = time.strftime('%y%m%d-%H:%M:%S', time.localtime())
         pickle.dump(self.infos, open('dumps/' + self.infos['name'] + date, 'wb'))
-
-    def constructSimMat(self):
-        """construct the simlarity matrix. measure = cosine sim"""
-        # open or precalculate the similarity matrix if it does not exist yet
-        try:
-            print('Opening simFile')
-            if self.ub:
-                simFile = open('simCosUsers', 'rb')
-                self.simMat = np.load(simFile)
-            else:
-                simFile = open('simCosMovies', 'rb')
-                self.simMat = np.load(simFile)
-
-        except IOError:
-            print('Failed... Computation of similarities...')
-            self.simMat = np.empty((self.lastXi + 1, self.lastXi + 1))
-            for xi in range(1, self.lastXi + 1):
-                for xj in range(1, self.lastXi + 1):
-                    self.simMat[xi, xj] = self.simCos(xi, xj)
-            if self.ub:
-                simFile = open('simCosUsers', 'wb')
-                np.save(simFile, self.simMat)
-            else:
-                simFile = open('simCosMovies', 'wb')
-                np.save(simFile, self.simMat)
-
-    def simCos(self, a, b):
-        """ return the similarity between two users or movies using cosine
-        distance"""
-        # movies rated by a and b or users having rated a and b
-        Yab = [y for y in range(1, self.lastYi + 1) if self.rm[a, y] > 0 and
-            self.rm[b, y] > 0]
-
-        # need to have at least two movies in common
-        if len(Yab) < 2:
-            return 0
-
-        # list of ratings of/by a and b
-        aR = [self.rm[a, y] for y in Yab]
-        bR = [self.rm[b, y] for y in Yab]
-
-        return 1 - cosine(aR, bR)
 
     def getx0y0(self, u0, m0):
         """return x0 and y0 based on the self.ub variable (see constructor)"""
@@ -165,7 +129,55 @@ class AlgoRandom(Algo):
     def estimate(self, u0, m0):
         self.est = self.distrib.rvs()
 
-class AlgoBasicCollaborative(Algo):
+class AlgoUsingCosineSim(Algo):
+    """Abstract class for algos using cosine similarity"""
+    def __init__(self, rm, movieBased=False):
+        Algo.__init__(self,rm, movieBased)
+        self.constructSimMat() # we'll need the similiarities
+
+    def constructSimMat(self):
+        """construct the simlarity matrix. measure = cosine sim"""
+        # open or precalculate the similarity matrix if it does not exist yet
+        try:
+            print('Opening simFile')
+            if self.ub:
+                simFile = open('simCosUsers', 'rb')
+                self.simMat = np.load(simFile)
+            else:
+                simFile = open('simCosMovies', 'rb')
+                self.simMat = np.load(simFile)
+
+        except IOError:
+            print('Failed... Computation of similarities...')
+            self.simMat = np.empty((self.lastXi + 1, self.lastXi + 1))
+            for xi in range(1, self.lastXi + 1):
+                for xj in range(1, self.lastXi + 1):
+                    self.simMat[xi, xj] = self.simCos(xi, xj)
+            if self.ub:
+                simFile = open('simCosUsers', 'wb')
+                np.save(simFile, self.simMat)
+            else:
+                simFile = open('simCosMovies', 'wb')
+                np.save(simFile, self.simMat)
+
+    def simCos(self, a, b):
+        """ return the similarity between two users or movies using cosine
+        distance"""
+        # movies rated by a and b or users having rated a and b
+        Yab = [y for y in range(1, self.lastYi + 1) if self.rm[a, y] > 0 and
+            self.rm[b, y] > 0]
+
+        # need to have at least two movies in common
+        if len(Yab) < 2:
+            return 0
+
+        # list of ratings of/by a and b
+        aR = [self.rm[a, y] for y in Yab]
+        bR = [self.rm[b, y] for y in Yab]
+
+        return 1 - cosine(aR, bR)
+
+class AlgoBasicCollaborative(AlgoUsingCosineSim):
     """Basic collaborative filtering algorithm
     
     est = (weighted) average of ratings from the KNN
@@ -174,7 +186,6 @@ class AlgoBasicCollaborative(Algo):
 
     def __init__(self, rm, movieBased=False):
         super().__init__(rm, movieBased)
-        self.constructSimMat() # we'll need the similiarities
 
         self.k = 40
 
@@ -355,7 +366,7 @@ class AlgoGilles(AlgoUsingAnalogy):
 class AlgoWithBaseline(Algo):
     """Abstract class for algos that need a baseline"""
     def __init__(self, rm, ur=None, mr=None, movieBased=False, method='opt'):
-        super().__init__(rm, ur, mr, movieBased)
+        Algo.__init__(self,rm, ur, mr, movieBased)
 
         #compute users and items biases
         # see from 5.2.1 of RS handbook
@@ -366,6 +377,7 @@ class AlgoWithBaseline(Algo):
         self.xBiases = np.zeros(self.lastXi + 1)
         self.yBiases = np.zeros(self.lastYi + 1)
 
+        print('Estimating biases...')
         if method == 'opt':
             # using stochastic gradient descent optimisation
             lambda4 = 0.02
@@ -415,13 +427,13 @@ class AlgoBaselineOnly(AlgoWithBaseline):
         x0, y0 = self.getx0y0(u0, m0)
         self.est = self.getBaseline(x0, y0)
 
-class AlgoNeighborhoodWithBaseline(AlgoWithBaseline):
+class AlgoNeighborhoodWithBaseline(AlgoWithBaseline, AlgoUsingCosineSim):
     """ Algo baseline AND deviation from baseline of the neighbors
         
         simlarity measure = cos"""
     def __init__(self, rm, ur, mr, movieBased=False, method='opt'):
-        super().__init__(rm, ur, mr, movieBased, method)
-        self.constructSimMat() # we'll need the similiarities
+        AlgoWithBaseline.__init__(self, rm, ur, mr, movieBased, method)
+        AlgoUsingCosineSim.__init__(self, rm, movieBased)
         self.infos['name'] = 'neighborhoodWithBaseline'
 
     def estimate(self, u0, m0):

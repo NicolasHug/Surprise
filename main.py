@@ -22,7 +22,7 @@ for line in base:
     mr[mi].append((ui, r))
 
 #a = al.AlgoRandom(rm)
-#a = al.AlgoBasicCollaborative(rm, movieBased=False)
+a = al.AlgoBasicCollaborative(rm, movieBased=False)
 #a = al.AlgoAnalogy(rm, ur, mr, movieBased=False)
 #a = al.AlgoGilles(rm, ur, mr, movieBased=False)
 #a = al.AlgoBaselineOnly(rm, ur, mr, method='opt')
