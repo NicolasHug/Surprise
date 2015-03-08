@@ -53,11 +53,11 @@ def details(est):
         
 
 def filterByError(ests, inf=0., sup=4.):
-    """return an iterator with all the estimations where error is more or equl
-    to inf and less or equal to sup"""
+    """return an iterator with all the estimations where abs(error) is between
+    inf and sup (both included)"""
     return filter(lambda x: abs(err(x)) >= inf and abs(err(x)) <= sup, ests)
 
 # detail of predictions
-for est in filterByError(infos['ests'], inf=2):
+for est in filterByError(infos['ests'], inf=3):
     details(est)
     print('-' * 52)

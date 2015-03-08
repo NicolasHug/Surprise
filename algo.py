@@ -11,7 +11,7 @@ import common as cmn
 class Algo:
     """Abstract Algo class where is defined the basic behaviour of a recomender
     algorithm"""
-    def __init__(self, rm, ur, mr, movieBased=False, withDump=True):
+    def __init__(self, rm, ur, mr, movieBased=False, withDump=True, **kwargs):
 
         # handle multiple inheritance of algorithms...
         if hasattr(self, 'initialized'):
@@ -144,8 +144,8 @@ class AlgoRandom(Algo):
 
 class AlgoUsingCosineSim(Algo):
     """Abstract class for algos using cosine similarity"""
-    def __init__(self, rm, ur, mr, movieBased=False):
-        Algo.__init__(self, rm, ur, mr, movieBased)
+    def __init__(self, rm, ur, mr, movieBased=False, **kwargs):
+        super().__init__(rm, ur, mr, movieBased)
         self.constructSimMat() # we'll need the similiarities
 
     def constructSimMat(self):
@@ -378,8 +378,9 @@ class AlgoGilles(AlgoUsingAnalogy):
 
 class AlgoWithBaseline(Algo):
     """Abstract class for algos that need a baseline"""
-    def __init__(self, rm, ur=None, mr=None, movieBased=False, method='opt'):
-        Algo.__init__(self,rm, ur, mr, movieBased)
+    def __init__(self, rm, ur, mr, movieBased, **kwargs):
+        super().__init__(rm, ur, mr, movieBased)
+        method = kwargs['method']
 
         #compute users and items biases
         # see from 5.2.1 of RS handbook
@@ -433,7 +434,7 @@ class AlgoBaselineOnly(AlgoWithBaseline):
     """ Algo using only baseline""" 
 
     def __init__(self, rm, ur, mr, movieBased=False, method='opt'):
-        super().__init__(rm, ur, mr, movieBased, method)
+        super().__init__(rm, ur, mr, movieBased, method=method)
         self.infos['name'] = 'algoBaselineOnly'
 
     def estimate(self, u0, m0):
@@ -442,11 +443,9 @@ class AlgoBaselineOnly(AlgoWithBaseline):
 
 class AlgoNeighborhoodWithBaseline(AlgoWithBaseline, AlgoUsingCosineSim):
     """ Algo baseline AND deviation from baseline of the neighbors
-        
         simlarity measure = cos"""
     def __init__(self, rm, ur, mr, movieBased=False, method='opt'):
-        AlgoWithBaseline.__init__(self, rm, ur, mr, movieBased, method)
-        AlgoUsingCosineSim.__init__(self, rm, ur, mr,  movieBased)
+        super().__init__(rm, ur, mr, movieBased, method=method) 
         self.infos['name'] = 'neighborhoodWithBaseline'
 
     def estimate(self, u0, m0):
@@ -477,7 +476,7 @@ class AlgoKNNBelkor(AlgoWithBaseline):
     """ KNN learning interpolating weights from the training data. see 5.1.1
     from reco system handbook"""
     def __init__(self, rm, ur, mr, movieBased=False, method='opt'):
-        super().__init__(rm, ur, mr, movieBased, method)
+        super().__init__(rm, ur, mr, movieBased, method=method)
         self.weights = np.zeros((self.lastXi + 1, self.lastXi + 1),
         dtype='double')
 
