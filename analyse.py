@@ -36,17 +36,18 @@ def err(est):
 def details(est):
     """print details on an estimation"""
     # ids, true rating, etimation and error
-    print("u0: {0:<3d}    m0: {1:<4d}   r0: {2}   est: {3:1.2f}   err: {4:-2.2f}".format(est['u0'],
-        est['m0'], est['r0'], est['est'], err(est)))
+    print("u0: {0:<3d}    m0: {1:<4d}   r0: {2}   est: {3:1.2f}"
+        "   err: {4:-2.2f}".format(est['u0'], est['m0'], est['r0'], est['est'],
+        err(est)))
     # u0 ratings mean and count
     print("u0 ratings:")
-    print("\tcount: {0:d}".format(len(est['u0Ratings'])))
-    print("\tmean : {0:1.4f}".format(np.mean(est['u0Ratings'], 0)[1]))
+    print("\tcount: {0:d}".format(len(infos['ur'][est['u0']])))
+    print("\tmean : {0:1.4f}".format(np.mean(infos['ur'][est['u0']], 0)[1]))
     # m0 ratings mean and count
     print("m0 ratings:")
-    print("\tcount: {0:d}".format(len(est['m0Ratings'])))
-    if est['m0Ratings']:
-        print("\tmean : {0:1.4f}".format(np.mean(est['m0Ratings'], 0)[1]))
+    print("\tcount: {0:d}".format(len(infos['mr'][est['m0']])))
+    if infos['mr'][est['m0']]:
+        print("\tmean : {0:1.4f}".format(np.mean(infos['mr'][est['m0']], 0)[1]))
     else:
         print("\tmean : no f***ing way!")
         

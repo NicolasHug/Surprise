@@ -47,6 +47,8 @@ class Algo:
         self.infos['params'] = {} 
         self.infos['params']['Based on '] = 'users' if self.ub else 'movies'
         self.infos['ests'] = [] 
+        self.infos['ur'] = ur
+        self.infos['mr'] = mr
 
 
     def dumpInfos(self):
@@ -90,11 +92,6 @@ class Algo:
         if self.withDump:
             predInfo['u0'] = u0 ; predInfo['m0'] = m0; predInfo['r0'] = r0
             predInfo['est'] = self.est
-            ur = self.xr if self.ub else self.yr
-            mr = self.yr if self.ub else self.xr
-            predInfo['u0Ratings'] = ur[u0]
-            predInfo['m0Ratings'] = mr[m0]
-
             self.infos['ests'].append(predInfo)
 
         self.preds.append((self.est, r0))
