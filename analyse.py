@@ -55,15 +55,15 @@ def details(est):
 def filterByError(ests, inf=0., sup=4.):
     """return an iterator with all the estimations where abs(error) is between
     inf and sup (both included)"""
+
     return filter(lambda x: (inf <= abs(err(x)) <= sup), ests)
 
 def filterByRatingsCount(ests, x='u', inf=0, sup=float('inf')):
-    if x == 'u':
-        xr = infos['ur']
-        x0 = 'u0'
-    else:
-        xr = infos['mr']
-        x0 = 'm0'
+    """return an iterator with all the estimations where number of ratings for
+    x ('u' or 'm') is between inf and sup (both included)"""
+
+    xr = infos['ur'] if x == 'u' else infos['mr']
+    x0 = 'u0' if x == 'u' else 'm0'
 
     return filter(lambda e: inf <= len(xr[e[x0]]) <= sup, ests)
 
