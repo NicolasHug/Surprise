@@ -65,10 +65,13 @@ def ratingsCountBetween(p, x='u', inf=0, sup=float('inf')):
     x0 = 'u0' if x == 'u' else 'm0'
     return inf <= len(xr[p[x0]]) <= sup
 
+def r0Between(p, inf=1, sup=5):
+    """return true if r0 is between inf and sup (both included)"""
+    return inf <= p['r0'] <= sup
+
 # requirements that a prediction needs to fit
-requirements = (lambda p: True)
-    errorBetween(p, inf=2.5)  and 
-    ratingsCountBetween(p, x='m' ))
+requirements = (lambda p: 
+    r0Between(p, sup=1))
 
 # list with all estimations fitting the previously defined requirements
 # (list and not iterator because we may need to use it more than once)

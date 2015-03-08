@@ -24,9 +24,9 @@ for line in base:
 #a = al.AlgoRandom(rm, ur, mr)
 #a = al.AlgoBasicCollaborative(rm, ur, mr, movieBased=False)
 #a = al.AlgoAnalogy(rm, ur, mr, movieBased=False)
-a = al.AlgoGilles(rm, ur, mr, movieBased=False)
+#a = al.AlgoGilles(rm, ur, mr, movieBased=False)
 #a = al.AlgoBaselineOnly(rm, ur, mr, method='opt')
-#a = al.AlgoNeighborhoodWithBaseline(rm, ur, mr, movieBased=False, method='opt')
+a = al.AlgoNeighborhoodWithBaseline(rm, ur, mr, movieBased=False, method='opt')
 #a = al.AlgoKNNBelkor(rm, ur, mr, method='opt', movieBased=False)
 
 
@@ -49,6 +49,5 @@ for u0, m0, r0, _ in testSet:
     print('-' * 20)
 
 print('-' * 20)
-#a.makeStats()
 c.printStats(a.infos['preds'])
 a.dumpInfos()
