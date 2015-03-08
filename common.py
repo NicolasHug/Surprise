@@ -1,3 +1,5 @@
+import numpy as np
+
 lastMi = 1682 # last movie index for u1.base
 lastUi = 943 # last user index for u1.base
 
@@ -12,3 +14,33 @@ class Col:
     BOLD = '\033[1m'
     UNDERLINE = '\033[4m'
 
+def printStats(preds):
+    """compute some statistics (RMSE) on a list of predictions"""
+    nOK = nKO = nImp = 0
+        
+    sumSqErr = 0
+    sumAbsErr = 0
+
+    for p in preds:
+
+        sumSqErr += (p['r0'] - p['est'])**2
+        sumAbsErr += abs(p['r0'] - p['est'])
+
+        if p['est'] == p['r0']:
+            nOK += 1
+        else:
+            nKO += 1
+        if p['wasImpossible']:
+            nImp += 1
+
+    try:
+        rmse = np.sqrt(sumSqErr / (nOK + nKO))
+        mae = np.sqrt(sumAbsErr / (nOK + nKO))
+        accRate = nOK / (nOK + nKO)
+
+        print('Nb impossible predictions:', nImp)
+        print('RMSE:', rmse)
+        print('MAE:', mae)
+        print('Accuracy rate:', accRate)
+    except ZeroDivisionError:
+        print("looks like there's no prediction...")

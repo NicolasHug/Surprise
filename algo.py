@@ -36,17 +36,14 @@ class Algo:
             self.xr = mr
             self.yr = ur
 
-        self.est = 0 # set by the estimate method of the child classes
-        self.preds = [] # list of (estimation, r0) so far
-        self.nImp = 0 # number of impossible predictions
-        self.mae = self.rmse = self.accRate = 0 # statistics
+        self.est = 0 # set by the estimate method of the child class
 
         self.withDump = withDump
         self.infos = {}
         self.infos['name'] = 'undefined'
         self.infos['params'] = {} 
         self.infos['params']['Based on '] = 'users' if self.ub else 'movies'
-        self.infos['ests'] = [] 
+        self.infos['preds'] = [] 
         self.infos['ur'] = ur
         self.infos['mr'] = mr
 
@@ -83,46 +80,16 @@ class Algo:
 
         predInfo = {}
         if self.est == 0:
-            self.nImp += 1
-            predInfo['wasImpossible'] = True
             self.est = 3 # default value
+            predInfo['wasImpossible'] = True
         else:
             predInfo['wasImpossible'] = False
 
-        if self.withDump:
-            predInfo['u0'] = u0 ; predInfo['m0'] = m0; predInfo['r0'] = r0
-            predInfo['est'] = self.est
-            self.infos['ests'].append(predInfo)
+        predInfo['u0'] = u0 ; predInfo['m0'] = m0; predInfo['r0'] = r0
+        predInfo['est'] = self.est
+        self.infos['preds'].append(predInfo)
 
-        self.preds.append((self.est, r0))
         
-
-    def makeStats(self, output=True):
-        """compute some statistics (RMSE) on the already predicted ratings"""
-        nOK = nKO = 0
-            
-        sumSqErr = 0
-        sumAbsErr = 0
-
-        for est, r0 in self.preds:
-            sumSqErr += (r0 - est)**2
-            sumAbsErr += abs(r0 - est)
-
-            if est == r0:
-                nOK += 1
-            else:
-                nKO += 1
-        
-        self.rmse = np.sqrt(sumSqErr / (nOK + nKO))
-        self.mae = np.sqrt(sumAbsErr / (nOK + nKO))
-        self.accRate = nOK / (nOK + nKO)
-
-        if output:
-            print('Nb impossible predictions:', self.nImp)
-            print('RMSE:', self.rmse)
-            print('MAE:', self.mae)
-            print('Accuracy rate:', self.accRate)
-
 class AlgoRandom(Algo):
     """predict a random rating based on the distribution of the training set"""
     
