@@ -16,10 +16,16 @@ class Col:
 
 def printStats(preds):
     """compute some statistics (RMSE) on a list of predictions"""
+
+    if not preds:
+        print("looks like there's no prediction...")
+        return
+
     nOK = nKO = nImp = 0
         
     sumSqErr = 0
     sumAbsErr = 0
+
 
     for p in preds:
 
@@ -33,14 +39,11 @@ def printStats(preds):
         if p['wasImpossible']:
             nImp += 1
 
-    try:
-        rmse = np.sqrt(sumSqErr / (nOK + nKO))
-        mae = np.sqrt(sumAbsErr / (nOK + nKO))
-        accRate = nOK / (nOK + nKO)
+    rmse = np.sqrt(sumSqErr / (nOK + nKO))
+    mae = np.sqrt(sumAbsErr / (nOK + nKO))
+    accRate = nOK / (nOK + nKO)
 
-        print('Nb impossible predictions:', nImp)
-        print('RMSE:', rmse)
-        print('MAE:', mae)
-        print('Accuracy rate:', accRate)
-    except ZeroDivisionError:
-        print("looks like there's no prediction...")
+    print('Nb impossible predictions:', nImp)
+    print('RMSE:', rmse)
+    print('MAE:', mae)
+    print('Accuracy rate:', accRate)

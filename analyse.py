@@ -66,7 +66,7 @@ def ratingsCountBetween(p, x='u', inf=0, sup=float('inf')):
     return inf <= len(xr[p[x0]]) <= sup
 
 # requirements that a prediction needs to fit
-requirements = (lambda p: 
+requirements = (lambda p: True)
     errorBetween(p, inf=2.5)  and 
     ratingsCountBetween(p, x='m' ))
 
