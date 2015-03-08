@@ -85,3 +85,15 @@ for p in interstingPreds:
 
 # print RMSE & Co for these predictions
 c.printStats(interstingPreds)
+
+def secsToHMS(s):
+    """convert seconds to h:m:s"""
+    m, s = divmod(s, 60)
+    h, m = divmod(m, 60)
+    return int(h), int(m), s
+
+print('-' * 10)
+print("training time: "
+    "{0:02d}h{1:02d}m{2:2.2f}s".format(*secsToHMS(infos['trainingTime'])))
+print("testing time : "
+    "{0:02d}h{1:02d}m{2:2.2f}s".format(*secsToHMS(infos['testingTime'])))

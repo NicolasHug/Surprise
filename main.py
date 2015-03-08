@@ -3,6 +3,7 @@ import pandas as pd
 import numpy as np
 import random as rd
 from collections import defaultdict
+import time
 
 import algo as al
 import common as c
@@ -21,13 +22,15 @@ for line in base:
     ur[ui].append((mi, r))
     mr[mi].append((ui, r))
 
+trainStartTime = time.process_time()
 #a = al.AlgoRandom(rm, ur, mr)
 #a = al.AlgoBasicCollaborative(rm, ur, mr, movieBased=False)
 #a = al.AlgoAnalogy(rm, ur, mr, movieBased=False)
-#a = al.AlgoGilles(rm, ur, mr, movieBased=False)
+a = al.AlgoGilles(rm, ur, mr, movieBased=False)
 #a = al.AlgoBaselineOnly(rm, ur, mr, method='opt')
-a = al.AlgoNeighborhoodWithBaseline(rm, ur, mr, movieBased=False, method='opt')
+#a = al.AlgoNeighborhoodWithBaseline(rm, ur, mr, movieBased=False, method='opt')
 #a = al.AlgoKNNBelkor(rm, ur, mr, method='opt', movieBased=False)
+trainingTime = time.process_time() - trainStartTime
 
 
 rd.seed(0)
@@ -35,11 +38,12 @@ testSet = []
 for line in test:
     testSet.append(line.split())
 
+testTimeStart = time.process_time()
+"""
 for _ in range(100):
     u0, m0, r0, _ = rd.choice(testSet)
     """
 for u0, m0, r0, _ in testSet:
-"""
     u0 = int(u0); m0 = int(m0); r0 = int(r0)
 
     print(u0, m0, r0)
@@ -49,5 +53,10 @@ for u0, m0, r0, _ in testSet:
     print('-' * 20)
 
 print('-' * 20)
+testingTime = time.process_time() - testTimeStart
+
+a.infos['trainingTime'] = trainingTime
+a.infos['testingTime'] = testingTime
+
 c.printStats(a.infos['preds'])
 a.dumpInfos()

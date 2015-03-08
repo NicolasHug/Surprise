@@ -46,4 +46,5 @@ def printStats(preds):
     print('Nb impossible predictions:', nImp)
     print('RMSE:', rmse)
     print('MAE:', mae)
+    print('sample size:', len(preds))
     print('Accuracy rate:', accRate)
