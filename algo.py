@@ -54,7 +54,7 @@ class Algo:
         if not os.path.exists('./dumps'):
             os.makedirs('./dumps')
         
-        date = time.strftime('%y%m%d-%H:%M:%S', time.localtime())
+        date = time.strftime('%y%m%d-%Hh%Mm%S', time.localtime())
         pickle.dump(self.infos, open('dumps/' + date + '-' + self.infos['name'], 'wb'))
 
     def getx0y0(self, u0, m0):
