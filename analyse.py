@@ -71,20 +71,26 @@ def r0Between(p, inf=1, sup=5):
 
 # requirements that a prediction needs to fit
 requirements = (lambda p: 
-    r0Between(p, sup=1))
+    True)
 
 # list with all estimations fitting the previously defined requirements
 # (list and not iterator because we may need to use it more than once)
-interstingPreds= list(filter(requirements, infos['preds']))
+interestingPreds= list(filter(requirements, infos['preds']))
+
+# keep only the k highest or lowest values for ratings count of u0
+k = 5
+interestingPreds.sort(key=lambda p:len(infos['ur'][p['u0']]))
+interestingPreds = interestingPreds[-10:] # top K
+#interestingPreds = interestingPreds[:10] # bottom K
 
 
 # print details for predictions we are interested in
-for p in interstingPreds:
+for p in interestingPreds:
     details(p)
     print('-' * 52)
 
 # print RMSE & Co for these predictions
-c.printStats(interstingPreds)
+c.printStats(interestingPreds)
 
 def secsToHMS(s):
     """convert seconds to h:m:s"""
