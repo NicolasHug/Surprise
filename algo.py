@@ -87,6 +87,8 @@ class Algo:
 
         predInfo['u0'] = u0 ; predInfo['m0'] = m0; predInfo['r0'] = r0
         predInfo['est'] = self.est
+        if isinstance(self, AlgoUsingAnalogy):
+            predInfo['3tuples'] = self.tuples
         self.infos['preds'].append(predInfo)
 
         
@@ -200,6 +202,7 @@ class AlgoUsingAnalogy(Algo):
     """Abstract class for algos that use an analogy framework"""
     def __init__(self, rm, ur, mr, movieBased=False):
         super().__init__(rm, ur, mr, movieBased)
+        self.tuples = [] # list of 3-tuple (for the last prediction only)
 
     def isSolvable(self, ra, rb, rc):
         """return true if analogical equation is solvable else false"""
@@ -292,6 +295,7 @@ class AlgoGilles(AlgoUsingAnalogy):
             return
 
         candidates= [] # solutions to analogical equations
+        self.tuples = [] # list of 3-tuples that are serve as candidates
         for i in range(1000):
             # randomly choose a, b, and c
             xa, ra = rd.choice(self.yr[y0])
@@ -301,8 +305,9 @@ class AlgoGilles(AlgoUsingAnalogy):
                 # get info about the abcd 'paralellogram'
                 (nYabc0, nrm) = self.getParall(xa, xb, xc, x0)
                 if nrm < 1.5 * np.sqrt(nYabc0): # we allow some margin
-                    candidates.append((self.solve(ra, rb, rc), nrm,
-                        nYabc0))
+                    sol = self.solve(ra, rb, rc)
+                    candidates.append((sol, nrm, nYabc0))
+                    self.tuples.append((xa, xb, xc, nYabc0, sol))
 
         # if there are candidates, estimate rating as a weighted average
         if candidates:

@@ -35,24 +35,43 @@ def err(p):
     """return the error between the expected rating and the estimated one"""
     return p['est'] - p['r0']
 
+def meanCommonXs(p):
+    """return the mean count of users (or movies) rated in common for all
+    the 3-tuples of prediction p"""
+    return np.mean(p['3tuples'], 0)[3] if p['3tuples'] else 0
+    
+    
+
 def details(p):
-    """print details on an estimation"""
+    """print details about a prediction"""
+    def detailsRatings(x='u'):
+        """print mean and count of ratings for a user or a movie"""
+        xr = infos['ur'] if x == 'u' else infos['mr']
+        x0 = 'u0' if x == 'u' else 'm0'
+        print("\tcount: {0:d}".format(len(xr[p[x0]])))
+        s = "{0:1.4f}".format(np.mean(xr[p[x0]], 0)[1]) if xr[p[x0]] else ""
+        print("\tmean :", s)
+
     # ids, true rating, etimation and error
     print("u0: {0:<3d}    m0: {1:<4d}   r0: {2}   est: {3:1.2f}"
         "   err: {4:-2.2f}".format(p['u0'], p['m0'], p['r0'], p['est'],
         err(p)))
-    # u0 ratings mean and count
+
+     # was the prediction impossible ?
+    print("Prediction impossible? -", p['wasImpossible'])
+
+    # u0 and m0 ratings infos
     print("u0 ratings:")
-    print("\tcount: {0:d}".format(len(infos['ur'][p['u0']])))
-    print("\tmean : {0:1.4f}".format(np.mean(infos['ur'][p['u0']], 0)[1]))
-    # m0 ratings mean and count
+    detailsRatings(x='u')
     print("m0 ratings:")
-    print("\tcount: {0:d}".format(len(infos['mr'][p['m0']])))
-    if infos['mr'][p['m0']]:
-        print("\tmean : {0:1.4f}".format(np.mean(infos['mr'][p['m0']], 0)[1]))
-    else:
-        print("\tmean : no f***ing way!")
-        
+    detailsRatings(x='m')
+
+    # if algo is analogy based, print info about the candidates triplets
+    if '3tuples' in p:
+        print("3-tuples:")
+        print("\tcount: {0:d}".format(len(p['3tuples'])))
+        print("\tmean of common xs :{0:3.0f}".format(meanCommonXs(p)))
+
 
 def errorBetween(p, inf=0., sup=4.):
     """return true if abs(err) is between inf and sup (both included)"""
@@ -69,19 +88,24 @@ def r0Between(p, inf=1, sup=5):
     """return true if r0 is between inf and sup (both included)"""
     return inf <= p['r0'] <= sup
 
+def meanCommonXsBetween(p, inf=0, sup=float('inf')):
+    return inf <= meanCommonXs(p) <= sup
+
 # requirements that a prediction needs to fit
 requirements = (lambda p: 
-    True)
+     meanCommonXsBetween(p, sup=5))
 
 # list with all estimations fitting the previously defined requirements
 # (list and not iterator because we may need to use it more than once)
 interestingPreds= list(filter(requirements, infos['preds']))
 
 # keep only the k highest or lowest values for ratings count of u0
+"""
 k = 5
 interestingPreds.sort(key=lambda p:len(infos['ur'][p['u0']]))
 interestingPreds = interestingPreds[-10:] # top K
 #interestingPreds = interestingPreds[:10] # bottom K
+"""
 
 
 # print details for predictions we are interested in
@@ -103,3 +127,4 @@ print("training time: "
     "{0:02d}h{1:02d}m{2:2.2f}s".format(*secsToHMS(infos['trainingTime'])))
 print("testing time : "
     "{0:02d}h{1:02d}m{2:2.2f}s".format(*secsToHMS(infos['testingTime'])))
+
