@@ -40,7 +40,13 @@ def meanCommonXs(p):
     the 3-tuples of prediction p"""
     return np.mean(p['3tuples'], 0)[3] if p['3tuples'] else 0
     
-    
+def correctSolProp(p):
+    """proportion of solution to analogical equation that were correct for all
+    3-tuples of the prediction"""
+    if p['3tuples']:
+        return sum((rd == p['r0']) for _, _, _, _, rd in p['3tuples'])/len(p['3tuples'])
+    else :
+        return 0
 
 def details(p):
     """print details about a prediction"""
@@ -70,7 +76,8 @@ def details(p):
     if '3tuples' in p:
         print("3-tuples:")
         print("\tcount: {0:d}".format(len(p['3tuples'])))
-        print("\tmean of common xs :{0:3.0f}".format(meanCommonXs(p)))
+        print("\tmean of common xs : {0:2.0f}".format(meanCommonXs(p)))
+        print("\tcorrect solution: {0:2.0f}%".format(correctSolProp(p)*100.))
 
 
 def errorBetween(p, inf=0., sup=4.):
@@ -93,7 +100,7 @@ def meanCommonXsBetween(p, inf=0, sup=float('inf')):
 
 # requirements that a prediction needs to fit
 requirements = (lambda p: 
-     meanCommonXsBetween(p, sup=5))
+     errorBetween(p, inf=2))
 
 # list with all estimations fitting the previously defined requirements
 # (list and not iterator because we may need to use it more than once)
