@@ -55,7 +55,9 @@ class Algo:
             os.makedirs('./dumps')
         
         date = time.strftime('%y%m%d-%Hh%Mm%S', time.localtime())
-        pickle.dump(self.infos, open('dumps/' + date + '-' + self.infos['name'], 'wb'))
+        name = ('dumps/' + date + '-' + self.infos['name'] + '-' +
+            str(len(self.infos['preds'])))
+        pickle.dump(self.infos, open(name,'wb'))
 
     def getx0y0(self, u0, m0):
         """return x0 and y0 based on the self.ub variable (see constructor)"""
