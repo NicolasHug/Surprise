@@ -321,7 +321,7 @@ class AlgoGilles(AlgoUsingAnalogy):
             self.est = int(round(np.average(ratings, weights=norms)))
             self.est = int(round(np.average(ratings, weights=nYs)))
             """
-            self.est = int(round(np.average(ratings)))
+            self.est = np.average(ratings)
         else:
             self.est = 0
 
