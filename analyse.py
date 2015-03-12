@@ -128,7 +128,9 @@ def compareDumps(dumpFileA, dumpFileB):
 
     # show details of pred from A and B where A is better than B 
     # (err(A) <= err(B))
-    aIsBetter = [i for (i, p) in enumerate(predsA) if err(p) <= err(predsB[i])]
+    print('-' * 50)
+    aIsBetter = [i for (i, p) in enumerate(predsA) if abs(err(p)) <= abs(err(predsB[i]))]
+    """
     for i in aIsBetter:
         print('Algo A')
         details(predsA[i], infosA)
@@ -136,8 +138,13 @@ def compareDumps(dumpFileA, dumpFileB):
         print('Algo B')
         details(predsB[i], infosB)
         print('-' * 52)
+    """
 
-    print('Algo A is better on {0} predictions'.format(len(aIsBetter)))
+    print('Algo A is better on {0} predictions, where:'.format(len(aIsBetter)))
+    print('\tmean of abs errors for A: {0:1.2f}'.format(
+        np.mean([abs(err(predsA[i])) for i in aIsBetter])))
+    print('\tmean of abs errors for B: {0:1.2f}'.format(
+        np.mean([abs(err(predsB[i])) for i in aIsBetter])))
 
 
 
