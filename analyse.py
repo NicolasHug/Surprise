@@ -8,29 +8,6 @@ import numpy as np
 
 import common as c
 
-# by default, open the last created file in the dumps directory
-if len(sys.argv) < 2:
-    for dirname, dirnames, filenames in os.walk('./dumps'):
-        dumpFile = max([f for f in filenames], 
-            key=lambda x:os.path.getctime(os.path.join(dirname, x)))
-        dumpFile = os.path.join(dirname, dumpFile)
-# if file name is passed as argument, chose it instead
-else:
-    dumpFile=sys.argv[1]
-
-print('File:', dumpFile)
-
-infos = pickle.load(open(dumpFile, 'rb'))
-
-# print name and specific parameters
-print('Algo name:', infos['name'])
-print('Tests count:', len(infos['preds']))
-for k, v in infos['params'].items():
-    print(k + ':', v)
-
-print('-' * 10)
-print('-' * 10)
-
 def err(p):
     """return the error between the expected rating and the estimated one"""
     return p['est'] - p['r0']
@@ -96,11 +73,51 @@ def r0Between(p, inf=1, sup=5):
     return inf <= p['r0'] <= sup
 
 def meanCommonXsBetween(p, inf=0, sup=float('inf')):
+    """return true if the mean of common ratings is betewen inf and sup (both
+    included)"""
     return inf <= meanCommonXs(p) <= sup
+
+def printErrHist(preds):
+    lineLenght = 50
+    for inf in range(4):
+        print(inf, '<= err < ', inf + 1, ': [', end="")
+        propInterval = sum(inf <= abs(err(p)) < inf + 1 for p in preds) / len(preds)
+        nFill = int(propInterval * lineLenght)
+        print('X' * nFill + ' ' * (lineLenght - nFill), end="")
+        print('] - {0:02.0f}%'.format(propInterval*100.))
+
+def secsToHMS(s):
+    """convert seconds to h:m:s"""
+    m, s = divmod(s, 60)
+    h, m = divmod(m, 60)
+    return int(h), int(m), s
+
+
+
+# by default, open the last created file in the dumps directory
+if len(sys.argv) < 2:
+    for dirname, dirnames, filenames in os.walk('./dumps'):
+        dumpFile = max([f for f in filenames], 
+            key=lambda x:os.path.getctime(os.path.join(dirname, x)))
+        dumpFile = os.path.join(dirname, dumpFile)
+# if file name is passed as argument, chose it instead
+else:
+    dumpFile=sys.argv[1]
+
+print('File:', dumpFile)
+
+infos = pickle.load(open(dumpFile, 'rb'))
+
+# print name and specific parameters
+print('Algo name:', infos['name'])
+print('Tests count:', len(infos['preds']))
+for k, v in infos['params'].items():
+    print(k + ':', v)
+
 
 # requirements that a prediction needs to fit
 requirements = (lambda p: 
-     errorBetween(p, inf=2))
+     errorBetween(p, inf=3))
 
 # list with all estimations fitting the previously defined requirements
 # (list and not iterator because we may need to use it more than once)
@@ -116,19 +133,26 @@ interestingPreds = interestingPreds[-10:] # top K
 
 
 # print details for predictions we are interested in
+"""
+print('-' * 52)
 for p in interestingPreds:
     details(p)
     print('-' * 52)
+"""
 
+print('-' * 52)
 # print RMSE & Co for these predictions
 c.printStats(interestingPreds)
 
-def secsToHMS(s):
-    """convert seconds to h:m:s"""
-    m, s = divmod(s, 60)
-    h, m = divmod(m, 60)
-    return int(h), int(m), s
+    
+# print proportion of absolute errors
+print('-' * 10, "\n" + "Proportions of absolute errors among int. preds:")
+printErrHist(interestingPreds)
 
+print('-' * 10, "\n" + "Proportions of absolute errors among all preds:")
+printErrHist(infos['preds'])
+
+#print time info
 print('-' * 10)
 print("training time: "
     "{0:02d}h{1:02d}m{2:2.2f}s".format(*secsToHMS(infos['trainingTime'])))
