@@ -77,14 +77,24 @@ def meanCommonXsBetween(p, inf=0, sup=float('inf')):
     included)"""
     return inf <= meanCommonXs(p) <= sup
 
-def printErrHist(preds):
+def printHist(preds, key):
+    """print histogram for errors ('err'), r0 ('r0') or estimations ('est')"""
     lineLenght = 50
-    for inf in range(4):
-        print(inf, '<= err < ', inf + 1, ': [', end="")
-        propInterval = sum(inf <= abs(err(p)) < inf + 1 for p in preds) / len(preds)
-        nFill = int(propInterval * lineLenght)
-        print('X' * nFill + ' ' * (lineLenght - nFill), end="")
-        print('] - {0:02.0f}%'.format(propInterval*100.))
+    if key == 'err':
+        for inf in range(4):
+            print(inf, '<= err < ', inf + 1, ': [', end="")
+            propInterval = (sum(inf <= abs(err(p)) < inf + 1 for p in preds) /
+                len(preds))
+            nFill = int(propInterval * lineLenght)
+            print('X' * nFill + ' ' * (lineLenght - nFill), end="")
+            print('] - {0:02.0f}%'.format(propInterval*100.))
+    else: 
+        for v in range(1, 6):
+            print(key,'=', v, ': [', end="")
+            propInterval = sum(p[key] == v for p in preds) / len(preds)
+            nFill = int(propInterval * lineLenght)
+            print('X' * nFill + ' ' * (lineLenght - nFill), end="")
+            print('] - {0:02.0f}%'.format(propInterval*100.))
 
 def secsToHMS(s):
     """convert seconds to h:m:s"""
@@ -147,13 +157,24 @@ c.printStats(interestingPreds)
     
 # print proportion of absolute errors
 print('-' * 10, "\n" + "Proportions of absolute errors among int. preds:")
-printErrHist(interestingPreds)
-
+printHist(interestingPreds, key='err')
 print('-' * 10, "\n" + "Proportions of absolute errors among all preds:")
-printErrHist(infos['preds'])
+printHist(infos['preds'], key='err')
+
+# print propotion of estimation values
+print('-' * 52, "\n" + "Proportions of estimation values in int. preds:")
+printHist(interestingPreds, key='est')
+print('-' * 10, "\n" + "Proportions of estimation values in all preds:")
+printHist(infos['preds'], key='est')
+
+# print propotion of estimation values
+print('-' * 52, "\n" + "Proportions of r0 values in int. preds:")
+printHist(interestingPreds, key='r0')
+print('-' * 10, "\n" + "Proportions of r0 values in all preds:")
+printHist(infos['preds'], key='r0')
 
 #print time info
-print('-' * 10)
+print('-' * 52)
 print("training time: "
     "{0:02d}h{1:02d}m{2:2.2f}s".format(*secsToHMS(infos['trainingTime'])))
 print("testing time : "
