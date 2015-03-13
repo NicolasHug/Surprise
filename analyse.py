@@ -57,12 +57,12 @@ def analyseDumpFile(dumpFile):
     printHist(infos['preds'], key='err')
 
     # print propotion of estimation values
-    print('-' * 52, "\n" + "Proportions of estimation values in int. preds:")
+    print('-' * 52, "\n" + "Proportions of rounded ests values in int. preds:")
     printHist(interestingPreds, key='est')
-    print('-' * 10, "\n" + "Proportions of estimation values in all preds:")
+    print('-' * 10, "\n" + "Proportions of rounded ests values in all preds:")
     printHist(infos['preds'], key='est')
 
-    # print propotion of estimation values
+    # print propotion of rounded estimation values
     print('-' * 52, "\n" + "Proportions of r0 values in int. preds:")
     printHist(interestingPreds, key='r0')
     print('-' * 10, "\n" + "Proportions of r0 values in all preds:")
@@ -130,7 +130,6 @@ def compareDumps(dumpFileA, dumpFileB):
     # (err(A) <= err(B))
     print('-' * 50)
     aIsBetter = [i for (i, p) in enumerate(predsA) if abs(err(p)) <= abs(err(predsB[i]))]
-    """
     for i in aIsBetter:
         print('Algo A')
         details(predsA[i], infosA)
@@ -138,7 +137,6 @@ def compareDumps(dumpFileA, dumpFileB):
         print('Algo B')
         details(predsB[i], infosB)
         print('-' * 52)
-    """
 
     print('Algo A is better on {0} predictions, where:'.format(len(aIsBetter)))
     print('\tmean of abs errors for A: {0:1.2f}'.format(

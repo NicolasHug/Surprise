@@ -70,7 +70,8 @@ def meanCommonXsBetween(p, inf=0, sup=float('inf')):
     return inf <= meanCommonXs(p) <= sup
 
 def printHist(preds, key):
-    """print histogram for errors ('err'), r0 ('r0') or estimations ('est')"""
+    """print histogram for errors ('err'), r0 ('r0') or round of estimations
+    ('est')"""
     lineLenght = 50
     if key == 'err':
         for inf in range(4):
@@ -79,15 +80,16 @@ def printHist(preds, key):
                 len(preds))
             nFill = int(propInterval * lineLenght)
             print('X' * nFill + ' ' * (lineLenght - nFill), end="")
-            print('] - {0:02.0f}%'.format(propInterval*100.))
-    else: 
-        for inf in range(5):
-            print(inf, '<=', key, '< ', inf + 1, ': [', end="")
-            propInterval = (sum(inf <= p[key] < inf + 1 for p in preds) /
+            print('] - {0:3.0f}%'.format(propInterval*100.))
+    else:
+        for v in range(1, 6):
+            print(key, '=', v, ': [', end="")
+            propInterval = (sum(v == round(p[key]) for p in preds) /
                 len(preds))
             nFill = int(propInterval * lineLenght)
             print('X' * nFill + ' ' * (lineLenght - nFill), end="")
-            print('] - {0:02.0f}%'.format(propInterval*100.))
+            print('] - {0:3.0f}%'.format(propInterval*100.))
+
 
 def secsToHMS(s):
     """convert seconds to h:m:s"""
