@@ -10,9 +10,9 @@ import common as c
 base = open('../ml-100k/u1.base', 'r')
 test = open('../ml-100k/u1.test', 'r')
 
-rm = np.empty((c.lastMi + 1 , c.lastUi + 1), dtype='int')
-ur = defaultdict(list)
-mr = defaultdict(list)
+rm = np.empty((c.lastMi + 1 , c.lastUi + 1), dtype='int') # the rating matrix
+ur = defaultdict(list) # dict of users containing list of (m, rat(u, m))
+mr = defaultdict(list) # dict of movies containing list of (u, rat(u, m))
 
 for line in base:
     ui, mi, r, _ = line.split()

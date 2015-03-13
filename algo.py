@@ -13,11 +13,6 @@ class Algo:
     algorithm"""
     def __init__(self, rm, ur, mr, movieBased=False, withDump=True, **kwargs):
 
-        # handle multiple inheritance of algorithms...
-        if hasattr(self, 'initialized'):
-            return
-        self.initialized = True
-
         # whether the algo will be based on users
         # if the algo is user based, x denotes a user and y a movie
         # if the algo is movie based, x denotes a movie and y a user
@@ -41,9 +36,9 @@ class Algo:
         self.withDump = withDump
         self.infos = {}
         self.infos['name'] = 'undefined'
-        self.infos['params'] = {} 
+        self.infos['params'] = {} # dict of params specific to any algo
         self.infos['params']['Based on '] = 'users' if self.ub else 'movies'
-        self.infos['preds'] = [] 
+        self.infos['preds'] = [] # list of predictions. see updatePreds
         self.infos['ur'] = ur
         self.infos['mr'] = mr
 
@@ -80,6 +75,11 @@ class Algo:
             else:
                 print(cmn.Col.FAIL + 'KO ' + cmn.Col.ENDC + str(self.est))
 
+        # a prediction is a dict with the following keys
+        # 'wasImpossible' : whether or not the prediction was possible
+        # 'u0', 'm0', 'r0' (true rating) and 'est' (estimated rating)
+        # '3tuples' (only if algo is analogy based). A list containing all the
+        # 3-tuples used for estimation (structure content may depend on the algo)
         predInfo = {}
         if self.est == 0:
             self.est = 3 # default value
