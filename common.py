@@ -48,3 +48,13 @@ def printStats(preds):
     print('MAE:', mae)
     print('sample size:', len(preds))
     print('Accuracy rate:', accRate)
+
+def tvA(ra, rb, rc, rd):
+    """return the truth value of A(ra, rb, rc, rd)"""
+
+    # map ratings into [0, 1]
+    ra = (ra-1)/4.; rb = (rb-1)/4.; rc = (rc-1)/4.; rd = (rd-1)/4.; 
+    if (ra >= rb and rc >= rd) or (ra <= rb and rc <= rd):
+        return 1 - abs((ra-rb) - (rc-rd))
+    else:
+        return 1 - max(abs(ra-rb), abs(rc-rd))

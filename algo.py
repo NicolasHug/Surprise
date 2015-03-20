@@ -41,6 +41,7 @@ class Algo:
         self.infos['preds'] = [] # list of predictions. see updatePreds
         self.infos['ur'] = ur
         self.infos['mr'] = mr
+        self.infos['rm'] = self.rm 
 
 
     def dumpInfos(self):

@@ -1,21 +1,31 @@
 import numpy as np
 
+import common as cmn
+
 def err(p):
     """return the error between the expected rating and the estimated one"""
     return p['est'] - p['r0']
 
-def meanCommonXs(p):
+def meanCommonYs(p):
     """return the mean count of users (or movies) rated in common for all
     the 3-tuples of prediction p"""
     return np.mean(p['3tuples'], 0)[3] if p['3tuples'] else 0
     
-def correctSolProp(p):
-    """proportion of solution to analogical equation that were correct for all
-    3-tuples of the prediction"""
+def solProp(p, r):
+    """proportion of solution to analogical equation that are equal to r for
+    all 3-tuples of the prediction"""
     if p['3tuples']:
-        return sum((rd == p['r0']) for _, _, _, _, rd in p['3tuples'])/len(p['3tuples'])
+        return sum((rd == r) for _, _, _, _, rd in p['3tuples'])/len(p['3tuples'])
     else :
         return 0
+
+def getCommonYs(t, p, infos):
+    xa, xb, xc, _, _ = t
+    x0 = p['u0'] if infos['params']['Based on '] == 'users' else p['m0']
+    xr = infos['ur'] if infos['params']['Based on '] == 'users' else infos['mr']
+    rm = infos['rm']
+    Yabc0 = [y for (y, r) in xr[xa] if rm[xb, y] and rm[xc, y] and rm[x0, y]]
+    return Yabc0
 
 def details(p, infos):
     """print details about a prediction"""
@@ -45,8 +55,29 @@ def details(p, infos):
     if '3tuples' in p:
         print("3-tuples:")
         print("\tcount: {0:d}".format(len(p['3tuples'])))
-        print("\tmean of common xs : {0:2.0f}".format(meanCommonXs(p)))
-        print("\tcorrect solution: {0:2.0f}%".format(correctSolProp(p)*100.))
+        print("\tmean of common ys : {0:2.0f}".format(meanCommonYs(p)))
+        print("\tproportion of solutions among the candidate 3-tuples:")
+        lineLenght = 50
+        rm = infos['rm']
+        for r in [1, 2, 3, 4, 5]:
+            print('\t\tsol =', r, ': [', end="")
+            prop = solProp(p, r)
+            nFill = int(prop * lineLenght)
+            print('X' * nFill + ' ' * (lineLenght - nFill), end="")
+            print('] - {0:3.0f}%'.format(prop*100.))
+
+        print("\tdetails for 3-tuples:")
+        for t in p['3tuples']:
+            a, b, c, _, _ = t
+            tvs = []
+            for y in getCommonYs(t, p , infos):
+                # won't work when moviebased...
+                tva = cmn.tvA(rm[a, y], rm[b, y], rm[c, y], rm[p['u0'], y])
+                tvs.append(tva)
+                print("\t\t{0:4d}  {1:d}  {2:d}  {3:d}  {4:d}  {5:1.2f}".format(y, rm[a, y], rm[b,
+                y], rm[c, y], rm[p['u0'], y], tva))
+            print("\t\tmean tvA = {0:1.2f}".format(np.mean(tvs)))
+            print("\t\t" + '-' * 16)
 
 
 def errorBetween(p, inf=0., sup=4.):
