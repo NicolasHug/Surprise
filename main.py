@@ -40,8 +40,8 @@ for line in test:
 smallTestSet = [rd.choice(testSet) for i in range(100)]
 
 testTimeStart = time.process_time()
-#for u0, m0, r0, _ in testSet:
-for u0, m0, r0, _ in smallTestSet:
+for u0, m0, r0, _ in testSet:
+##for u0, m0, r0, _ in smallTestSet:
 
     u0 = int(u0); m0 = int(m0); r0 = int(r0)
 

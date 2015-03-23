@@ -21,7 +21,7 @@ def analyseDumpFile(dumpFile):
 
 
     # requirements that a prediction needs to fit
-    requirements = (lambda p: True)
+    requirements = (lambda p: p['u0'] == 334 and p['m0'] == 160)
 
     # list with all estimations fitting the previously defined requirements
     # (list and not iterator because we may need to use it more than once)
@@ -34,6 +34,8 @@ def analyseDumpFile(dumpFile):
     interestingPreds = interestingPreds[-10:] # top K
     #interestingPreds = interestingPreds[:10] # bottom K
     """
+
+
 
 
     # print details for predictions we are interested in

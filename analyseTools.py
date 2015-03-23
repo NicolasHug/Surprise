@@ -19,10 +19,18 @@ def solProp(p, r):
     else :
         return 0
 
+def getx0y0(p, infos):
+    """return x0 and y0 based on the ub variable"""
+    if infos['ub']:
+        return p['u0'], p['m0']
+    else:
+        return p['m0'], p['u0']
+
+
 def getCommonYs(t, p, infos):
     xa, xb, xc, _, _ = t
-    x0 = p['u0'] if infos['params']['Based on '] == 'users' else p['m0']
-    xr = infos['ur'] if infos['params']['Based on '] == 'users' else infos['mr']
+    x0, _ = getx0y0(p, infos)
+    xr = infos['ur'] if infos['ub'] else infos['mr']
     rm = infos['rm']
     Yabc0 = [y for (y, r) in xr[xa] if rm[xb, y] and rm[xc, y] and rm[x0, y]]
     return Yabc0
@@ -66,16 +74,17 @@ def details(p, infos):
             print('X' * nFill + ' ' * (lineLenght - nFill), end="")
             print('] - {0:3.0f}%'.format(prop*100.))
 
+        x0, _ = getx0y0(p, infos)
         print("\tdetails for 3-tuples:")
         for t in p['3tuples']:
-            a, b, c, _, _ = t
+            xa, xb, xc, _, _ = t
             tvs = []
             for y in getCommonYs(t, p , infos):
-                # won't work when moviebased...
-                tva = cmn.tvA(rm[a, y], rm[b, y], rm[c, y], rm[p['u0'], y])
+                tva = cmn.tvA(rm[xa, y], rm[xb, y], rm[xc, y], rm[x0, y])
                 tvs.append(tva)
-                print("\t\t{0:4d}  {1:d}  {2:d}  {3:d}  {4:d}  {5:1.2f}".format(y, rm[a, y], rm[b,
-                y], rm[c, y], rm[p['u0'], y], tva))
+                print("\t\t{0:4d}  {1:d}  {2:d}  {3:d}  {4:d}"
+                "{5:1.2f}".format(y, rm[xa, y], rm[xb, y], rm[xc, y], rm[x0,
+                y], tva))
             print("\t\tmean tvA = {0:1.2f}".format(np.mean(tvs)))
             print("\t\t" + '-' * 16)
 

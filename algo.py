@@ -38,10 +38,14 @@ class Algo:
         self.infos['name'] = 'undefined'
         self.infos['params'] = {} # dict of params specific to any algo
         self.infos['params']['Based on '] = 'users' if self.ub else 'movies'
+        self.infos['ub'] = self.ub
         self.infos['preds'] = [] # list of predictions. see updatePreds
-        self.infos['ur'] = ur
-        self.infos['mr'] = mr
-        self.infos['rm'] = self.rm 
+        self.infos['ur'] = ur # user ratings  dict
+        self.infos['mr'] = mr # movie ratings dict
+        self.infos['rm'] = self.rm  # rating matrix
+        # Note: there is a lot of duplicated data, the dumped file will be
+        # HUGE.
+
 
 
     def dumpInfos(self):
