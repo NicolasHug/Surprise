@@ -74,18 +74,21 @@ def details(p, infos):
             print('X' * nFill + ' ' * (lineLenght - nFill), end="")
             print('] - {0:3.0f}%'.format(prop*100.))
 
-        x0, _ = getx0y0(p, infos)
+        x0, y0 = getx0y0(p, infos)
         print("\tdetails for 3-tuples:")
         for t in p['3tuples']:
             xa, xb, xc, _, _ = t
+            rsol = rm[xc, y0] - rm[xa, y0] + rm[xb, y0]
             tvs = []
             for y in getCommonYs(t, p , infos):
                 tva = cmn.tvA(rm[xa, y], rm[xb, y], rm[xc, y], rm[x0, y])
                 tvs.append(tva)
                 print("\t\t{0:4d}  {1:d}  {2:d}  {3:d}  {4:d}"
-                "{5:1.2f}".format(y, rm[xa, y], rm[xb, y], rm[xc, y], rm[x0,
+                "  {5:1.2f}".format(y, rm[xa, y], rm[xb, y], rm[xc, y], rm[x0,
                 y], tva))
             print("\t\tmean tvA = {0:1.2f}".format(np.mean(tvs)))
+            print("\t\t{0:d}  {1:d}  {2:d}  {3:d}".format( rm[xa, y0], rm[xb,
+            y0], rm[xc, y0], rsol))
             print("\t\t" + '-' * 16)
 
 
