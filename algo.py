@@ -378,9 +378,16 @@ class AlgoPattern(AlgoUsingAnalogy):
             xa, ra = rd.choice(self.yr[y0])
             xb, rb = rd.choice(self.yr[y0])
             xc, rc = rd.choice(self.yr[y0])
+            # if pattern is a:a::b:x => swap b and c
+            if ra == rb and ra != rc:
+                xb, xc = xc, xb
+                rb, rc = rc, rb
+
             cat1 = cat2 = cat3 = 0 # number of 3-tuples belonging to cat1, cat2...
             if xa != xb != xc and xa != xc and self.isSolvable(ra, rb, rc):
                 Yabc0 = self.getYabc0(xa, xb, xc, x0)
+                if not Yabc0:
+                    break
                 for y in Yabc0:
                     ray, rby, rcy, r0y = (self.rm[xa, y], self.rm[xb, y],
                         self.rm[xc, y], self.rm[x0, y])
@@ -576,3 +583,42 @@ class AlgoKNNBelkor(AlgoWithBaseline):
         self.est = min(5, self.est)
         self.est = max(1, self.est)
 
+class AlgoFactors(Algo):
+    """Algo using latent factors"""
+    def __init__(self, rm, ur, mr, movieBased=False):
+        super().__init__(rm, ur, mr, movieBased)
+        self.infos['name'] = 'algoLatentFactors'
+
+        nFactors = 10 # number of factors
+        #self.px = np.empty((self.lastXi + 1, nFactors))
+        #self.qy = np.empty((self.lastYi + 1, nFactors))
+        #self.px = np.random.randn(self.lastXi + 1, nFactors) * .5
+        #self.qy = np.random.randn(self.lastYi + 1, nFactors) * .5
+        self.px = np.ones((self.lastXi + 1, nFactors)) * 0.1 
+        self.qy = np.ones((self.lastYi + 1, nFactors)) * 0.1
+
+        lambda4 = 0.02 # regularization extent
+        gamma = 0.005 # learning rate
+
+        self.infos['params']['nFactors'] = nFactors
+        self.infos['params']['lambda4'] = lambda4
+        self.infos['params']['gamma'] = gamma
+
+        nIter = 2
+        for i in range(nIter):
+            print(i)
+            for f in range(nFactors):
+                for x, xRatings in self.xr.items():
+                    for y, r in xRatings:
+                        err = r - np.dot(self.px[x, f], self.qy[y, f])
+                        # update px 
+                        self.px[x, f] += gamma * (err * self.qy[y, f] - lambda4 *
+                            self.px[x, f])
+                        # udapte qy
+                        self.qy[y, f] += gamma * (err * self.px[x, f] - lambda4 *
+                            self.qy[y, f])
+
+    def estimate(self, u0, m0):
+        x0, y0 = self.getx0y0(u0, m0)
+        
+        self.est = np.dot(self.px[x0, :], self.qy[y0, :])

@@ -21,7 +21,7 @@ def analyseDumpFile(dumpFile):
 
 
     # requirements that a prediction needs to fit
-    requirements = (lambda p: True)#p['u0'] == 334 and p['m0'] == 160)
+    requirements = (lambda p: not p['wasImpossible'])#p['u0'] == 405)# and p['m0'] == 1383)
 
     # list with all estimations fitting the previously defined requirements
     # (list and not iterator because we may need to use it more than once)
@@ -38,15 +38,15 @@ def analyseDumpFile(dumpFile):
 
 
 
-    """
     # print details for predictions we are interested in
+    """
     print('-' * 52)
     for p in interestingPreds:
         details(p, infos)
         print('-' * 52)
-    """
 
     print('-' * 52)
+    """
     # print RMSE & Co for these predictions
     c.printStats(interestingPreds)
 
@@ -100,12 +100,12 @@ def compareDumps(dumpFileA, dumpFileB):
 
     # show details of pred from A and B where pred for A is bad (err >= 3) or
     # good (err <= 1)
-    """
     badPredsA = [(i, p) for (i, p) in enumerate(predsA) if errorBetween(p,
         inf=3)]
     goodPredsA = [(i, p) for (i, p) in enumerate(predsA) if errorBetween(p,
         sup=1)]
 
+    """
     print('-' * 52)
     print('BAD PREDS FOR A:')
     for (i, p) in badPredsA:
@@ -132,6 +132,8 @@ def compareDumps(dumpFileA, dumpFileB):
     print('-' * 50)
     aIsBetter = [i for (i, p) in enumerate(predsA) if abs(err(p)) <= abs(err(predsB[i]))]
     for i in aIsBetter:
+        print(predsA[i]['m0'], predsA[i]['u0'])
+        """
         print('Algo A')
         details(predsA[i], infosA)
         print('-' * 10)
@@ -144,6 +146,7 @@ def compareDumps(dumpFileA, dumpFileB):
         np.mean([abs(err(predsA[i])) for i in aIsBetter])))
     print('\tmean of abs errors for B: {0:1.2f}'.format(
         np.mean([abs(err(predsB[i])) for i in aIsBetter])))
+        """
 
 
 

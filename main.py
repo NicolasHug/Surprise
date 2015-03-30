@@ -30,6 +30,7 @@ a = al.AlgoPattern(rm, ur, mr, movieBased=False)
 #a = al.AlgoBaselineOnly(rm, ur, mr, method='opt')
 #a = al.AlgoNeighborhoodWithBaseline(rm, ur, mr, movieBased=False, method='opt')
 #a = al.AlgoKNNBelkor(rm, ur, mr, method='opt', movieBased=False)
+#a = al.AlgoFactors(rm, ur, mr, movieBased=False)
 trainingTime = time.process_time() - trainStartTime
 
 
