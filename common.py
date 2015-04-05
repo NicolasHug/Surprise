@@ -15,7 +15,7 @@ class Col:
     UNDERLINE = '\033[4m'
 
 def printStats(preds):
-    """compute some statistics (RMSE) on a list of predictions"""
+    """compute some statistics (RMSE, coverage...) on a list of predictions"""
 
     if not preds:
         print("looks like there's no prediction...")
@@ -25,12 +25,22 @@ def printStats(preds):
         
     sumSqErr = 0
     sumAbsErr = 0
+    
+    nRecoOK = nRecoKO = 0
 
+
+    threshold = 4. # we recommend m to u iff estimation >= threshold
 
     for p in preds:
 
         sumSqErr += (p['r0'] - p['est'])**2
         sumAbsErr += abs(p['r0'] - p['est'])
+
+        if p['est'] >= threshold: # we recommend m to u
+            if p['r0'] >= threshold: # we did well
+                nRecoOK += 1
+            else: # we shouldn't have...
+                nRecoKO += 1
 
         if p['est'] == p['r0']:
             nOK += 1
@@ -42,12 +52,16 @@ def printStats(preds):
     rmse = np.sqrt(sumSqErr / (nOK + nKO))
     mae = np.sqrt(sumAbsErr / (nOK + nKO))
     accRate = nOK / (nOK + nKO)
+    precision = nRecoOK / (nRecoOK + nRecoKO)
+    recall = nRecoOK / sum(True for p in preds if p['r0'] >= threshold)
 
     print('Nb impossible predictions:', nImp)
-    print('RMSE:', rmse)
-    print('MAE:', mae)
+    print('RMSE: {0:1.4f}'.format(rmse))
+    print('MAE: {0:1.4f}'.format(mae))
     print('sample size:', len(preds))
-    print('Accuracy rate:', accRate)
+    print('Accuracy rate: {0:1.4f}'.format(accRate))
+    print('Precision: {0:1.2f}'.format(precision))
+    print('recall: {0:1.2f}'.format(recall))
 
 def tvA(ra, rb, rc, rd):
     """return the truth value of A(ra, rb, rc, rd)"""

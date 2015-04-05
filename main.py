@@ -26,9 +26,9 @@ trainStartTime = time.process_time()
 #a = al.AlgoBasicCollaborative(rm, ur, mr, movieBased=False)
 #a = al.AlgoAnalogy(rm, ur, mr, movieBased=False)
 #a = al.AlgoGilles(rm, ur, mr, movieBased=False)
-a = al.AlgoPattern(rm, ur, mr, movieBased=False)
+#a = al.AlgoPattern(rm, ur, mr, movieBased=False)
 #a = al.AlgoBaselineOnly(rm, ur, mr, method='opt')
-#a = al.AlgoNeighborhoodWithBaseline(rm, ur, mr, movieBased=False, method='opt')
+a = al.AlgoNeighborhoodWithBaseline(rm, ur, mr, movieBased=False, method='opt')
 #a = al.AlgoKNNBelkor(rm, ur, mr, method='opt', movieBased=False)
 #a = al.AlgoFactors(rm, ur, mr, movieBased=False)
 trainingTime = time.process_time() - trainStartTime
@@ -42,8 +42,8 @@ for line in test:
 smallTestSet = [rd.choice(testSet) for i in range(100)]
 
 testTimeStart = time.process_time()
-for u0, m0, r0, _ in testSet:
-#for u0, m0, r0, _ in smallTestSet:
+#for u0, m0, r0, _ in testSet:
+for u0, m0, r0, _ in smallTestSet:
 
     u0 = int(u0); m0 = int(m0); r0 = int(r0)
 

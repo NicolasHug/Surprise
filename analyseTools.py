@@ -1,3 +1,4 @@
+import warnings
 import numpy as np
 
 import common as cmn
@@ -143,4 +144,51 @@ def secsToHMS(s):
     h, m = divmod(m, 60)
     return int(h), int(m), s
 
+def pmi(i, j, pij):
+    """return the point-wise mutual information of two items based on their
+    probabilities to be rated together"""
+    try:
+        return np.log2(pij[i, j] / (pij[i, i] * pij[j, j])) / (-np.log2(pij[i, j]))
+    except RuntimeWarning:
+        return 0
 
+
+def measureSurprise(preds, infos):
+    """measure surprise of recommendation using PMI (see Adomavicius paper)"""
+
+    # pij is a matrix of probabilities.
+    # p[i, j] with i /= j represents the probability for i and j to be rated
+    # together
+    # p[i, i] represents the probability for i to be rated
+    pij = np.zeros((cmn.lastMi + 1, cmn.lastMi + 1))
+    print("constructing the pij matrix...")
+    for i in range(1, cmn.lastMi + 1):
+        iratings = infos['mr'][i]
+        if not iratings:
+            continue
+        ui, _ = zip(*iratings)
+        ui = set(ui) # we need a set to use intersection
+        for j in range(i + 1, cmn.lastMi + 1):
+            jratings = infos['mr'][j]
+            if not jratings:
+                continue
+            uj, _ = zip(*(jratings))
+            uj = set(uj)
+            pij[i, j] = len(ui.intersection(uj)) / cmn.lastUi
+            pij[j, i] = pij[i, j]
+        pij[i, i] = len(ui) / cmn.lastUi
+
+    warnings.filterwarnings('error') # treat warning as exceptions
+
+    # we measure surprise as max of PMI values or as their mean
+    surprises = [] # list containing surprise measures of all predictions
+    for p in preds:
+        u0 = p['u0']
+        m0 = p['m0']
+        pmis = [pmi(m0, j, pij) for (j, _) in infos['ur'][u0]]
+        surprises.append((max(pmis), np.mean(pmis)))
+
+    print("mean of co-occurence surprise (max): "
+        "{0:1.2f}".format(np.mean(surprises, 0)[0]))
+    print("mean of co-occurence surprise (avg): "
+        "{0:1.2f}".format(np.mean(surprises, 0)[1]))

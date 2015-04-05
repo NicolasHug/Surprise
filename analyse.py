@@ -21,7 +21,7 @@ def analyseDumpFile(dumpFile):
 
 
     # requirements that a prediction needs to fit
-    requirements = (lambda p: not p['wasImpossible'])#p['u0'] == 405)# and p['m0'] == 1383)
+    requirements = (lambda p: p['r0'] >= 4 and p['est'] >= 4)
 
     # list with all estimations fitting the previously defined requirements
     # (list and not iterator because we may need to use it more than once)
@@ -46,6 +46,7 @@ def analyseDumpFile(dumpFile):
         print('-' * 52)
 
     print('-' * 52)
+    """
     """
     # print RMSE & Co for these predictions
     c.printStats(interestingPreds)
@@ -76,6 +77,8 @@ def analyseDumpFile(dumpFile):
     print("testing time : "
         "{0:02d}h{1:02d}m{2:2.2f}s".format(*secsToHMS(infos['testingTime'])))
 
+    """
+    measureSurprise(interestingPreds, infos)
 
 def compareDumps(dumpFileA, dumpFileB):
     """compare two algorithms from their dumpFile"""
