@@ -189,6 +189,6 @@ def measureSurprise(preds, infos):
         surprises.append((max(pmis), np.mean(pmis)))
 
     print("mean of co-occurence surprise (max): "
-        "{0:1.2f}".format(np.mean(surprises, 0)[0]))
+        "{0:1.4f}".format(np.mean(surprises, 0)[0]))
     print("mean of co-occurence surprise (avg): "
-        "{0:1.2f}".format(np.mean(surprises, 0)[1]))
+        "{0:1.4f}".format(np.mean(surprises, 0)[1]))
