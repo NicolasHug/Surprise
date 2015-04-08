@@ -3,12 +3,18 @@ import numpy as np
 import random as rd
 from collections import defaultdict
 import time
+import sys
 
 import algo as al
 import common as c
 
-base = open('../ml-100k/u1.base', 'r')
-test = open('../ml-100k/u1.test', 'r')
+if len(sys.argv) != 2:
+    sys.exit("Error : Tell me which split to use (1, 2, 3, 4, or 5)")
+
+split = sys.argv[1]
+
+base = open('../ml-100k/u' + split + '.base', 'r')
+test = open('../ml-100k/u' + split + '.test', 'r')
 
 rm = np.empty((c.lastMi + 1 , c.lastUi + 1), dtype='int') # the rating matrix
 ur = defaultdict(list) # dict of users containing list of (m, rat(u, m))
@@ -27,12 +33,13 @@ trainStartTime = time.process_time()
 #a = al.AlgoAnalogy(rm, ur, mr, movieBased=False)
 #a = al.AlgoGilles(rm, ur, mr, movieBased=False)
 #a = al.AlgoPattern(rm, ur, mr, movieBased=False)
-#a = al.AlgoBaselineOnly(rm, ur, mr, method='opt')
+a = al.AlgoBaselineOnly(rm, ur, mr, method='opt')
 #a = al.AlgoNeighborhoodWithBaseline(rm, ur, mr, movieBased=False, method='opt',sim='MSD')
 #a = al.AlgoKNNBelkor(rm, ur, mr, method='opt', movieBased=False)
 #a = al.AlgoFactors(rm, ur, mr, movieBased=False)
-a = al.AlgoGillesKnn(rm, ur, mr, movieBased=False, sim='MSD')
 trainingTime = time.process_time() - trainStartTime
+
+a.infos['params']['split'] = split
 
 
 rd.seed(0)
