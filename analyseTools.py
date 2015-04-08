@@ -182,7 +182,7 @@ def measureSurprise(preds, infos):
 
     # we measure surprise as max of PMI values or as their mean
     surprises = [] # list containing surprise measures of all predictions
-    for p in preds:
+    for p in filter(lambda p:p['est'] >= 4, preds):
         u0 = p['u0']
         m0 = p['m0']
         pmis = [pmi(m0, j, pij) for (j, _) in infos['ur'][u0]]
@@ -192,3 +192,12 @@ def measureSurprise(preds, infos):
         "{0:1.4f}".format(np.mean(surprises, 0)[0]))
     print("mean of co-occurence surprise (avg): "
         "{0:1.4f}".format(np.mean(surprises, 0)[1]))
+
+def printCoverage(preds):
+    
+    # set of recommended movies
+    recMovies = {p['m0'] for p in preds if p['est'] >= 4}
+    # set of all movies
+    movies = {p['m0'] for p in preds}
+
+    print("coverage: {0:1.2f}".format(len(recMovies) / len(movies)))
