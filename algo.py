@@ -599,27 +599,51 @@ class AlgoKNNBelkor(AlgoWithBaseline):
         self.est = max(1, self.est)
 
 class AlgoFactors(Algo):
-    """Algo using latent factors"""
+    """Algo using latent factors. Implem heavily inspired by
+    https://github.com/aaw/IncrementalSVD.jl"""
     def __init__(self, rm, ur, mr, movieBased=False):
         super().__init__(rm, ur, mr, movieBased)
         self.infos['name'] = 'algoLatentFactors'
 
-        nFactors = 10 # number of factors
-        #self.px = np.empty((self.lastXi + 1, nFactors))
-        #self.qy = np.empty((self.lastYi + 1, nFactors))
-        #self.px = np.random.randn(self.lastXi + 1, nFactors) * .5
-        #self.qy = np.random.randn(self.lastYi + 1, nFactors) * .5
+        nFactors = 50 # number of factors
+        nIter = 10
         self.px = np.ones((self.lastXi + 1, nFactors)) * 0.1 
         self.qy = np.ones((self.lastYi + 1, nFactors)) * 0.1
+        residuals = []
 
         lambda4 = 0.02 # regularization extent
         gamma = 0.005 # learning rate
 
         self.infos['params']['nFactors'] = nFactors
-        self.infos['params']['lambda4'] = lambda4
-        self.infos['params']['gamma'] = gamma
+        self.infos['params']['reguParam'] = lambda4
+        self.infos['params']['learningRate'] = gamma
+        self.infos['params']['nIter'] = nIter
 
-        nIter = 2
+        ratings = []
+        for x, xRatings in self.xr.items():
+            for y, val in xRatings:
+                ratings.append(((x, y, val), [val, 0., 0.]))
+
+
+        for f in range(nFactors):
+            print(f)
+            errors = [0., float('inf'), float('inf')]
+            for i in range(nIter):
+                for (x, y, val), (res) in ratings:
+                    yF = self.qy[y, f] # value of feature f for y
+                    xF = self.px[x, f] # value of feature f for x
+                    res[1] = res[0] - yF * xF
+                    errDiff = res[2] - res[1]
+                    errors[0] += errDiff**2
+                    res[2] = res[1]
+                    self.qy[y, f] += gamma * (res[1] * xF - lambda4 * yF)
+                    self.px[x, f] += gamma * (res[1] * yF - lambda4 * xF)
+                errors = [0., errors[0], errors[1]]
+            for _, (res) in ratings:
+                res[0] = res[1]
+                res[2] = 0.
+
+        """
         for i in range(nIter):
             print(i)
             for f in range(nFactors):
@@ -632,6 +656,7 @@ class AlgoFactors(Algo):
                         # udapte qy
                         self.qy[y, f] += gamma * (err * self.px[x, f] - lambda4 *
                             self.qy[y, f])
+        """
 
     def estimate(self, u0, m0):
         x0, y0 = self.getx0y0(u0, m0)
