@@ -5,8 +5,9 @@ from collections import defaultdict
 import time
 import sys
 
-import algo as al
 import common as c
+from algo import *
+from algoAnalogy import *
 
 if len(sys.argv) != 2:
     sys.exit("Error : Tell me which split to use (1, 2, 3, 4, or 5)")
@@ -28,16 +29,16 @@ for line in base:
     mr[mi].append((ui, r))
 
 trainStartTime = time.process_time()
-#a = al.AlgoRandom(rm, ur, mr)
-#a = al.AlgoBasicCollaborative(rm, ur, mr, sim='MSD', movieBased=False)
-#a = al.AlgoAnalogy(rm, ur, mr, movieBased=False)
-a = al.AlgoParall(rm, ur, mr, movieBased=False)
-#a = al.AlgoParallKnn(rm, ur, mr, movieBased=False, sim='MSD')
-#a = al.AlgoPattern(rm, ur, mr, movieBased=False)
-#a = al.AlgoBaselineOnly(rm, ur, mr, method='opt')
-#a = al.AlgoNeighborhoodWithBaseline(rm, ur, mr, movieBased=False, method='opt',sim='MSD')
-#a = al.AlgoKNNBelkor(rm, ur, mr, method='opt', movieBased=False)
-#a = al.AlgoFactors(rm, ur, mr, movieBased=False)
+#a = AlgoRandom(rm, ur, mr)
+#a = AlgoBasicCollaborative(rm, ur, mr, sim='MSD', movieBased=False)
+#a = AlgoAnalogy(rm, ur, mr, movieBased=False)
+a = AlgoParall(rm, ur, mr, movieBased=False)
+#a = AlgoParallKnn(rm, ur, mr, movieBased=False, sim='MSD')
+#a = AlgoPattern(rm, ur, mr, movieBased=False)
+#a = AlgoBaselineOnly(rm, ur, mr, method='opt')
+#a = AlgoNeighborhoodWithBaseline(rm, ur, mr, movieBased=False, method='opt',sim='MSD')
+#a = AlgoKNNBelkor(rm, ur, mr, method='opt', movieBased=False)
+#a = AlgoFactors(rm, ur, mr, movieBased=False)
 trainingTime = time.process_time() - trainStartTime
 
 a.infos['params']['split'] = split
