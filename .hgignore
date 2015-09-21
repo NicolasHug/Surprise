@@ -8,8 +8,17 @@ syntax: glob
 
 simCosMovies
 simCosUsers
+simMSDUsers
+simMSDMovies
 
 dumps/*
+baselineOnly/
+basicCollab/
+gillesKNN/
+neighborhoodBaseline/
+pattern/
+patternKNN/
+
 
 # switch to regexp syntax.
 syntax: regexp
