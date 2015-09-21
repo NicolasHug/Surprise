@@ -33,11 +33,44 @@ class AlgoUsingAnalogy(Algo):
             return 1 - max(abs(ra-rb), abs(rc-rd))
 
 
-class AlgoParall(AlgoUsingAnalogy):
+class AlgoParall(AlgoUsingSim, AlgoUsingAnalogy):
     """geometrical analogy based recommender"""
-    def __init__(self, rm, ur, mr, movieBased=False):
-        super().__init__(rm, ur, mr, movieBased)
-        self.infos['name'] = 'algoGilles'
+    def __init__(self, rm, ur, mr, movieBased=False, sim='MSD', k=40):
+        super().__init__(rm, ur, mr, movieBased, sim)
+        self.infos['name'] = 'algoParallKNN' if k else 'algoParall'
+
+        self.k = k
+        
+        # if k is specified, look for 3-tuples in the kNN. Else, choose them
+        # randomly
+        self.gen = self.genkNN if k else self.genRandom
+
+    def genkNN(self, x0, y0):
+        """generator to find triplets amongst the kNN"""
+
+        # list of (x, sim(x0, x)) for x having rated m0 or for m rated by x0
+        simX0 = [(x, self.simMat[x0, x]) for x in range(1, self.lastXi + 1) if
+            self.rm[x, y0] > 0]
+
+        # sort simX0 by similarity decreasing order
+        simX0 = sorted(simX0, key=lambda x:x[1], reverse=True)
+
+        # get only the k nearest neighbors
+        neighboorsList = [(x, self.rm[x, y0]) for (x, _) in simX0[:self.k]]
+        for xa, ra in neighboorsList:
+            for xb, rb in neighboorsList:
+                for xc, rc in neighboorsList:
+                    yield (xa, ra), (xb, rb), (xc, rc)
+
+    def genRandom(self, x0, y0):
+        """generator that will return 1000 random triplets"""
+        for i in range(1000):
+            # randomly choose a, b, and c
+            xa, ra = rd.choice(self.yr[y0])
+            xb, rb = rd.choice(self.yr[y0])
+            xc, rc = rd.choice(self.yr[y0])
+            yield (xa, ra), (xb, rb), (xc, rc)
+        
 
     def estimate(self, u0, m0):
         x0, y0 = self.getx0y0(u0, m0)
@@ -49,12 +82,10 @@ class AlgoParall(AlgoUsingAnalogy):
 
         candidates= [] # solutions to analogical equations
         self.tuples = [] # list of 3-tuples that are serve as candidates
-        for i in range(1000):
-            # randomly choose a, b, and c
-            xa, ra = rd.choice(self.yr[y0])
-            xb, rb = rd.choice(self.yr[y0])
-            xc, rc = rd.choice(self.yr[y0])
-            if xa != xb != xc and xa != xc and self.isSolvable(ra, rb, rc):
+
+        for (xa, ra), (xb, rb), (xc, rc) in self.gen(x0, y0):
+            if (xa != xb != xc and xa != xc and 
+               self.isSolvable(ra, rb, rc)):
                 # get info about the abcd 'paralellogram'
                 (nYabc0, nrm) = self.getParall(xa, xb, xc, x0)
                 if nrm < 1.5 * np.sqrt(nYabc0): # we allow some margin
@@ -99,99 +130,6 @@ class AlgoParall(AlgoUsingAnalogy):
         nrm = np.linalg.norm((xaRs - xbRs) - (xcRs - x0Rs))
 
         return len(Yabc0), nrm
-
-class AlgoParallKnn(AlgoUsingSim,AlgoUsingAnalogy):
-     """geometrical analogy based recommender using Knn to get analogical proportions instead of all the guys"""
-     
-
-     def __init__(self, rm, ur, mr, movieBased=False, sim='MSD'):
-         super().__init__(rm, ur, mr, movieBased=movieBased, sim=sim)
-
-         self.k = 40 #number of chosen neighbours
-
-         self.infos['name'] = 'algoGillesKnn'
-         self.infos['params']['k'] = self.k
-
-
-     def estimate(self, u0, m0):
-         x0, y0 = self.getx0y0(u0, m0)
-         # list of (x, sim(x0, x)) for x having rated m0 or for m rated by x0
-         simX0 = [(x, self.simMat[x0, x]) for x in range(1, self.lastXi + 1) if
-             self.rm[x, y0] > 0]
-
-         # if there is nobody to predict the rating, prediction is impossible (=0)
-         if not simX0:
-             self.est = 0
-             return
-
-         # sort simX0 by similarity decreasing order
-         simX0 = sorted(simX0, key=lambda x:x[1], reverse=True)
-
-         # get only the Knn guys
-         fullList = [x for (x, _) in simX0]
-         neighboorsList = [x for (x, _) in simX0[:self.k]]
-         #simNeighboors = [sim for (_, sim) in simX0[:self.k]]
-         #ratNeighboors = [self.rm[x, y0] for (x, _) in simX0[:self.k]]
-                     
-         
-         candidates= []      # solutions to analogical equations
-         #self.tuples = []    # list of 3-tuples that serve as candidates
-         # choose a, b, and c among the neighbours here we get a cubic complexity wrt number of neighbours
-         seen=[] #to avoid redundancy
-         for xa in neighboorsList:
-            for xb in neighboorsList:
-                 for xc in neighboorsList:
-                   if xa != xb != xc and xa != xc and self.isSolvable(self.rm[xa, y0], self.rm[xb, y0], self.rm[xc, y0]):
-                 # get info about the abcd 'parallelogram'
-                             (nrm,numberOfCommonMovies) = self.getParall(xa, xb, xc, x0)
-                             if (nrm < 1.5 * np.sqrt(numberOfCommonMovies)): # we allow some margin
-                                 sol = self.solve(self.rm[xa, y0], self.rm[xb, y0], self.rm[xc, y0])
-                                 candidates.append((sol, nrm, numberOfCommonMovies))
-                                 #seen.append(xa)
-                                 #self.tuples.append((xa, xb, xc, nYabc0, sol))
-
-         # if there are candidates, estimate rating as a weighted average
-         if candidates:
-             ratings = [sol for (sol, _, _) in candidates]
-             #norms = [1/(nrm + 1) for (_, nrm, _) in candidates]
-             #nYs = [nY for (_, _, nY) in candidates]
-             self.est = np.average(ratings)
-         else:
-             self.est = 0
-         print("candidates:",len(candidates),"estim=",self.est)
-         
-    
-     def getParall(self, xa, xb, xc, x0):
-         """return all information about the parallelogram formed by xs: number of
-         ratings in common and norm of the difference (a-b)-(c-d) (see formula)"""
-
-         # list of movies that xa, xb, xc, and x0 have commonly rated
-         # or list of users having seen xa, xb, xc, and x0
-         listOfCommon = [y for (y, _) in self.xr[xa] if (self.rm[xb, y] and self.rm[xc, y]
-             and self.rm[x0, y])]
-         #tv = [] # vector of componentwise truth value
-         # if there is no common things
-         if not listOfCommon:
-             return float('inf'), 0
-
-         # lists of ratings for common things y - 4 vectors with same dimension
-         xaRs = np.array([self.rm[xa, y] for y in listOfCommon])
-         xbRs = np.array([self.rm[xb, y] for y in listOfCommon])
-         xcRs = np.array([self.rm[xc, y] for y in listOfCommon])
-         x0Rs = np.array([self.rm[x0, y] for y in listOfCommon])
-
-         # the closer the norm to zero, the more abcd looks like a parallelogram
-         # norm is important
-         nrm = np.linalg.norm((xaRs - xbRs) - (xcRs - x0Rs))
-         
-         # list of ratings from xa xb xc x0 for the common things
-         #Yabc0 = [(self.rm[xa, y], self.rm[xb, y], self.rm[xc, y], self.rm[x0,y]) for y in listOfCommon]
-         #compute the truth value componentwise
-         #for (ra, rb, rc, rd) in Yabc0:
-             #tv.append(self.tvAStar(ra, rb, rc, rd))
-           #  tv.append(self.tvA(ra, rb, rc, rd))
-             
-         return nrm,  len(listOfCommon)
 
 class AlgoPattern(AlgoUsingAnalogy):
     """analogy based recommender using patterns in 3-tuples"""
@@ -269,6 +207,3 @@ class AlgoPattern(AlgoUsingAnalogy):
         # list of ys that xa, xb, xc, and x0 have commonly rated
         return [y for (y, _) in self.xr[xa] if (self.rm[xb, y] and self.rm[xc,
             y] and self.rm[x0, y])]
-
-
-

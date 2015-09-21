@@ -30,10 +30,9 @@ for line in base:
 
 trainStartTime = time.process_time()
 #a = AlgoRandom(rm, ur, mr)
-a = AlgoBasicCollaborative(rm, ur, mr, sim='MSD', movieBased=False)
+#a = AlgoBasicCollaborative(rm, ur, mr, sim='MSD', movieBased=False)
 #a = AlgoAnalogy(rm, ur, mr, movieBased=False)
-#a = AlgoParall(rm, ur, mr, movieBased=False)
-#a = AlgoParallKnn(rm, ur, mr, movieBased=False, sim='MSD')
+a = AlgoParall(rm, ur, mr, movieBased=False, sim='MSD', k=40)
 #a = AlgoPattern(rm, ur, mr, movieBased=False)
 #a = AlgoBaselineOnly(rm, ur, mr, method='opt')
 #a = AlgoNeighborhoodWithBaseline(rm, ur, mr, movieBased=False, method='opt',sim='MSD')
