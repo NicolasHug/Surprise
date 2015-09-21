@@ -250,55 +250,6 @@ class AlgoUsingAnalogy(Algo):
             return 1 - abs((ra-rb) - (rc-rd))
         else:
             return 1 - max(abs(ra-rb), abs(rc-rd))
-    
-class AlgoAnalogy(AlgoUsingAnalogy):
-    """analogy based recommender"""
-    def __init__(self, rm, ur, mr, movieBased=False):
-        super().__init__(rm, ur, mr, movieBased)
-        self.infos['name'] = 'algoAnalogy'
-
-
-    def estimate(self, u0, m0):
-        x0, y0 = self.getx0y0(u0, m0)
-
-        # if there are no ratings for y0, prediction is impossible
-        if not self.yr[y0]:
-            self.est = 0
-            return
-
-        sols = [] # solutions to analogical equation
-        for i in range(1000):
-            # randomly choose a, b, and c
-            xa, ra = rd.choice(self.yr[y0])
-            xb, rb = rd.choice(self.yr[y0])
-            xc, rc = rd.choice(self.yr[y0])
-            if xa != xb != xc and xa != xc and self.isSolvable(ra, rb, rc):
-                tv = self.getTvVector(xa, xb, xc, x0)
-                if tv:
-                    sols.append((self.solve(ra, rb, rc), np.mean(tv)))
-
-        ratings = [r for (r, _) in sols]
-        weights = [w for (_, w) in sols]
-
-        if not ratings or set(weights) == {0}:
-            self.est = 0
-            return
-        self.est = int(round(np.average(ratings, weights=weights)))
-
-    def getTvVector(self, xa, xb, xc, x0):
-        tv = []
-
-        # list of ys that xa, xb, xc, and x0 have commonly rated
-        Yabc0 = [(self.rm[xa, y], self.rm[xb, y], self.rm[xc, y], self.rm[x0,
-            y]) for (y, _) in self.xr[xa] if (self.rm[xb, y] and self.rm[xc, y]
-            and self.rm[x0, y])]
-
-        for ra, rb, rc, rd in Yabc0:
-            #tv.append(self.tvAStar(ra, rb, rc, rd))
-            tv.append(self.tvA(ra, rb, rc, rd))
-
-        return tv
-
 
 
 class AlgoGilles(AlgoUsingAnalogy):
