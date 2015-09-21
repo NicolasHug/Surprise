@@ -6,8 +6,8 @@ import time
 import sys
 
 import common as c
-from algo import *
 from algoAnalogy import *
+from algoKorbenAndCo import *
 
 if len(sys.argv) != 2:
     sys.exit("Error : Tell me which split to use (1, 2, 3, 4, or 5)")
@@ -30,9 +30,9 @@ for line in base:
 
 trainStartTime = time.process_time()
 #a = AlgoRandom(rm, ur, mr)
-#a = AlgoBasicCollaborative(rm, ur, mr, sim='MSD', movieBased=False)
+a = AlgoBasicCollaborative(rm, ur, mr, sim='MSD', movieBased=False)
 #a = AlgoAnalogy(rm, ur, mr, movieBased=False)
-a = AlgoParall(rm, ur, mr, movieBased=False)
+#a = AlgoParall(rm, ur, mr, movieBased=False)
 #a = AlgoParallKnn(rm, ur, mr, movieBased=False, sim='MSD')
 #a = AlgoPattern(rm, ur, mr, movieBased=False)
 #a = AlgoBaselineOnly(rm, ur, mr, method='opt')
