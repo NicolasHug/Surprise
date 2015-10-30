@@ -52,7 +52,7 @@ def printStats(preds):
     rmse = np.sqrt(sumSqErr / (nOK + nKO))
     mae = np.sqrt(sumAbsErr / (nOK + nKO))
     accRate = nOK / (nOK + nKO)
-    precision = nRecoOK / (nRecoOK + nRecoKO)
+    precision = 0#nRecoOK / (nRecoOK + nRecoKO)
     recall = nRecoOK / sum(True for p in preds if p['r0'] >= threshold)
 
     print('Nb impossible predictions:', nImp)

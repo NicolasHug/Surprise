@@ -283,3 +283,36 @@ class AlgoBaselineOnly(AlgoWithBaseline):
     def estimate(self, u0, m0):
         x0, y0 = self.getx0y0(u0, m0)
         self.est = self.getBaseline(x0, y0)
+
+class AlgoCollabDiff(Algo):
+    """Basic collaborative taking into accuonts constant differences between
+    ratings"""
+
+    def __init__(self, rm, ur, mr, movieBased=False):
+        super().__init__(rm, ur, mr, movieBased=movieBased)
+
+        self.infos['name'] = 'collabDiff'
+
+    def isClone(self, xa, xb, k):
+        w = [xai - xbi for (xai, xbi) in zip(xa, xb)]
+        sigma = sum(abs(wi - k) for wi in w)
+        return (sigma <= len(w)*1.1)
+
+    def estimate(self, u0, m0):
+        x0, y0 = self.getx0y0(u0, m0)
+
+        candidates = []
+        for (x, rx) in self.yr[y0]:
+            # find common ratings
+            commonRatings = [(self.rm[x0, y], self.rm[x, y]) for (y, _) in self.xr[x0] if self.rm[x, y] > 0]
+            if not commonRatings: break
+            xa, xb = zip(*commonRatings)
+            for k in range(-4, 5):
+                if self.isClone(xa, xb, k):
+                    candidates.append(rx + k)
+                    break
+        if candidates:
+            self.est = np.mean(candidates)
+        else:
+            self.est = 0
+            
