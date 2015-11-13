@@ -130,7 +130,7 @@ class AlgoUsingSim(Algo):
 
     def constructSimMat(self, sim):
         """construct the simlarity matrix"""
-        if not(sim == 'Cos' or sim == 'MSD'):
+        if not(sim == 'Cos' or sim == 'MSD' or sim =='MSDClone'):
             raise NameError('WrongSimName')
 
         # open or precalculate the similarity matrix if it does not exist yet
@@ -147,9 +147,10 @@ class AlgoUsingSim(Algo):
         except IOError:
             print("File doesn't exist. Creating it...")
             self.simMat = np.empty((self.lastXi + 1, self.lastXi + 1))
-            simMeasure = self.simCos if sim=='Cos' else self.simMSD
+            simMeasure = self.simCos if sim=='Cos' else self.simMSD if sim == 'MSD' else self.simMSDClone
             for xi in range(1, self.lastXi + 1):
-                for xj in range(xi, self.lastXi + 1):
+                for xj in range(xi, self.lastXi + 1): 
+                    # note : sim is assumed to be symetric
                     self.simMat[xi, xj] = simMeasure(xi, xj)
                     self.simMat[xj, xi] = self.simMat[xi, xj]
             simFile = open(simFileName, 'wb')
@@ -181,6 +182,24 @@ class AlgoUsingSim(Algo):
 
         # sum of squared differences:
         ssd = sum((self.rm[xi, y] - self.rm[xj, y])**2 for y in Yij)
+        if ssd == 0:
+            return  len(Yij) # maybe we should return more ?
+        return len(Yij) / ssd
+
+    def simMSDClone(self, xi, xj):
+        """ return the similarity between two users or movies using Mean
+        Squared Difference with Clone"""
+
+        # movies rated by xi andxj or users having rated xi and xj
+        Yij = [y for (y, _) in self.xr[xi] if self.rm[xj, y] > 0]
+
+        if not Yij:
+            return 0
+
+        print(xi, xj)
+        meanDiff = np.mean([self.rm[xi, y] - self.rm[xj, y] for y in Yij])
+        # sum of squared differences:
+        ssd = sum((self.rm[xi, y] - self.rm[xj, y] - meanDiff)**2 for y in Yij)
         if ssd == 0:
             return  len(Yij) # maybe we should return more ?
         return len(Yij) / ssd
@@ -284,35 +303,124 @@ class AlgoBaselineOnly(AlgoWithBaseline):
         x0, y0 = self.getx0y0(u0, m0)
         self.est = self.getBaseline(x0, y0)
 
-class AlgoCollabDiff(Algo):
+class AlgoClone(Algo):
+    """Basic collaborative taking into accounts constant differences between
+    ratings"""
+
+    def __init__(self, rm, ur, mr, movieBased=False):
+        super().__init__(rm, ur, mr, movieBased=movieBased)
+
+        self.infos['name'] = 'clone'
+
+    def isClone(self, xa, xb, k):
+        w = [xai - xbi for (xai, xbi) in zip(xa, xb)]
+        sigma = sum(abs(wi - k) for wi in w)
+        return sigma <= len(w)
+
+    def estimate(self, u0, m0):
+        x0, y0 = self.getx0y0(u0, m0)
+
+        candidates = []
+        for (x, rx) in self.yr[y0]: # for ALL users that have rated y0
+            # find common ratings between x0 and x
+            commonRatings = [(self.rm[x0, y], self.rm[x, y]) for (y, _) in self.xr[x0] if self.rm[x, y] > 0]
+            if not commonRatings: continue 
+            ra, rb = zip(*commonRatings)
+            for k in range(-4, 5):
+                if self.isClone(ra, rb, k):
+                    candidates.append(rx + k)
+
+        if candidates:
+            self.est = np.mean(candidates)
+        else:
+            self.est = 0
+
+class AlgoMeanDiff(Algo):
     """Basic collaborative taking into accuonts constant differences between
     ratings"""
 
     def __init__(self, rm, ur, mr, movieBased=False):
         super().__init__(rm, ur, mr, movieBased=movieBased)
 
-        self.infos['name'] = 'collabDiff'
+        self.infos['name'] = 'meanDiff'
 
-    def isClone(self, xa, xb, k):
-        w = [xai - xbi for (xai, xbi) in zip(xa, xb)]
-        sigma = sum(abs(wi - k) for wi in w)
-        return (sigma <= len(w)*1.1)
+    def meanDiff(self, ra, rb):
+        """Return the mean difference between two sets or ratings and the
+        weight associated to it"""
+
+        diffs = [(rai - rbi) for (rai, rbi) in zip(ra, rb)]
+        md = np.mean(diffs) # mean diff
+        w = 1./(np.std(diffs) + 1) # weight
+        #w = 100 - np.std(diffs) # weight
+        return md, w
+
 
     def estimate(self, u0, m0):
         x0, y0 = self.getx0y0(u0, m0)
 
         candidates = []
-        for (x, rx) in self.yr[y0]:
-            # find common ratings
+        weights = []
+        for (x, rx) in self.yr[y0]: # for ALL users that have rated y0
+
+            # find common ratings between x0 and x
             commonRatings = [(self.rm[x0, y], self.rm[x, y]) for (y, _) in self.xr[x0] if self.rm[x, y] > 0]
-            if not commonRatings: break
-            xa, xb = zip(*commonRatings)
-            for k in range(-4, 5):
-                if self.isClone(xa, xb, k):
-                    candidates.append(rx + k)
-                    break
+            if not commonRatings: continue 
+            ra, rb = zip(*commonRatings)
+
+            # compute the mean diff between x0 and x, and attribute a weight
+            # to x
+            md, w = self.meanDiff(ra, rb)
+            candidates.append(rx + md)
+            weights.append(w)
+					
         if candidates:
-            self.est = np.mean(candidates)
+            self.est = np.average(candidates, weights=weights)
         else:
             self.est = 0
-            
+
+class AlgoCollabMeanDiff(AlgoUsingSim):
+    """Basic collaborative taking into accuonts constant differences between
+    ratings"""
+
+    def __init__(self, rm, ur, mr, movieBased=False, sim='MSDClone'):
+        super().__init__(rm, ur, mr, movieBased=movieBased, sim=sim)
+
+        self.infos['name'] = 'CollabMeanDiff'
+
+        self.k = 40
+
+        self.infos['params']['similarity measure'] = sim
+        self.infos['params']['k'] = self.k
+
+    def meanDiff(self, xa, xb):
+        """Return the mean difference between two users """
+        commonRatings = [(self.rm[xa, y], self.rm[xb, y]) for (y, _) in self.xr[xa] if self.rm[xb, y] > 0]
+        if not commonRatings: return 0
+        ra, rb = zip(*commonRatings)
+
+        diffs = [(rai - rbi) for (rai, rbi) in zip(ra, rb)]
+        md = np.mean(diffs) # mean diff
+
+        return md
+
+    def estimate(self, u0, m0):
+        x0, y0 = self.getx0y0(u0, m0)
+        # list of (x, sim(x0, x)) for u having rated m0 or for m rated by x0
+        simX0 = [(x, self.simMat[x0, x]) for x in range(1, self.lastXi + 1) if
+            self.rm[x, y0] > 0]
+
+        # if there is nobody on which predict the rating...
+        if not simX0:
+            self.est = 0
+            return
+
+        # sort simX0 by similarity
+        simX0 = sorted(simX0, key=lambda x:x[1], reverse=True)
+
+        # let the KNN vote
+        simNeighboors = [sim for (_, sim) in simX0[:self.k]]
+        ratNeighboors = [self.rm[x, y0] + self.meanDiff(x0, x) for (x, _) in simX0[:self.k]]
+        try:
+            self.est = np.average(ratNeighboors, weights=simNeighboors)
+        except ZeroDivisionError:
+            self.est = 0

@@ -38,7 +38,7 @@ trainStartTime = time.process_time()
 #a = AlgoNeighborhoodWithBaseline(rm, ur, mr, movieBased=False, method='opt',sim='MSD')
 #a = AlgoKNNBelkor(rm, ur, mr, method='opt', movieBased=False)
 #a = AlgoFactors(rm, ur, mr, movieBased=False)
-a = AlgoCollabDiff(rm, ur, mr, movieBased=False)
+a = AlgoCollabMeanDiff(rm, ur, mr, movieBased=False, sim='MSDClone')
 trainingTime = time.process_time() - trainStartTime
 
 a.infos['params']['split'] = split
@@ -49,7 +49,7 @@ testSet = []
 for line in test:
     testSet.append(line.split())
 
-smallTestSet = [rd.choice(testSet) for i in range(100)]
+smallTestSet = [rd.choice(testSet) for i in range(1000)]
 
 testTimeStart = time.process_time()
 for u0, m0, r0, _ in testSet:
