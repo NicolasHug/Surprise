@@ -34,13 +34,13 @@ trainStartTime = time.process_time()
 #a = AlgoAnalogy(rm, ur, mr, movieBased=False)
 #a = AlgoParall(rm, ur, mr, movieBased=False, sim='MSD', k=40)
 #a = AlgoPattern(rm, ur, mr, movieBased=False)
-#a = AlgoBaselineOnly(rm, ur, mr, method='opt')
-#a = AlgoNeighborhoodWithBaseline(rm, ur, mr, movieBased=False, method='opt',sim='MSD')
 #a = AlgoKNNBelkor(rm, ur, mr, method='opt', movieBased=False)
 #a = AlgoFactors(rm, ur, mr, movieBased=False)
-a = AlgoCollabMeanDiff(rm, ur, mr, movieBased=False, sim='MSDClone')
-trainingTime = time.process_time() - trainStartTime
+#a = AlgoCollabMeanDiff(rm, ur, mr, movieBased=False, sim='MSDClone')
+#a = AlgoNeighborhoodWithBaseline(rm, ur, mr, movieBased=False, method='opt',sim='MSD')
+a = AlgoBaselineOnly(rm, ur, mr, movieBased=False, method='als')
 
+trainingTime = time.process_time() - trainStartTime
 a.infos['params']['split'] = split
 
 
@@ -49,7 +49,7 @@ testSet = []
 for line in test:
     testSet.append(line.split())
 
-smallTestSet = [rd.choice(testSet) for i in range(1000)]
+smallTestSet = [rd.choice(testSet) for i in range(100)]
 
 testTimeStart = time.process_time()
 for u0, m0, r0, _ in testSet:
@@ -59,6 +59,7 @@ for u0, m0, r0, _ in testSet:
 
     print(u0, m0, r0)
     a.estimate(u0, m0)
+    a.cut_estimate(1, 5)
     a.updatePreds(u0, m0, r0)
 
     print('-' * 20)

@@ -47,8 +47,6 @@ class Algo:
         # Note: there is a lot of duplicated data, the dumped file will be
         # HUGE.
 
-
-
     def dumpInfos(self):
         if not self.withDump:
             return
@@ -98,6 +96,10 @@ class Algo:
         if isinstance(self, algoAnalogy.AlgoUsingAnalogy):
             predInfo['3tuples'] = self.tuples
         self.infos['preds'].append(predInfo)
+    
+    def cut_estimate(self, inf, sup):
+        self.est = min(sup, self.est)
+        self.est = max(inf, self.est)
 
         
 class AlgoRandom(Algo):
@@ -254,38 +256,48 @@ class AlgoWithBaseline(Algo):
         self.yBiases = np.zeros(self.lastYi + 1)
 
         print('Estimating biases...')
-        if method == 'opt':
-            # using stochastic gradient descent optimisation
-            lambda4 = 0.02
-            gamma = 0.005
-            nIter = 20
-            for i in range(nIter):
-                for x, xRatings in self.xr.items():
-                    for y, r in xRatings:
-                        err = r - (self.mu + self.xBiases[x] + self.yBiases[y])
-                        # update xBiases 
-                        self.xBiases[x] += gamma * (err - lambda4 *
-                            self.xBiases[x])
-                        # udapte yBiases
-                        self.yBiases[y] += gamma * (err - lambda4 *
-                            self.yBiases[y])
-        else:
-            # using a more basic method 
-            if self.ub:
-                lambda2 = 10.
-                lambda3 = 25.
-            else:
-                lambda2 = 25.
-                lambda3 = 10.
+        if method == 'sgd':
+            self.optimize_sgd()
+        elif method == 'als':
+            self.optimize_als()
 
-            for x in range(1, self.lastXi + 1):
-                # list of deviations from average for x
-                devX = [r - self.mu for (_, r) in self.xr[x]]
-                self.xBiases[x] = sum(devX) / (lambda2 + len(devX))
+    def optimize_sgd(self):
+        """optimize biases using sgd"""
+        lambda4 = 0.02
+        gamma = 0.005
+        nIter = 20
+        for i in range(nIter):
+            for x, xRatings in self.xr.items():
+                for y, r in xRatings:
+                    err = r - (self.mu + self.xBiases[x] + self.yBiases[y])
+                    # update xBiases 
+                    self.xBiases[x] += gamma * (err - lambda4 *
+                        self.xBiases[x])
+                    # udapte yBiases
+                    self.yBiases[y] += gamma * (err - lambda4 *
+                        self.yBiases[y])
+
+    def optimize_als(self):
+        """alternatively optimize yBiases and xBiases. Probably not really an
+        als"""
+        reg_u = 15 
+        reg_i = 10 
+        nIter = 10
+
+        self.reg_x = reg_u if self.ub else reg_i
+        self.reg_y = reg_u if not self.ub else reg_i
+
+        for i in range(nIter):
+            self.yBiases = np.zeros(self.lastYi + 1)
             for y in range(1, self.lastYi + 1):
-                # list of deviations from average for y
-                devY = [r - self.mu for (_, r) in self.yr[y]]
-                self.yBiases[y] = sum(devY) / (lambda3 + len(devY))
+                devY = sum(r - self.mu - self.xBiases[x] for (x, r) in self.yr[y])
+                self.yBiases[y] = devY / (self.reg_y + len(self.yr[y]))
+
+            self.xBiases = np.zeros(self.lastXi + 1)
+            for x in range(1, self.lastXi + 1):
+                devX = sum(r - self.mu - self.yBiases[y] for (y, r) in self.xr[x])
+                self.xBiases[x] = devX / (self.reg_x + len(self.xr[x]))
+        
 
 
     def getBaseline(self, x, y):
