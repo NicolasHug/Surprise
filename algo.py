@@ -101,7 +101,11 @@ class Algo:
         self.est = min(sup, self.est)
         self.est = max(inf, self.est)
 
-        
+    def iterAllRatings(self):
+        for x, xRatings in self.xr.items():
+            for y, r in xRatings:
+                yield x, y, r
+
 class AlgoRandom(Algo):
     """predict a random rating based on the distribution of the training set"""
     
@@ -267,15 +271,18 @@ class AlgoWithBaseline(Algo):
         gamma = 0.005
         nIter = 20
         for i in range(nIter):
+            for x, y, r in self.iterAllRatings():
+                """
             for x, xRatings in self.xr.items():
                 for y, r in xRatings:
-                    err = r - (self.mu + self.xBiases[x] + self.yBiases[y])
-                    # update xBiases 
-                    self.xBiases[x] += gamma * (err - lambda4 *
-                        self.xBiases[x])
-                    # udapte yBiases
-                    self.yBiases[y] += gamma * (err - lambda4 *
-                        self.yBiases[y])
+                    """
+                err = r - (self.mu + self.xBiases[x] + self.yBiases[y])
+                # update xBiases 
+                self.xBiases[x] += gamma * (err - lambda4 *
+                    self.xBiases[x])
+                # udapte yBiases
+                self.yBiases[y] += gamma * (err - lambda4 *
+                    self.yBiases[y])
 
     def optimize_als(self):
         """alternatively optimize yBiases and xBiases. Probably not really an

@@ -49,29 +49,28 @@ class AlgoKNNBelkor(AlgoWithBaseline):
 
         for i in range(nIter):
             print("optimizing...", nIter - i, "iteration left")
-            for x, xRatings in self.xr.items():
-                for y, rxy in xRatings:
-                    est = sum((r - self.getBaseline(x2, y)) *
-                        self.weights[x, x2] for (x2, r) in self.yr[y])
-                    est /= np.sqrt(len(self.yr[y]))
-                    est += self.mu + self.xBiases[x] + self.yBiases[y]
+            for x, y, rxy in self.iterAllRatings():
+                est = sum((r - self.getBaseline(x2, y)) *
+                    self.weights[x, x2] for (x2, r) in self.yr[y])
+                est /= np.sqrt(len(self.yr[y]))
+                est += self.mu + self.xBiases[x] + self.yBiases[y]
 
-                    err = rxy - est
+                err = rxy - est
 
-                    # update x bias
-                    self.xBiases[x] += gamma * (err - lambda10 *
-                        self.xBiases[x])
+                # update x bias
+                self.xBiases[x] += gamma * (err - lambda10 *
+                    self.xBiases[x])
 
-                    # update y bias
-                    self.yBiases[y] += gamma * (err - lambda10 *
-                        self.yBiases[y])
+                # update y bias
+                self.yBiases[y] += gamma * (err - lambda10 *
+                    self.yBiases[y])
 
-                    # update weights
-                    for x2, rx2y in self.yr[y]:
-                        bx2y = self.getBaseline(x2, y)
-                        wxx2 = self.weights[x, x2]
-                        self.weights[x, x2] += gamma * ((err * (rx2y -
-                            bx2y)/np.sqrt(len(self.yr[y]))) - (lambda10 * wxx2))
+                # update weights
+                for x2, rx2y in self.yr[y]:
+                    bx2y = self.getBaseline(x2, y)
+                    wxx2 = self.weights[x, x2]
+                    self.weights[x, x2] += gamma * ((err * (rx2y -
+                        bx2y)/np.sqrt(len(self.yr[y]))) - (lambda10 * wxx2))
 
 
     def estimate(self, u0, m0):
@@ -107,9 +106,8 @@ class AlgoFactors(Algo):
         self.infos['params']['nIter'] = nIter
 
         ratings = []
-        for x, xRatings in self.xr.items():
-            for y, val in xRatings:
-                ratings.append(((x, y, val), [val, 0., 0.]))
+        for x, y, val in self.iterAllRatings():
+            ratings.append(((x, y, val), [val, 0., 0.]))
 
 
         for f in range(nFactors):

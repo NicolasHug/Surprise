@@ -34,11 +34,11 @@ trainStartTime = time.process_time()
 #a = AlgoAnalogy(rm, ur, mr, movieBased=False)
 #a = AlgoParall(rm, ur, mr, movieBased=False, sim='MSD', k=40)
 #a = AlgoPattern(rm, ur, mr, movieBased=False)
-#a = AlgoKNNBelkor(rm, ur, mr, method='opt', movieBased=False)
+a = AlgoKNNBelkor(rm, ur, mr, method='als', movieBased=False)
 #a = AlgoFactors(rm, ur, mr, movieBased=False)
 #a = AlgoCollabMeanDiff(rm, ur, mr, movieBased=False, sim='MSDClone')
-#a = AlgoNeighborhoodWithBaseline(rm, ur, mr, movieBased=False, method='opt',sim='MSD')
-a = AlgoBaselineOnly(rm, ur, mr, movieBased=False, method='als')
+#a = AlgoNeighborhoodWithBaseline(rm, ur, mr, movieBased=False, method='als',sim='MSD')
+#a = AlgoBaselineOnly(rm, ur, mr, movieBased=False, method='sgd')
 
 trainingTime = time.process_time() - trainStartTime
 a.infos['params']['split'] = split
