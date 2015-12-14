@@ -1,7 +1,7 @@
 #!/usr/bin/python3
-import numpy as np
 import random as rd
 from collections import defaultdict
+import numpy as np
 import time
 import sys
 
@@ -17,9 +17,9 @@ split = sys.argv[1]
 base = open('../ml-100k/u' + split + '.base', 'r')
 test = open('../ml-100k/u' + split + '.test', 'r')
 
-rm = np.empty((c.lastMi + 1 , c.lastUi + 1), dtype='int') # the rating matrix
-ur = defaultdict(list) # dict of users containing list of (m, rat(u, m))
-mr = defaultdict(list) # dict of movies containing list of (u, rat(u, m))
+rm = np.empty((c.lastMi + 1, c.lastUi + 1), dtype='int') # the rating matrix
+ur = defaultdict(list)  # dict of users containing list of (m, rat(u, m))
+mr = defaultdict(list)  # dict of movies containing list of (u, rat(u, m))
 
 for line in base:
     ui, mi, r, _ = line.split()
@@ -30,15 +30,15 @@ for line in base:
 
 trainStartTime = time.process_time()
 #a = AlgoRandom(rm, ur, mr)
-#a = AlgoBasicCollaborative(rm, ur, mr, sim='MSD', movieBased=False)
+a = AlgoBasicCollaborative(rm, ur, mr, sim='Cos2', movieBased=False)
 #a = AlgoAnalogy(rm, ur, mr, movieBased=False)
 #a = AlgoParall(rm, ur, mr, movieBased=False, sim='MSD', k=40)
 #a = AlgoPattern(rm, ur, mr, movieBased=False)
-a = AlgoKNNBelkor(rm, ur, mr, method='als', movieBased=False)
+#a = AlgoKNNBelkor(rm, ur, mr, method='als', movieBased=False)
 #a = AlgoFactors(rm, ur, mr, movieBased=False)
 #a = AlgoCollabMeanDiff(rm, ur, mr, movieBased=False, sim='MSDClone')
 #a = AlgoNeighborhoodWithBaseline(rm, ur, mr, movieBased=False, method='als',sim='MSD')
-#a = AlgoBaselineOnly(rm, ur, mr, movieBased=False, method='sgd')
+#a = AlgoBaselineOnly(rm, ur, mr, movieBased=False, method='als')
 
 trainingTime = time.process_time() - trainStartTime
 a.infos['params']['split'] = split
@@ -52,8 +52,8 @@ for line in test:
 smallTestSet = [rd.choice(testSet) for i in range(100)]
 
 testTimeStart = time.process_time()
-for u0, m0, r0, _ in testSet:
-#for u0, m0, r0, _ in smallTestSet:
+#for u0, m0, r0, _ in testSet:
+for u0, m0, r0, _ in smallTestSet:
 
     u0 = int(u0); m0 = int(m0); r0 = int(r0)
 

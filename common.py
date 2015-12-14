@@ -22,10 +22,10 @@ def printStats(preds):
         return
 
     nOK = nKO = nImp = 0
-        
+
     sumSqErr = 0
     sumAbsErr = 0
-    
+
     nRecoOK = nRecoKO = 0
 
 
@@ -67,7 +67,7 @@ def tvA(ra, rb, rc, rd):
     """return the truth value of A(ra, rb, rc, rd)"""
 
     # map ratings into [0, 1]
-    ra = (ra-1)/4.; rb = (rb-1)/4.; rc = (rc-1)/4.; rd = (rd-1)/4.; 
+    ra = (ra-1)/4.; rb = (rb-1)/4.; rc = (rc-1)/4.; rd = (rd-1)/4.;
     if (ra >= rb and rc >= rd) or (ra <= rb and rc <= rd):
         return 1 - abs((ra-rb) - (rc-rd))
     else:

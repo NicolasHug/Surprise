@@ -1,4 +1,6 @@
-from algo import * 
+import random as rd
+
+from algo import *
 
 class AlgoUsingAnalogy(Algo):
     """Abstract class for algos that use an analogy framework"""
@@ -18,7 +20,7 @@ class AlgoUsingAnalogy(Algo):
         """return the truth value of A*(ra, rb, rc, rd)"""
 
         # map ratings into [0, 1]
-        ra = (ra-1)/4.; rb = (rb-1)/4.; rc = (rc-1)/4.; rd = (rd-1)/4.; 
+        ra = (ra-1)/4.; rb = (rb-1)/4.; rc = (rc-1)/4.; rd = (rd-1)/4.;
         return min(1 - abs(max(ra, rd) - max(rb, rc)), 1 - abs(min(ra, rd) -
             min(rb, rc)))
 
@@ -26,7 +28,7 @@ class AlgoUsingAnalogy(Algo):
         """return the truth value of A(ra, rb, rc, rd)"""
 
         # map ratings into [0, 1]
-        ra = (ra-1)/4.; rb = (rb-1)/4.; rc = (rc-1)/4.; rd = (rd-1)/4.; 
+        ra = (ra-1)/4.; rb = (rb-1)/4.; rc = (rc-1)/4.; rd = (rd-1)/4.;
         if (ra >= rb and rc >= rd) or (ra <= rb and rc <= rd):
             return 1 - abs((ra-rb) - (rc-rd))
         else:
@@ -40,7 +42,7 @@ class AlgoParall(AlgoUsingSim, AlgoUsingAnalogy):
         self.infos['name'] = 'algoParallKNN' if k else 'algoParall'
 
         self.k = k
-        
+
         # if k is specified, look for 3-tuples in the kNN. Else, choose them
         # randomly
         self.gen = self.genkNN if k else self.genRandom
@@ -70,7 +72,7 @@ class AlgoParall(AlgoUsingSim, AlgoUsingAnalogy):
             xb, rb = rd.choice(self.yr[y0])
             xc, rc = rd.choice(self.yr[y0])
             yield (xa, ra), (xb, rb), (xc, rc)
-        
+
 
     def estimate(self, u0, m0):
         x0, y0 = self.getx0y0(u0, m0)
@@ -84,7 +86,7 @@ class AlgoParall(AlgoUsingSim, AlgoUsingAnalogy):
         self.tuples = [] # list of 3-tuples that are serve as candidates
 
         for (xa, ra), (xb, rb), (xc, rc) in self.gen(x0, y0):
-            if (xa != xb != xc and xa != xc and 
+            if (xa != xb != xc and xa != xc and
                self.isSolvable(ra, rb, rc)):
                 # get info about the abcd 'paralellogram'
                 (nYabc0, nrm) = self.getParall(xa, xb, xc, x0)

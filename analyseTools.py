@@ -11,7 +11,7 @@ def meanCommonYs(p):
     """return the mean count of users (or movies) rated in common for all
     the 3-tuples of prediction p"""
     return np.mean(p['3tuples'], 0)[3] if p['3tuples'] else 0
-    
+
 def solProp(p, r):
     """proportion of solution to analogical equation that are equal to r for
     all 3-tuples of the prediction"""
@@ -194,7 +194,7 @@ def measureSurprise(preds, infos):
         "{0:1.4f}".format(np.mean(surprises, 0)[1]))
 
 def printCoverage(preds):
-    
+
     # set of recommended movies
     recMovies = {p['m0'] for p in preds if p['est'] >= 4}
     # set of all movies

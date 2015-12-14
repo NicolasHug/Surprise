@@ -4,7 +4,7 @@ class AlgoNeighborhoodWithBaseline(AlgoWithBaseline, AlgoUsingSim):
     """ Algo baseline AND deviation from baseline of the neighbors
         simlarity measure = cos"""
     def __init__(self, rm, ur, mr, movieBased=False, method='opt', sim='Cos'):
-        super().__init__(rm, ur, mr, movieBased, method=method, sim=sim) 
+        super().__init__(rm, ur, mr, movieBased, method=method, sim=sim)
         self.infos['name'] = 'neighborhoodWithBaseline'
         self.k = 40
         self.infos['params']['k'] = self.k
@@ -26,7 +26,7 @@ class AlgoNeighborhoodWithBaseline(AlgoWithBaseline, AlgoUsingSim):
         # let the KNN vote
         k = self.k
         simNeighboors = [sim for (_, sim, _) in simX0[:k]]
-        diffRatNeighboors = [r - self.getBaseline(x, y0) 
+        diffRatNeighboors = [r - self.getBaseline(x, y0)
             for (x, _, r) in simX0[:k]]
         try:
             self.est += np.average(diffRatNeighboors, weights=simNeighboors)
@@ -75,7 +75,7 @@ class AlgoKNNBelkor(AlgoWithBaseline):
 
     def estimate(self, u0, m0):
         x0, y0 = self.getx0y0(u0, m0)
-        
+
         self.est = sum((r - self.getBaseline(x2, y0)) *
             self.weights[x0, x2] for (x2, r) in self.yr[y0])
         self.est /= np.sqrt(len(self.yr[y0]))
@@ -93,7 +93,7 @@ class AlgoFactors(Algo):
 
         nFactors = 50 # number of factors
         nIter = 10
-        self.px = np.ones((self.lastXi + 1, nFactors)) * 0.1 
+        self.px = np.ones((self.lastXi + 1, nFactors)) * 0.1
         self.qy = np.ones((self.lastYi + 1, nFactors)) * 0.1
         residuals = []
 
@@ -130,6 +130,8 @@ class AlgoFactors(Algo):
 
     def estimate(self, u0, m0):
         x0, y0 = self.getx0y0(u0, m0)
-        
+
+
+
         self.est = np.dot(self.px[x0, :], self.qy[y0, :])
 

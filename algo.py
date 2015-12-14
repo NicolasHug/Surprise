@@ -1,18 +1,16 @@
 from scipy.stats import rv_discrete
 from scipy.spatial.distance import cosine
 import numpy as np
-import random as rd
 import pickle
 import time
 import os
 
-import algoAnalogy
 import common as cmn
 
 class Algo:
     """Abstract Algo class where is defined the basic behaviour of a recomender
     algorithm"""
-    def __init__(self, rm, ur, mr, movieBased=False, withDump=True, **kwargs):
+    def __init__(self, rm, ur, mr, movieBased=False, withDump=True):
 
         # whether the algo will be based on users
         # if the algo is user based, x denotes a user and y a movie
@@ -93,8 +91,6 @@ class Algo:
 
         predInfo['u0'] = u0 ; predInfo['m0'] = m0; predInfo['r0'] = r0
         predInfo['est'] = self.est
-        if isinstance(self, algoAnalogy.AlgoUsingAnalogy):
-            predInfo['3tuples'] = self.tuples
         self.infos['preds'].append(predInfo)
     
     def cut_estimate(self, inf, sup):
@@ -122,7 +118,7 @@ class AlgoRandom(Algo):
         fqs = [fq/sum(fqs) for fq in fqs]
         self.distrib = rv_discrete(values=([1, 2, 3, 4, 5], fqs))
 
-    def estimate(self, u0, m0):
+    def estimate(self, *_):
         self.est = self.distrib.rvs()
 
 class AlgoUsingSim(Algo):
@@ -136,7 +132,8 @@ class AlgoUsingSim(Algo):
 
     def constructSimMat(self, sim):
         """construct the simlarity matrix"""
-        if not(sim == 'Cos' or sim == 'MSD' or sim =='MSDClone'):
+        if not(sim == 'Cos' or sim == 'MSD' or sim =='MSDClone' or sim ==
+            "Cos2"):
             raise NameError('WrongSimName')
 
         # open or precalculate the similarity matrix if it does not exist yet
@@ -154,13 +151,16 @@ class AlgoUsingSim(Algo):
             print("File doesn't exist. Creating it...")
             self.simMat = np.empty((self.lastXi + 1, self.lastXi + 1))
             simMeasure = self.simCos if sim=='Cos' else self.simMSD if sim == 'MSD' else self.simMSDClone
-            for xi in range(1, self.lastXi + 1):
-                for xj in range(xi, self.lastXi + 1): 
-                    # note : sim is assumed to be symetric
-                    self.simMat[xi, xj] = simMeasure(xi, xj)
-                    self.simMat[xj, xi] = self.simMat[xi, xj]
-            simFile = open(simFileName, 'wb')
-            np.save(simFile, self.simMat)
+            if sim=='Cos2':
+                self.cos2()
+            else:
+                for xi in range(1, self.lastXi + 1):
+                    for xj in range(xi, self.lastXi + 1): 
+                        # note : sim is assumed to be symetric
+                        self.simMat[xi, xj] = simMeasure(xi, xj)
+                        self.simMat[xj, xi] = self.simMat[xi, xj]
+                simFile = open(simFileName, 'wb')
+                np.save(simFile, self.simMat)
 
     def simCos(self, xi, xj):
         """ return the similarity between two users or movies using cosine
@@ -209,6 +209,35 @@ class AlgoUsingSim(Algo):
         if ssd == 0:
             return  len(Yij) # maybe we should return more ?
         return len(Yij) / ssd
+
+    def cos2(self):
+        from itertools import combinations
+        from collections import defaultdict
+
+        prods = defaultdict(int)
+        freq = defaultdict(int)
+        sums = defaultdict(int)
+
+        for y, yRatings in self.yr.items():
+            for (x1, r1), (x2, r2) in combinations(yRatings, 2):
+                prods[(x1, x2)] += r1 * r2
+                freq[(x1, x2)] += 1
+
+        for xi in range(1, self.lastXi + 1):
+            sums[xi] = sum(ri**2 for (_, ri) in self.xr[xi])
+
+        for xi in range(1, self.lastXi + 1):
+            for xj in range(xi, self.lastXi + 1): 
+
+                if freq[(xi, xj)] < 1:
+                    self.simMat[xi, xj] = 0
+                else:
+                    denum = np.sqrt(sums[xi] * sums[xj])
+                    self.simMat[xi, xj] = 1 - prods[(xi, xj)] / denum
+
+                self.simMat[xj, xi] = self.simMat[xi, xj]
+
+
 
 
 class AlgoBasicCollaborative(AlgoUsingSim):
@@ -270,7 +299,7 @@ class AlgoWithBaseline(Algo):
         lambda4 = 0.02
         gamma = 0.005
         nIter = 20
-        for i in range(nIter):
+        for dummy in range(nIter):
             for x, y, r in self.iterAllRatings():
                 """
             for x, xRatings in self.xr.items():
@@ -294,7 +323,7 @@ class AlgoWithBaseline(Algo):
         self.reg_x = reg_u if self.ub else reg_i
         self.reg_y = reg_u if not self.ub else reg_i
 
-        for i in range(nIter):
+        for dummy in range(nIter):
             self.yBiases = np.zeros(self.lastYi + 1)
             for y in range(1, self.lastYi + 1):
                 devY = sum(r - self.mu - self.xBiases[x] for (x, r) in self.yr[y])
