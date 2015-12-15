@@ -30,7 +30,7 @@ for line in base:
 
 trainStartTime = time.process_time()
 #a = AlgoRandom(rm, ur, mr)
-a = AlgoBasicCollaborative(rm, ur, mr, sim='Cos2', movieBased=False)
+a = AlgoBasicCollaborative(rm, ur, mr, sim='MSD', movieBased=False)
 #a = AlgoAnalogy(rm, ur, mr, movieBased=False)
 #a = AlgoParall(rm, ur, mr, movieBased=False, sim='MSD', k=40)
 #a = AlgoPattern(rm, ur, mr, movieBased=False)
@@ -42,11 +42,6 @@ a = AlgoBasicCollaborative(rm, ur, mr, sim='Cos2', movieBased=False)
 
 trainingTime = time.process_time() - trainStartTime
 a.infos['params']['split'] = split
-
-
-np.save('cos2', a.simMat)
-
-"""
 
 rd.seed(0)
 testSet = []
@@ -76,4 +71,3 @@ a.infos['testingTime'] = testingTime
 
 c.printStats(a.infos['preds'])
 a.dumpInfos()
-"""

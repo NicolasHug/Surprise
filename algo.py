@@ -1,3 +1,5 @@
+from itertools import combinations
+from collections import defaultdict
 from scipy.stats import rv_discrete
 from scipy.spatial.distance import cosine
 import numpy as np
@@ -132,96 +134,75 @@ class AlgoUsingSim(Algo):
 
     def constructSimMat(self, sim):
         """construct the simlarity matrix"""
-        if not(sim == 'Cos' or sim == 'MSD' or sim =='MSDClone' or sim ==
-            "Cos2"):
+        knownSim = ['cos', 'MSD', 'MSDClone']
+        if not sim in knownSim:
             raise NameError('WrongSimName')
 
-        # open or precalculate the similarity matrix if it does not exist yet
-        simFileName = 'sim' + sim
-        if self.ub:
-            simFileName += 'Users'
-        else:
-            simFileName += 'Movies'
-        print('Opening file', simFileName, '...')
-        try:
-            simFile = open(simFileName, 'rb')
-            self.simMat = np.load(simFile)
+        print("computing the similarity matrix...")
+        self.simMat = np.empty((self.lastXi + 1, self.lastXi + 1))
+        if sim == 'cos':
+            self.constructCosineSimMat()
+        elif sim == 'MSD':
+            self.constructMSDSimMat()
+            return
 
-        except IOError:
-            print("File doesn't exist. Creating it...")
-            self.simMat = np.empty((self.lastXi + 1, self.lastXi + 1))
-            simMeasure = self.simCos if sim=='Cos' else self.simMSD if sim == 'MSD' else self.simMSDClone
-            if sim=='Cos2':
-                self.cos2()
-            else:
-                for xi in range(1, self.lastXi + 1):
-                    for xj in range(xi, self.lastXi + 1): 
-                        # note : sim is assumed to be symetric
-                        self.simMat[xi, xj] = simMeasure(xi, xj)
-                        self.simMat[xj, xi] = self.simMat[xi, xj]
-                simFile = open(simFileName, 'wb')
-                np.save(simFile, self.simMat)
+    def constructCosineSimMat(self):
+        """compute the cosine similarity between all pairs of xs.
 
-    def simCos(self, xi, xj):
-        """ return the similarity between two users or movies using cosine
-        distance"""
-        # movies rated by xi and xj or users having rated xi and xj
-        Yij= [y for (y, _) in self.xr[xi] if self.rm[xj, y] > 0]
+        Technique inspired from MyMediaLite"""
 
-        if not Yij: # no common rating
-            return 0
-
-        # list of ratings of/by i and j
-        iR = [self.rm[xi, y] for y in Yij]
-        jR = [self.rm[xj, y] for y in Yij]
-
-        return 1 - cosine(iR, jR)
-
-    def cos2(self):
-        from itertools import combinations
-        from collections import defaultdict
-
-        prods = np.empty((self.lastXi + 1, self.lastXi + 1))
-        freq = np.empty((self.lastXi + 1, self.lastXi + 1))
-        sumii = np.empty((self.lastXi + 1, self.lastXi + 1))
-        sumjj = np.empty((self.lastXi + 1, self.lastXi + 1))
+        prods = defaultdict(int)  # sum (r_ui * r_vi) for common items
+        freq = defaultdict(int)   # number common items
+        sqi = defaultdict(int)  # sum (r_ui ^ 2) for common items
+        sqj = defaultdict(int)  # sum (r_vi ^ 2) for common items
 
         for y, yRatings in self.yr.items():
-            for (x1, r1), (x2, r2) in combinations(yRatings, 2):
-                prods[x1, x2] += r1 * r2
-                freq[x1, x2] += 1
-                sumii[x1, x2] += r1**2
-                sumjj[x1, x2] += r2**2
+            for (xi, r1), (xj, r2) in combinations(yRatings, 2):
+                # note : accessing and updating elements takes a looooot of
+                # time. Yet defaultdict is still faster than a numpy array...
+                prods[xi, xj] += r1 * r2
+                freq[xi, xj] += 1
+                sqi[xi, xj] += r1**2
+                sqj[xi, xj] += r2**2
 
         for xi in range(1, self.lastXi + 1):
             self.simMat[xi, xi] = 1
-            for xj in range(xi + 1, self.lastXi + 1): 
-
-                if freq[(xi, xj)] < 1:
+            for xj in range(xi + 1, self.lastXi + 1):
+                if freq[xi, xj] == 0:
                     self.simMat[xi, xj] = 0
                 else:
-                    denum = np.sqrt(sumii[(xi, xj)] * sumjj[(xi, xj)])
-                    self.simMat[xi, xj] = prods[(xi, xj)] / denum
+                    denum = np.sqrt(sqi[xi, xj] * sqj[xi, xj])
+                    self.simMat[xi, xj] = prods[xi, xj] / denum
 
                 self.simMat[xj, xi] = self.simMat[xi, xj]
 
+    def constructMSDSimMat(self):
+        """compute the mean squared difference similarity between all pairs of
+        xs. MSDSim(xi, xj) = 1/MSD(xi, xj). if MSD(xi, xj) == 0, then
+        MSDSim(xi, xj) = number of common ys. Implicitely, if there are no
+        common ys, sim will be zero
 
+        Technique inspired from MyMediaLite"""
 
+        sqDiff = defaultdict(int)  # sum (r_ui - r_vi)**2 for common items
+        freq = defaultdict(int)   # number common items
 
-    def simMSD(self, xi, xj):
-        """ return the similarity between two users or movies using Mean
-        Squared Difference"""
-        # movies rated by xi andxj or users having rated xi and xj
-        Yij = [y for (y, _) in self.xr[xi] if self.rm[xj, y] > 0]
+        for y, yRatings in self.yr.items():
+            for (xi, r1), (xj, r2) in combinations(yRatings, 2):
+                # note : accessing and updating elements takes a looooot of
+                # time. Yet defaultdict is still faster than a numpya array...
+                sqDiff[xi, xj] += (r1 - r2)**2
+                freq[xi, xj] += 1
 
-        if not Yij:
-            return 0
+        for xi in range(1, self.lastXi + 1):
+            self.simMat[xi, xi] = 100 # completely arbitrary and useless anyway
+            for xj in range(xi, self.lastXi + 1):
+                if sqDiff[xi, xj] == 0:  # return number of common ys
+                    self.simMat[xi, xj] = freq[xi, xj]
+                else:  # return inverse of MSD
+                    self.simMat[xi, xj] = freq[xi, xj] / sqDiff[xi, xj]
 
-        # sum of squared differences:
-        ssd = sum((self.rm[xi, y] - self.rm[xj, y])**2 for y in Yij)
-        if ssd == 0:
-            return  len(Yij) # maybe we should return more ?
-        return len(Yij) / ssd
+                self.simMat[xj, xi] = self.simMat[xi, xj]
 
     def simMSDClone(self, xi, xj):
         """ return the similarity between two users or movies using Mean
