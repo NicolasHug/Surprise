@@ -134,9 +134,6 @@ class AlgoUsingSim(Algo):
 
     def constructSimMat(self, sim):
         """construct the simlarity matrix"""
-        knownSim = ['cos', 'MSD', 'MSDClone']
-        if not sim in knownSim:
-            raise NameError('WrongSimName')
 
         print("computing the similarity matrix...")
         self.simMat = np.empty((self.lastXi + 1, self.lastXi + 1))
@@ -144,7 +141,12 @@ class AlgoUsingSim(Algo):
             self.constructCosineSimMat()
         elif sim == 'MSD':
             self.constructMSDSimMat()
-            return
+        elif sim == 'MSDClone':
+            self.constructMSDCloneSimMat()
+        elif sim == 'pearson':
+            self.constructPearsonSimMat()
+        else:
+            raise NameError('WrongSimName')
 
     def constructCosineSimMat(self):
         """compute the cosine similarity between all pairs of xs.
@@ -204,23 +206,67 @@ class AlgoUsingSim(Algo):
 
                 self.simMat[xj, xi] = self.simMat[xi, xj]
 
-    def simMSDClone(self, xi, xj):
-        """ return the similarity between two users or movies using Mean
-        Squared Difference with Clone"""
+    def constructMSDCloneSimMat(self):
+        """compute the 'clone' mean squared difference similarity between all
+        pairs of xs. Some properties as for MSDSim apply"""
 
-        # movies rated by xi andxj or users having rated xi and xj
-        Yij = [y for (y, _) in self.xr[xi] if self.rm[xj, y] > 0]
+        for xi in range(1, self.lastXi + 1):
+            self.simMat[xi, xi] = 100 # completely arbitrary and useless anyway
+            for xj in range(xi, self.lastXi + 1):
+                # comon ys for xi and xj
+                Yij = [y for (y, _) in self.xr[xi] if self.rm[xj, y] > 0]
 
-        if not Yij:
-            return 0
+                if not Yij:
+                    self.simMat[xi, xj] = 0
+                    continue
 
-        print(xi, xj)
-        meanDiff = np.mean([self.rm[xi, y] - self.rm[xj, y] for y in Yij])
-        # sum of squared differences:
-        ssd = sum((self.rm[xi, y] - self.rm[xj, y] - meanDiff)**2 for y in Yij)
-        if ssd == 0:
-            return  len(Yij) # maybe we should return more ?
-        return len(Yij) / ssd
+                meanDiff = np.mean([self.rm[xi, y] - self.rm[xj, y] for y in Yij])
+                # sum of squared differences:
+                ssd = sum((self.rm[xi, y] - self.rm[xj, y] - meanDiff)**2 for y in Yij)
+                if ssd == 0:
+                    self.simMat[xi, xj] = len(Yij) # well... ok.
+                else:
+                    self.simMat[xi, xj] = len(Yij) / ssd
+
+    def constructPearsonSimMat(self):
+        """compute the pearson corr coeff between all pairs of xs.
+
+        Technique inspired from MyMediaLite"""
+
+        freq = defaultdict(int)   # number common items
+        prods = defaultdict(int)  # sum (r_ui * r_vi) for common items
+        sqi = defaultdict(int)  # sum (r_ui ^ 2) for common items
+        sqj = defaultdict(int)  # sum (r_vi ^ 2) for common items
+        si = defaultdict(int)  # sum (r_ui) for common items
+        sj = defaultdict(int)  # sum (r_vi) for common items
+
+        for y, yRatings in self.yr.items():
+            for (xi, r1), (xj, r2) in combinations(yRatings, 2):
+                # note : accessing and updating elements takes a looooot of
+                # time. Yet defaultdict is still faster than a numpy array...
+                prods[xi, xj] += r1 * r2
+                freq[xi, xj] += 1
+                sqi[xi, xj] += r1**2
+                sqj[xi, xj] += r2**2
+                si[xi, xj] += r1
+                sj[xi, xj] += r2
+
+        for xi in range(1, self.lastXi + 1):
+            self.simMat[xi, xi] = 1
+            for xj in range(xi + 1, self.lastXi + 1):
+                n = freq[xi, xj]
+                if n < 2:
+                    self.simMat[xi, xj] = 0
+                else:
+                    num = n * prods[xi, xj] - si[xi, xj] - sj[xi, xj]
+                    denum = np.sqrt((n * sqi[xi, xj] - si[xi, xj]**2) *
+                                    (n * sqj[xi, xj] - sj[xi, xj]**2))
+                    if denum == 0:
+                        self.simMat[xi, xj] = 0
+                    else:
+                        self.simMat[xi, xj] = num / denum
+
+                self.simMat[xj, xi] = self.simMat[xi, xj]
 
 
 class AlgoBasicCollaborative(AlgoUsingSim):
