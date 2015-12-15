@@ -44,6 +44,10 @@ trainingTime = time.process_time() - trainStartTime
 a.infos['params']['split'] = split
 
 
+np.save('cos2', a.simMat)
+
+"""
+
 rd.seed(0)
 testSet = []
 for line in test:
@@ -72,3 +76,4 @@ a.infos['testingTime'] = testingTime
 
 c.printStats(a.infos['preds'])
 a.dumpInfos()
+"""

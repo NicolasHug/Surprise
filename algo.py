@@ -177,6 +177,37 @@ class AlgoUsingSim(Algo):
 
         return 1 - cosine(iR, jR)
 
+    def cos2(self):
+        from itertools import combinations
+        from collections import defaultdict
+
+        prods = np.empty((self.lastXi + 1, self.lastXi + 1))
+        freq = np.empty((self.lastXi + 1, self.lastXi + 1))
+        sumii = np.empty((self.lastXi + 1, self.lastXi + 1))
+        sumjj = np.empty((self.lastXi + 1, self.lastXi + 1))
+
+        for y, yRatings in self.yr.items():
+            for (x1, r1), (x2, r2) in combinations(yRatings, 2):
+                prods[x1, x2] += r1 * r2
+                freq[x1, x2] += 1
+                sumii[x1, x2] += r1**2
+                sumjj[x1, x2] += r2**2
+
+        for xi in range(1, self.lastXi + 1):
+            self.simMat[xi, xi] = 1
+            for xj in range(xi + 1, self.lastXi + 1): 
+
+                if freq[(xi, xj)] < 1:
+                    self.simMat[xi, xj] = 0
+                else:
+                    denum = np.sqrt(sumii[(xi, xj)] * sumjj[(xi, xj)])
+                    self.simMat[xi, xj] = prods[(xi, xj)] / denum
+
+                self.simMat[xj, xi] = self.simMat[xi, xj]
+
+
+
+
     def simMSD(self, xi, xj):
         """ return the similarity between two users or movies using Mean
         Squared Difference"""
@@ -209,35 +240,6 @@ class AlgoUsingSim(Algo):
         if ssd == 0:
             return  len(Yij) # maybe we should return more ?
         return len(Yij) / ssd
-
-    def cos2(self):
-        from itertools import combinations
-        from collections import defaultdict
-
-        prods = defaultdict(int)
-        freq = defaultdict(int)
-        sums = defaultdict(int)
-
-        for y, yRatings in self.yr.items():
-            for (x1, r1), (x2, r2) in combinations(yRatings, 2):
-                prods[(x1, x2)] += r1 * r2
-                freq[(x1, x2)] += 1
-
-        for xi in range(1, self.lastXi + 1):
-            sums[xi] = sum(ri**2 for (_, ri) in self.xr[xi])
-
-        for xi in range(1, self.lastXi + 1):
-            for xj in range(xi, self.lastXi + 1): 
-
-                if freq[(xi, xj)] < 1:
-                    self.simMat[xi, xj] = 0
-                else:
-                    denum = np.sqrt(sums[xi] * sums[xj])
-                    self.simMat[xi, xj] = 1 - prods[(xi, xj)] / denum
-
-                self.simMat[xj, xi] = self.simMat[xi, xj]
-
-
 
 
 class AlgoBasicCollaborative(AlgoUsingSim):
