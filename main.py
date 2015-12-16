@@ -38,7 +38,7 @@ trainStartTime = time.process_time()
 #a = AlgoFactors(rm, ur, mr, movieBased=False)
 #a = AlgoCollabMeanDiff(rm, ur, mr, movieBased=False, sim='MSDClone')
 a = AlgoNeighborhoodWithBaseline(rm, ur, mr, movieBased=False,
-        method='als',sim='MSD')
+        method='als',sim='pearson')
 #a = AlgoBaselineOnly(rm, ur, mr, movieBased=False, method='als')
 
 trainingTime = time.process_time() - trainStartTime

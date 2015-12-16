@@ -25,9 +25,9 @@ class AlgoNeighborhoodWithBaseline(AlgoWithBaseline, AlgoUsingSim):
 
         # let the KNN vote
         k = self.k
-        simNeighboors = [sim for (_, sim, _) in simX0[:k]]
+        simNeighboors = [sim for (_, sim, _) in simX0[:k] if sim > 0]
         diffRatNeighboors = [r - self.getBaseline(x, y0)
-            for (x, _, r) in simX0[:k]]
+            for (x, sim, r) in simX0[:k] if sim > 0]
         try:
             self.est += np.average(diffRatNeighboors, weights=simNeighboors)
         except ZeroDivisionError:

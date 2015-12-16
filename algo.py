@@ -258,7 +258,7 @@ class AlgoUsingSim(Algo):
                 if n < 2:
                     self.simMat[xi, xj] = 0
                 else:
-                    num = n * prods[xi, xj] - si[xi, xj] - sj[xi, xj]
+                    num = n * prods[xi, xj] - si[xi, xj] * sj[xi, xj]
                     denum = np.sqrt((n * sqi[xi, xj] - si[xi, xj]**2) *
                                     (n * sqj[xi, xj] - sj[xi, xj]**2))
                     if denum == 0:
@@ -296,8 +296,9 @@ class AlgoBasicCollaborative(AlgoUsingSim):
         simX0 = sorted(simX0, key=lambda x:x[1], reverse=True)
 
         # let the KNN vote
-        simNeighboors = [sim for (_, sim) in simX0[:self.k]]
-        ratNeighboors = [self.rm[x, y0] for (x, _) in simX0[:self.k]]
+        simNeighboors = [sim for (_, sim) in simX0[:self.k] if sim > 0]
+        ratNeighboors = [self.rm[x, y0] for (x, sim) in simX0[:self.k]
+                if sim > 0]
         try:
             self.est = np.average(ratNeighboors, weights=simNeighboors)
         except ZeroDivisionError:
