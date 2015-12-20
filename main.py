@@ -9,6 +9,7 @@ import argparse
 import common as c
 from algoAnalogy import *
 from algoKorbenAndCo import *
+from algoClone import *
 
 parser = argparse.ArgumentParser(
         description='run a prediction algorithm for recommendation on given '
@@ -25,9 +26,9 @@ algoChoices = {
         'AlgoPattern'                  : AlgoPattern,
         'AlgoKNNBelkor'                : AlgoKNNBelkor,
         'AlgoFactors'                  : AlgoFactors,
-        'AlgoClone'                    : AlgoClone,
-        'AlgoMeanDiff'                 : AlgoMeanDiff,
-        'AlgoCollabMeanDiff'           : AlgoCollabMeanDiff
+        'AlgoCloneBruteforce'          : AlgoCloneBruteforce,
+        'AlgoCloneMeanDiff'            : AlgoCloneMeanDiff,
+        'AlgoCloneKNNMeanDiff'         : AlgoCloneKNNMeanDiff
 }
 parser.add_argument('-algo', type=str,
         default='AlgoNeighborhoodWithBaseline',

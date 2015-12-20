@@ -4,10 +4,9 @@ class AlgoNeighborhoodWithBaseline(AlgoWithBaseline, AlgoUsingSim):
     """ Algo baseline AND deviation from baseline of the neighbors
         simlarity measure = cos"""
     def __init__(self, rm, ur, mr, movieBased=False, method='als', sim='cos',
-            **kwargs):
+            k=40, **kwargs):
         super().__init__(rm, ur, mr, movieBased, method=method, sim=sim)
         self.infos['name'] = 'neighborhoodWithBaseline'
-        self.k = 40
         self.infos['params']['k'] = self.k
 
     def estimate(self, u0, m0):
