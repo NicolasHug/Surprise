@@ -1,8 +1,8 @@
 from algo import *
 
 class AlgoUsingMeanDiff(Algo):
-    """Astract class for algorithms using the mean difference the ratings of
-    two users/items"""
+    """Astract class for algorithms using the mean difference between the
+    ratings of two users/items"""
     def __init__(self, rm, ur, mr, movieBased=False, **kwargs):
         super().__init__(rm, ur, mr, movieBased=movieBased, **kwargs)
 
@@ -36,7 +36,7 @@ class AlgoCloneBruteforce(Algo):
     def __init__(self, rm, ur, mr, movieBased=False, **kwargs):
         super().__init__(rm, ur, mr, movieBased=movieBased)
 
-        self.infos['name'] = 'clone'
+        self.infos['name'] = 'AlgoClonBruteForce'
 
     def isClone(self, ra, rb, k):
         """ return True if xa (with ratings ra) is a k-clone of xb (with
@@ -77,7 +77,7 @@ class AlgoCloneMeanDiff(AlgoUsingMeanDiff):
     def __init__(self, rm, ur, mr, movieBased=False, **kargs):
         super().__init__(rm, ur, mr, movieBased=movieBased)
 
-        self.infos['name'] = 'meanDiff'
+        self.infos['name'] = 'AlgoCloneMeanDiff'
 
     def estimate(self, u0, m0):
         x0, y0 = self.getx0y0(u0, m0)
@@ -107,7 +107,7 @@ class AlgoCloneKNNMeanDiff(AlgoUsingMeanDiff, AlgoUsingSim):
     def __init__(self, rm, ur, mr, movieBased=False, sim='MSDClone', k=40, **kwargs):
         super().__init__(rm, ur, mr, movieBased=movieBased, sim=sim)
 
-        self.infos['name'] = 'CollabMeanDiff'
+        self.infos['name'] = 'AlgoCloneKNNMeanDiff'
 
         self.k = k
 

@@ -18,17 +18,18 @@ parser = argparse.ArgumentParser(
         '--movieBased 1 3')
 
 algoChoices = {
-        'AlgoRandom'                   : AlgoRandom,
-        'AlgoBaselineOnly'             : AlgoBaselineOnly,
-        'AlgoBasicCollaborative'       : AlgoBasicCollaborative,
-        'AlgoNeighborhoodWithBaseline' : AlgoNeighborhoodWithBaseline,
-        'AlgoParall'                   : AlgoParall,
-        'AlgoPattern'                  : AlgoPattern,
-        'AlgoKNNBelkor'                : AlgoKNNBelkor,
-        'AlgoFactors'                  : AlgoFactors,
-        'AlgoCloneBruteforce'          : AlgoCloneBruteforce,
-        'AlgoCloneMeanDiff'            : AlgoCloneMeanDiff,
-        'AlgoCloneKNNMeanDiff'         : AlgoCloneKNNMeanDiff
+        'AlgoRandom'           : AlgoRandom,
+        'AlgoBaselineOnly'     : AlgoBaselineOnly,
+        'AlgoKNNBasic'         : AlgoKNNBasic,
+        'AlgoKNNBaseline'      : AlgoKNNBaseline,
+        'AlgoKNNWithMeans'     : AlgoKNNWithMeans,
+        'AlgoParall'           : AlgoParall,
+        'AlgoPattern'          : AlgoPattern,
+        'AlgoKNNBelkor'        : AlgoKNNBelkor,
+        'AlgoFactors'          : AlgoFactors,
+        'AlgoCloneBruteforce'  : AlgoCloneBruteforce,
+        'AlgoCloneMeanDiff'    : AlgoCloneMeanDiff,
+        'AlgoCloneKNNMeanDiff' : AlgoCloneKNNMeanDiff
 }
 parser.add_argument('-algo', type=str,
         default='AlgoNeighborhoodWithBaseline',
@@ -146,5 +147,5 @@ for fold in args.folds:
     print('-' * 20)
     print('-' * 20)
 
-print("mean RMSE of", args.algo, "on folds", args.folds,
-        ": {0:1.4f}".format(np.mean(rmses)))
+print(args)
+print("RMSE: {0:1.4f}".format(np.mean(rmses)))

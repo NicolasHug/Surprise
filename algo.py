@@ -125,7 +125,7 @@ class AlgoRandom(Algo):
 
 class AlgoUsingSim(Algo):
     """Abstract class for algos using a similarity measure
-    sim parameter can be 'Cos' or 'MSD' for mean squared difference"""
+    sim parameter can be 'cos' or 'MSD' for mean squared difference"""
     def __init__(self, rm, ur, mr, movieBased, sim, **kwargs):
         super().__init__(rm, ur, mr, movieBased, **kwargs)
 
@@ -269,16 +269,16 @@ class AlgoUsingSim(Algo):
                 self.simMat[xj, xi] = self.simMat[xi, xj]
 
 
-class AlgoBasicCollaborative(AlgoUsingSim):
+class AlgoKNNBasic(AlgoUsingSim):
     """Basic collaborative filtering algorithm"""
 
-    def __init__(self, rm, ur, mr, movieBased=False, sim='Cos', k=40, **kwargs):
+    def __init__(self, rm, ur, mr, movieBased=False, sim='cos', k=40, **kwargs):
         super().__init__(rm, ur, mr, movieBased=movieBased, sim=sim)
 
         self.k = k
 
-        self.infos['name'] = 'basicCollaborative'
-        self.infos['params']['similarity measure'] = 'cosine'
+        self.infos['name'] = 'KNNBasic'
+        self.infos['params']['similarity measure'] = sim
         self.infos['params']['k'] = self.k
 
     def estimate(self, u0, m0):
@@ -303,6 +303,47 @@ class AlgoBasicCollaborative(AlgoUsingSim):
             self.est = np.average(ratNeighboors, weights=simNeighboors)
         except ZeroDivisionError:
             self.est = 0
+
+class AlgoKNNWithMeans(AlgoUsingSim):
+    """Basic collaborative filtering algorithm, taking into account the mean
+    ratings of each user"""
+
+    def __init__(self, rm, ur, mr, movieBased=False, sim='cos', k=40, **kwargs):
+        super().__init__(rm, ur, mr, movieBased=movieBased, sim=sim)
+
+        self.k = k
+
+        self.infos['name'] = 'basicWithMeans'
+        self.infos['params']['similarity measure'] = sim
+        self.infos['params']['k'] = self.k
+
+        self.means = np.zeros(self.lastXi + 1)
+        for x, ratings in self.xr.items():
+            self.means[x] = np.mean([r for (_, r) in self.xr[x]])
+
+    def estimate(self, u0, m0):
+        x0, y0 = self.getx0y0(u0, m0)
+        # list of (x, sim(x0, x)) for u having rated m0 or for m rated by x0
+        simX0 = [(x, self.simMat[x0, x]) for x in range(1, self.lastXi + 1) if
+            self.rm[x, y0] > 0]
+
+        self.est = self.means[x0]
+
+        # if there is nobody on which predict the rating...
+        if not simX0:
+            return
+
+        # sort simX0 by similarity
+        simX0 = sorted(simX0, key=lambda x:x[1], reverse=True)
+
+        # let the KNN vote
+        simNeighboors = [sim for (_, sim) in simX0[:self.k] if sim > 0]
+        ratNeighboors = [self.rm[x, y0] - self.means[x] for (x, sim) in
+                simX0[:self.k] if sim > 0]
+        try:
+            self.est += np.average(ratNeighboors, weights=simNeighboors)
+        except ZeroDivisionError:
+            pass
 
 class AlgoWithBaseline(Algo):
     """Abstract class for algos that need a baseline"""
@@ -331,10 +372,6 @@ class AlgoWithBaseline(Algo):
         nIter = 20
         for dummy in range(nIter):
             for x, y, r in self.iterAllRatings():
-                """
-            for x, xRatings in self.xr.items():
-                for y, r in xRatings:
-                    """
                 err = r - (self.mu + self.xBiases[x] + self.yBiases[y])
                 # update xBiases
                 self.xBiases[x] += gamma * (err - lambda4 *
