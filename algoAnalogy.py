@@ -37,7 +37,8 @@ class AlgoUsingAnalogy(Algo):
 
 class AlgoParall(AlgoUsingSim, AlgoUsingAnalogy):
     """geometrical analogy based recommender"""
-    def __init__(self, rm, ur, mr, movieBased=False, sim='MSD', k=40):
+    def __init__(self, rm, ur, mr, movieBased=False, sim='MSD', k=40,
+            **kwargs):
         super().__init__(rm, ur, mr, movieBased, sim)
         self.infos['name'] = 'algoParallKNN' if k else 'algoParall'
 
@@ -135,7 +136,7 @@ class AlgoParall(AlgoUsingSim, AlgoUsingAnalogy):
 
 class AlgoPattern(AlgoUsingAnalogy):
     """analogy based recommender using patterns in 3-tuples"""
-    def __init__(self, rm, ur, mr, movieBased=False):
+    def __init__(self, rm, ur, mr, movieBased=False, **kwargs):
         super().__init__(rm, ur, mr, movieBased)
         self.infos['name'] = 'algoPattern'
 

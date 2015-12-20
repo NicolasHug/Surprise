@@ -12,7 +12,7 @@ import common as cmn
 class Algo:
     """Abstract Algo class where is defined the basic behaviour of a recomender
     algorithm"""
-    def __init__(self, rm, ur, mr, movieBased=False, withDump=True):
+    def __init__(self, rm, ur, mr, movieBased=False, withDump=False):
 
         # whether the algo will be based on users
         # if the algo is user based, x denotes a user and y a movie
@@ -107,7 +107,7 @@ class Algo:
 class AlgoRandom(Algo):
     """predict a random rating based on the distribution of the training set"""
     
-    def __init__(self, rm, ur, mr):
+    def __init__(self, rm, ur, mr, **kwargs):
         super().__init__(rm, ur, mr)
         self.infos['name'] = 'random'
 
@@ -272,7 +272,7 @@ class AlgoUsingSim(Algo):
 class AlgoBasicCollaborative(AlgoUsingSim):
     """Basic collaborative filtering algorithm"""
 
-    def __init__(self, rm, ur, mr, movieBased=False, sim='Cos'):
+    def __init__(self, rm, ur, mr, movieBased=False, sim='Cos', **kwargs):
         super().__init__(rm, ur, mr, movieBased=movieBased, sim=sim)
 
         self.k = 40
@@ -363,8 +363,6 @@ class AlgoWithBaseline(Algo):
             for x in range(1, self.lastXi + 1):
                 devX = sum(r - self.mu - self.yBiases[y] for (y, r) in self.xr[x])
                 self.xBiases[x] = devX / (self.reg_x + len(self.xr[x]))
-        
-
 
     def getBaseline(self, x, y):
         return self.mu + self.xBiases[x] + self.yBiases[y]
@@ -373,7 +371,7 @@ class AlgoWithBaseline(Algo):
 class AlgoBaselineOnly(AlgoWithBaseline):
     """ Algo using only baseline""" 
 
-    def __init__(self, rm, ur, mr, movieBased=False, method='opt'):
+    def __init__(self, rm, ur, mr, movieBased=False, method='als', **kwargs):
         super().__init__(rm, ur, mr, movieBased, method=method)
         self.infos['name'] = 'algoBaselineOnly'
 
@@ -385,7 +383,7 @@ class AlgoClone(Algo):
     """Basic collaborative taking into accounts constant differences between
     ratings"""
 
-    def __init__(self, rm, ur, mr, movieBased=False):
+    def __init__(self, rm, ur, mr, movieBased=False, **kwargs):
         super().__init__(rm, ur, mr, movieBased=movieBased)
 
         self.infos['name'] = 'clone'
@@ -417,7 +415,7 @@ class AlgoMeanDiff(Algo):
     """Basic collaborative taking into accuonts constant differences between
     ratings"""
 
-    def __init__(self, rm, ur, mr, movieBased=False):
+    def __init__(self, rm, ur, mr, movieBased=False, **kargs):
         super().__init__(rm, ur, mr, movieBased=movieBased)
 
         self.infos['name'] = 'meanDiff'
@@ -460,7 +458,7 @@ class AlgoCollabMeanDiff(AlgoUsingSim):
     """Basic collaborative taking into accuonts constant differences between
     ratings"""
 
-    def __init__(self, rm, ur, mr, movieBased=False, sim='MSDClone'):
+    def __init__(self, rm, ur, mr, movieBased=False, sim='MSDClone', **kwargs):
         super().__init__(rm, ur, mr, movieBased=movieBased, sim=sim)
 
         self.infos['name'] = 'CollabMeanDiff'

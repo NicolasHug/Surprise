@@ -3,7 +3,8 @@ from algo import *
 class AlgoNeighborhoodWithBaseline(AlgoWithBaseline, AlgoUsingSim):
     """ Algo baseline AND deviation from baseline of the neighbors
         simlarity measure = cos"""
-    def __init__(self, rm, ur, mr, movieBased=False, method='opt', sim='Cos'):
+    def __init__(self, rm, ur, mr, movieBased=False, method='als', sim='cos',
+            **kwargs):
         super().__init__(rm, ur, mr, movieBased, method=method, sim=sim)
         self.infos['name'] = 'neighborhoodWithBaseline'
         self.k = 40
@@ -36,7 +37,7 @@ class AlgoNeighborhoodWithBaseline(AlgoWithBaseline, AlgoUsingSim):
 class AlgoKNNBelkor(AlgoWithBaseline):
     """ KNN learning interpolating weights from the training data. see 5.1.1
     from reco system handbook"""
-    def __init__(self, rm, ur, mr, movieBased=False, method='opt'):
+    def __init__(self, rm, ur, mr, movieBased=False, method='opt', **kwargs):
         super().__init__(rm, ur, mr, movieBased, method=method)
         self.weights = np.zeros((self.lastXi + 1, self.lastXi + 1),
         dtype='double')
@@ -87,7 +88,7 @@ class AlgoKNNBelkor(AlgoWithBaseline):
 class AlgoFactors(Algo):
     """Algo using latent factors. Implem heavily inspired by
     https://github.com/aaw/IncrementalSVD.jl"""
-    def __init__(self, rm, ur, mr, movieBased=False):
+    def __init__(self, rm, ur, mr, movieBased=False, **kwargs):
         super().__init__(rm, ur, mr, movieBased)
         self.infos['name'] = 'algoLatentFactors'
 
