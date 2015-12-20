@@ -450,7 +450,7 @@ class AlgoMeanDiff(Algo):
             md, w = self.meanDiff(ra, rb)
             candidates.append(rx + md)
             weights.append(w)
-					
+
         if candidates:
             self.est = np.average(candidates, weights=weights)
         else:
@@ -496,8 +496,9 @@ class AlgoCollabMeanDiff(AlgoUsingSim):
         simX0 = sorted(simX0, key=lambda x:x[1], reverse=True)
 
         # let the KNN vote
-        simNeighboors = [sim for (_, sim) in simX0[:self.k]]
-        ratNeighboors = [self.rm[x, y0] + self.meanDiff(x0, x) for (x, _) in simX0[:self.k]]
+        simNeighboors = [sim for (_, sim) in simX0[:self.k] if sim > 0]
+        ratNeighboors = [self.rm[x, y0] + self.meanDiff(x0, x) for (x, sim) in
+                simX0[:self.k] if sim > 0]
         try:
             self.est = np.average(ratNeighboors, weights=simNeighboors)
         except ZeroDivisionError:

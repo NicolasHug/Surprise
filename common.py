@@ -14,7 +14,7 @@ class Col:
     BOLD = '\033[1m'
     UNDERLINE = '\033[4m'
 
-def printStats(preds):
+def computeStats(preds, output=True):
     """compute some statistics (RMSE, coverage...) on a list of predictions"""
 
     if not preds:
@@ -55,13 +55,16 @@ def printStats(preds):
     precision = 0#nRecoOK / (nRecoOK + nRecoKO)
     recall = nRecoOK / sum(True for p in preds if p['r0'] >= threshold)
 
-    print('Nb impossible predictions:', nImp)
-    print('RMSE: {0:1.4f}'.format(rmse))
-    print('MAE: {0:1.4f}'.format(mae))
-    print('sample size:', len(preds))
-    print('Accuracy rate: {0:1.4f}'.format(accRate))
-    print('Precision: {0:1.2f}'.format(precision))
-    print('recall: {0:1.2f}'.format(recall))
+    if output:
+        print('Nb impossible predictions:', nImp)
+        print('RMSE: {0:1.4f}'.format(rmse))
+        print('MAE: {0:1.4f}'.format(mae))
+        print('sample size:', len(preds))
+        print('Accuracy rate: {0:1.4f}'.format(accRate))
+        print('Precision: {0:1.2f}'.format(precision))
+        print('recall: {0:1.2f}'.format(recall))
+
+    return rmse
 
 def tvA(ra, rb, rc, rd):
     """return the truth value of A(ra, rb, rc, rd)"""

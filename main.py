@@ -37,8 +37,9 @@ trainStartTime = time.process_time()
 #a = AlgoKNNBelkor(rm, ur, mr, method='als', movieBased=False)
 #a = AlgoFactors(rm, ur, mr, movieBased=False)
 #a = AlgoCollabMeanDiff(rm, ur, mr, movieBased=False, sim='MSDClone')
+#a = AlgoClone(rm, ur, mr, movieBased=False)
 a = AlgoNeighborhoodWithBaseline(rm, ur, mr, movieBased=False,
-        method='als',sim='pearson')
+        method='als',sim='MSD')
 #a = AlgoBaselineOnly(rm, ur, mr, movieBased=False, method='als')
 
 trainingTime = time.process_time() - trainStartTime
@@ -70,5 +71,5 @@ testingTime = time.process_time() - testTimeStart
 a.infos['trainingTime'] = trainingTime
 a.infos['testingTime'] = testingTime
 
-c.printStats(a.infos['preds'])
+c.computeStats(a.infos['preds'])
 a.dumpInfos()

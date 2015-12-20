@@ -48,7 +48,7 @@ def analyseDumpFile(dumpFile):
     print('-' * 52)
     """
     # print RMSE & Co for these predictions
-    c.printStats(interestingPreds)
+    c.computeStats(interestingPreds)
 
         
     """
