@@ -1,6 +1,6 @@
 import numpy as np
 
-lastMi = 1682 # last movie index for u1.base
+lastIi = 1682 # last item index for u1.base
 lastUi = 943 # last user index for u1.base
 
 class Col:
@@ -65,13 +65,3 @@ def computeStats(preds, output=True):
         print('recall: {0:1.2f}'.format(recall))
 
     return rmse
-
-def tvA(ra, rb, rc, rd):
-    """return the truth value of A(ra, rb, rc, rd)"""
-
-    # map ratings into [0, 1]
-    ra = (ra-1)/4.; rb = (rb-1)/4.; rc = (rc-1)/4.; rd = (rd-1)/4.;
-    if (ra >= rb and rc >= rd) or (ra <= rb and rc <= rd):
-        return 1 - abs((ra-rb) - (rc-rd))
-    else:
-        return 1 - max(abs(ra-rb), abs(rc-rd))

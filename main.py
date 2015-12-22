@@ -8,14 +8,14 @@ import argparse
 
 import common as c
 from algoAnalogy import *
-from algoKorbenAndCo import *
+from algoKorenAndCo import *
 from algoClone import *
 
 parser = argparse.ArgumentParser(
         description='run a prediction algorithm for recommendation on given '
         'folds',
-        epilog='example: main.py -algo AlgoBasicCollaborative -k 30 -sim cos '
-        '--movieBased 1 3')
+        epilog='example: main.py -algo AlgoKNNBasic -k 30 -sim cos '
+        '--itemBased 1 3')
 
 algoChoices = {
         'AlgoRandom'           : AlgoRandom,
@@ -32,11 +32,11 @@ algoChoices = {
         'AlgoCloneKNNMeanDiff' : AlgoCloneKNNMeanDiff
 }
 parser.add_argument('-algo', type=str,
-        default='AlgoNeighborhoodWithBaseline',
+        default='AlgoKNNBaseline',
         choices=algoChoices,
         help='The prediction algorithm to use. Allowed values are '
         + ', '.join(algoChoices.keys()) + '. (default: '
-        'AlgoNeighborhoodWithBaseline)',
+        'AlgoKNNBaseline)',
         metavar='prediction_algo'
         )
 
@@ -65,8 +65,8 @@ parser.add_argument('folds', metavar='fold', type=int, nargs='*',
         help='The fold numbers on which to make predictions (default: 1 2 3 4 '
         '5)')
 
-parser.add_argument('--movieBased', dest='movieBased', action='store_const',
-const=True, default=False, help='compute similarities on movies (default: user'
+parser.add_argument('--itemBased', dest='itemBased', action='store_const',
+const=True, default=False, help='compute similarities on items (default: user'
         ' based)')
 
 parser.add_argument('--withDump', dest='withDump', action='store_const',
@@ -84,26 +84,26 @@ for fold in args.folds:
 
     print("-- fold numer %d --" % fold)
 
-    base = open('../ml-100k/u%s.base' % fold , 'r')
-    test = open('../ml-100k/u%s.test' % fold, 'r')
+    base = open('./datasets/ml-100k/u%s.base' % fold , 'r')
+    test = open('./datasets/ml-100k/u%s.test' % fold, 'r')
 
-    rm = np.zeros((c.lastMi + 1, c.lastUi + 1), dtype='int') # the rating matrix
-    ur = defaultdict(list)  # dict of users containing list of (m, rat(u, m))
-    mr = defaultdict(list)  # dict of movies containing list of (u, rat(u, m))
+    rm = np.zeros((c.lastIi + 1, c.lastUi + 1), dtype='int') # the rating matrix
+    ur = defaultdict(list)  # dict of users containing list of (i, rat(u, i))
+    ir = defaultdict(list)  # dict of items containing list of (u, rat(u, i))
 
     # read training file
     for line in base:
-        ui, mi, r, _ = line.split()
-        ui = int(ui); mi = int(mi); r = int(r)
-        rm[mi, ui] = r
-        ur[ui].append((mi, r))
-        mr[mi].append((ui, r))
+        ui, ii, r, _ = line.split()
+        ui = int(ui); ii = int(ii); r = int(r)
+        rm[ii, ui] = r
+        ur[ui].append((ii, r))
+        ir[ii].append((ui, r))
 
     trainStartTime = time.process_time()
     trainingTime = time.process_time() - trainStartTime
 
-    algo = algoChoices[args.algo](rm, ur, mr,
-            movieBased=args.movieBased,
+    algo = algoChoices[args.algo](rm, ur, ir,
+            itemBased=args.itemBased,
             method=args.method,
             sim=args.sim,
             k=args.k)
@@ -119,17 +119,17 @@ for fold in args.folds:
 
     print("computing predictions...")
     testTimeStart = time.process_time()
-    for u0, m0, r0, _ in testSet:
-    #for u0, m0, r0, _ in smallTestSet:
+    for u0, i0, r0, _ in testSet:
+    #for u0, i0, r0, _ in smallTestSet:
 
-        u0 = int(u0); m0 = int(m0); r0 = int(r0)
+        u0 = int(u0); i0 = int(i0); r0 = int(r0)
 
         if args.indivOutput:
-            print(u0, m0, r0)
+            print(u0, i0, r0)
 
-        algo.estimate(u0, m0)
+        algo.estimate(u0, i0)
         algo.cut_estimate(1, 5)
-        algo.updatePreds(u0, m0, r0, args.indivOutput)
+        algo.updatePreds(u0, i0, r0, args.indivOutput)
 
         if args.indivOutput:
             print('-' * 20)

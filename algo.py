@@ -1,7 +1,6 @@
 from itertools import combinations
 from collections import defaultdict
 from scipy.stats import rv_discrete
-from scipy.spatial.distance import cosine
 import numpy as np
 import pickle
 import time
@@ -12,24 +11,25 @@ import common as cmn
 class Algo:
     """Abstract Algo class where is defined the basic behaviour of a recomender
     algorithm"""
-    def __init__(self, rm, ur, mr, movieBased=False, withDump=False):
+    def __init__(self, rm, ur, ir, itemBased=False, withDump=False):
 
-        # whether the algo will be based on users
-        # if the algo is user based, x denotes a user and y a movie
-        # if the algo is movie based, x denotes a movie and y a user
-        self.ub = not movieBased
+        # whether the algo will be based on users (basically means that the
+        # similarities will be computed between users or between items)
+        # if the algo is user based, x denotes a user and y an item
+        # if the algo is item based, x denotes an item and y a user
+        self.ub = not itemBased
 
         if self.ub:
             self.rm = rm.T # we take the transpose of the rating matrix
             self.lastXi = cmn.lastUi
-            self.lastYi = cmn.lastMi
+            self.lastYi = cmn.lastIi
             self.xr = ur
-            self.yr = mr
+            self.yr = ir
         else:
-            self.lastXi = cmn.lastMi
+            self.lastXi = cmn.lastIi
             self.lastYi = cmn.lastUi
             self.rm = rm
-            self.xr = mr
+            self.xr = ir
             self.yr = ur
 
         self.est = 0 # set by the estimate method of the child class
@@ -38,11 +38,11 @@ class Algo:
         self.infos = {}
         self.infos['name'] = 'undefined'
         self.infos['params'] = {} # dict of params specific to any algo
-        self.infos['params']['Based on '] = 'users' if self.ub else 'movies'
+        self.infos['params']['Based on '] = 'users' if self.ub else 'items'
         self.infos['ub'] = self.ub
         self.infos['preds'] = [] # list of predictions. see updatePreds
         self.infos['ur'] = ur # user ratings  dict
-        self.infos['mr'] = mr # movie ratings dict
+        self.infos['ir'] = ir # item ratings dict
         self.infos['rm'] = self.rm  # rating matrix
         # Note: there is a lot of duplicated data, the dumped file will be
         # HUGE.
@@ -58,14 +58,14 @@ class Algo:
             str(len(self.infos['preds'])))
         pickle.dump(self.infos, open(name,'wb'))
 
-    def getx0y0(self, u0, m0):
+    def getx0y0(self, u0, i0):
         """return x0 and y0 based on the self.ub variable (see constructor)"""
         if self.ub:
-            return u0, m0
+            return u0, i0
         else:
-            return m0, u0
+            return i0, u0
 
-    def updatePreds(self, u0, m0, r0, output=True):
+    def updatePreds(self, u0, i0, r0, output=True):
         """update preds list and print some info if required
 
         should be called right after the estimate method
@@ -81,7 +81,7 @@ class Algo:
 
         # a prediction is a dict with the following keys
         # 'wasImpossible' : whether or not the prediction was possible
-        # 'u0', 'm0', 'r0' (true rating) and 'est' (estimated rating)
+        # 'u0', 'i0', 'r0' (true rating) and 'est' (estimated rating)
         # '3tuples' (only if algo is analogy based). A list containing all the
         # 3-tuples used for estimation (structure content may depend on the algo)
         predInfo = {}
@@ -91,7 +91,7 @@ class Algo:
         else:
             predInfo['wasImpossible'] = False
 
-        predInfo['u0'] = u0 ; predInfo['m0'] = m0; predInfo['r0'] = r0
+        predInfo['u0'] = u0 ; predInfo['i0'] = i0; predInfo['r0'] = r0
         predInfo['est'] = self.est
         self.infos['preds'].append(predInfo)
 
@@ -107,8 +107,8 @@ class Algo:
 class AlgoRandom(Algo):
     """predict a random rating based on the distribution of the training set"""
 
-    def __init__(self, rm, ur, mr, **kwargs):
-        super().__init__(rm, ur, mr)
+    def __init__(self, rm, ur, ir, **kwargs):
+        super().__init__(rm, ur, ir)
         self.infos['name'] = 'random'
 
         # estimation of the distribution
@@ -126,8 +126,8 @@ class AlgoRandom(Algo):
 class AlgoUsingSim(Algo):
     """Abstract class for algos using a similarity measure
     sim parameter can be 'cos' or 'MSD' for mean squared difference"""
-    def __init__(self, rm, ur, mr, movieBased, sim, **kwargs):
-        super().__init__(rm, ur, mr, movieBased, **kwargs)
+    def __init__(self, rm, ur, ir, itemBased, sim, **kwargs):
+        super().__init__(rm, ur, ir, itemBased, **kwargs)
 
         self.infos['params']['sim'] = sim
         self.constructSimMat(sim) # we'll need the similiarities
@@ -272,8 +272,8 @@ class AlgoUsingSim(Algo):
 class AlgoKNNBasic(AlgoUsingSim):
     """Basic collaborative filtering algorithm"""
 
-    def __init__(self, rm, ur, mr, movieBased=False, sim='cos', k=40, **kwargs):
-        super().__init__(rm, ur, mr, movieBased=movieBased, sim=sim)
+    def __init__(self, rm, ur, ir, itemBased=False, sim='cos', k=40, **kwargs):
+        super().__init__(rm, ur, ir, itemBased=itemBased, sim=sim)
 
         self.k = k
 
@@ -281,9 +281,9 @@ class AlgoKNNBasic(AlgoUsingSim):
         self.infos['params']['similarity measure'] = sim
         self.infos['params']['k'] = self.k
 
-    def estimate(self, u0, m0):
-        x0, y0 = self.getx0y0(u0, m0)
-        # list of (x, sim(x0, x)) for u having rated m0 or for m rated by x0
+    def estimate(self, u0, i0):
+        x0, y0 = self.getx0y0(u0, i0)
+        # list of (x, sim(x0, x)) for u having rated i0 or for m rated by x0
         simX0 = [(x, self.simMat[x0, x]) for x in range(1, self.lastXi + 1) if
             self.rm[x, y0] > 0]
 
@@ -308,8 +308,8 @@ class AlgoKNNWithMeans(AlgoUsingSim):
     """Basic collaborative filtering algorithm, taking into account the mean
     ratings of each user"""
 
-    def __init__(self, rm, ur, mr, movieBased=False, sim='cos', k=40, **kwargs):
-        super().__init__(rm, ur, mr, movieBased=movieBased, sim=sim)
+    def __init__(self, rm, ur, ir, itemBased=False, sim='cos', k=40, **kwargs):
+        super().__init__(rm, ur, ir, itemBased=itemBased, sim=sim)
 
         self.k = k
 
@@ -321,9 +321,9 @@ class AlgoKNNWithMeans(AlgoUsingSim):
         for x, ratings in self.xr.items():
             self.means[x] = np.mean([r for (_, r) in self.xr[x]])
 
-    def estimate(self, u0, m0):
-        x0, y0 = self.getx0y0(u0, m0)
-        # list of (x, sim(x0, x)) for u having rated m0 or for m rated by x0
+    def estimate(self, u0, i0):
+        x0, y0 = self.getx0y0(u0, i0)
+        # list of (x, sim(x0, x)) for u having rated i0 or for m rated by x0
         simX0 = [(x, self.simMat[x0, x]) for x in range(1, self.lastXi + 1) if
             self.rm[x, y0] > 0]
 
@@ -347,8 +347,8 @@ class AlgoKNNWithMeans(AlgoUsingSim):
 
 class AlgoWithBaseline(Algo):
     """Abstract class for algos that need a baseline"""
-    def __init__(self, rm, ur, mr, movieBased, method, **kwargs):
-        super().__init__(rm, ur, mr, movieBased, **kwargs)
+    def __init__(self, rm, ur, ir, itemBased, method, **kwargs):
+        super().__init__(rm, ur, ir, itemBased, **kwargs)
 
         #compute users and items biases
         # see from 5.2.1 of RS handbook
@@ -408,11 +408,11 @@ class AlgoWithBaseline(Algo):
 class AlgoBaselineOnly(AlgoWithBaseline):
     """ Algo using only baseline"""
 
-    def __init__(self, rm, ur, mr, movieBased=False, method='als', **kwargs):
-        super().__init__(rm, ur, mr, movieBased, method=method)
+    def __init__(self, rm, ur, ir, itemBased=False, method='als', **kwargs):
+        super().__init__(rm, ur, ir, itemBased, method=method)
         self.infos['name'] = 'algoBaselineOnly'
 
-    def estimate(self, u0, m0):
-        x0, y0 = self.getx0y0(u0, m0)
+    def estimate(self, u0, i0):
+        x0, y0 = self.getx0y0(u0, i0)
         self.est = self.getBaseline(x0, y0)
 

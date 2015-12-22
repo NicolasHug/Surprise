@@ -8,7 +8,7 @@ def err(p):
     return p['est'] - p['r0']
 
 def meanCommonYs(p):
-    """return the mean count of users (or movies) rated in common for all
+    """return the mean count of users (or items) rated in common for all
     the 3-tuples of prediction p"""
     return np.mean(p['3tuples'], 0)[3] if p['3tuples'] else 0
 
@@ -23,15 +23,15 @@ def solProp(p, r):
 def getx0y0(p, infos):
     """return x0 and y0 based on the ub variable"""
     if infos['ub']:
-        return p['u0'], p['m0']
+        return p['u0'], p['i0']
     else:
-        return p['m0'], p['u0']
+        return p['i0'], p['u0']
 
 
 def getCommonYs(t, p, infos):
     xa, xb, xc, _, _ = t
     x0, _ = getx0y0(p, infos)
-    xr = infos['ur'] if infos['ub'] else infos['mr']
+    xr = infos['ur'] if infos['ub'] else infos['ir']
     rm = infos['rm']
     Yabc0 = [y for (y, r) in xr[xa] if rm[xb, y] and rm[xc, y] and rm[x0, y]]
     return Yabc0
@@ -39,25 +39,25 @@ def getCommonYs(t, p, infos):
 def details(p, infos):
     """print details about a prediction"""
     def detailsRatings(x='u'):
-        """print mean and count of ratings for a user or a movie"""
-        xr = infos['ur'] if x == 'u' else infos['mr']
-        x0 = 'u0' if x == 'u' else 'm0'
+        """print mean and count of ratings for a user or an item"""
+        xr = infos['ur'] if x == 'u' else infos['ir']
+        x0 = 'u0' if x == 'u' else 'i0'
         print("\tcount: {0:d}".format(len(xr[p[x0]])))
         s = "{0:1.4f}".format(np.mean(xr[p[x0]], 0)[1]) if xr[p[x0]] else ""
         print("\tmean :", s)
 
     # ids, true rating, etimation and error
-    print("u0: {0:<3d}    m0: {1:<4d}   r0: {2}   est: {3:1.2f}"
-        "   err: {4:-2.2f}".format(p['u0'], p['m0'], p['r0'], p['est'],
+    print("u0: {0:<3d}    i0: {1:<4d}   r0: {2}   est: {3:1.2f}"
+        "   err: {4:-2.2f}".format(p['u0'], p['i0'], p['r0'], p['est'],
         err(p)))
 
      # was the prediction impossible ?
     print("Prediction impossible? -", p['wasImpossible'])
 
-    # u0 and m0 ratings infos
+    # u0 and i0 ratings infos
     print("u0 ratings:")
     detailsRatings(x='u')
-    print("m0 ratings:")
+    print("i0 ratings:")
     detailsRatings(x='m')
 
     # if algo is analogy based, print info about the candidates triplets
@@ -103,8 +103,8 @@ def errorBetween(p, inf=0., sup=4.):
 def ratingsCountBetween(p, x='u', inf=0, sup=float('inf')):
     """return true if the number of rating for x0 ('u' or 'm') is between inf
     and sup (both included)"""
-    xr = infos['ur'] if x == 'u' else infos['mr']
-    x0 = 'u0' if x == 'u' else 'm0'
+    xr = infos['ur'] if x == 'u' else infos['ir']
+    x0 = 'u0' if x == 'u' else 'i0'
     return inf <= len(xr[p[x0]]) <= sup
 
 def r0Between(p, inf=1, sup=5):
@@ -160,16 +160,16 @@ def measureSurprise(preds, infos):
     # p[i, j] with i /= j represents the probability for i and j to be rated
     # together
     # p[i, i] represents the probability for i to be rated
-    pij = np.zeros((cmn.lastMi + 1, cmn.lastMi + 1))
+    pij = np.zeros((cmn.lastIi + 1, cmn.lastIi + 1))
     print("constructing the pij matrix...")
-    for i in range(1, cmn.lastMi + 1):
-        iratings = infos['mr'][i]
+    for i in range(1, cmn.lastIi + 1):
+        iratings = infos['ir'][i]
         if not iratings:
             continue
         ui, _ = zip(*iratings)
         ui = set(ui) # we need a set to use intersection
-        for j in range(i + 1, cmn.lastMi + 1):
-            jratings = infos['mr'][j]
+        for j in range(i + 1, cmn.lastIi + 1):
+            jratings = infos['ir'][j]
             if not jratings:
                 continue
             uj, _ = zip(*(jratings))
@@ -184,8 +184,8 @@ def measureSurprise(preds, infos):
     surprises = [] # list containing surprise measures of all predictions
     for p in filter(lambda p:p['est'] >= 4, preds):
         u0 = p['u0']
-        m0 = p['m0']
-        pmis = [pmi(m0, j, pij) for (j, _) in infos['ur'][u0]]
+        i0 = p['i0']
+        pmis = [pmi(i0, j, pij) for (j, _) in infos['ur'][u0]]
         surprises.append((max(pmis), np.mean(pmis)))
 
     print("mean of co-occurence surprise (max): "
@@ -195,9 +195,9 @@ def measureSurprise(preds, infos):
 
 def printCoverage(preds):
 
-    # set of recommended movies
-    recMovies = {p['m0'] for p in preds if p['est'] >= 4}
-    # set of all movies
-    movies = {p['m0'] for p in preds}
+    # set of recommended items
+    recItems = {p['i0'] for p in preds if p['est'] >= 4}
+    # set of all items
+    items = {p['i0'] for p in preds}
 
-    print("coverage: {0:1.2f}".format(len(recMovies) / len(movies)))
+    print("coverage: {0:1.2f}".format(len(recItems) / len(items)))

@@ -136,7 +136,7 @@ def compareDumps(dumpFileA, dumpFileB):
     print('-' * 50)
     aIsBetter = [i for (i, p) in enumerate(predsA) if abs(err(p)) <= abs(err(predsB[i]))]
     for i in aIsBetter:
-        print(predsA[i]['m0'], predsA[i]['u0'])
+        print(predsA[i]['i0'], predsA[i]['u0'])
         """
         print('Algo A')
         details(predsA[i], infosA)

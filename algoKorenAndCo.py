@@ -3,16 +3,16 @@ from algo import *
 class AlgoKNNBaseline(AlgoWithBaseline, AlgoUsingSim):
     """ Algo baseline AND deviation from baseline of the neighbors
         simlarity measure = cos"""
-    def __init__(self, rm, ur, mr, movieBased=False, method='als', sim='cos',
+    def __init__(self, rm, ur, ir, itemBased=False, method='als', sim='cos',
             k=40, **kwargs):
-        super().__init__(rm, ur, mr, movieBased, method=method, sim=sim)
+        super().__init__(rm, ur, ir, itemBased, method=method, sim=sim)
 
         self.k = k
         self.infos['name'] = 'neighborhoodWithBaseline'
         self.infos['params']['k'] = self.k
 
-    def estimate(self, u0, m0):
-        x0, y0 = self.getx0y0(u0, m0)
+    def estimate(self, u0, i0):
+        x0, y0 = self.getx0y0(u0, i0)
         self.est = self.getBaseline(x0, y0)
 
 
@@ -38,8 +38,8 @@ class AlgoKNNBaseline(AlgoWithBaseline, AlgoUsingSim):
 class AlgoKNNBelkor(AlgoWithBaseline):
     """ KNN learning interpolating weights from the training data. see 5.1.1
     from reco system handbook"""
-    def __init__(self, rm, ur, mr, movieBased=False, method='opt', **kwargs):
-        super().__init__(rm, ur, mr, movieBased, method=method)
+    def __init__(self, rm, ur, ir, itemBased=False, method='opt', **kwargs):
+        super().__init__(rm, ur, ir, itemBased, method=method)
         self.weights = np.zeros((self.lastXi + 1, self.lastXi + 1),
         dtype='double')
 
@@ -75,8 +75,8 @@ class AlgoKNNBelkor(AlgoWithBaseline):
                         bx2y)/np.sqrt(len(self.yr[y]))) - (lambda10 * wxx2))
 
 
-    def estimate(self, u0, m0):
-        x0, y0 = self.getx0y0(u0, m0)
+    def estimate(self, u0, i0):
+        x0, y0 = self.getx0y0(u0, i0)
 
         self.est = sum((r - self.getBaseline(x2, y0)) *
             self.weights[x0, x2] for (x2, r) in self.yr[y0])
@@ -89,8 +89,8 @@ class AlgoKNNBelkor(AlgoWithBaseline):
 class AlgoFactors(Algo):
     """Algo using latent factors. Implem heavily inspired by
     https://github.com/aaw/IncrementalSVD.jl"""
-    def __init__(self, rm, ur, mr, movieBased=False, **kwargs):
-        super().__init__(rm, ur, mr, movieBased)
+    def __init__(self, rm, ur, ir, itemBased=False, **kwargs):
+        super().__init__(rm, ur, ir, itemBased)
         self.infos['name'] = 'algoLatentFactors'
 
         nFactors = 50 # number of factors
@@ -130,8 +130,8 @@ class AlgoFactors(Algo):
                 res[0] = res[1]
                 res[2] = 0.
 
-    def estimate(self, u0, m0):
-        x0, y0 = self.getx0y0(u0, m0)
+    def estimate(self, u0, i0):
+        x0, y0 = self.getx0y0(u0, i0)
 
 
 

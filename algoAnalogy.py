@@ -4,8 +4,8 @@ from algo import *
 
 class AlgoUsingAnalogy(Algo):
     """Abstract class for algos that use an analogy framework"""
-    def __init__(self, rm, ur, mr, movieBased=False):
-        super().__init__(rm, ur, mr, movieBased)
+    def __init__(self, rm, ur, ir, itemBased=False):
+        super().__init__(rm, ur, ir, itemBased)
         self.tuples = [] # list of 3-tuple (for the last prediction only)
 
     def isSolvable(self, ra, rb, rc):
@@ -37,9 +37,9 @@ class AlgoUsingAnalogy(Algo):
 
 class AlgoParall(AlgoUsingSim, AlgoUsingAnalogy):
     """geometrical analogy based recommender"""
-    def __init__(self, rm, ur, mr, movieBased=False, sim='MSD', k=40,
+    def __init__(self, rm, ur, ir, itemBased=False, sim='MSD', k=40,
             **kwargs):
-        super().__init__(rm, ur, mr, movieBased, sim)
+        super().__init__(rm, ur, ir, itemBased, sim)
         self.infos['name'] = 'algoParallKNN' if k else 'algoParall'
 
         self.k = k
@@ -51,7 +51,7 @@ class AlgoParall(AlgoUsingSim, AlgoUsingAnalogy):
     def genkNN(self, x0, y0):
         """generator to find triplets amongst the kNN"""
 
-        # list of (x, sim(x0, x)) for x having rated m0 or for m rated by x0
+        # list of (x, sim(x0, x)) for x having rated y0 or for y rated by x0
         simX0 = [(x, self.simMat[x0, x]) for x in range(1, self.lastXi + 1) if
             self.rm[x, y0] > 0]
 
@@ -59,7 +59,8 @@ class AlgoParall(AlgoUsingSim, AlgoUsingAnalogy):
         simX0 = sorted(simX0, key=lambda x:x[1], reverse=True)
 
         # get only the k nearest neighbors
-        neighboorsList = [(x, self.rm[x, y0]) for (x, _) in simX0[:self.k]]
+        neighboorsList = [(x, self.rm[x, y0]) for (x, sim) in simX0[:self.k] if
+                sim > 0]
         for xa, ra in neighboorsList:
             for xb, rb in neighboorsList:
                 for xc, rc in neighboorsList:
@@ -75,8 +76,8 @@ class AlgoParall(AlgoUsingSim, AlgoUsingAnalogy):
             yield (xa, ra), (xb, rb), (xc, rc)
 
 
-    def estimate(self, u0, m0):
-        x0, y0 = self.getx0y0(u0, m0)
+    def estimate(self, u0, i0):
+        x0, y0 = self.getx0y0(u0, i0)
 
         # if there are no ratings for y0, prediction is impossible
         if not self.yr[y0]:
@@ -136,12 +137,12 @@ class AlgoParall(AlgoUsingSim, AlgoUsingAnalogy):
 
 class AlgoPattern(AlgoUsingAnalogy):
     """analogy based recommender using patterns in 3-tuples"""
-    def __init__(self, rm, ur, mr, movieBased=False, **kwargs):
-        super().__init__(rm, ur, mr, movieBased)
+    def __init__(self, rm, ur, ir, itemBased=False, **kwargs):
+        super().__init__(rm, ur, ir, itemBased)
         self.infos['name'] = 'algoPattern'
 
-    def estimate(self, u0, m0):
-        x0, y0 = self.getx0y0(u0, m0)
+    def estimate(self, u0, i0):
+        x0, y0 = self.getx0y0(u0, i0)
 
         # if there are no ratings for y0, prediction is impossible
         if not self.yr[y0]:
