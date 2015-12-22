@@ -87,9 +87,9 @@ for fold in args.folds:
     base = open('./datasets/ml-100k/u%s.base' % fold , 'r')
     test = open('./datasets/ml-100k/u%s.test' % fold, 'r')
 
-    rm = np.zeros((c.lastIi + 1, c.lastUi + 1), dtype='int') # the rating matrix
-    ur = defaultdict(list)  # dict of users containing list of (i, rat(u, i))
-    ir = defaultdict(list)  # dict of items containing list of (u, rat(u, i))
+    rm = np.zeros((c.lastIi + 1, c.lastUi + 1), dtype='int')
+    ur = defaultdict(list)
+    ir = defaultdict(list)
 
     # read training file
     for line in base:
@@ -127,12 +127,10 @@ for fold in args.folds:
         if args.indivOutput:
             print(u0, i0, r0)
 
-        algo.estimate(u0, i0)
-        algo.cut_estimate(1, 5)
-        algo.updatePreds(u0, i0, r0, args.indivOutput)
+        algo.predict(u0, i0, r0, args.indivOutput)
 
         if args.indivOutput:
-            print('-' * 20)
+            print('-' * 15)
 
     testingTime = time.process_time() - testTimeStart
 
@@ -142,7 +140,7 @@ for fold in args.folds:
     algo.infos['trainingTime'] = trainingTime
     algo.infos['testingTime'] = testingTime
 
-    rmses.append(c.computeStats(algo.infos['preds']))
+    rmses.append(c.computeStats(algo.preds))
     algo.dumpInfos()
     print('-' * 20)
     print('-' * 20)

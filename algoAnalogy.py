@@ -68,7 +68,7 @@ class AlgoParall(AlgoUsingSim, AlgoUsingAnalogy):
 
     def genRandom(self, x0, y0):
         """generator that will return 1000 random triplets"""
-        for i in range(1000):
+        for i in range(10):
             # randomly choose a, b, and c
             xa, ra = rd.choice(self.yr[y0])
             xb, rb = rd.choice(self.yr[y0])
@@ -81,8 +81,7 @@ class AlgoParall(AlgoUsingSim, AlgoUsingAnalogy):
 
         # if there are no ratings for y0, prediction is impossible
         if not self.yr[y0]:
-            self.est = 0
-            return
+            raise PredictionImpossible
 
         candidates= [] # solutions to analogical equations
         self.tuples = [] # list of 3-tuples that are serve as candidates
@@ -108,7 +107,7 @@ class AlgoParall(AlgoUsingSim, AlgoUsingAnalogy):
             """
             self.est = np.average(ratings)
         else:
-            self.est = 0
+            raise PredictionImpossible
 
 
     def getParall(self, xa, xb, xc, x0):
@@ -146,8 +145,7 @@ class AlgoPattern(AlgoUsingAnalogy):
 
         # if there are no ratings for y0, prediction is impossible
         if not self.yr[y0]:
-            self.est = 0
-            return
+            raise PredictionImpossible
 
         candidates= [] # solutions to analogical equations
         self.tuples = [] # list of 3-tuples that are serve as candidates
@@ -204,7 +202,7 @@ class AlgoPattern(AlgoUsingAnalogy):
             ratings = [r for r in candidates]
             self.est = np.average(ratings)
         else:
-            self.est = 0
+            raise PredictionImpossible
 
 
     def getYabc0(self, xa, xb, xc, x0):

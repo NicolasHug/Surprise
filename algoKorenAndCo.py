@@ -55,7 +55,7 @@ class AlgoKNNBelkor(AlgoWithBaseline):
                 est = sum((r - self.getBaseline(x2, y)) *
                     self.weights[x, x2] for (x2, r) in self.yr[y])
                 est /= np.sqrt(len(self.yr[y]))
-                est += self.mu + self.xBiases[x] + self.yBiases[y]
+                est += self.meanRatings + self.xBiases[x] + self.yBiases[y]
 
                 err = rxy - est
 

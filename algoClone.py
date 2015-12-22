@@ -65,7 +65,7 @@ class AlgoCloneBruteforce(Algo):
         if candidates:
             self.est = np.mean(candidates)
         else:
-            self.est = 0
+            raise PredictionImpossible
 
 class AlgoCloneMeanDiff(AlgoUsingMeanDiff):
     """Algo based on cloning:
@@ -94,7 +94,7 @@ class AlgoCloneMeanDiff(AlgoUsingMeanDiff):
         if candidates:
             self.est = np.average(candidates, weights=weights)
         else:
-            self.est = 0
+            raise PredictionImpossible
 
 class AlgoCloneKNNMeanDiff(AlgoUsingMeanDiff, AlgoUsingSim):
     """Algo based on cloning:
@@ -122,8 +122,7 @@ class AlgoCloneKNNMeanDiff(AlgoUsingMeanDiff, AlgoUsingSim):
 
         # if there is nobody on which predict the rating...
         if not simX0:
-            self.est = 0
-            return
+            raise PredictionImpossible
 
         # sort simX0 by similarity
         simX0 = sorted(simX0, key=lambda x:x[1], reverse=True)
@@ -135,4 +134,4 @@ class AlgoCloneKNNMeanDiff(AlgoUsingMeanDiff, AlgoUsingSim):
         try:
             self.est = np.average(ratNeighboors, weights=simNeighboors)
         except ZeroDivisionError:
-            self.est = 0
+            raise PredictionImpossible

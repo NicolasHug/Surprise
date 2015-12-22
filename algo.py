@@ -8,10 +8,15 @@ import os
 
 import common as cmn
 
+class PredictionImpossible(Exception):
+    """Exception raised when a prediction is impossible"""
+    pass
+
 class Algo:
     """Abstract Algo class where is defined the basic behaviour of a recomender
     algorithm"""
-    def __init__(self, rm, ur, ir, itemBased=False, withDump=False):
+    def __init__(self, rm, ur, ir, itemBased=False, withDump=False, rMin=1,
+            rMax=5):
 
         # whether the algo will be based on users (basically means that the
         # similarities will be computed between users or between items)
@@ -32,7 +37,13 @@ class Algo:
             self.xr = ir
             self.yr = ur
 
-        self.est = 0 # set by the estimate method of the child class
+        # boundaries of ratings interval (usually [1, 5] or [0, 1])
+        self.rMin = rMin
+        self.rMax = rMax
+        # global mean of all ratings
+        self.meanRatings = np.mean([r for (_, _, r) in self.iterAllRatings()])
+        # list of all predictions computed by the algorithm
+        self.preds = []
 
         self.withDump = withDump
         self.infos = {}
@@ -40,14 +51,54 @@ class Algo:
         self.infos['params'] = {} # dict of params specific to any algo
         self.infos['params']['Based on '] = 'users' if self.ub else 'items'
         self.infos['ub'] = self.ub
-        self.infos['preds'] = [] # list of predictions. see updatePreds
+        self.infos['preds'] = self.preds  # list of predictions.
         self.infos['ur'] = ur # user ratings  dict
         self.infos['ir'] = ir # item ratings dict
         self.infos['rm'] = self.rm  # rating matrix
         # Note: there is a lot of duplicated data, the dumped file will be
         # HUGE.
 
+    def predict(self, u0, i0, r0=0, output=False):
+        """Predict the rating for u0 and i0 by calling the estimate method of
+        the algorithm (defined in every sub-class). If prediction is impossible
+        (for any reason), set prediction to the global mean of all ratings. the
+        self.preds attribute is updated.
+        """
+
+        try:
+            est = self.estimate(u0, i0)
+            impossible = False
+        except PredictionImpossible:
+            est = self.meanRatings
+            impossible = True
+            print(est, self.meanRatings)
+
+        # clip estimate into [self.rMin, self.rMax]
+        est = min(self.rMax, self.est)
+        est = max(self.rMin, self.est)
+
+        if output:
+            if impossible:
+                print(cmn.Col.FAIL + 'Impossible to predict' + cmn.Col.ENDC)
+            err = abs(self.est - r0)
+            col = cmn.Col.FAIL if err > 1 else cmn.Col.OKGREEN
+            print(col + "err = {0:1.2f}".format(err) + cmn.Col.ENDC)
+
+        pred = (u0, i0, r0, est, impossible)
+        self.preds.append(pred)
+
+        return pred
+
+    def iterAllRatings(self):
+        """generator to iter over all ratings"""
+
+        for x, xRatings in self.xr.items():
+            for y, r in xRatings:
+                yield x, y, r
+
     def dumpInfos(self):
+        """dump the dict self.infos into a file"""
+
         if not self.withDump:
             return
         if not os.path.exists('./dumps'):
@@ -64,45 +115,6 @@ class Algo:
             return u0, i0
         else:
             return i0, u0
-
-    def updatePreds(self, u0, i0, r0, output=True):
-        """update preds list and print some info if required
-
-        should be called right after the estimate method
-        """
-
-        if output:
-            if self.est == 0:
-                print(cmn.Col.FAIL + 'Impossible to predict' + cmn.Col.ENDC)
-            if self.est == r0:
-                print(cmn.Col.OKGREEN + 'OK' + cmn.Col.ENDC)
-            else:
-                print(cmn.Col.FAIL + 'KO ' + cmn.Col.ENDC + str(self.est))
-
-        # a prediction is a dict with the following keys
-        # 'wasImpossible' : whether or not the prediction was possible
-        # 'u0', 'i0', 'r0' (true rating) and 'est' (estimated rating)
-        # '3tuples' (only if algo is analogy based). A list containing all the
-        # 3-tuples used for estimation (structure content may depend on the algo)
-        predInfo = {}
-        if self.est == 0:
-            self.est = 3 # default value
-            predInfo['wasImpossible'] = True
-        else:
-            predInfo['wasImpossible'] = False
-
-        predInfo['u0'] = u0 ; predInfo['i0'] = i0; predInfo['r0'] = r0
-        predInfo['est'] = self.est
-        self.infos['preds'].append(predInfo)
-
-    def cut_estimate(self, inf, sup):
-        self.est = min(sup, self.est)
-        self.est = max(inf, self.est)
-
-    def iterAllRatings(self):
-        for x, xRatings in self.xr.items():
-            for y, r in xRatings:
-                yield x, y, r
 
 class AlgoRandom(Algo):
     """predict a random rating based on the distribution of the training set"""
@@ -289,8 +301,7 @@ class AlgoKNNBasic(AlgoUsingSim):
 
         # if there is nobody on which predict the rating...
         if not simX0:
-            self.est = 0
-            return
+            raise PredictionImpossible
 
         # sort simX0 by similarity
         simX0 = sorted(simX0, key=lambda x:x[1], reverse=True)
@@ -302,7 +313,7 @@ class AlgoKNNBasic(AlgoUsingSim):
         try:
             self.est = np.average(ratNeighboors, weights=simNeighboors)
         except ZeroDivisionError:
-            self.est = 0
+            raise PredictionImpossible
 
 class AlgoKNNWithMeans(AlgoUsingSim):
     """Basic collaborative filtering algorithm, taking into account the mean
@@ -353,9 +364,6 @@ class AlgoWithBaseline(Algo):
         #compute users and items biases
         # see from 5.2.1 of RS handbook
 
-        # mean of all ratings from training set
-        self.mu = np.mean([r for l in self.rm for r in l if r > 0])
-
         self.xBiases = np.zeros(self.lastXi + 1)
         self.yBiases = np.zeros(self.lastYi + 1)
 
@@ -372,7 +380,8 @@ class AlgoWithBaseline(Algo):
         nIter = 20
         for dummy in range(nIter):
             for x, y, r in self.iterAllRatings():
-                err = r - (self.mu + self.xBiases[x] + self.yBiases[y])
+                err = (r -
+                    (self.meanRatings + self.xBiases[x] + self.yBiases[y]))
                 # update xBiases
                 self.xBiases[x] += gamma * (err - lambda4 *
                     self.xBiases[x])
@@ -393,16 +402,16 @@ class AlgoWithBaseline(Algo):
         for dummy in range(nIter):
             self.yBiases = np.zeros(self.lastYi + 1)
             for y in range(1, self.lastYi + 1):
-                devY = sum(r - self.mu - self.xBiases[x] for (x, r) in self.yr[y])
+                devY = sum(r - self.meanRatings - self.xBiases[x] for (x, r) in self.yr[y])
                 self.yBiases[y] = devY / (self.reg_y + len(self.yr[y]))
 
             self.xBiases = np.zeros(self.lastXi + 1)
             for x in range(1, self.lastXi + 1):
-                devX = sum(r - self.mu - self.yBiases[y] for (y, r) in self.xr[x])
+                devX = sum(r - self.meanRatings - self.yBiases[y] for (y, r) in self.xr[x])
                 self.xBiases[x] = devX / (self.reg_x + len(self.xr[x]))
 
     def getBaseline(self, x, y):
-        return self.mu + self.xBiases[x] + self.yBiases[y]
+        return self.meanRatings + self.xBiases[x] + self.yBiases[y]
 
 
 class AlgoBaselineOnly(AlgoWithBaseline):
