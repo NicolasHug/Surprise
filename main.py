@@ -5,6 +5,8 @@ import numpy as np
 import time
 import sys
 import argparse
+from scipy.sparse import dok_matrix
+
 
 import common as c
 from algoAnalogy import *
@@ -87,7 +89,7 @@ for fold in args.folds:
     base = open('./datasets/ml-100k/u%s.base' % fold , 'r')
     test = open('./datasets/ml-100k/u%s.test' % fold, 'r')
 
-    rm = np.zeros((c.lastIi + 1, c.lastUi + 1), dtype='int')
+    rm = dok_matrix((c.lastIi + 1, c.lastUi + 1), dtype='int')
     ur = defaultdict(list)
     ir = defaultdict(list)
 
