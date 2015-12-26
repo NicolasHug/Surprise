@@ -3,12 +3,12 @@ from algo import *
 class AlgoUsingMeanDiff(Algo):
     """Astract class for algorithms using the mean difference between the
     ratings of two users/items"""
-    def __init__(self, rm, ur, ir, itemBased=False, **kwargs):
-        super().__init__(rm, ur, ir, itemBased=itemBased, **kwargs)
+    def __init__(self, trainingData, itemBased=False, **kwargs):
+        super().__init__(trainingData, itemBased=itemBased, **kwargs)
 
         print("computing mean differences between users...")
-        self.meanDiff = np.zeros((self.lastXi + 1, self.lastXi + 1))
-        self.meanDiffWeight = np.zeros((self.lastXi + 1, self.lastXi + 1))
+        self.meanDiff = np.zeros((self.nX, self.nX))
+        self.meanDiffWeight = np.zeros((self.nX, self.nX))
 
         diffs = defaultdict(int)  # sum (r_ui - r_vi) for common items
         freq = defaultdict(int)   # number common items
@@ -18,8 +18,8 @@ class AlgoUsingMeanDiff(Algo):
                 diffs[xi, xj] += (r1 - r2)
                 freq[xi, xj] += 1
 
-        for xi in range(1, self.lastXi + 1):
-            for xj in range(xi, self.lastXi + 1):
+        for xi in range(self.nX):
+            for xj in range(xi, self.nX):
                 if freq[xi, xj]:
                     self.meanDiff[xi, xj] = diffs[xi, xj] / freq[xi, xj]
                     self.meanDiffWeight[xi, xj] = (
@@ -33,8 +33,8 @@ class AlgoCloneBruteforce(Algo):
     pred(r_xy) = mean(r_x'y + k) for all x' that are k-clone of x
     """
 
-    def __init__(self, rm, ur, ir, itemBased=False, **kwargs):
-        super().__init__(rm, ur, ir, itemBased=itemBased)
+    def __init__(self, trainingData, itemBased=False, **kwargs):
+        super().__init__(trainingData, itemBased=itemBased)
 
         self.infos['name'] = 'AlgoClonBruteForce'
 
@@ -74,8 +74,8 @@ class AlgoCloneMeanDiff(AlgoUsingMeanDiff):
     The mean is weighted by how 'steady' is the meanDiff
     """
 
-    def __init__(self, rm, ur, ir, itemBased=False, **kargs):
-        super().__init__(rm, ur, ir, itemBased=itemBased)
+    def __init__(self, trainingData, itemBased=False, **kargs):
+        super().__init__(trainingData, itemBased=itemBased)
 
         self.infos['name'] = 'AlgoCloneMeanDiff'
 
@@ -104,8 +104,8 @@ class AlgoCloneKNNMeanDiff(AlgoUsingMeanDiff, AlgoUsingSim):
     using an appropriate similarity measure
     """
 
-    def __init__(self, rm, ur, ir, itemBased=False, sim='MSDClone', k=40, **kwargs):
-        super().__init__(rm, ur, ir, itemBased=itemBased, sim=sim)
+    def __init__(self, trainingData, itemBased=False, sim='MSDClone', k=40, **kwargs):
+        super().__init__(trainingData, itemBased=itemBased, sim=sim)
 
         self.infos['name'] = 'AlgoCloneKNNMeanDiff'
 
@@ -117,7 +117,7 @@ class AlgoCloneKNNMeanDiff(AlgoUsingMeanDiff, AlgoUsingSim):
     def estimate(self, u0, i0):
         x0, y0 = self.getx0y0(u0, i0)
         # list of (x, sim(x0, x)) for u having rated i0 or for m rated by x0
-        simX0 = [(x, self.simMat[x0, x]) for x in range(1, self.lastXi + 1) if
+        simX0 = [(x, self.simMat[x0, x]) for x in range(self.nX) if
             self.rm[x, y0] > 0]
 
         # if there is nobody on which predict the rating...

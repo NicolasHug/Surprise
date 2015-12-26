@@ -15,8 +15,9 @@ class PredictionImpossible(Exception):
 class Algo:
     """Abstract Algo class where is defined the basic behaviour of a recomender
     algorithm"""
-    def __init__(self, rm, ur, ir, itemBased=False, withDump=False, rMin=1,
-            rMax=5):
+    def __init__(self, trainingData, itemBased=False, withDump=False):
+
+        self.trainingData = trainingData
 
         # whether the algo will be based on users (basically means that the
         # similarities will be computed between users or between items)
@@ -25,21 +26,21 @@ class Algo:
         self.ub = not itemBased
 
         if self.ub:
-            self.rm = rm.T # we take the transpose of the rating matrix
-            self.lastXi = cmn.lastUi
-            self.lastYi = cmn.lastIi
-            self.xr = ur
-            self.yr = ir
+            self.rm = trainingData.rm
+            self.xr = trainingData.ur
+            self.yr = trainingData.ir
+            self.nX = trainingData.nUsers
+            self.nY = trainingData.nItems
         else:
-            self.lastXi = cmn.lastIi
-            self.lastYi = cmn.lastUi
-            self.rm = rm
-            self.xr = ir
-            self.yr = ur
+            self.rm = defaultdict(int)
+            # @TODO: maybe change that...
+            for (ui, mi), r in trainingData.rm.items():
+                self.rm[mi, ui] = r
+            self.xr = trainingData.ir
+            self.yr = trainingData.ur
+            self.nX = trainingData.nItems
+            self.nY = trainingData.nUsers
 
-        # boundaries of ratings interval (usually [1, 5] or [0, 1])
-        self.rMin = rMin
-        self.rMax = rMax
         # global mean of all ratings
         self.meanRatings = np.mean([r for (_, _, r) in self.iterAllRatings()])
         # list of all predictions computed by the algorithm
@@ -52,8 +53,8 @@ class Algo:
         self.infos['params']['Based on '] = 'users' if self.ub else 'items'
         self.infos['ub'] = self.ub
         self.infos['preds'] = self.preds  # list of predictions.
-        self.infos['ur'] = ur # user ratings  dict
-        self.infos['ir'] = ir # item ratings dict
+        self.infos['ur'] = trainingData.ur # user ratings  dict
+        self.infos['ir'] = trainingData.ir # item ratings dict
         self.infos['rm'] = self.rm  # rating matrix
         # Note: there is a lot of duplicated data, the dumped file will be
         # HUGE.
@@ -71,11 +72,10 @@ class Algo:
         except PredictionImpossible:
             est = self.meanRatings
             impossible = True
-            print(est, self.meanRatings)
 
         # clip estimate into [self.rMin, self.rMax]
-        est = min(self.rMax, self.est)
-        est = max(self.rMin, self.est)
+        est = min(self.trainingData.rMax, self.est)
+        est = max(self.trainingData.rMin, self.est)
 
         if output:
             if impossible:
@@ -119,14 +119,14 @@ class Algo:
 class AlgoRandom(Algo):
     """predict a random rating based on the distribution of the training set"""
 
-    def __init__(self, rm, ur, ir, **kwargs):
-        super().__init__(rm, ur, ir)
+    def __init__(self, trainingData, **kwargs):
+        super().__init__(trainingData)
         self.infos['name'] = 'random'
 
         # estimation of the distribution
         fqs = [0, 0, 0, 0, 0]
-        for x in range(1, self.lastXi):
-            for y in range(1, self.lastYi):
+        for x in range(nX):
+            for y in range(nY):
                 if self.rm[x, y] > 0:
                     fqs[self.rm[x, y] - 1] += 1
         fqs = [fq/sum(fqs) for fq in fqs]
@@ -138,8 +138,8 @@ class AlgoRandom(Algo):
 class AlgoUsingSim(Algo):
     """Abstract class for algos using a similarity measure
     sim parameter can be 'cos' or 'MSD' for mean squared difference"""
-    def __init__(self, rm, ur, ir, itemBased, sim, **kwargs):
-        super().__init__(rm, ur, ir, itemBased, **kwargs)
+    def __init__(self, trainingData, itemBased, sim, **kwargs):
+        super().__init__(trainingData, itemBased, **kwargs)
 
         self.infos['params']['sim'] = sim
         self.constructSimMat(sim) # we'll need the similiarities
@@ -148,7 +148,7 @@ class AlgoUsingSim(Algo):
         """construct the simlarity matrix"""
 
         print("computing the similarity matrix...")
-        self.simMat = np.zeros((self.lastXi + 1, self.lastXi + 1))
+        self.simMat = np.zeros((self.nX, self.nX))
         if sim == 'cos':
             self.constructCosineSimMat()
         elif sim == 'MSD':
@@ -179,9 +179,9 @@ class AlgoUsingSim(Algo):
                 sqi[xi, xj] += r1**2
                 sqj[xi, xj] += r2**2
 
-        for xi in range(1, self.lastXi + 1):
+        for xi in range(self.nX):
             self.simMat[xi, xi] = 1
-            for xj in range(xi + 1, self.lastXi + 1):
+            for xj in range(xi + 1, self.nX):
                 if freq[xi, xj] == 0:
                     self.simMat[xi, xj] = 0
                 else:
@@ -208,9 +208,9 @@ class AlgoUsingSim(Algo):
                 sqDiff[xi, xj] += (r1 - r2)**2
                 freq[xi, xj] += 1
 
-        for xi in range(1, self.lastXi + 1):
+        for xi in range(self.nX):
             self.simMat[xi, xi] = 100 # completely arbitrary and useless anyway
-            for xj in range(xi, self.lastXi + 1):
+            for xj in range(xi, self.nX):
                 if sqDiff[xi, xj] == 0:  # return number of common ys
                     self.simMat[xi, xj] = freq[xi, xj]
                 else:  # return inverse of MSD
@@ -222,9 +222,9 @@ class AlgoUsingSim(Algo):
         """compute the 'clone' mean squared difference similarity between all
         pairs of xs. Some properties as for MSDSim apply"""
 
-        for xi in range(1, self.lastXi + 1):
+        for xi in range(self.nX):
             self.simMat[xi, xi] = 100 # completely arbitrary and useless anyway
-            for xj in range(xi, self.lastXi + 1):
+            for xj in range(xi, self.nX):
                 # comon ys for xi and xj
                 Yij = [y for (y, _) in self.xr[xi] if self.rm[xj, y] > 0]
 
@@ -263,9 +263,9 @@ class AlgoUsingSim(Algo):
                 si[xi, xj] += r1
                 sj[xi, xj] += r2
 
-        for xi in range(1, self.lastXi + 1):
+        for xi in range(self.nX):
             self.simMat[xi, xi] = 1
-            for xj in range(xi + 1, self.lastXi + 1):
+            for xj in range(xi + 1, self.nX):
                 n = freq[xi, xj]
                 if n < 2:
                     self.simMat[xi, xj] = 0
@@ -284,8 +284,8 @@ class AlgoUsingSim(Algo):
 class AlgoKNNBasic(AlgoUsingSim):
     """Basic collaborative filtering algorithm"""
 
-    def __init__(self, rm, ur, ir, itemBased=False, sim='cos', k=40, **kwargs):
-        super().__init__(rm, ur, ir, itemBased=itemBased, sim=sim)
+    def __init__(self, trainingData, itemBased=False, sim='cos', k=40, **kwargs):
+        super().__init__(trainingData, itemBased=itemBased, sim=sim)
 
         self.k = k
 
@@ -296,7 +296,7 @@ class AlgoKNNBasic(AlgoUsingSim):
     def estimate(self, u0, i0):
         x0, y0 = self.getx0y0(u0, i0)
         # list of (x, sim(x0, x)) for u having rated i0 or for m rated by x0
-        simX0 = [(x, self.simMat[x0, x]) for x in range(1, self.lastXi + 1) if
+        simX0 = [(x, self.simMat[x0, x]) for x in range(self.nX) if
             self.rm[x, y0] > 0]
 
         # if there is nobody on which predict the rating...
@@ -319,8 +319,8 @@ class AlgoKNNWithMeans(AlgoUsingSim):
     """Basic collaborative filtering algorithm, taking into account the mean
     ratings of each user"""
 
-    def __init__(self, rm, ur, ir, itemBased=False, sim='cos', k=40, **kwargs):
-        super().__init__(rm, ur, ir, itemBased=itemBased, sim=sim)
+    def __init__(self, trainingData, itemBased=False, sim='cos', k=40, **kwargs):
+        super().__init__(trainingData, itemBased=itemBased, sim=sim)
 
         self.k = k
 
@@ -328,14 +328,14 @@ class AlgoKNNWithMeans(AlgoUsingSim):
         self.infos['params']['similarity measure'] = sim
         self.infos['params']['k'] = self.k
 
-        self.means = np.zeros(self.lastXi + 1)
+        self.means = np.zeros(self.nX)
         for x, ratings in self.xr.items():
             self.means[x] = np.mean([r for (_, r) in self.xr[x]])
 
     def estimate(self, u0, i0):
         x0, y0 = self.getx0y0(u0, i0)
         # list of (x, sim(x0, x)) for u having rated i0 or for m rated by x0
-        simX0 = [(x, self.simMat[x0, x]) for x in range(1, self.lastXi + 1) if
+        simX0 = [(x, self.simMat[x0, x]) for x in range(self.nX) if
             self.rm[x, y0] > 0]
 
         self.est = self.means[x0]
@@ -358,14 +358,14 @@ class AlgoKNNWithMeans(AlgoUsingSim):
 
 class AlgoWithBaseline(Algo):
     """Abstract class for algos that need a baseline"""
-    def __init__(self, rm, ur, ir, itemBased, method, **kwargs):
-        super().__init__(rm, ur, ir, itemBased, **kwargs)
+    def __init__(self, trainingData, itemBased, method, **kwargs):
+        super().__init__(trainingData, itemBased, **kwargs)
 
         #compute users and items biases
         # see from 5.2.1 of RS handbook
 
-        self.xBiases = np.zeros(self.lastXi + 1)
-        self.yBiases = np.zeros(self.lastYi + 1)
+        self.xBiases = np.zeros(self.nX)
+        self.yBiases = np.zeros(self.nY)
 
         print('Estimating biases...')
         if method == 'sgd':
@@ -400,13 +400,13 @@ class AlgoWithBaseline(Algo):
         self.reg_y = reg_u if not self.ub else reg_i
 
         for dummy in range(nIter):
-            self.yBiases = np.zeros(self.lastYi + 1)
-            for y in range(1, self.lastYi + 1):
+            self.yBiases = np.zeros(self.nY)
+            for y in range(self.nY):
                 devY = sum(r - self.meanRatings - self.xBiases[x] for (x, r) in self.yr[y])
                 self.yBiases[y] = devY / (self.reg_y + len(self.yr[y]))
 
-            self.xBiases = np.zeros(self.lastXi + 1)
-            for x in range(1, self.lastXi + 1):
+            self.xBiases = np.zeros(self.nX)
+            for x in range(self.nX):
                 devX = sum(r - self.meanRatings - self.yBiases[y] for (y, r) in self.xr[x])
                 self.xBiases[x] = devX / (self.reg_x + len(self.xr[x]))
 
@@ -417,11 +417,10 @@ class AlgoWithBaseline(Algo):
 class AlgoBaselineOnly(AlgoWithBaseline):
     """ Algo using only baseline"""
 
-    def __init__(self, rm, ur, ir, itemBased=False, method='als', **kwargs):
-        super().__init__(rm, ur, ir, itemBased, method=method)
+    def __init__(self, trainingData, itemBased=False, method='als', **kwargs):
+        super().__init__(trainingData, itemBased, method=method)
         self.infos['name'] = 'algoBaselineOnly'
 
     def estimate(self, u0, i0):
         x0, y0 = self.getx0y0(u0, i0)
         self.est = self.getBaseline(x0, y0)
-

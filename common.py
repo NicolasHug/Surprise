@@ -1,8 +1,5 @@
 import numpy as np
 
-lastIi = 1682 # last item index for u1.base
-lastUi = 943 # last user index for u1.base
-
 class Col:
     """A class for adding color in the term output"""
     HEADER = '\033[95m'

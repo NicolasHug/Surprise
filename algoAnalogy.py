@@ -4,8 +4,8 @@ from algo import *
 
 class AlgoUsingAnalogy(Algo):
     """Abstract class for algos that use an analogy framework"""
-    def __init__(self, rm, ur, ir, itemBased=False):
-        super().__init__(rm, ur, ir, itemBased)
+    def __init__(self, trainingData, itemBased=False):
+        super().__init__(trainingData, itemBased)
         self.tuples = [] # list of 3-tuple (for the last prediction only)
 
     def isSolvable(self, ra, rb, rc):
@@ -37,9 +37,9 @@ class AlgoUsingAnalogy(Algo):
 
 class AlgoParall(AlgoUsingSim, AlgoUsingAnalogy):
     """geometrical analogy based recommender"""
-    def __init__(self, rm, ur, ir, itemBased=False, sim='MSD', k=40,
+    def __init__(self, trainingData, itemBased=False, sim='MSD', k=40,
             **kwargs):
-        super().__init__(rm, ur, ir, itemBased, sim)
+        super().__init__(trainingData, itemBased, sim)
         self.infos['name'] = 'algoParallKNN' if k else 'algoParall'
 
         self.k = k
@@ -52,7 +52,7 @@ class AlgoParall(AlgoUsingSim, AlgoUsingAnalogy):
         """generator to find triplets amongst the kNN"""
 
         # list of (x, sim(x0, x)) for x having rated y0 or for y rated by x0
-        simX0 = [(x, self.simMat[x0, x]) for x in range(1, self.lastXi + 1) if
+        simX0 = [(x, self.simMat[x0, x]) for x in range(self.nX) if
             self.rm[x, y0] > 0]
 
         # sort simX0 by similarity decreasing order
@@ -136,8 +136,8 @@ class AlgoParall(AlgoUsingSim, AlgoUsingAnalogy):
 
 class AlgoPattern(AlgoUsingAnalogy):
     """analogy based recommender using patterns in 3-tuples"""
-    def __init__(self, rm, ur, ir, itemBased=False, **kwargs):
-        super().__init__(rm, ur, ir, itemBased)
+    def __init__(self, trainingData, itemBased=False, **kwargs):
+        super().__init__(trainingData, itemBased)
         self.infos['name'] = 'algoPattern'
 
     def estimate(self, u0, i0):

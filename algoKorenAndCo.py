@@ -3,9 +3,9 @@ from algo import *
 class AlgoKNNBaseline(AlgoWithBaseline, AlgoUsingSim):
     """ Algo baseline AND deviation from baseline of the neighbors
         simlarity measure = cos"""
-    def __init__(self, rm, ur, ir, itemBased=False, method='als', sim='cos',
+    def __init__(self, trainingData, itemBased=False, method='als', sim='cos',
             k=40, **kwargs):
-        super().__init__(rm, ur, ir, itemBased, method=method, sim=sim)
+        super().__init__(trainingData, itemBased, method=method, sim=sim)
 
         self.k = k
         self.infos['name'] = 'neighborhoodWithBaseline'
@@ -38,9 +38,9 @@ class AlgoKNNBaseline(AlgoWithBaseline, AlgoUsingSim):
 class AlgoKNNBelkor(AlgoWithBaseline):
     """ KNN learning interpolating weights from the training data. see 5.1.1
     from reco system handbook"""
-    def __init__(self, rm, ur, ir, itemBased=False, method='opt', **kwargs):
-        super().__init__(rm, ur, ir, itemBased, method=method)
-        self.weights = np.zeros((self.lastXi + 1, self.lastXi + 1),
+    def __init__(self, trainingData, itemBased=False, method='opt', **kwargs):
+        super().__init__(trainingData, itemBased, method=method)
+        self.weights = np.zeros((self.nX, self.nX),
         dtype='double')
 
         nIter = 20
@@ -89,14 +89,14 @@ class AlgoKNNBelkor(AlgoWithBaseline):
 class AlgoFactors(Algo):
     """Algo using latent factors. Implem heavily inspired by
     https://github.com/aaw/IncrementalSVD.jl"""
-    def __init__(self, rm, ur, ir, itemBased=False, **kwargs):
-        super().__init__(rm, ur, ir, itemBased)
+    def __init__(self, trainingData, itemBased=False, **kwargs):
+        super().__init__(trainingData, itemBased)
         self.infos['name'] = 'algoLatentFactors'
 
         nFactors = 50 # number of factors
         nIter = 10
-        self.px = np.ones((self.lastXi + 1, nFactors)) * 0.1
-        self.qy = np.ones((self.lastYi + 1, nFactors)) * 0.1
+        self.px = np.ones((self.nX, nFactors)) * 0.1
+        self.qy = np.ones((self.nY, nFactors)) * 0.1
         residuals = []
 
         lambda4 = 0.02 # regularization extent
