@@ -48,7 +48,7 @@ simChoices = ['cos', 'pearson', 'MSD', 'MSDClone']
 parser.add_argument('-sim', type=str,
         default='MSD',
         choices=simChoices,
-        help='the similarity measure to use. Allowed values are '
+        help='for algorithms using a similarity measure. Allowed values are '
         + ', '.join(simChoices) + '. (default: MSD)',
         metavar='<sim measure>')
 
@@ -56,8 +56,8 @@ methodChoices = ['als', 'sgd']
 parser.add_argument('-method', type=str,
         default='als',
         choices=methodChoices,
-        help='the method to compute user and item biases. Allowed values are '
-        + ', '.join(simChoices) + '. (default: als)',
+        help='for algorithms using a baseline, the method to compute it. '
+        'Allowed values are ' + ', '.join(simChoices) + '. (default: als)',
         metavar='<method>')
 
 parser.add_argument('-k', type=int,
@@ -69,7 +69,8 @@ datasetChoices = ['ml-100k', 'ml-1m', 'BX']
 parser.add_argument('-dataset', metavar='<dataset>', type=str,
         default='ml-100k',
         choices=datasetChoices,
-        help='the dataset to use (default: ml-100k: MovieLens 100k)')
+        help='the dataset to use. Allowed values are ' +
+        ', '.join(datasetChoices) + '( default: ml-100k -- MovieLens 100k)')
 
 parser.add_argument('-cv', type=int,
         metavar = "<number of folds>",
@@ -82,8 +83,8 @@ parser.add_argument('-seed', type=int,
         help='the seed to use for RNG (default: current system time)')
 
 parser.add_argument('--itemBased', dest='itemBased', action='store_const',
-const=True, default=False, help='compute similarities on items (default: user'
-        ' based)')
+const=True, default=False, help='compute similarities on items rather than on '
+        'users')
 
 parser.add_argument('--withDump', dest='withDump', action='store_const',
         const=True, default=False, help='tells to dump results in a file '
