@@ -118,23 +118,25 @@ class AlgoCloneKNNMeanDiff(AlgoUsingMeanDiff, AlgoUsingSim):
 
     def estimate(self, u0, i0):
         x0, y0 = self.getx0y0(u0, i0)
-        # list of (x, sim(x0, x)) for u having rated i0 or for m rated by x0
-        simX0 = [(x, self.simMat[x0, x]) for x in range(self.nX) if
-            self.rm[x, y0] > 0]
 
-        # if there is nobody on which predict the rating...
-        if not simX0:
+        neighbors = [(x, self.simMat[x0, x], r) for (x, r) in self.yr[y0]]
+
+        if not neighbors:
             raise PredictionImpossible
 
-        # sort simX0 by similarity
-        simX0 = sorted(simX0, key=lambda x:x[1], reverse=True)
+        # sort neighbors by similarity
+        neighbors = sorted(neighbors, key=lambda x:x[1], reverse=True)
 
-        # let the KNN vote
-        simNeighboors = [sim for (_, sim) in simX0[:self.k] if sim > 0]
-        ratNeighboors = [self.rm[x, y0] + self.meanDiff[x0, x] for (x, sim) in
-                simX0[:self.k] if sim > 0]
+        # compute weighted average
+        sumSim = sumRatings = 0
+        for (nb, sim, r) in neighbors[:self.k]:
+            if sim > 0:
+                sumSim += sim
+                sumRatings += sim * (r + self.meanDiff[x0, nb])
+
         try:
-            est = np.average(ratNeighboors, weights=simNeighboors)
-            return est
+            est = sumRatings / sumSim
         except ZeroDivisionError:
             raise PredictionImpossible
+
+        return est

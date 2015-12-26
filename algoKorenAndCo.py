@@ -15,25 +15,26 @@ class AlgoKNNBaseline(AlgoWithBaseline, AlgoUsingSim):
         x0, y0 = self.getx0y0(u0, i0)
         est = self.getBaseline(x0, y0)
 
+        neighbors = [(x, self.simMat[x0, x], r) for (x, r) in self.yr[y0]]
 
-        simX0 = [(x, self.simMat[x0, x], r) for (x, r) in self.yr[y0]]
-
-        # if there is nobody on which predict the rating...
-        if not simX0:
+        if not neighbors:
             return est # result will be just the baseline
 
-        # sort simX0 by similarity
-        simX0 = sorted(simX0, key=lambda x:x[1], reverse=True)
+        # sort neighbors by similarity
+        neighbors = sorted(neighbors, key=lambda x:x[1], reverse=True)
 
-        # let the KNN vote
-        k = self.k
-        simNeighboors = [sim for (_, sim, _) in simX0[:k] if sim > 0]
-        diffRatNeighboors = [r - self.getBaseline(x, y0)
-            for (x, sim, r) in simX0[:k] if sim > 0]
+        # compute weighted average
+        sumSim = sumRatings = 0
+        for (nb, sim, r) in neighbors[:self.k]:
+            if sim > 0:
+                sumSim += sim
+                sumRatings += sim * (r - self.getBaseline(nb, y0))
+
         try:
-            est += np.average(diffRatNeighboors, weights=simNeighboors)
+            est += sumRatings / sumSim
         except ZeroDivisionError:
             pass # just baseline again
+
         return est
 
 class AlgoKNNBelkor(AlgoWithBaseline):

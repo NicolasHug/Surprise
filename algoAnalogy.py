@@ -52,18 +52,14 @@ class AlgoParall(AlgoUsingSim, AlgoUsingAnalogy):
         """generator to find triplets amongst the kNN"""
 
         # list of (x, sim(x0, x)) for x having rated y0 or for y rated by x0
-        simX0 = [(x, self.simMat[x0, x]) for x in range(self.nX) if
-            self.rm[x, y0] > 0]
+        neighbors = [(x, self.simMat[x0, x], r) for (x, r) in self.yr[y0]]
 
-        # sort simX0 by similarity decreasing order
-        simX0 = sorted(simX0, key=lambda x:x[1], reverse=True)
+        # sort neighbors by similarity in decreasing order
+        neighbors = sorted(neighbors, key=lambda x:x[1], reverse=True)
 
-        # get only the k nearest neighbors
-        neighboorsList = [(x, self.rm[x, y0]) for (x, sim) in simX0[:self.k] if
-                sim > 0]
-        for xa, ra in neighboorsList:
-            for xb, rb in neighboorsList:
-                for xc, rc in neighboorsList:
+        for xa, _, ra in neighbors[:self.k]:
+            for xb, _, rb in neighbors[:self.k]:
+                for xc, _, rc in neighbors[:self.k]:
                     yield (xa, ra), (xb, rb), (xc, rc)
 
     def genRandom(self, x0, y0):
