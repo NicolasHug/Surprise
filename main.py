@@ -128,7 +128,7 @@ def downloadDataset(dataset):
     zf.extractall('datasets/' + dataset)
     os.remove('tmp.zip')
 
-def getData(dataset):
+def getRawRatings(dataset):
     if dataset == 'ml-100k':
         dataFile = './datasets/ml-100k/ml-100k/u.data'
         ReaderClass = MovieLens100kReader
@@ -160,10 +160,10 @@ def kFolds(seq, k):
             stop += 1
         yield seq[:start] + seq[stop:], seq[start:stop]
 
-data, ReaderClass = getData(args.dataset)
+rawRatings, ReaderClass = getRawRatings(args.dataset)
 
 rmses = [] # list of rmse: one per fold
-for foldNumber, (trainSet, testSet) in enumerate(kFolds(data, args.cv)):
+for foldNumber, (trainSet, testSet) in enumerate(kFolds(rawRatings, args.cv)):
     readerTrain = ReaderClass(trainSet)
     readerTest = ReaderClass(testSet)
 

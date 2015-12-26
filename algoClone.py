@@ -63,7 +63,8 @@ class AlgoCloneBruteforce(Algo):
                     candidates.append(rx + k)
 
         if candidates:
-            self.est = np.mean(candidates)
+            est = np.mean(candidates)
+            return est
         else:
             raise PredictionImpossible
 
@@ -92,7 +93,8 @@ class AlgoCloneMeanDiff(AlgoUsingMeanDiff):
                 weights.append(weight)
 
         if candidates:
-            self.est = np.average(candidates, weights=weights)
+            est = np.average(candidates, weights=weights)
+            return est
         else:
             raise PredictionImpossible
 
@@ -132,6 +134,7 @@ class AlgoCloneKNNMeanDiff(AlgoUsingMeanDiff, AlgoUsingSim):
         ratNeighboors = [self.rm[x, y0] + self.meanDiff[x0, x] for (x, sim) in
                 simX0[:self.k] if sim > 0]
         try:
-            self.est = np.average(ratNeighboors, weights=simNeighboors)
+            est = np.average(ratNeighboors, weights=simNeighboors)
+            return est
         except ZeroDivisionError:
             raise PredictionImpossible

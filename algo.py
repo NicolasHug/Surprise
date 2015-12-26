@@ -74,13 +74,13 @@ class Algo:
             impossible = True
 
         # clip estimate into [self.rMin, self.rMax]
-        est = min(self.trainingData.rMax, self.est)
-        est = max(self.trainingData.rMin, self.est)
+        est = min(self.trainingData.rMax, est)
+        est = max(self.trainingData.rMin, est)
 
         if output:
             if impossible:
                 print(cmn.Col.FAIL + 'Impossible to predict' + cmn.Col.ENDC)
-            err = abs(self.est - r0)
+            err = abs(est - r0)
             col = cmn.Col.FAIL if err > 1 else cmn.Col.OKGREEN
             print(col + "err = {0:1.2f}".format(err) + cmn.Col.ENDC)
 
@@ -133,7 +133,7 @@ class AlgoRandom(Algo):
         self.distrib = rv_discrete(values=([1, 2, 3, 4, 5], fqs))
 
     def estimate(self, *_):
-        self.est = self.distrib.rvs()
+        return self.distrib.rvs()
 
 class AlgoUsingSim(Algo):
     """Abstract class for algos using a similarity measure
@@ -311,7 +311,7 @@ class AlgoKNNBasic(AlgoUsingSim):
         ratNeighboors = [self.rm[x, y0] for (x, sim) in simX0[:self.k]
                 if sim > 0]
         try:
-            self.est = np.average(ratNeighboors, weights=simNeighboors)
+            return np.average(ratNeighboors, weights=simNeighboors)
         except ZeroDivisionError:
             raise PredictionImpossible
 
@@ -338,7 +338,7 @@ class AlgoKNNWithMeans(AlgoUsingSim):
         simX0 = [(x, self.simMat[x0, x]) for x in range(self.nX) if
             self.rm[x, y0] > 0]
 
-        self.est = self.means[x0]
+        est = self.means[x0]
 
         # if there is nobody on which predict the rating...
         if not simX0:
@@ -352,9 +352,10 @@ class AlgoKNNWithMeans(AlgoUsingSim):
         ratNeighboors = [self.rm[x, y0] - self.means[x] for (x, sim) in
                 simX0[:self.k] if sim > 0]
         try:
-            self.est += np.average(ratNeighboors, weights=simNeighboors)
+            est += np.average(ratNeighboors, weights=simNeighboors)
+            return est
         except ZeroDivisionError:
-            pass
+            raise PredictionImpossible
 
 class AlgoWithBaseline(Algo):
     """Abstract class for algos that need a baseline"""
@@ -423,4 +424,4 @@ class AlgoBaselineOnly(AlgoWithBaseline):
 
     def estimate(self, u0, i0):
         x0, y0 = self.getx0y0(u0, i0)
-        self.est = self.getBaseline(x0, y0)
+        return self.getBaseline(x0, y0)

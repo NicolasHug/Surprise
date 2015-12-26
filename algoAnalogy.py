@@ -100,12 +100,8 @@ class AlgoParall(AlgoUsingSim, AlgoUsingAnalogy):
         if candidates:
             ratings = [r for (r, _, _) in candidates]
             norms = [1/(nrm + 1) for (_, nrm, _) in candidates]
-            """
-            nYs = [nY for (_, _, nY) in candidates]
-            self.est = int(round(np.average(ratings, weights=norms)))
-            self.est = int(round(np.average(ratings, weights=nYs)))
-            """
-            self.est = np.average(ratings)
+            est = np.average(ratings)
+            return est
         else:
             raise PredictionImpossible
 
@@ -200,7 +196,8 @@ class AlgoPattern(AlgoUsingAnalogy):
         # if there are candidates, estimate rating as a weighted average
         if candidates:
             ratings = [r for r in candidates]
-            self.est = np.average(ratings)
+            est = np.average(ratings)
+            return est
         else:
             raise PredictionImpossible
 

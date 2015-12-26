@@ -13,14 +13,14 @@ class AlgoKNNBaseline(AlgoWithBaseline, AlgoUsingSim):
 
     def estimate(self, u0, i0):
         x0, y0 = self.getx0y0(u0, i0)
-        self.est = self.getBaseline(x0, y0)
+        est = self.getBaseline(x0, y0)
 
 
         simX0 = [(x, self.simMat[x0, x], r) for (x, r) in self.yr[y0]]
 
         # if there is nobody on which predict the rating...
         if not simX0:
-            return # result will be just the baseline
+            return est # result will be just the baseline
 
         # sort simX0 by similarity
         simX0 = sorted(simX0, key=lambda x:x[1], reverse=True)
@@ -31,9 +31,10 @@ class AlgoKNNBaseline(AlgoWithBaseline, AlgoUsingSim):
         diffRatNeighboors = [r - self.getBaseline(x, y0)
             for (x, sim, r) in simX0[:k] if sim > 0]
         try:
-            self.est += np.average(diffRatNeighboors, weights=simNeighboors)
+            est += np.average(diffRatNeighboors, weights=simNeighboors)
         except ZeroDivisionError:
-            return # just baseline
+            pass # just baseline again
+        return est
 
 class AlgoKNNBelkor(AlgoWithBaseline):
     """ KNN learning interpolating weights from the training data. see 5.1.1
@@ -78,13 +79,12 @@ class AlgoKNNBelkor(AlgoWithBaseline):
     def estimate(self, u0, i0):
         x0, y0 = self.getx0y0(u0, i0)
 
-        self.est = sum((r - self.getBaseline(x2, y0)) *
+        est = sum((r - self.getBaseline(x2, y0)) *
             self.weights[x0, x2] for (x2, r) in self.yr[y0])
-        self.est /= np.sqrt(len(self.yr[y0]))
-        self.est += self.getBaseline(x0, y0)
+        est /= np.sqrt(len(self.yr[y0]))
+        est += self.getBaseline(x0, y0)
 
-        self.est = min(5, self.est)
-        self.est = max(1, self.est)
+        return est
 
 class AlgoFactors(Algo):
     """Algo using latent factors. Implem heavily inspired by
@@ -135,5 +135,6 @@ class AlgoFactors(Algo):
 
 
 
-        self.est = np.dot(self.px[x0, :], self.qy[y0, :])
+        est = np.dot(self.px[x0, :], self.qy[y0, :])
+        return est
 
