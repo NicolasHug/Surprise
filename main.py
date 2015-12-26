@@ -65,6 +65,18 @@ parser.add_argument('-k', type=int,
         default=40,
         help='the number of neighbors to use for k-NN algorithms (default: 40)')
 
+parser.add_argument('-trainFile', type=str,
+        metavar = '<train file>',
+        default=None,
+        help='the file containing raw ratings for training. dataset argument '
+        'needs to be set accordingly (default: None)')
+
+parser.add_argument('-testFile', type=str,
+        metavar = '<test file>',
+        default=None,
+        help='the file containing raw ratings for testing. dataset argument '
+        'needs to be set accordingly. (default: None)')
+
 datasetChoices = ['ml-100k', 'ml-1m', 'BX']
 parser.add_argument('-dataset', metavar='<dataset>', type=str,
         default='ml-100k',
@@ -75,7 +87,8 @@ parser.add_argument('-dataset', metavar='<dataset>', type=str,
 parser.add_argument('-cv', type=int,
         metavar = "<number of folds>",
         default=5,
-        help='the number of folds for cross validation')
+        help='the number of folds for cross validation. Ignored if trainFile '
+        'and testFile are set. (default: 5)')
 
 parser.add_argument('-seed', type=int,
         metavar = '<random seed>',
@@ -129,16 +142,16 @@ def downloadDataset(dataset):
     zf.extractall('datasets/' + dataset)
     os.remove('tmp.zip')
 
-def getRawRatings(dataset):
+def getRawRatings(dataset, trainFile=None):
     if dataset == 'ml-100k':
-        dataFile = './datasets/ml-100k/ml-100k/u.data'
+        dataFile = trainFile or './datasets/ml-100k/ml-100k/u.data'
         ReaderClass = MovieLens100kReader
     elif dataset == 'ml-1m':
-        dataFile = './datasets/ml-1m/ml-1m/ratings.dat'
+        dataFile = trainFile or './datasets/ml-1m/ml-1m/ratings.dat'
         ReaderClass = MovieLens1mReader
     elif dataset == 'BX':
         ReaderClass = BXReader
-        dataFile = './datasets/BX/BX-Book-Ratings.csv'
+        dataFile = trainFile or './datasets/BX/BX-Book-Ratings.csv'
 
     try:
         f = open(dataFile, 'r')
@@ -161,16 +174,13 @@ def kFolds(seq, k):
             stop += 1
         yield seq[:start] + seq[stop:], seq[start:stop]
 
-rawRatings, ReaderClass = getRawRatings(args.dataset)
-
 rmses = [] # list of rmse: one per fold
-for foldNumber, (trainSet, testSet) in enumerate(kFolds(rawRatings, args.cv)):
-    readerTrain = ReaderClass(trainSet)
-    readerTest = ReaderClass(testSet)
+
+def getRmse(trainRawRatings, testRawRatings):
+    readerTrain = ReaderClass(trainRawRatings)
+    readerTest = ReaderClass(testRawRatings)
 
     trainingData = TrainingData(readerTrain)
-
-    print("-- fold numer {0} --".format(foldNumber + 1))
 
     trainStartTime = time.process_time()
     trainingTime = time.process_time() - trainStartTime
@@ -209,10 +219,22 @@ for foldNumber, (trainSet, testSet) in enumerate(kFolds(rawRatings, args.cv)):
     algo.infos['trainingTime'] = trainingTime
     algo.infos['testingTime'] = testingTime
 
-    rmses.append(c.computeStats(algo.preds))
     algo.dumpInfos()
     print('-' * 20)
     print('-' * 20)
+    return c.computeStats(algo.preds)
+
+if args.trainFile and args.testFile:
+    trainRawRatings, ReaderClass = getRawRatings(args.dataset, args.trainFile)
+    testRawRatings, ReaderClass = getRawRatings(args.dataset, args.testFile)
+    rmses.append(getRmse(trainRawRatings, testRawRatings))
+
+else:
+    rawRatings, ReaderClass = getRawRatings(args.dataset)
+    for foldNumber, (trainSet, testSet) in enumerate(kFolds(rawRatings, args.cv)):
+        print("-- fold numer {0} --".format(foldNumber + 1))
+        rmses.append(getRmse(trainSet, testSet))
+
 
 print(args)
 print("RMSE: {0:1.4f}".format(np.mean(rmses)))
