@@ -11,6 +11,8 @@ simCosUsers
 simMSDUsers
 simMSDMovies
 
+datasets/*
+datasets
 dumps/*
 baselineOnly/
 basicCollab/

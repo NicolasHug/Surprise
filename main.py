@@ -6,6 +6,8 @@ import time
 import sys
 import argparse
 from scipy.sparse import dok_matrix
+from urllib.request import urlretrieve
+import zipfile
 
 import common as c
 from algoAnalogy import *
@@ -63,8 +65,10 @@ parser.add_argument('-k', type=int,
         default=40,
         help='the number of neighbors to use for k-NN algorithms (default: 40)')
 
+datasetChoices = ['ml-100k', 'ml-1m', 'BX']
 parser.add_argument('-dataset', metavar='<dataset>', type=str,
         default='ml-100k',
+        choices=datasetChoices,
         help='the dataset to use (default: ml-100k: MovieLens 100k)')
 
 parser.add_argument('-cv', type=int,
@@ -93,20 +97,57 @@ args = parser.parse_args()
 
 rd.seed(args.seed)
 
-if args.dataset == 'ml-100k':
-    f = open('./datasets/ml-100k/u.data', 'r')
+if not os.path.exists('datasets'):
+    os.makedirs('datasets')
+
+def downloadDataset(dataset):
+    answered = False
+    while not answered:
+        print('dataset ' + dataset + ' could not be found. Do you want to '
+        'download it? [Y/n]')
+        choice = input().lower()
+        if choice in ['yes', 'y', '']:
+            answered = True
+        elif choice in ['no', 'n']:
+            answered = True
+            print("Ok then, I'm out")
+            sys.exit()
+
+    if dataset == 'ml-100k':
+        url = 'http://files.grouplens.org/datasets/movielens/ml-100k.zip'
+    elif dataset == 'ml-1m':
+        url = 'http://files.grouplens.org/datasets/movielens/ml-1m.zip'
+    elif dataset == 'BX':
+        url = 'http://www2.informatik.uni-freiburg.de/~cziegler/BX/BX-CSV-Dump.zip'
+
+    print('downloading...')
+    urlretrieve(url, 'tmp.zip')
+    print('done')
+
+    zf = zipfile.ZipFile('tmp.zip', 'r')
+    zf.extractall('datasets/' + dataset)
+    os.remove('tmp.zip')
+
+def getData(dataset):
+    if dataset == 'ml-100k':
+        dataFile = './datasets/ml-100k/ml-100k/u.data'
+        ReaderClass = MovieLens100kReader
+    elif dataset == 'ml-1m':
+        dataFile = './datasets/ml-1m/ml-1m/ratings.dat'
+        ReaderClass = MovieLens1mReader
+    elif dataset == 'BX':
+        ReaderClass = BXReader
+        dataFile = './datasets/BX/BX-Book-Ratings.csv'
+
+    try:
+        f = open(dataFile, 'r')
+    except FileNotFoundError:
+        downloadDataset(dataset)
+        f = open(dataFile, 'r')
+
     data = [line for line in f]
-    ReaderClass = MovieLens100kReader
-elif args.dataset == 'ml-1m':
-    f = open('./datasets/ml-1m/ratings.dat', 'r')
-    data = [line for line in f]
-    ReaderClass = MovieLens1mReader
-elif args.dataset == 'BX':
-    f = open('./datasets/BX/BX-Book-Ratings.csv', 'r')
-    for line in f:
-        print(line)
-    data = [line for line in f][1:] # skip first line
-    ReaderClass = BXReader
+
+    return data, ReaderClass
 
 def kFolds(seq, k):
     """inpired from scikit learn KFold method"""
@@ -118,6 +159,8 @@ def kFolds(seq, k):
         if fold < len(seq) % k:
             stop += 1
         yield seq[:start] + seq[stop:], seq[start:stop]
+
+data, ReaderClass = getData(args.dataset)
 
 rmses = [] # list of rmse: one per fold
 for foldNumber, (trainSet, testSet) in enumerate(kFolds(data, args.cv)):
