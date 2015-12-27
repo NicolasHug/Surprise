@@ -45,7 +45,7 @@ class Algo:
             self.nY = trainingData.nUsers
 
         # global mean of all ratings
-        self.meanRatings = np.mean([r for (_, _, r) in self.iterAllRatings()])
+        self.meanRatings = np.mean([r for (_, _, r) in self.allRatings])
         # list of all predictions computed by the algorithm
         self.preds = []
 
@@ -92,12 +92,23 @@ class Algo:
 
         return pred
 
-    def iterAllRatings(self):
+    @property
+    def allRatings(self):
         """generator to iter over all ratings"""
 
         for x, xRatings in self.xr.items():
             for y, r in xRatings:
                 yield x, y, r
+
+    @property
+    def allXs(self):
+        """generator to iter over all xs"""
+        return range(self.nX)
+
+    @property
+    def allYs(self):
+        """generator to iter over all ys"""
+        return range(self.nY)
 
     def dumpInfos(self):
         """dump the dict self.infos into a file"""
@@ -128,8 +139,8 @@ class AlgoRandom(Algo):
 
         # estimation of the distribution
         fqs = [0, 0, 0, 0, 0]
-        for x in range(self.nX):
-            for y in range(self.nY):
+        for x in self.allXs:
+            for y in self.allYs:
                 if self.rm[x, y] > 0:
                     fqs[self.rm[x, y] - 1] += 1
         fqs = [fq/sum(fqs) for fq in fqs]
@@ -265,7 +276,7 @@ class AlgoWithBaseline(Algo):
         gamma = 0.005
         nIter = 20
         for dummy in range(nIter):
-            for x, y, r in self.iterAllRatings():
+            for x, y, r in self.allRatings:
                 err = (r -
                     (self.meanRatings + self.xBiases[x] + self.yBiases[y]))
                 # update xBiases
@@ -287,12 +298,12 @@ class AlgoWithBaseline(Algo):
 
         for dummy in range(nIter):
             self.yBiases = np.zeros(self.nY)
-            for y in range(self.nY):
+            for y in self.allYs:
                 devY = sum(r - self.meanRatings - self.xBiases[x] for (x, r) in self.yr[y])
                 self.yBiases[y] = devY / (self.reg_y + len(self.yr[y]))
 
             self.xBiases = np.zeros(self.nX)
-            for x in range(self.nX):
+            for x in self.allXs:
                 devX = sum(r - self.meanRatings - self.yBiases[y] for (y, r) in self.xr[x])
                 self.xBiases[x] = devX / (self.reg_x + len(self.xr[x]))
 

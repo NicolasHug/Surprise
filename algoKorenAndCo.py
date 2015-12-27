@@ -53,7 +53,7 @@ class AlgoKNNBelkor(AlgoWithBaseline):
 
         for i in range(nIter):
             print("optimizing...", nIter - i, "iteration left")
-            for x, y, rxy in self.iterAllRatings():
+            for x, y, rxy in self.allRatings:
                 est = sum((r - self.getBaseline(x2, y)) *
                     self.weights[x, x2] for (x2, r) in self.yr[y])
                 est /= np.sqrt(len(self.yr[y]))
@@ -109,7 +109,7 @@ class AlgoFactors(Algo):
         self.infos['params']['nIter'] = nIter
 
         ratings = []
-        for x, y, val in self.iterAllRatings():
+        for x, y, val in self.allRatings:
             ratings.append(((x, y, val), [val, 0., 0.]))
 
 
