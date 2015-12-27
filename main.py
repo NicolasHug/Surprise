@@ -1,11 +1,9 @@
 #!/usr/bin/python3
 import random as rd
-from collections import defaultdict
 import numpy as np
 import time
 import sys
 import argparse
-from scipy.sparse import dok_matrix
 from urllib.request import urlretrieve
 import zipfile
 
@@ -221,7 +219,7 @@ def getRmse(trainRawRatings, testRawRatings):
 
     algo.dumpInfos()
     print('-' * 20)
-    print('-' * 20)
+    print('Results:')
     return c.computeStats(algo.preds)
 
 if args.trainFile and args.testFile:
@@ -232,9 +230,11 @@ if args.trainFile and args.testFile:
 else:
     rawRatings, ReaderClass = getRawRatings(args.dataset)
     for foldNumber, (trainSet, testSet) in enumerate(kFolds(rawRatings, args.cv)):
+        print('-' * 19)
         print("-- fold numer {0} --".format(foldNumber + 1))
+        print('-' * 19)
         rmses.append(getRmse(trainSet, testSet))
 
 
 print(args)
-print("RMSE: {0:1.4f}".format(np.mean(rmses)))
+print("Mean RMSE: {0:1.4f}".format(np.mean(rmses)))

@@ -1,11 +1,14 @@
 from itertools import combinations
 from collections import defaultdict
-from scipy.stats import rv_discrete
-import numpy as np
 import pickle
 import time
 import os
+import pyximport; pyximport.install()
 
+from scipy.stats import rv_discrete
+import numpy as np
+
+import similarities as sims
 import common as cmn
 
 class PredictionImpossible(Exception):
@@ -125,8 +128,8 @@ class AlgoRandom(Algo):
 
         # estimation of the distribution
         fqs = [0, 0, 0, 0, 0]
-        for x in range(nX):
-            for y in range(nY):
+        for x in range(self.nX):
+            for y in range(self.nY):
                 if self.rm[x, y] > 0:
                     fqs[self.rm[x, y] - 1] += 1
         fqs = [fq/sum(fqs) for fq in fqs]
@@ -136,8 +139,7 @@ class AlgoRandom(Algo):
         return self.distrib.rvs()
 
 class AlgoUsingSim(Algo):
-    """Abstract class for algos using a similarity measure
-    sim parameter can be 'cos' or 'MSD' for mean squared difference"""
+    """Abstract class for algos using a similarity measure"""
     def __init__(self, trainingData, itemBased, sim, **kwargs):
         super().__init__(trainingData, itemBased, **kwargs)
 
@@ -148,138 +150,16 @@ class AlgoUsingSim(Algo):
         """construct the simlarity matrix"""
 
         print("computing the similarity matrix...")
-        self.simMat = np.zeros((self.nX, self.nX))
         if sim == 'cos':
-            self.constructCosineSimMat()
+            self.simMat = sims.cosine(self.nX, self.yr)
         elif sim == 'MSD':
-            self.constructMSDSimMat()
+            self.simMat = sims.msd(self.nX, self.yr)
         elif sim == 'MSDClone':
-            self.constructMSDCloneSimMat()
+            self.simMat = sims.msdClone(self.nX, self.xr, self.rm)
         elif sim == 'pearson':
-            self.constructPearsonSimMat()
+            self.simMat = sims.pearson(self.nX, self.yr)
         else:
             raise NameError('WrongSimName')
-
-    def constructCosineSimMat(self):
-        """compute the cosine similarity between all pairs of xs.
-
-        Technique inspired from MyMediaLite"""
-
-        prods = defaultdict(int)  # sum (r_ui * r_vi) for common items
-        freq = defaultdict(int)   # number common items
-        sqi = defaultdict(int)  # sum (r_ui ^ 2) for common items
-        sqj = defaultdict(int)  # sum (r_vi ^ 2) for common items
-
-        for y, yRatings in self.yr.items():
-            for (xi, r1), (xj, r2) in combinations(yRatings, 2):
-                # note : accessing and updating elements takes a looooot of
-                # time. Yet defaultdict is still faster than a numpy array...
-                prods[xi, xj] += r1 * r2
-                freq[xi, xj] += 1
-                sqi[xi, xj] += r1**2
-                sqj[xi, xj] += r2**2
-
-        for xi in range(self.nX):
-            self.simMat[xi, xi] = 1
-            for xj in range(xi + 1, self.nX):
-                if freq[xi, xj] == 0:
-                    self.simMat[xi, xj] = 0
-                else:
-                    denum = np.sqrt(sqi[xi, xj] * sqj[xi, xj])
-                    self.simMat[xi, xj] = prods[xi, xj] / denum
-
-                self.simMat[xj, xi] = self.simMat[xi, xj]
-
-    def constructMSDSimMat(self):
-        """compute the mean squared difference similarity between all pairs of
-        xs. MSDSim(xi, xj) = 1/MSD(xi, xj). if MSD(xi, xj) == 0, then
-        MSDSim(xi, xj) = number of common ys. Implicitely, if there are no
-        common ys, sim will be zero
-
-        Technique inspired from MyMediaLite"""
-
-        sqDiff = defaultdict(int)  # sum (r_ui - r_vi)**2 for common items
-        freq = defaultdict(int)   # number common items
-
-        for y, yRatings in self.yr.items():
-            for (xi, r1), (xj, r2) in combinations(yRatings, 2):
-                # note : accessing and updating elements takes a looooot of
-                # time. Yet defaultdict is still faster than a numpya array...
-                sqDiff[xi, xj] += (r1 - r2)**2
-                freq[xi, xj] += 1
-
-        for xi in range(self.nX):
-            self.simMat[xi, xi] = 100 # completely arbitrary and useless anyway
-            for xj in range(xi, self.nX):
-                if sqDiff[xi, xj] == 0:  # return number of common ys
-                    self.simMat[xi, xj] = freq[xi, xj]
-                else:  # return inverse of MSD
-                    self.simMat[xi, xj] = freq[xi, xj] / sqDiff[xi, xj]
-
-                self.simMat[xj, xi] = self.simMat[xi, xj]
-
-    def constructMSDCloneSimMat(self):
-        """compute the 'clone' mean squared difference similarity between all
-        pairs of xs. Some properties as for MSDSim apply"""
-
-        for xi in range(self.nX):
-            self.simMat[xi, xi] = 100 # completely arbitrary and useless anyway
-            for xj in range(xi, self.nX):
-                # comon ys for xi and xj
-                Yij = [y for (y, _) in self.xr[xi] if self.rm[xj, y] > 0]
-
-                if not Yij:
-                    self.simMat[xi, xj] = 0
-                    continue
-
-                meanDiff = np.mean([self.rm[xi, y] - self.rm[xj, y] for y in Yij])
-                # sum of squared differences:
-                ssd = sum((self.rm[xi, y] - self.rm[xj, y] - meanDiff)**2 for y in Yij)
-                if ssd == 0:
-                    self.simMat[xi, xj] = len(Yij) # well... ok.
-                else:
-                    self.simMat[xi, xj] = len(Yij) / ssd
-
-    def constructPearsonSimMat(self):
-        """compute the pearson corr coeff between all pairs of xs.
-
-        Technique inspired from MyMediaLite"""
-
-        freq = defaultdict(int)   # number common items
-        prods = defaultdict(int)  # sum (r_ui * r_vi) for common items
-        sqi = defaultdict(int)  # sum (r_ui ^ 2) for common items
-        sqj = defaultdict(int)  # sum (r_vi ^ 2) for common items
-        si = defaultdict(int)  # sum (r_ui) for common items
-        sj = defaultdict(int)  # sum (r_vi) for common items
-
-        for y, yRatings in self.yr.items():
-            for (xi, r1), (xj, r2) in combinations(yRatings, 2):
-                # note : accessing and updating elements takes a looooot of
-                # time. Yet defaultdict is still faster than a numpy array...
-                prods[xi, xj] += r1 * r2
-                freq[xi, xj] += 1
-                sqi[xi, xj] += r1**2
-                sqj[xi, xj] += r2**2
-                si[xi, xj] += r1
-                sj[xi, xj] += r2
-
-        for xi in range(self.nX):
-            self.simMat[xi, xi] = 1
-            for xj in range(xi + 1, self.nX):
-                n = freq[xi, xj]
-                if n < 2:
-                    self.simMat[xi, xj] = 0
-                else:
-                    num = n * prods[xi, xj] - si[xi, xj] * sj[xi, xj]
-                    denum = np.sqrt((n * sqi[xi, xj] - si[xi, xj]**2) *
-                                    (n * sqj[xi, xj] - sj[xi, xj]**2))
-                    if denum == 0:
-                        self.simMat[xi, xj] = 0
-                    else:
-                        self.simMat[xi, xj] = num / denum
-
-                self.simMat[xj, xi] = self.simMat[xi, xj]
-
 
 class AlgoKNNBasic(AlgoUsingSim):
     """Basic collaborative filtering algorithm"""
@@ -333,7 +213,7 @@ class AlgoKNNWithMeans(AlgoUsingSim):
 
         self.means = np.zeros(self.nX)
         for x, ratings in self.xr.items():
-            self.means[x] = np.mean([r for (_, r) in self.xr[x]])
+            self.means[x] = np.mean(ratings)
 
     def estimate(self, u0, i0):
         x0, y0 = self.getx0y0(u0, i0)
