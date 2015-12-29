@@ -6,22 +6,6 @@ syntax: glob
 *~
 *.swp
 
-simCosMovies
-simCosUsers
-simMSDUsers
-simMSDMovies
-
-datasets/*
+doc/build
 datasets
-dumps/*
-baselineOnly/
-basicCollab/
-gillesKNN/
-neighborhoodBaseline/
-pattern/
-patternKNN/
-
-
-# switch to regexp syntax.
-syntax: regexp
-^\.pc/
+dumps
