@@ -137,17 +137,17 @@ class AlgoRandom(Algo):
         super().__init__(trainingData)
         self.infos['name'] = 'random'
 
-        # estimation of the distribution
-        fqs = [0, 0, 0, 0, 0]
-        for x in self.allXs:
-            for y in self.allYs:
-                if self.rm[x, y] > 0:
-                    fqs[self.rm[x, y] - 1] += 1
-        fqs = [fq/sum(fqs) for fq in fqs]
-        self.distrib = rv_discrete(values=([1, 2, 3, 4, 5], fqs))
+        # compute unbiased variance of ratings
+        num = denum = 0
+        for _, _, r in self.allRatings:
+            num += (r - self.meanRatings)**2
+            denum += 1
+        denum -= 1
+
+        self.var = num / denum
 
     def estimate(self, *_):
-        return self.distrib.rvs()
+        return np.random.normal(self.meanRatings, self.var)
 
 class AlgoUsingSim(Algo):
     """Abstract class for algos using a similarity measure"""
