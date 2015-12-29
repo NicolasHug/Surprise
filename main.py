@@ -2,43 +2,47 @@
 import random as rd
 import numpy as np
 import time
-import sys
 import argparse
-from urllib.request import urlretrieve
-import zipfile
+import os
 
-import common as c
-from algoAnalogy import *
-from algoKorenAndCo import *
-from algoClone import *
-from dataset import *
+import stats
+from prediction_algorithms.random import Random
+from prediction_algorithms.baseline_only import BaselineOnly
+from prediction_algorithms.knns import KNNBasic
+from prediction_algorithms.knns import KNNBaseline
+from prediction_algorithms.knns import KNNWithMeans
+from prediction_algorithms.analogy import Parall
+from prediction_algorithms.analogy import Pattern
+from prediction_algorithms.clone import CloneBruteforce
+from prediction_algorithms.clone import CloneMeanDiff
+from prediction_algorithms.clone import CloneKNNMeanDiff
+from dataset import getRawRatings
+from dataset import TrainingData
 
 parser = argparse.ArgumentParser(
         description='run a prediction algorithm for recommendation on given '
         'folds',
-        epilog='example: main.py -algo AlgoKNNBasic -cv 3 -k 30 -sim cos '
+        epilog='example: main.py -algo KNNBasic -cv 3 -k 30 -sim cos '
         '--itemBased')
 
 algoChoices = {
-        'AlgoRandom'           : AlgoRandom,
-        'AlgoBaselineOnly'     : AlgoBaselineOnly,
-        'AlgoKNNBasic'         : AlgoKNNBasic,
-        'AlgoKNNBaseline'      : AlgoKNNBaseline,
-        'AlgoKNNWithMeans'     : AlgoKNNWithMeans,
-        'AlgoParall'           : AlgoParall,
-        'AlgoPattern'          : AlgoPattern,
-        'AlgoKNNBelkor'        : AlgoKNNBelkor,
-        'AlgoFactors'          : AlgoFactors,
-        'AlgoCloneBruteforce'  : AlgoCloneBruteforce,
-        'AlgoCloneMeanDiff'    : AlgoCloneMeanDiff,
-        'AlgoCloneKNNMeanDiff' : AlgoCloneKNNMeanDiff
+        'Random'           : Random,
+        'BaselineOnly'     : BaselineOnly,
+        'KNNBasic'         : KNNBasic,
+        'KNNBaseline'      : KNNBaseline,
+        'KNNWithMeans'     : KNNWithMeans,
+        'Parall'           : Parall,
+        'Pattern'          : Pattern,
+        'CloneBruteforce'  : CloneBruteforce,
+        'CloneMeanDiff'    : CloneMeanDiff,
+        'CloneKNNMeanDiff' : CloneKNNMeanDiff
 }
 parser.add_argument('-algo', type=str,
-        default='AlgoKNNBaseline',
+        default='KNNBaseline',
         choices=algoChoices,
         help='the prediction algorithm to use. Allowed values are '
         + ', '.join(algoChoices.keys()) + '. (default: '
-        'AlgoKNNBaseline)',
+        'KNNBaseline)',
         metavar='<prediction algorithm>'
         )
 
@@ -112,60 +116,6 @@ rd.seed(args.seed)
 if not os.path.exists('datasets'):
     os.makedirs('datasets')
 
-def downloadDataset(dataset):
-    answered = False
-    while not answered:
-        print('dataset ' + dataset + ' could not be found. Do you want to '
-        'download it? [Y/n]')
-        choice = input().lower()
-        if choice in ['yes', 'y', '']:
-            answered = True
-        elif choice in ['no', 'n']:
-            answered = True
-            print("Ok then, I'm out")
-            sys.exit()
-
-    if dataset == 'ml-100k':
-        url = 'http://files.grouplens.org/datasets/movielens/ml-100k.zip'
-    elif dataset == 'ml-1m':
-        url = 'http://files.grouplens.org/datasets/movielens/ml-1m.zip'
-    elif dataset == 'BX':
-        url = 'http://www2.informatik.uni-freiburg.de/~cziegler/BX/BX-CSV-Dump.zip'
-    elif dataset == 'jester':
-        url = 'http://eigentaste.berkeley.edu/dataset/jester_dataset_2.zip'
-
-    print('downloading...')
-    urlretrieve(url, 'tmp.zip')
-    print('done')
-
-    zf = zipfile.ZipFile('tmp.zip', 'r')
-    zf.extractall('datasets/' + dataset)
-    os.remove('tmp.zip')
-
-def getRawRatings(dataset, trainFile=None):
-    if dataset == 'ml-100k':
-        dataFile = trainFile or './datasets/ml-100k/ml-100k/u.data'
-        ReaderClass = MovieLens100kReader
-    elif dataset == 'ml-1m':
-        dataFile = trainFile or './datasets/ml-1m/ml-1m/ratings.dat'
-        ReaderClass = MovieLens1mReader
-    elif dataset == 'BX':
-        ReaderClass = BXReader
-        dataFile = trainFile or './datasets/BX/BX-Book-Ratings.csv'
-    elif dataset =='jester':
-        ReaderClass = JesterReader
-        dataFile = trainFile or './datasets/jester/jester_ratings.dat'
-
-    try:
-        f = open(dataFile, 'r')
-    except FileNotFoundError:
-        downloadDataset(dataset)
-        f = open(dataFile, 'r')
-
-    data = [line for line in f]
-
-    return data, ReaderClass
-
 def kFolds(seq, k):
     """inpired from scikit learn KFold method"""
     rd.shuffle(seq)
@@ -225,7 +175,7 @@ def getRmse(trainRawRatings, testRawRatings):
     algo.dumpInfos()
     print('-' * 20)
     print('Results:')
-    return c.computeStats(algo.preds)
+    return stats.computeStats(algo.preds)
 
 if args.trainFile and args.testFile:
     trainRawRatings, ReaderClass = getRawRatings(args.dataset, args.trainFile)

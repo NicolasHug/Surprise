@@ -1,6 +1,12 @@
-from algo import *
+from collections import defaultdict
+from itertools import combinations
+import numpy as np
 
-class AlgoUsingMeanDiff(Algo):
+from .bases import AlgoBase
+from .bases import AlgoUsingSim
+from .bases import PredictionImpossible
+
+class AlgoUsingMeanDiff(AlgoBase):
     """Astract class for algorithms using the mean difference between the
     ratings of two users/items"""
     def __init__(self, trainingData, itemBased=False, **kwargs):
@@ -13,7 +19,7 @@ class AlgoUsingMeanDiff(Algo):
         diffs = defaultdict(int)  # sum (r_ui - r_vi) for common items
         freq = defaultdict(int)   # number common items
 
-        for y, yRatings in self.yr.items():
+        for _, yRatings in self.yr.items():
             for (xi, r1), (xj, r2) in combinations(yRatings, 2):
                 diffs[xi, xj] += (r1 - r2)
                 freq[xi, xj] += 1
@@ -28,13 +34,13 @@ class AlgoUsingMeanDiff(Algo):
                 self.meanDiff[xj, xi] = -self.meanDiff[xi, xj]
                 self.meanDiffWeight[xj, xi] = self.meanDiffWeight[xi, xj]
 
-class AlgoCloneBruteforce(Algo):
+class CloneBruteforce(AlgoBase):
     """Algo based on cloning, quite rough and straightforward:
     pred(r_xy) = mean(r_x'y + k) for all x' that are k-clone of x
     """
 
     def __init__(self, trainingData, itemBased=False, **kwargs):
-        super().__init__(trainingData, itemBased=itemBased)
+        super().__init__(trainingData, itemBased=itemBased, **kwargs)
 
         self.infos['name'] = 'AlgoClonBruteForce'
 
@@ -68,17 +74,17 @@ class AlgoCloneBruteforce(Algo):
         else:
             raise PredictionImpossible
 
-class AlgoCloneMeanDiff(AlgoUsingMeanDiff):
+class CloneMeanDiff(AlgoUsingMeanDiff):
     """Algo based on cloning:
 
     pred(r_xy) = av_mean(r_x'y + meanDiff(x', x)) for all x' having rated y.
     The mean is weighted by how 'steady' is the meanDiff
     """
 
-    def __init__(self, trainingData, itemBased=False, **kargs):
-        super().__init__(trainingData, itemBased=itemBased)
+    def __init__(self, trainingData, itemBased=False, **kwargs):
+        super().__init__(trainingData, itemBased=itemBased, **kwargs)
 
-        self.infos['name'] = 'AlgoCloneMeanDiff'
+        self.infos['name'] = 'CloneMeanDiff'
 
     def estimate(self, u0, i0):
         x0, y0 = self.getx0y0(u0, i0)
@@ -98,7 +104,7 @@ class AlgoCloneMeanDiff(AlgoUsingMeanDiff):
         else:
             raise PredictionImpossible
 
-class AlgoCloneKNNMeanDiff(AlgoUsingMeanDiff, AlgoUsingSim):
+class CloneKNNMeanDiff(AlgoUsingMeanDiff, AlgoUsingSim):
     """Algo based on cloning:
 
     pred(r_xy) = av_mean(rx'y + meanDiff(x', x)) for all x' that are "close" to
@@ -109,7 +115,7 @@ class AlgoCloneKNNMeanDiff(AlgoUsingMeanDiff, AlgoUsingSim):
     def __init__(self, trainingData, itemBased=False, sim='MSDClone', k=40, **kwargs):
         super().__init__(trainingData, itemBased=itemBased, sim=sim)
 
-        self.infos['name'] = 'AlgoCloneKNNMeanDiff'
+        self.infos['name'] = 'CloneKNNMeanDiff'
 
         self.k = k
 

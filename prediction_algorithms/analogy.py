@@ -1,8 +1,11 @@
-import random as rd
+import random
+import numpy as np
 
-from algo import *
+from .bases import AlgoBase
+from .bases import AlgoUsingSim
+from .bases import PredictionImpossible
 
-class AlgoUsingAnalogy(Algo):
+class AlgoUsingAnalogy(AlgoBase):
     """Abstract class for algos that use an analogy framework"""
     def __init__(self, trainingData, itemBased=False):
         super().__init__(trainingData, itemBased)
@@ -20,7 +23,10 @@ class AlgoUsingAnalogy(Algo):
         """return the truth value of A*(ra, rb, rc, rd)"""
 
         # map ratings into [0, 1]
-        ra = (ra-1)/4.; rb = (rb-1)/4.; rc = (rc-1)/4.; rd = (rd-1)/4.;
+        ra = (ra-1)/4.
+        rb = (rb-1)/4.
+        rc = (rc-1)/4.
+        rd = (rd-1)/4.
         return min(1 - abs(max(ra, rd) - max(rb, rc)), 1 - abs(min(ra, rd) -
             min(rb, rc)))
 
@@ -28,14 +34,17 @@ class AlgoUsingAnalogy(Algo):
         """return the truth value of A(ra, rb, rc, rd)"""
 
         # map ratings into [0, 1]
-        ra = (ra-1)/4.; rb = (rb-1)/4.; rc = (rc-1)/4.; rd = (rd-1)/4.;
+        ra = (ra-1)/4.
+        rb = (rb-1)/4.
+        rc = (rc-1)/4.
+        rd = (rd-1)/4.
         if (ra >= rb and rc >= rd) or (ra <= rb and rc <= rd):
             return 1 - abs((ra-rb) - (rc-rd))
         else:
             return 1 - max(abs(ra-rb), abs(rc-rd))
 
 
-class AlgoParall(AlgoUsingSim, AlgoUsingAnalogy):
+class Parall(AlgoUsingSim, AlgoUsingAnalogy):
     """geometrical analogy based recommender"""
     def __init__(self, trainingData, itemBased=False, sim='MSD', k=40,
             **kwargs):
@@ -62,13 +71,13 @@ class AlgoParall(AlgoUsingSim, AlgoUsingAnalogy):
                 for xc, _, rc in neighbors[:self.k]:
                     yield (xa, ra), (xb, rb), (xc, rc)
 
-    def genRandom(self, x0, y0):
+    def genRandom(self, _, y0):
         """generator that will return 1000 random triplets"""
-        for i in range(10):
+        for dummy in range(10):
             # randomly choose a, b, and c
-            xa, ra = rd.choice(self.yr[y0])
-            xb, rb = rd.choice(self.yr[y0])
-            xc, rc = rd.choice(self.yr[y0])
+            xa, ra = random.choice(self.yr[y0])
+            xb, rb = random.choice(self.yr[y0])
+            xc, rc = random.choice(self.yr[y0])
             yield (xa, ra), (xb, rb), (xc, rc)
 
 
@@ -95,7 +104,7 @@ class AlgoParall(AlgoUsingSim, AlgoUsingAnalogy):
         # if there are candidates, estimate rating as a weighted average
         if candidates:
             ratings = [r for (r, _, _) in candidates]
-            norms = [1/(nrm + 1) for (_, nrm, _) in candidates]
+            # norms = [1/(nrm + 1) for (_, nrm, _) in candidates]
             est = np.average(ratings)
             return est
         else:
@@ -126,10 +135,10 @@ class AlgoParall(AlgoUsingSim, AlgoUsingAnalogy):
 
         return len(Yabc0), nrm
 
-class AlgoPattern(AlgoUsingAnalogy):
+class Pattern(AlgoUsingAnalogy):
     """analogy based recommender using patterns in 3-tuples"""
     def __init__(self, trainingData, itemBased=False, **kwargs):
-        super().__init__(trainingData, itemBased)
+        super().__init__(trainingData, itemBased, **kwargs)
         self.infos['name'] = 'algoPattern'
 
     def estimate(self, u0, i0):
@@ -143,11 +152,11 @@ class AlgoPattern(AlgoUsingAnalogy):
         self.tuples = [] # list of 3-tuples that are serve as candidates
         tCat1 = np.var([1, 2, 1, 1]) #threshold of variance
         self.tuples = [] # list of 3-tuples that are serve as candidates
-        for i in range(1000):
+        for dummy in range(1000):
             # randomly choose a, b, and c
-            xa, ra = rd.choice(self.yr[y0])
-            xb, rb = rd.choice(self.yr[y0])
-            xc, rc = rd.choice(self.yr[y0])
+            xa, ra = random.choice(self.yr[y0])
+            xb, rb = random.choice(self.yr[y0])
+            xc, rc = random.choice(self.yr[y0])
             # if pattern is a:a::b:x => swap b and c
             if ra == rb and ra != rc:
                 xb, xc = xc, xb

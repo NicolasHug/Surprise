@@ -1,21 +1,19 @@
-from itertools import combinations
 from collections import defaultdict
 import pickle
 import time
 import os
 import pyximport; pyximport.install()
 
-from scipy.stats import rv_discrete
 import numpy as np
 
 import similarities as sims
-import common as cmn
+import colors
 
 class PredictionImpossible(Exception):
     """Exception raised when a prediction is impossible"""
     pass
 
-class Algo:
+class AlgoBase:
     """Abstract Algo class where is defined the basic behaviour of a recomender
     algorithm"""
     def __init__(self, trainingData, itemBased=False, withDump=False):
@@ -82,10 +80,10 @@ class Algo:
 
         if output:
             if impossible:
-                print(cmn.Col.FAIL + 'Impossible to predict' + cmn.Col.ENDC)
+                print(colors.FAIL + 'Impossible to predict' + colors.ENDC)
             err = abs(est - r0)
-            col = cmn.Col.FAIL if err > 1 else cmn.Col.OKGREEN
-            print(col + "err = {0:1.2f}".format(err) + cmn.Col.ENDC)
+            col = colors.FAIL if err > 1 else colors.OKGREEN
+            print(col + "err = {0:1.2f}".format(err) + colors.ENDC)
 
         pred = (u0, i0, r0, est, impossible)
         self.preds.append(pred)
@@ -130,26 +128,7 @@ class Algo:
         else:
             return i0, u0
 
-class AlgoRandom(Algo):
-    """predict a random rating based on the distribution of the training set"""
-
-    def __init__(self, trainingData, **kwargs):
-        super().__init__(trainingData)
-        self.infos['name'] = 'random'
-
-        # compute unbiased variance of ratings
-        num = denum = 0
-        for _, _, r in self.allRatings:
-            num += (r - self.meanRatings)**2
-            denum += 1
-        denum -= 1
-
-        self.var = num / denum
-
-    def estimate(self, *_):
-        return np.random.normal(self.meanRatings, self.var)
-
-class AlgoUsingSim(Algo):
+class AlgoUsingSim(AlgoBase):
     """Abstract class for algos using a similarity measure"""
     def __init__(self, trainingData, itemBased, sim, **kwargs):
         super().__init__(trainingData, itemBased, **kwargs)
@@ -172,88 +151,7 @@ class AlgoUsingSim(Algo):
         else:
             raise NameError('WrongSimName')
 
-class AlgoKNNBasic(AlgoUsingSim):
-    """Basic collaborative filtering algorithm"""
-
-    def __init__(self, trainingData, itemBased=False, sim='cos', k=40, **kwargs):
-        super().__init__(trainingData, itemBased=itemBased, sim=sim)
-
-        self.k = k
-
-        self.infos['name'] = 'KNNBasic'
-        self.infos['params']['similarity measure'] = sim
-        self.infos['params']['k'] = self.k
-
-    def estimate(self, u0, i0):
-        x0, y0 = self.getx0y0(u0, i0)
-
-        neighbors = [(x, self.simMat[x0, x], r) for (x, r) in self.yr[y0]]
-
-        if not neighbors:
-            raise PredictionImpossible
-
-        # sort neighbors by similarity
-        neighbors = sorted(neighbors, key=lambda x:x[1], reverse=True)
-
-        # compute weighted average
-        sumSim = sumRatings = 0
-        for (nb, sim, r) in neighbors[:self.k]:
-            if sim > 0:
-                sumSim += sim
-                sumRatings += sim * r
-
-        try:
-            est = sumRatings / sumSim
-        except ZeroDivisionError:
-            raise PredictionImpossible
-
-        return est
-
-class AlgoKNNWithMeans(AlgoUsingSim):
-    """Basic collaborative filtering algorithm, taking into account the mean
-    ratings of each user"""
-
-    def __init__(self, trainingData, itemBased=False, sim='cos', k=40, **kwargs):
-        super().__init__(trainingData, itemBased=itemBased, sim=sim)
-
-        self.k = k
-
-        self.infos['name'] = 'basicWithMeans'
-        self.infos['params']['similarity measure'] = sim
-        self.infos['params']['k'] = self.k
-
-        self.means = np.zeros(self.nX)
-        for x, ratings in self.xr.items():
-            self.means[x] = np.mean(ratings)
-
-    def estimate(self, u0, i0):
-        x0, y0 = self.getx0y0(u0, i0)
-
-        neighbors = [(x, self.simMat[x0, x], r) for (x, r) in self.yr[y0]]
-
-        est = self.means[x0]
-
-        if not neighbors:
-            return est # result will be just the baseline
-
-        # sort neighbors by similarity
-        neighbors = sorted(neighbors, key=lambda x:x[1], reverse=True)
-
-        # compute weighted average
-        sumSim = sumRatings = 0
-        for (nb, sim, r) in neighbors[:self.k]:
-            if sim > 0:
-                sumSim += sim
-                sumRatings += sim * (r - self.means[nb])
-
-        try:
-            est += sumRatings / sumSim
-        except ZeroDivisionError:
-            pass # return mean
-
-        return est
-
-class AlgoWithBaseline(Algo):
+class AlgoWithBaseline(AlgoBase):
     """Abstract class for algos that need a baseline"""
     def __init__(self, trainingData, itemBased, method, **kwargs):
         super().__init__(trainingData, itemBased, **kwargs)
@@ -309,15 +207,3 @@ class AlgoWithBaseline(Algo):
 
     def getBaseline(self, x, y):
         return self.meanRatings + self.xBiases[x] + self.yBiases[y]
-
-
-class AlgoBaselineOnly(AlgoWithBaseline):
-    """ Algo using only baseline"""
-
-    def __init__(self, trainingData, itemBased=False, method='als', **kwargs):
-        super().__init__(trainingData, itemBased, method=method)
-        self.infos['name'] = 'algoBaselineOnly'
-
-    def estimate(self, u0, i0):
-        x0, y0 = self.getx0y0(u0, i0)
-        return self.getBaseline(x0, y0)
