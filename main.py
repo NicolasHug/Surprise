@@ -75,7 +75,7 @@ parser.add_argument('-testFile', type=str,
         help='the file containing raw ratings for testing. dataset argument '
         'needs to be set accordingly. (default: None)')
 
-datasetChoices = ['ml-100k', 'ml-1m', 'BX']
+datasetChoices = ['ml-100k', 'ml-1m', 'BX', 'jester']
 parser.add_argument('-dataset', metavar='<dataset>', type=str,
         default='ml-100k',
         choices=datasetChoices,
@@ -131,6 +131,8 @@ def downloadDataset(dataset):
         url = 'http://files.grouplens.org/datasets/movielens/ml-1m.zip'
     elif dataset == 'BX':
         url = 'http://www2.informatik.uni-freiburg.de/~cziegler/BX/BX-CSV-Dump.zip'
+    elif dataset == 'jester':
+        url = 'http://eigentaste.berkeley.edu/dataset/jester_dataset_2.zip'
 
     print('downloading...')
     urlretrieve(url, 'tmp.zip')
@@ -150,6 +152,9 @@ def getRawRatings(dataset, trainFile=None):
     elif dataset == 'BX':
         ReaderClass = BXReader
         dataFile = trainFile or './datasets/BX/BX-Book-Ratings.csv'
+    elif dataset =='jester':
+        ReaderClass = JesterReader
+        dataFile = trainFile or './datasets/jester/jester_ratings.dat'
 
     try:
         f = open(dataFile, 'r')

@@ -79,3 +79,18 @@ class BXReader(Reader):
         for line in self.rawRatings:
             urid, irid, r = line.split(';')
             yield int(urid), int(irid), int(r), 0
+
+class JesterReader(Reader):
+    def __init__(self, rawRatings):
+        super().__init__(rawRatings)
+        # raw ratings are in [-10, 10]. We need to offset the of 11 so that
+        # zero correponds to 'unrated'
+        self.rMin, self.rMax = (1, 21)
+
+    @property
+    def ratings(self):
+        # TODO: for now only consider the beggining of the file because, else
+        # Python throws MemoryError.
+        for line in self.rawRatings[:10000]:
+            urid, irid, r = line.split()
+            yield int(urid), int(irid), float(r) + 11, 0
