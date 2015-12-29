@@ -1,4 +1,5 @@
 #!/usr/bin/python3
+
 import random as rd
 import numpy as np
 import time

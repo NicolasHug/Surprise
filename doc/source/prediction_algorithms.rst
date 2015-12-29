@@ -1,9 +1,6 @@
 prediction_algorithms package
 =============================
 
-Submodules
-----------
-
 prediction_algorithms.analogy module
 ------------------------------------
 
