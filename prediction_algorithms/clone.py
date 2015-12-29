@@ -6,9 +6,11 @@ from .bases import AlgoBase
 from .bases import AlgoUsingSim
 from .bases import PredictionImpossible
 
+
 class AlgoUsingMeanDiff(AlgoBase):
     """Astract class for algorithms using the mean difference between the
     ratings of two users/items"""
+
     def __init__(self, trainingData, itemBased=False, **kwargs):
         super().__init__(trainingData, itemBased=itemBased, **kwargs)
 
@@ -33,6 +35,7 @@ class AlgoUsingMeanDiff(AlgoBase):
 
                 self.meanDiff[xj, xi] = -self.meanDiff[xi, xj]
                 self.meanDiffWeight[xj, xi] = self.meanDiffWeight[xi, xj]
+
 
 class CloneBruteforce(AlgoBase):
     """Algo based on cloning, quite rough and straightforward:
@@ -59,10 +62,12 @@ class CloneBruteforce(AlgoBase):
         x0, y0 = self.getx0y0(u0, i0)
 
         candidates = []
-        for (x, rx) in self.yr[y0]: # for ALL xs that have rated y0
+        for (x, rx) in self.yr[y0]:  # for ALL xs that have rated y0
             # find common ratings between x0 and x
-            commonRatings = [(self.rm[x0, y], self.rm[x, y]) for (y, _) in self.xr[x0] if self.rm[x, y] > 0]
-            if not commonRatings: continue
+            commonRatings = [(self.rm[x0, y], self.rm[x, y])
+                             for (y, _) in self.xr[x0] if self.rm[x, y] > 0]
+            if not commonRatings:
+                continue
             ra, rb = zip(*commonRatings)
             for k in range(-4, 5):
                 if self.isClone(ra, rb, k):
@@ -73,6 +78,7 @@ class CloneBruteforce(AlgoBase):
             return est
         else:
             raise PredictionImpossible
+
 
 class CloneMeanDiff(AlgoUsingMeanDiff):
     """Algo based on cloning:
@@ -91,10 +97,10 @@ class CloneMeanDiff(AlgoUsingMeanDiff):
 
         candidates = []
         weights = []
-        for (x, rx) in self.yr[y0]: # for ALL xs that have rated y0
+        for (x, rx) in self.yr[y0]:  # for ALL xs that have rated y0
 
             weight = self.meanDiffWeight[x0, x]
-            if weight: # if x and x0 have ys in common
+            if weight:  # if x and x0 have ys in common
                 candidates.append(rx + self.meanDiff[x0, x])
                 weights.append(weight)
 
@@ -104,6 +110,7 @@ class CloneMeanDiff(AlgoUsingMeanDiff):
         else:
             raise PredictionImpossible
 
+
 class CloneKNNMeanDiff(AlgoUsingMeanDiff, AlgoUsingSim):
     """Algo based on cloning:
 
@@ -112,7 +119,8 @@ class CloneKNNMeanDiff(AlgoUsingMeanDiff, AlgoUsingSim):
     using an appropriate similarity measure
     """
 
-    def __init__(self, trainingData, itemBased=False, sim='MSDClone', k=40, **kwargs):
+    def __init__(self, trainingData, itemBased=False, sim='MSDClone', k=40,
+                 **kwargs):
         super().__init__(trainingData, itemBased=itemBased, sim=sim)
 
         self.infos['name'] = 'CloneKNNMeanDiff'
@@ -131,7 +139,7 @@ class CloneKNNMeanDiff(AlgoUsingMeanDiff, AlgoUsingSim):
             raise PredictionImpossible
 
         # sort neighbors by similarity
-        neighbors = sorted(neighbors, key=lambda x:x[1], reverse=True)
+        neighbors = sorted(neighbors, key=lambda x: x[1], reverse=True)
 
         # compute weighted average
         sumSim = sumRatings = 0

@@ -4,7 +4,9 @@ import os
 from urllib.request import urlretrieve
 import zipfile
 
+
 class TrainingData:
+
     def __init__(self, reader):
 
         self.rMax = reader.rMax
@@ -39,20 +41,25 @@ class TrainingData:
             self.ur[uid].append((iid, r))
             self.ir[iid].append((uid, r))
 
-        self.nUsers = len(self.ur) # number of users
-        self.nItems = len(self.ir) # number of items
+        self.nUsers = len(self.ur)  # number of users
+        self.nItems = len(self.ir)  # number of items
 
 
 class Reader():
+
     def __init__(self, rawRatings):
         self.rawRatings = rawRatings
 
+
 class MovieLensReader(Reader):
+
     def __init__(self, rawRatings):
         super().__init__(rawRatings)
         self.rMin, self.rMax = (1, 5)
 
+
 class MovieLens100kReader(MovieLensReader):
+
     def __init__(self, rawRatings):
         super().__init__(rawRatings)
 
@@ -62,7 +69,9 @@ class MovieLens100kReader(MovieLensReader):
             urid, irid, r, timestamp = line.split()
             yield int(urid), int(irid), int(r), timestamp
 
+
 class MovieLens1mReader(MovieLensReader):
+
     def __init__(self, rawRatings):
         super().__init__(rawRatings)
 
@@ -72,7 +81,9 @@ class MovieLens1mReader(MovieLensReader):
             urid, irid, r, timestamp = line.split('::')
             yield int(urid), int(irid), int(r), timestamp
 
+
 class BXReader(Reader):
+
     def __init__(self, rawRatings):
         super().__init__(rawRatings)
         # implicit info (null rating) is discarded
@@ -84,7 +95,9 @@ class BXReader(Reader):
             urid, irid, r = line.split(';')
             yield int(urid), int(irid), int(r), 0
 
+
 class JesterReader(Reader):
+
     def __init__(self, rawRatings):
         super().__init__(rawRatings)
         # raw ratings are in [-10, 10]. We need to offset the of 11 so that
@@ -99,11 +112,12 @@ class JesterReader(Reader):
             urid, irid, r = line.split()
             yield int(urid), int(irid), float(r) + 11, 0
 
+
 def downloadDataset(name):
     answered = False
     while not answered:
         print('dataset ' + name + ' could not be found. Do you want to '
-        'download it? [Y/n]')
+              'download it? [Y/n]')
         choice = input().lower()
         if choice in ['yes', 'y', '']:
             answered = True
@@ -129,6 +143,7 @@ def downloadDataset(name):
     zf.extractall('datasets/' + name)
     os.remove('tmp.zip')
 
+
 def getRawRatings(name, trainFile=None):
     if name == 'ml-100k':
         dataFile = trainFile or './datasets/ml-100k/ml-100k/u.data'
@@ -139,7 +154,7 @@ def getRawRatings(name, trainFile=None):
     elif name == 'BX':
         ReaderClass = BXReader
         dataFile = trainFile or './datasets/BX/BX-Book-Ratings.csv'
-    elif name =='jester':
+    elif name == 'jester':
         ReaderClass = JesterReader
         dataFile = trainFile or './datasets/jester/jester_ratings.dat'
 

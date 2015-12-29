@@ -2,6 +2,7 @@ import numpy as np
 
 from .bases import AlgoBase
 
+
 class Random(AlgoBase):
     """predict a random rating based on the distribution of the training set,
     which is assumed to be normal"""
@@ -21,5 +22,3 @@ class Random(AlgoBase):
 
     def estimate(self, *_):
         return np.random.normal(self.meanRatings, self.var)
-
-

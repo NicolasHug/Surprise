@@ -20,94 +20,102 @@ from dataset import getRawRatings
 from dataset import TrainingData
 
 parser = argparse.ArgumentParser(
-        description='run a prediction algorithm for recommendation on given '
-        'folds',
-        epilog='example: main.py -algo KNNBasic -cv 3 -k 30 -sim cos '
-        '--itemBased')
+    description='run a prediction algorithm for recommendation on given '
+    'folds',
+    epilog='example: main.py -algo KNNBasic -cv 3 -k 30 -sim cos '
+    '--itemBased')
 
 algoChoices = {
-        'Random'           : Random,
-        'BaselineOnly'     : BaselineOnly,
-        'KNNBasic'         : KNNBasic,
-        'KNNBaseline'      : KNNBaseline,
-        'KNNWithMeans'     : KNNWithMeans,
-        'Parall'           : Parall,
-        'Pattern'          : Pattern,
-        'CloneBruteforce'  : CloneBruteforce,
-        'CloneMeanDiff'    : CloneMeanDiff,
-        'CloneKNNMeanDiff' : CloneKNNMeanDiff
+    'Random': Random,
+    'BaselineOnly': BaselineOnly,
+    'KNNBasic': KNNBasic,
+    'KNNBaseline': KNNBaseline,
+    'KNNWithMeans': KNNWithMeans,
+    'Parall': Parall,
+    'Pattern': Pattern,
+    'CloneBruteforce': CloneBruteforce,
+    'CloneMeanDiff': CloneMeanDiff,
+    'CloneKNNMeanDiff': CloneKNNMeanDiff
 }
 parser.add_argument('-algo', type=str,
-        default='KNNBaseline',
-        choices=algoChoices,
-        help='the prediction algorithm to use. Allowed values are '
-        + ', '.join(algoChoices.keys()) + '. (default: '
-        'KNNBaseline)',
-        metavar='<prediction algorithm>'
-        )
+                    default='KNNBaseline',
+                    choices=algoChoices,
+                    help='the prediction algorithm to use. Allowed values ' +
+                    'are ' + ', '.join(algoChoices.keys()) + '. (default: '
+                    'KNNBaseline)',
+                    metavar='<prediction algorithm>')
 
 simChoices = ['cos', 'pearson', 'MSD', 'MSDClone']
 parser.add_argument('-sim', type=str,
-        default='MSD',
-        choices=simChoices,
-        help='for algorithms using a similarity measure. Allowed values are '
-        + ', '.join(simChoices) + '. (default: MSD)',
-        metavar='<sim measure>')
+                    default='MSD',
+                    choices=simChoices,
+                    help='for algorithms using a similarity measure. ' +
+                    'Allowed values are ' + ', '.join(simChoices) + '.' +
+                    ' (default: MSD)', metavar=' < sim measure >')
 
 methodChoices = ['als', 'sgd']
 parser.add_argument('-method', type=str,
-        default='als',
-        choices=methodChoices,
-        help='for algorithms using a baseline, the method to compute it. '
-        'Allowed values are ' + ', '.join(simChoices) + '. (default: als)',
-        metavar='<method>')
+                    default='als',
+                    choices=methodChoices,
+                    help='for algorithms using a baseline, the method to ' +
+                    'compute it. Allowed values are ' +
+                    ', '.join(simChoices) + '. (default: als)',
+                    metavar='<method>')
 
 parser.add_argument('-k', type=int,
-        metavar = '<number of neighbors>',
-        default=40,
-        help='the number of neighbors to use for k-NN algorithms (default: 40)')
+                    metavar='<number of neighbors>',
+                    default=40,
+                    help='the number of neighbors to use for k-NN ' +
+                    'algorithms (default: 40)')
 
 parser.add_argument('-trainFile', type=str,
-        metavar = '<train file>',
-        default=None,
-        help='the file containing raw ratings for training. dataset argument '
-        'needs to be set accordingly (default: None)')
+                    metavar='<train file>',
+                    default=None,
+                    help='the file containing raw ratings for training. ' +
+                    'The dataset argument needs to be set accordingly ' +
+                    '(default: None)')
 
 parser.add_argument('-testFile', type=str,
-        metavar = '<test file>',
-        default=None,
-        help='the file containing raw ratings for testing. dataset argument '
-        'needs to be set accordingly. (default: None)')
+                    metavar='<test file>',
+                    default=None,
+                    help='the file containing raw ratings for testing. ' +
+                    'The dataset argument needs to be set accordingly. ' +
+                    '(default: None)')
 
 datasetChoices = ['ml-100k', 'ml-1m', 'BX', 'jester']
 parser.add_argument('-dataset', metavar='<dataset>', type=str,
-        default='ml-100k',
-        choices=datasetChoices,
-        help='the dataset to use. Allowed values are ' +
-        ', '.join(datasetChoices) + '( default: ml-100k -- MovieLens 100k)')
+                    default='ml-100k',
+                    choices=datasetChoices,
+                    help='the dataset to use. Allowed values are ' +
+                    ', '.join(datasetChoices) +
+                    '( default: ml-100k -- MovieLens 100k)')
 
 parser.add_argument('-cv', type=int,
-        metavar = "<number of folds>",
-        default=5,
-        help='the number of folds for cross validation. Ignored if trainFile '
-        'and testFile are set. (default: 5)')
+                    metavar="<number of folds>",
+                    default=5,
+                    help='the number of folds for cross validation. ' +
+                    'Ignored if trainFile and testFile are set. (default: 5)')
 
 parser.add_argument('-seed', type=int,
-        metavar = '<random seed>',
-        default=None,
-        help='the seed to use for RNG (default: current system time)')
+                    metavar='<random seed>',
+                    default=None,
+                    help='the seed to use for RNG ' +
+                    '(default: current system time)')
 
 parser.add_argument('--itemBased', dest='itemBased', action='store_const',
-const=True, default=False, help='compute similarities on items rather than on '
-        'users')
+                    const=True,
+                    default=False,
+                    help='compute similarities on items rather than on users')
 
 parser.add_argument('--withDump', dest='withDump', action='store_const',
-        const=True, default=False, help='tells to dump results in a file '
-        '(default: False)')
+                    const=True, default=False, help='tells to dump results ' +
+                    'in a file (default: False)')
 
 parser.add_argument('--indivOutput', dest='indivOutput', action='store_const',
-        const=True, default=False, help='to print individual prediction '
-        'results (default: False)')
+                    const=True,
+                    default=False,
+                    help='to print individual prediction results ' +
+                    '(default: False)')
 
 args = parser.parse_args()
 
@@ -115,6 +123,7 @@ rd.seed(args.seed)
 
 if not os.path.exists('datasets'):
     os.makedirs('datasets')
+
 
 def kFolds(seq, k):
     """inpired from scikit learn KFold method"""
@@ -127,7 +136,8 @@ def kFolds(seq, k):
             stop += 1
         yield seq[:start] + seq[stop:], seq[start:stop]
 
-rmses = [] # list of rmse: one per fold
+rmses = []  # list of rmse: one per fold
+
 
 def getRmse(trainRawRatings, testRawRatings):
     readerTrain = ReaderClass(trainRawRatings)
@@ -139,10 +149,10 @@ def getRmse(trainRawRatings, testRawRatings):
     trainingTime = time.process_time() - trainStartTime
 
     algo = algoChoices[args.algo](trainingData,
-            itemBased=args.itemBased,
-            method=args.method,
-            sim=args.sim,
-            k=args.k)
+                                  itemBased=args.itemBased,
+                                  method=args.method,
+                                  sim=args.sim,
+                                  k=args.k)
 
     print("computing predictions...")
     testTimeStart = time.process_time()
@@ -184,7 +194,8 @@ if args.trainFile and args.testFile:
 
 else:
     rawRatings, ReaderClass = getRawRatings(args.dataset)
-    for foldNumber, (trainSet, testSet) in enumerate(kFolds(rawRatings, args.cv)):
+    for foldNumber, (trainSet, testSet) in enumerate(kFolds(rawRatings,
+                                                            args.cv)):
         print('-' * 19)
         print("-- fold numer {0} --".format(foldNumber + 1))
         print('-' * 19)

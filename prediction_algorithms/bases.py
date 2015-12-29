@@ -2,20 +2,24 @@ from collections import defaultdict
 import pickle
 import time
 import os
-import pyximport; pyximport.install()
-
 import numpy as np
+
+import pyximport
+pyximport.install()
 
 import similarities as sims
 import colors
+
 
 class PredictionImpossible(Exception):
     """Exception raised when a prediction is impossible"""
     pass
 
+
 class AlgoBase:
     """Abstract Algo class where is defined the basic behaviour of a recomender
     algorithm"""
+
     def __init__(self, trainingData, itemBased=False, withDump=False):
 
         self.trainingData = trainingData
@@ -50,12 +54,12 @@ class AlgoBase:
         self.withDump = withDump
         self.infos = {}
         self.infos['name'] = 'undefined'
-        self.infos['params'] = {} # dict of params specific to any algo
+        self.infos['params'] = {}  # dict of params specific to any algo
         self.infos['params']['Based on '] = 'users' if self.ub else 'items'
         self.infos['ub'] = self.ub
         self.infos['preds'] = self.preds  # list of predictions.
-        self.infos['ur'] = trainingData.ur # user ratings  dict
-        self.infos['ir'] = trainingData.ir # item ratings dict
+        self.infos['ur'] = trainingData.ur  # user ratings  dict
+        self.infos['ir'] = trainingData.ir  # item ratings dict
         self.infos['rm'] = self.rm  # rating matrix
         # Note: there is a lot of duplicated data, the dumped file will be
         # HUGE.
@@ -118,8 +122,8 @@ class AlgoBase:
 
         date = time.strftime('%y%m%d-%Hh%Mm%S', time.localtime())
         name = ('dumps/' + date + '-' + self.infos['name'] + '-' +
-            str(len(self.infos['preds'])))
-        pickle.dump(self.infos, open(name,'wb'))
+                str(len(self.infos['preds'])))
+        pickle.dump(self.infos, open(name, 'wb'))
 
     def getx0y0(self, u0, i0):
         """return x0 and y0 based on the self.ub variable (see constructor)"""
@@ -128,13 +132,15 @@ class AlgoBase:
         else:
             return i0, u0
 
+
 class AlgoUsingSim(AlgoBase):
     """Abstract class for algos using a similarity measure"""
+
     def __init__(self, trainingData, itemBased, sim, **kwargs):
         super().__init__(trainingData, itemBased, **kwargs)
 
         self.infos['params']['sim'] = sim
-        self.constructSimMat(sim) # we'll need the similiarities
+        self.constructSimMat(sim)  # we'll need the similiarities
 
     def constructSimMat(self, sim):
         """construct the simlarity matrix"""
@@ -151,12 +157,14 @@ class AlgoUsingSim(AlgoBase):
         else:
             raise NameError('WrongSimName')
 
+
 class AlgoWithBaseline(AlgoBase):
     """Abstract class for algos that need a baseline"""
+
     def __init__(self, trainingData, itemBased, method, **kwargs):
         super().__init__(trainingData, itemBased, **kwargs)
 
-        #compute users and items biases
+        # compute users and items biases
         # see from 5.2.1 of RS handbook
 
         self.xBiases = np.zeros(self.nX)
@@ -176,13 +184,13 @@ class AlgoWithBaseline(AlgoBase):
         for dummy in range(nIter):
             for x, y, r in self.allRatings:
                 err = (r -
-                    (self.meanRatings + self.xBiases[x] + self.yBiases[y]))
+                       (self.meanRatings + self.xBiases[x] + self.yBiases[y]))
                 # update xBiases
                 self.xBiases[x] += gamma * (err - lambda4 *
-                    self.xBiases[x])
+                                            self.xBiases[x])
                 # udapte yBiases
                 self.yBiases[y] += gamma * (err - lambda4 *
-                    self.yBiases[y])
+                                            self.yBiases[y])
 
     def optimize_als(self):
         """alternatively optimize yBiases and xBiases. Probably not really an
@@ -197,12 +205,14 @@ class AlgoWithBaseline(AlgoBase):
         for dummy in range(nIter):
             self.yBiases = np.zeros(self.nY)
             for y in self.allYs:
-                devY = sum(r - self.meanRatings - self.xBiases[x] for (x, r) in self.yr[y])
+                devY = sum(r - self.meanRatings -
+                           self.xBiases[x] for (x, r) in self.yr[y])
                 self.yBiases[y] = devY / (self.reg_y + len(self.yr[y]))
 
             self.xBiases = np.zeros(self.nX)
             for x in self.allXs:
-                devX = sum(r - self.meanRatings - self.yBiases[y] for (y, r) in self.xr[x])
+                devX = sum(r - self.meanRatings -
+                           self.yBiases[y] for (y, r) in self.xr[x])
                 self.xBiases[x] = devX / (self.reg_x + len(self.xr[x]))
 
     def getBaseline(self, x, y):

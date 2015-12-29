@@ -7,6 +7,7 @@ import os
 import common as c
 from analyseTools import *
 
+
 def analyseDumpFile(dumpFile):
     """print some info about an individual dump file"""
     print('File:', dumpFile)
@@ -19,13 +20,12 @@ def analyseDumpFile(dumpFile):
     for k, v in infos['params'].items():
         print(k + ':', v)
 
-
     # requirements that a prediction needs to fit
-    requirements = (lambda p: True)# p['r0'] >= 4 and p['est'] >= 4)
+    requirements = (lambda p: True)  # p['r0'] >= 4 and p['est'] >= 4)
 
     # list with all estimations fitting the previously defined requirements
     # (list and not iterator because we may need to use it more than once)
-    interestingPreds= list(filter(requirements, infos['preds']))
+    interestingPreds = list(filter(requirements, infos['preds']))
 
     # keep only the k highest or lowest values for ratings count of u0
     """
@@ -34,9 +34,6 @@ def analyseDumpFile(dumpFile):
     interestingPreds = interestingPreds[-10:] # top K
     #interestingPreds = interestingPreds[:10] # bottom K
     """
-
-
-
 
     # print details for predictions we are interested in
     """
@@ -50,7 +47,6 @@ def analyseDumpFile(dumpFile):
     # print RMSE & Co for these predictions
     c.computeStats(interestingPreds)
 
-        
     """
     # print proportion of absolute errors
     print('-' * 10, "\n" + "Proportions of absolute errors among int. preds:")
@@ -71,15 +67,16 @@ def analyseDumpFile(dumpFile):
     printHist(infos['preds'], key='r0')
 
     """
-    #print time info
+    # print time info
     print('-' * 52)
     print("training time: "
-        "{0:02d}h{1:02d}m{2:2.2f}s".format(*secsToHMS(infos['trainingTime'])))
+          "{0:02d}h{1:02d}m{2:2.2f}s".format(*secsToHMS(infos['trainingTime'])))
     print("testing time : "
-        "{0:02d}h{1:02d}m{2:2.2f}s".format(*secsToHMS(infos['testingTime'])))
+          "{0:02d}h{1:02d}m{2:2.2f}s".format(*secsToHMS(infos['testingTime'])))
 
     #measureSurprise(interestingPreds, infos)
-    #printCoverage(interestingPreds) 
+    # printCoverage(interestingPreds)
+
 
 def compareDumps(dumpFileA, dumpFileB):
     """compare two algorithms from their dumpFile"""
@@ -101,13 +98,12 @@ def compareDumps(dumpFileA, dumpFileB):
     predsA = infosA['preds']
     predsB = infosB['preds']
 
-
     # show details of pred from A and B where pred for A is bad (err >= 3) or
     # good (err <= 1)
     badPredsA = [(i, p) for (i, p) in enumerate(predsA) if errorBetween(p,
-        inf=3)]
+                                                                        inf=3)]
     goodPredsA = [(i, p) for (i, p) in enumerate(predsA) if errorBetween(p,
-        sup=1)]
+                                                                         sup=1)]
 
     """
     print('-' * 52)
@@ -130,11 +126,11 @@ def compareDumps(dumpFileA, dumpFileB):
         print('-' * 52)
     """
 
-
-    # show details of pred from A and B where A is better than B 
+    # show details of pred from A and B where A is better than B
     # (err(A) <= err(B))
     print('-' * 50)
-    aIsBetter = [i for (i, p) in enumerate(predsA) if abs(err(p)) <= abs(err(predsB[i]))]
+    aIsBetter = [i for (i, p) in enumerate(
+        predsA) if abs(err(p)) <= abs(err(predsB[i]))]
     for i in aIsBetter:
         print(predsA[i]['i0'], predsA[i]['u0'])
         """
@@ -153,15 +149,14 @@ def compareDumps(dumpFileA, dumpFileB):
         """
 
 
-
 argc = len(sys.argv)
 if argc < 3:
 
     # by default, open the last created file in the dumps directory
     if len(sys.argv) < 2:
         for dirname, dirnames, filenames in os.walk('./dumps'):
-            dumpFile = max([f for f in filenames], 
-                key=lambda x:os.path.getctime(os.path.join(dirname, x)))
+            dumpFile = max([f for f in filenames],
+                           key=lambda x: os.path.getctime(os.path.join(dirname, x)))
             dumpFile = os.path.join(dirname, dumpFile)
     # if file name is passed as argument, chose it instead
     elif len(sys.argv) < 3:
@@ -169,7 +164,7 @@ if argc < 3:
 
     analyseDumpFile(dumpFile)
 
-else :
+else:
     dumpFileA = sys.argv[1]
     dumpFileB = sys.argv[2]
     compareDumps(dumpFileA, dumpFileB)

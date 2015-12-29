@@ -3,22 +3,26 @@ import numpy as np
 
 import common as cmn
 
+
 def err(p):
     """return the error between the expected rating and the estimated one"""
     return p['est'] - p['r0']
+
 
 def meanCommonYs(p):
     """return the mean count of users (or items) rated in common for all
     the 3-tuples of prediction p"""
     return np.mean(p['3tuples'], 0)[3] if p['3tuples'] else 0
 
+
 def solProp(p, r):
     """proportion of solution to analogical equation that are equal to r for
     all 3-tuples of the prediction"""
     if p['3tuples']:
-        return sum((rd == r) for _, _, _, _, rd in p['3tuples'])/len(p['3tuples'])
-    else :
+        return sum((rd == r) for _, _, _, _, rd in p['3tuples']) / len(p['3tuples'])
+    else:
         return 0
+
 
 def getx0y0(p, infos):
     """return x0 and y0 based on the ub variable"""
@@ -36,6 +40,7 @@ def getCommonYs(t, p, infos):
     Yabc0 = [y for (y, r) in xr[xa] if rm[xb, y] and rm[xc, y] and rm[x0, y]]
     return Yabc0
 
+
 def details(p, infos):
     """print details about a prediction"""
     def detailsRatings(x='u'):
@@ -48,10 +53,10 @@ def details(p, infos):
 
     # ids, true rating, etimation and error
     print("u0: {0:<3d}    i0: {1:<4d}   r0: {2}   est: {3:1.2f}"
-        "   err: {4:-2.2f}".format(p['u0'], p['i0'], p['r0'], p['est'],
-        err(p)))
+          "   err: {4:-2.2f}".format(p['u0'], p['i0'], p['r0'], p['est'],
+                                     err(p)))
 
-     # was the prediction impossible ?
+    # was the prediction impossible ?
     print("Prediction impossible? -", p['wasImpossible'])
 
     # u0 and i0 ratings infos
@@ -73,7 +78,7 @@ def details(p, infos):
             prop = solProp(p, r)
             nFill = int(prop * lineLenght)
             print('X' * nFill + ' ' * (lineLenght - nFill), end="")
-            print('] - {0:3.0f}%'.format(prop*100.))
+            print('] - {0:3.0f}%'.format(prop * 100.))
 
         """
         x0, y0 = getx0y0(p, infos)
@@ -95,10 +100,10 @@ def details(p, infos):
         """
 
 
-
 def errorBetween(p, inf=0., sup=4.):
     """return true if abs(err) is between inf and sup (both included)"""
     return inf <= abs(err(p)) <= sup
+
 
 def ratingsCountBetween(p, x='u', inf=0, sup=float('inf')):
     """return true if the number of rating for x0 ('u' or 'm') is between inf
@@ -107,14 +112,17 @@ def ratingsCountBetween(p, x='u', inf=0, sup=float('inf')):
     x0 = 'u0' if x == 'u' else 'i0'
     return inf <= len(xr[p[x0]]) <= sup
 
+
 def r0Between(p, inf=1, sup=5):
     """return true if r0 is between inf and sup (both included)"""
     return inf <= p['r0'] <= sup
+
 
 def meanCommonXsBetween(p, inf=0, sup=float('inf')):
     """return true if the mean of common ratings is betewen inf and sup (both
     included)"""
     return inf <= meanCommonXs(p) <= sup
+
 
 def printHist(preds, key):
     """print histogram for errors ('err'), r0 ('r0') or round of estimations
@@ -124,18 +132,18 @@ def printHist(preds, key):
         for inf in range(4):
             print(inf, '<= err < ', inf + 1, ': [', end="")
             propInterval = (sum(inf <= abs(err(p)) < inf + 1 for p in preds) /
-                len(preds))
+                            len(preds))
             nFill = int(propInterval * lineLenght)
             print('X' * nFill + ' ' * (lineLenght - nFill), end="")
-            print('] - {0:3.0f}%'.format(propInterval*100.))
+            print('] - {0:3.0f}%'.format(propInterval * 100.))
     else:
         for v in range(1, 6):
             print(key, '=', v, ': [', end="")
             propInterval = (sum(v == round(p[key]) for p in preds) /
-                len(preds))
+                            len(preds))
             nFill = int(propInterval * lineLenght)
             print('X' * nFill + ' ' * (lineLenght - nFill), end="")
-            print('] - {0:3.0f}%'.format(propInterval*100.))
+            print('] - {0:3.0f}%'.format(propInterval * 100.))
 
 
 def secsToHMS(s):
@@ -143,6 +151,7 @@ def secsToHMS(s):
     m, s = divmod(s, 60)
     h, m = divmod(m, 60)
     return int(h), int(m), s
+
 
 def pmi(i, j, pij):
     """return the point-wise mutual information of two items based on their
@@ -167,7 +176,7 @@ def measureSurprise(preds, infos):
         if not iratings:
             continue
         ui, _ = zip(*iratings)
-        ui = set(ui) # we need a set to use intersection
+        ui = set(ui)  # we need a set to use intersection
         for j in range(i + 1, cmn.lastIi + 1):
             jratings = infos['ir'][j]
             if not jratings:
@@ -178,20 +187,21 @@ def measureSurprise(preds, infos):
             pij[j, i] = pij[i, j]
         pij[i, i] = len(ui) / cmn.lastUi
 
-    warnings.filterwarnings('error') # treat warning as exceptions
+    warnings.filterwarnings('error')  # treat warning as exceptions
 
     # we measure surprise as max of PMI values or as their mean
-    surprises = [] # list containing surprise measures of all predictions
-    for p in filter(lambda p:p['est'] >= 4, preds):
+    surprises = []  # list containing surprise measures of all predictions
+    for p in filter(lambda p: p['est'] >= 4, preds):
         u0 = p['u0']
         i0 = p['i0']
         pmis = [pmi(i0, j, pij) for (j, _) in infos['ur'][u0]]
         surprises.append((max(pmis), np.mean(pmis)))
 
     print("mean of co-occurence surprise (max): "
-        "{0:1.4f}".format(np.mean(surprises, 0)[0]))
+          "{0:1.4f}".format(np.mean(surprises, 0)[0]))
     print("mean of co-occurence surprise (avg): "
-        "{0:1.4f}".format(np.mean(surprises, 0)[1]))
+          "{0:1.4f}".format(np.mean(surprises, 0)[1]))
+
 
 def printCoverage(preds):
 

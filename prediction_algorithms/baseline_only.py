@@ -1,5 +1,6 @@
 from .bases import AlgoWithBaseline
 
+
 class BaselineOnly(AlgoWithBaseline):
     """ Algo using only baseline"""
 

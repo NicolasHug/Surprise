@@ -5,11 +5,13 @@ from .bases import AlgoBase
 from .bases import AlgoUsingSim
 from .bases import PredictionImpossible
 
+
 class AlgoUsingAnalogy(AlgoBase):
     """Abstract class for algos that use an analogy framework"""
+
     def __init__(self, trainingData, itemBased=False):
         super().__init__(trainingData, itemBased)
-        self.tuples = [] # list of 3-tuple (for the last prediction only)
+        self.tuples = []  # list of 3-tuple (for the last prediction only)
 
     def isSolvable(self, ra, rb, rc):
         """return true if analogical equation is solvable else false"""
@@ -19,35 +21,36 @@ class AlgoUsingAnalogy(AlgoBase):
         """ solve A*(a, b, c, x). Undefined if equation not solvable."""
         return rc - ra + rb
 
-    def tvAStar (self, ra, rb, rc, rd):
+    def tvAStar(self, ra, rb, rc, rd):
         """return the truth value of A*(ra, rb, rc, rd)"""
 
         # map ratings into [0, 1]
-        ra = (ra-1)/4.
-        rb = (rb-1)/4.
-        rc = (rc-1)/4.
-        rd = (rd-1)/4.
+        ra = (ra - 1) / 4.
+        rb = (rb - 1) / 4.
+        rc = (rc - 1) / 4.
+        rd = (rd - 1) / 4.
         return min(1 - abs(max(ra, rd) - max(rb, rc)), 1 - abs(min(ra, rd) -
-            min(rb, rc)))
+                                                               min(rb, rc)))
 
     def tvA(self, ra, rb, rc, rd):
         """return the truth value of A(ra, rb, rc, rd)"""
 
         # map ratings into [0, 1]
-        ra = (ra-1)/4.
-        rb = (rb-1)/4.
-        rc = (rc-1)/4.
-        rd = (rd-1)/4.
+        ra = (ra - 1) / 4.
+        rb = (rb - 1) / 4.
+        rc = (rc - 1) / 4.
+        rd = (rd - 1) / 4.
         if (ra >= rb and rc >= rd) or (ra <= rb and rc <= rd):
-            return 1 - abs((ra-rb) - (rc-rd))
+            return 1 - abs((ra - rb) - (rc - rd))
         else:
-            return 1 - max(abs(ra-rb), abs(rc-rd))
+            return 1 - max(abs(ra - rb), abs(rc - rd))
 
 
 class Parall(AlgoUsingSim, AlgoUsingAnalogy):
     """geometrical analogy based recommender"""
+
     def __init__(self, trainingData, itemBased=False, sim='MSD', k=40,
-            **kwargs):
+                 **kwargs):
         super().__init__(trainingData, itemBased, sim)
         self.infos['name'] = 'algoParallKNN' if k else 'algoParall'
 
@@ -64,7 +67,7 @@ class Parall(AlgoUsingSim, AlgoUsingAnalogy):
         neighbors = [(x, self.simMat[x0, x], r) for (x, r) in self.yr[y0]]
 
         # sort neighbors by similarity in decreasing order
-        neighbors = sorted(neighbors, key=lambda x:x[1], reverse=True)
+        neighbors = sorted(neighbors, key=lambda x: x[1], reverse=True)
 
         for xa, _, ra in neighbors[:self.k]:
             for xb, _, rb in neighbors[:self.k]:
@@ -80,7 +83,6 @@ class Parall(AlgoUsingSim, AlgoUsingAnalogy):
             xc, rc = random.choice(self.yr[y0])
             yield (xa, ra), (xb, rb), (xc, rc)
 
-
     def estimate(self, u0, i0):
         x0, y0 = self.getx0y0(u0, i0)
 
@@ -88,15 +90,15 @@ class Parall(AlgoUsingSim, AlgoUsingAnalogy):
         if not self.yr[y0]:
             raise PredictionImpossible
 
-        candidates= [] # solutions to analogical equations
-        self.tuples = [] # list of 3-tuples that are serve as candidates
+        candidates = []  #  solutions to analogical equations
+        self.tuples = []  # list of 3-tuples that are serve as candidates
 
         for (xa, ra), (xb, rb), (xc, rc) in self.gen(x0, y0):
             if (xa != xb != xc and xa != xc and
-               self.isSolvable(ra, rb, rc)):
+                    self.isSolvable(ra, rb, rc)):
                 # get info about the abcd 'paralellogram'
                 (nYabc0, nrm) = self.getParall(xa, xb, xc, x0)
-                if nrm < 1.5 * np.sqrt(nYabc0): # we allow some margin
+                if nrm < 1.5 * np.sqrt(nYabc0):  # we allow some margin
                     sol = self.solve(ra, rb, rc)
                     candidates.append((sol, nrm, nYabc0))
                     self.tuples.append((xa, xb, xc, nYabc0, sol))
@@ -110,14 +112,14 @@ class Parall(AlgoUsingSim, AlgoUsingAnalogy):
         else:
             raise PredictionImpossible
 
-
     def getParall(self, xa, xb, xc, x0):
         """return information about the parallelogram formed by xs: number of
         ratings in common and norm of the differences (see formula)"""
 
         # list of ys that xa, xb, xc, and x0 have commonly rated
-        Yabc0 = [y for (y, _) in self.xr[xa] if (self.rm[xb, y] and self.rm[xc, y]
-            and self.rm[x0, y])]
+        Yabc0 = [y for (y, _) in self.xr[xa] if (self.rm[xb, y] and
+                                                 self.rm[xc, y] and
+                                                 self.rm[x0, y])]
 
         # if there is no common rating
         if not Yabc0:
@@ -135,8 +137,10 @@ class Parall(AlgoUsingSim, AlgoUsingAnalogy):
 
         return len(Yabc0), nrm
 
+
 class Pattern(AlgoUsingAnalogy):
     """analogy based recommender using patterns in 3-tuples"""
+
     def __init__(self, trainingData, itemBased=False, **kwargs):
         super().__init__(trainingData, itemBased, **kwargs)
         self.infos['name'] = 'algoPattern'
@@ -148,10 +152,10 @@ class Pattern(AlgoUsingAnalogy):
         if not self.yr[y0]:
             raise PredictionImpossible
 
-        candidates= [] # solutions to analogical equations
-        self.tuples = [] # list of 3-tuples that are serve as candidates
-        tCat1 = np.var([1, 2, 1, 1]) #threshold of variance
-        self.tuples = [] # list of 3-tuples that are serve as candidates
+        candidates = []  #  solutions to analogical equations
+        self.tuples = []  # list of 3-tuples that are serve as candidates
+        tCat1 = np.var([1, 2, 1, 1])  # threshold of variance
+        self.tuples = []  # list of 3-tuples that are serve as candidates
         for dummy in range(1000):
             # randomly choose a, b, and c
             xa, ra = random.choice(self.yr[y0])
@@ -162,22 +166,23 @@ class Pattern(AlgoUsingAnalogy):
                 xb, xc = xc, xb
                 rb, rc = rc, rb
 
-            cat1 = cat2 = cat3 = 0 # number of 3-tuples belonging to cat1, cat2...
+            # number of 3-tuples belonging to cat1, cat2...
+            cat1 = cat2 = cat3 = 0
             if xa != xb != xc and xa != xc and self.isSolvable(ra, rb, rc):
                 Yabc0 = self.getYabc0(xa, xb, xc, x0)
                 if not Yabc0:
                     break
                 for y in Yabc0:
                     ray, rby, rcy, r0y = (self.rm[xa, y], self.rm[xb, y],
-                        self.rm[xc, y], self.rm[x0, y])
+                                          self.rm[xc, y], self.rm[x0, y])
                     # check if 3truple belongs to cat 1
                     # the variance check ensures that ratings are all equal, or
                     # only one differs from the othr with a diff of 1
                     if np.var([ray, rby, rcy, r0y]) <= tCat1:
                         cat1 += 1
                     # check if 3truple belongs to cat 2
-                    elif (np.sign(ray-rby) == np.sign(rcy-r0y) and
-                        min(abs(ray-rby), abs(rcy-r0y)) <= 2):
+                    elif (np.sign(ray - rby) == np.sign(rcy - r0y) and
+                          min(abs(ray - rby), abs(rcy - r0y)) <= 2):
                         cat2 += 1
 
                     # check if 3truple belongs to cat 3
@@ -188,15 +193,15 @@ class Pattern(AlgoUsingAnalogy):
                 if ra == rb == rc:
                     if cat1 >= cat2 + cat3:
                         candidates.append(ra)
-                        self.tuples.append((xa, xb, xc, len(Yabc0),ra))
+                        self.tuples.append((xa, xb, xc, len(Yabc0), ra))
                 elif abs(ra - rb) >= 2:
                     if cat2 > cat3:
                         candidates.append(rb)
-                        self.tuples.append((xa, xb, xc, len(Yabc0),rb))
+                        self.tuples.append((xa, xb, xc, len(Yabc0), rb))
                 else:
                     if cat1 >= cat2 + cat3 or cat2 > cat3:
                         candidates.append(rb)
-                        self.tuples.append((xa, xb, xc, len(Yabc0),rb))
+                        self.tuples.append((xa, xb, xc, len(Yabc0), rb))
 
         # if there are candidates, estimate rating as a weighted average
         if candidates:
@@ -206,8 +211,8 @@ class Pattern(AlgoUsingAnalogy):
         else:
             raise PredictionImpossible
 
-
     def getYabc0(self, xa, xb, xc, x0):
         # list of ys that xa, xb, xc, and x0 have commonly rated
-        return [y for (y, _) in self.xr[xa] if (self.rm[xb, y] and self.rm[xc,
-            y] and self.rm[x0, y])]
+        return [y for (y, _) in self.xr[xa] if (self.rm[xb, y] and
+                                                self.rm[xc, y] and
+                                                self.rm[x0, y])]
