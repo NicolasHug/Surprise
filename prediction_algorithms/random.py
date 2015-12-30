@@ -1,11 +1,19 @@
+"""
+Algorithm predicting a random rating.
+"""
+
 import numpy as np
 
 from .bases import AlgoBase
 
 
 class Random(AlgoBase):
-    """predict a random rating based on the distribution of the training set,
-    which is assumed to be normal"""
+    """Algorithm predicting a random rating based on the distribution of the
+    training set, which is assumed to be normal:
+
+    :math:`\hat{r}_{ui} \sim \mathcal{N}(\hat{\mu}, \hat{\sigma})` where
+    :math:`\hat{\mu}` and :math:`\hat{\sigma}` are estimated from the training data.
+    """
 
     def __init__(self, trainingData, **kwargs):
         super().__init__(trainingData, **kwargs)

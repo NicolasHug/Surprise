@@ -1,3 +1,9 @@
+"""
+The :mod:`similarities` module includes tools to compute similarity metrics
+between users or items. Please refer to the :ref:`notation standards
+<notation_standards>`.
+"""
+
 cimport numpy as np
 import numpy as np
 from itertools import combinations

@@ -6,7 +6,9 @@
 Welcome to PyRec's documentation!
 =================================
 
-Contents:
+PyRec is an open source Python package that provides tools to build and
+evaluate the performance of many recommender system prediction algorithms.
+
 
 .. toctree::
    :maxdepth: 2
@@ -14,8 +16,12 @@ Contents:
    prediction_algorithms
    similarities
 
+.. _notation_standards:
+
 Notation standards
-==================
+------------------
+
+In the documentation, you will find the following notation:
 
 * :math:`R` : the set of all ratings
 * :math:`U` : the set of all users
@@ -36,8 +42,11 @@ Notation standards
 * :math:`\mu_u` : the mean of all ratings given by user :math:`u`
 * :math:`\mu_i` : the mean of all ratings given to item :math:`i`
 * :math:`N_i^k(u)` : the :math:`k` nearest neighbors of user :math:`u` that
-  have rated item :math:`i`. This set is computed using a :ref:`similarity
-  metric <similarities>`
+  have rated item :math:`i`. This set is computed using a :mod:`similarity
+  metric <similarities>`.
+* :math:`N_u^k(i)` : the :math:`k` nearest neighbors of item :math:`i` that
+  are rated by user :math:`u`. This set is computed using a :mod:`similarity
+  metric <similarities>`.
 
 A lot of prediction algorithms are symetric: they can be based on users or on
 items. For example, a basic *k*-NN algorithm can predict either
@@ -60,13 +69,19 @@ we factorized this into a single notation:
 Both formulae below now simply become
 :math:`\hat{r}_{xy} = \frac{
 \sum\limits_{x' \in N^k_y(x)} \text{sim}(x, x') \cdot r_{x'y}}
-{\sum\limits_{x' \in N^k_x(y)} \text{sim}(x, x')}`
+{\sum\limits_{x' \in N^k_y(x)} \text{sim}(x, x')}`
 
+
+TODO
+----
+
+* mettre plus de datasets (voir les mymedialite et librec)
+* implémenter les algos mf (idem)
+* mettre au propre le main et la gestion des dataset
 
 Indices and tables
-==================
+------------------
 
 * :ref:`genindex`
 * :ref:`modindex`
 * :ref:`search`
-

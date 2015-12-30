@@ -1,4 +1,6 @@
-"""Module containing some k-NN inspired algorithms"""
+"""
+the :mod:`knns` module includes some some k-NN inspired algorithms.
+"""
 
 import numpy as np
 

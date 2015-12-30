@@ -1,7 +1,7 @@
+.. _similarities:
+
 similarities module
 ===================
-
-.. _similarities:
 
 .. automodule:: similarities
     :members:
