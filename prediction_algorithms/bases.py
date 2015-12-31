@@ -20,7 +20,7 @@ class AlgoBase:
     """Abstract Algo class where is defined the basic behaviour of a recomender
     algorithm"""
 
-    def __init__(self, trainingData, itemBased=False, withDump=False):
+    def __init__(self, trainingData, itemBased=False, withDump=False, **kwargs):
 
         self.trainingData = trainingData
 

@@ -92,8 +92,8 @@ class BXReader(Reader):
     @property
     def ratings(self):
         for line in self.rawRatings:
-            urid, irid, r = line.split(';')
-            yield int(urid), int(irid), int(r), 0
+            urid, irid, r = line[:-1].split(';')
+            yield urid[1:-1], irid[1:-1], int(r[1:-1]), 0
 
 
 class JesterReader(Reader):
@@ -108,7 +108,7 @@ class JesterReader(Reader):
     def ratings(self):
         # TODO: for now only consider the beggining of the file because, else
         # Python throws MemoryError.
-        for line in self.rawRatings[:10000]:
+        for line in self.rawRatings:
             urid, irid, r = line.split()
             yield int(urid), int(irid), float(r) + 11, 0
 
@@ -158,12 +158,14 @@ def getRawRatings(name, trainFile=None):
         ReaderClass = JesterReader
         dataFile = trainFile or './datasets/jester/jester_ratings.dat'
 
-    try:
-        f = open(dataFile, 'r')
-    except FileNotFoundError:
+    if not os.path.isfile(dataFile):
         downloadDataset(name)
-        f = open(dataFile, 'r')
 
-    data = [line for line in f]
+    # open file in latin, else the Book-Ratings dataset raises an utf8 error
+    with open(dataFile, encoding='latin') as f:
+        data = [line for line in f]
+
+    if name == 'BX':
+        data = data[1:]  # this really sucks TODO: change that
 
     return data, ReaderClass
