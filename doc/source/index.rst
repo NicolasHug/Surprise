@@ -75,9 +75,13 @@ Both formulae below now simply become
 TODO
 ----
 
-* mettre plus de datasets (voir les mymedialite et librec)
-* implémenter les algos mf (idem)
+* mettre plus de datasets
+* gérer les gros datasets (memory error)
+* implémenter les algos mf
 * mettre au propre le main et la gestion des dataset
+* mettre au propre les modules/packages
+* API vs programme ?
+* faire des tests
 
 Indices and tables
 ------------------
