@@ -36,8 +36,8 @@ In the documentation, you will find the following notation:
   :math:`i`
 * :math:`\hat{r}_{ui}` : the *estimated* rating of user :math:`u` for item
   :math:`i`
-* :math:`b_{ui}` : the *baseline* rating of user :math:`u` for item
-  :math:`i`
+* :math:`b_{ui}` : the :ref:`baseline rating<baseline_only>` of user :math:`u` 
+  for item :math:`i`
 * :math:`\mu` : the mean of all ratings
 * :math:`\mu_u` : the mean of all ratings given by user :math:`u`
 * :math:`\mu_i` : the mean of all ratings given to item :math:`i`
@@ -47,6 +47,8 @@ In the documentation, you will find the following notation:
 * :math:`N_u^k(i)` : the :math:`k` nearest neighbors of item :math:`i` that
   are rated by user :math:`u`. This set is computed using a :mod:`similarity
   metric <similarities>`.
+
+**Important note**:
 
 A lot of prediction algorithms are symetric: they can be based on users or on
 items. For example, a basic *k*-NN algorithm can predict either
@@ -60,7 +62,7 @@ or
 {\sum\limits_{j \in N^k_u(i)} \text{sim}(i, j)}`
 , depending on wether the similarities are computed between users or between
 items. To unify both notations and avoid writing the same code multiple times,
-we factorized this into a single notation:
+we factorized this into a single notation that is context dependent:
 
 * :math:`x` denotes the entity on which similarities are computed, be it users
   or items ;
@@ -69,19 +71,29 @@ we factorized this into a single notation:
 Both formulae below now simply become
 :math:`\hat{r}_{xy} = \frac{
 \sum\limits_{x' \in N^k_y(x)} \text{sim}(x, x') \cdot r_{x'y}}
-{\sum\limits_{x' \in N^k_y(x)} \text{sim}(x, x')}`
+{\sum\limits_{x' \in N^k_y(x)} \text{sim}(x, x')}`. Likewise, :math:`Y_{xx'}`
+may denote either :math:`U_{ij}` or :math:`I_{uv}` depending on the context.
 
 
 TODO
 ----
+Court terme :
 
-* mettre plus de datasets
-* gérer les gros datasets (memory error)
+* mettre au propre le main et la gestion des datasets
+* mettre au propre la structure du projet modules/packages
+* Mettre en place une API
+* gérer les gros datasets (memory error lors du calcul des similarités)
+* avoir un coding style pep8 compliant (noms de variables surtout)
+* écrire des tests
+
+Long terme :
+
+* gérer plus de datasets + datasets utilisateur
 * implémenter les algos mf
-* mettre au propre le main et la gestion des dataset
-* mettre au propre les modules/packages
-* API vs programme ?
-* faire des tests
+* plus de doc
+* utilitaires de comparaisons d'algos
+* packager pour open sourcer le truc (trouver un nom, un nom de
+  domaine+serveur, quelles sont les dépendances requises etc)
 
 Indices and tables
 ------------------

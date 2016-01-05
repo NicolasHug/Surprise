@@ -10,6 +10,7 @@ Basic algorithms
 
 .. autoclass:: prediction_algorithms.random.Random
 
+.. _baseline_only:
 .. autoclass:: prediction_algorithms.baseline_only.BaselineOnly
 
 
