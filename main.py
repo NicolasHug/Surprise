@@ -63,7 +63,7 @@ def main():
                         choices=methodChoices,
                         help='for algorithms using a baseline, the method ' +
                         'to compute it. Allowed values are ' +
-                        ', '.join(simChoices) + '. (default: als)',
+                        ', '.join(methodChoices) + '. (default: als)',
                         metavar='<method>')
 
     parser.add_argument('-k', type=int,
