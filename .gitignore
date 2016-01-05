@@ -1,0 +1,7 @@
+*.pyc
+*~
+*.swp
+
+doc/build
+datasets
+dumps
