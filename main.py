@@ -157,7 +157,8 @@ def main():
                                       itemBased=args.itemBased,
                                       method=args.method,
                                       sim=args.sim,
-                                      k=args.k)
+                                      k=args.k,
+                                      withDump=args.withDump)
 
         print("computing predictions...")
         testTimeStart = time.process_time()

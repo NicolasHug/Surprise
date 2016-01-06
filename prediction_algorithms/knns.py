@@ -19,7 +19,8 @@ class KNNBasic(AlgoUsingSim):
 
     def __init__(self, trainingData, itemBased=False, sim='cos', k=40,
                  **kwargs):
-        super().__init__(trainingData, itemBased=itemBased, sim=sim)
+        super().__init__(trainingData, itemBased=itemBased, sim=sim,
+                 **kwargs)
 
         self.k = k
 
@@ -116,7 +117,8 @@ class KNNBaseline(AlgoWithBaseline, AlgoUsingSim):
 
     def __init__(self, trainingData, itemBased=False, method='als', sim='cos',
                  k=40, **kwargs):
-        super().__init__(trainingData, itemBased, method=method, sim=sim)
+        super().__init__(trainingData, itemBased, method=method, sim=sim,
+                         **kwargs)
 
         self.k = k
         self.infos['name'] = 'neighborhoodWithBaseline'

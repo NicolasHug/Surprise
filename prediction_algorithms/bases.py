@@ -184,7 +184,7 @@ class AlgoWithBaseline(AlgoBase):
         for dummy in range(nIter):
             for x, y, r in self.allRatings:
                 err = (r -
-                       (self.meanRatings + self.xBiases[x] + self.yBiases[y]))
+                      (self.meanRatings + self.xBiases[x] + self.yBiases[y]))
                 # update xBiases
                 self.xBiases[x] += gamma * (err - lambda4 *
                                             self.xBiases[x])
