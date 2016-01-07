@@ -120,6 +120,11 @@ def msdClone(nX, xr, rm):
     # the similarity matrix
     cdef np.ndarray[np.double_t, ndim = 2] simMat = np.zeros((nX, nX))
 
+    cdef int xi = 0
+    cdef int xj = 0
+    cdef int y = 0
+
+
     for xi in range(nX):
         simMat[xi, xi] = 100 # completely arbitrary and useless anyway
         for xj in range(xi, nX):
@@ -137,6 +142,9 @@ def msdClone(nX, xr, rm):
                 simMat[xi, xj] = len(Yij) # well... ok.
             else:
                 simMat[xi, xj] = len(Yij) / ssd
+
+            simMat[xj, xi] = simMat[xi, xj]
+
     return simMat
 
 def pearson(nX, yr):
