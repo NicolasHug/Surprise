@@ -139,6 +139,7 @@ def downloadDataset(name):
     urlretrieve(url, 'tmp.zip')
     print('done')
 
+    # TODO: close zipfile before removing? use a context manager if available
     zf = zipfile.ZipFile('tmp.zip', 'r')
     zf.extractall('datasets/' + name)
     os.remove('tmp.zip')
