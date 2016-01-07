@@ -19,6 +19,10 @@ class Random(AlgoBase):
         super().__init__(trainingData, **kwargs)
         self.infos['name'] = 'random'
 
+        # TODO: change it to a more pythonic version
+        # num = sum((r - self.meanRatings)**2 for (_, _, r) in self.allRatings)
+        # denum = self.n_ratings - 1  <-- need this
+
         # compute unbiased variance of ratings
         num = denum = 0
         for _, _, r in self.allRatings:

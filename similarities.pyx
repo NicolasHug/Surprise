@@ -6,7 +6,17 @@ between users or items. Please refer to the :ref:`notation standards
 
 cimport numpy as np
 import numpy as np
-from itertools import combinations
+
+# OK so I changed some stuff: itertool.combinations is not used anymore, it caused a
+# weird bug in the mean_diff calculation. I'm pretty sure it used to work OK
+# before because we were only testing ml-100k on the 'official' 5-fold cross
+# validation sets, where all user ids where ordered. Now that ids can appear in
+# any order (because we do our own CV folds), combinations can't be used
+# anymore.
+# We now do it the 'bruteforce' way, which forces us to have a plain nX x nX
+# matrix (using combinations we could have (but did not) used  symetric matrix
+# structure).
+# We definitely need a proper test campaign.
 
 def cosine(nX, yr):
     """Compute the cosine similarity between all pairs of xs.
@@ -41,13 +51,12 @@ def cosine(nX, yr):
     cdef int r2 = 0
 
     for y, yRatings in yr.items():
-        # combinations are emitted in lexicographic sort order. It's important
-        # for the next loop
-        for (xi, r1), (xj, r2) in combinations(yRatings, 2):
-            freq[xi, xj] += 1
-            prods[xi, xj] += r1 * r2
-            sqi[xi, xj] += r1**2
-            sqj[xi, xj] += r2**2
+        for xi, r1 in yRatings:
+            for xj, r2 in yRatings:
+                freq[xi, xj] += 1
+                prods[xi, xj] += r1 * r2
+                sqi[xi, xj] += r1**2
+                sqj[xi, xj] += r2**2
 
     for xi in range(nX):
         simMat[xi, xi] = 1
@@ -97,13 +106,14 @@ def msd(nX, yr):
     cdef int r2 = 0
 
     for y, yRatings in yr.items():
-        for (xi, r1), (xj, r2) in combinations(yRatings, 2):
-            sqDiff[xi, xj] += (r1 - r2)**2
-            freq[xi, xj] += 1
+        for xi, r1 in yRatings:
+            for xj, r2 in yRatings:
+                sqDiff[xi, xj] += (r1 - r2)**2
+                freq[xi, xj] += 1
 
     for xi in range(nX):
         simMat[xi, xi] = 100 # completely arbitrary and useless anyway
-        for xj in range(xi, nX):
+        for xj in range(xi + 1, nX):
             if sqDiff[xi, xj] == 0: # return number of common ys (arbitrary)
                 simMat[xi, xj] = freq[xi, xj]
             else:  # return inverse of MSD
@@ -113,39 +123,78 @@ def msd(nX, yr):
 
     return simMat
 
-def msdClone(nX, xr, rm):
-    """compute the 'clone' mean squared difference similarity between all
-    pairs of xs. Some properties as for MSDSim apply. Not optimal at all"""
+def compute_mean_diff(nX, yr):
+    """Compute mean_diff, where
+    mean_diff[x, x'] = mean(r_xy - r_x'y) for common ys
+    """
 
-    # the similarity matrix
-    cdef np.ndarray[np.double_t, ndim = 2] simMat = np.zeros((nX, nX))
+    # sum (r_xy - r_x'y - mean_diff(r_x - r_x')) for common ys
+    cdef np.ndarray[np.double_t, ndim = 2] diff = np.zeros((nX, nX), np.double)
+    # number of common ys
+    cdef np.ndarray[np.int_t,    ndim = 2] freq   = np.zeros((nX, nX), np.int)
+    # the mean_diff matrix
+    cdef np.ndarray[np.double_t, ndim = 2] mean_diff = np.zeros((nX, nX))
 
+    # these variables need to be cdef'd so that array lookup can be fast
     cdef int xi = 0
     cdef int xj = 0
-    cdef int y = 0
+    cdef int r1 = 0
+    cdef int r2 = 0
 
+    for y, yRatings in yr.items():
+        for xi, r1 in yRatings:
+            for xj, r2 in yRatings:
+                diff[xi, xj] += (r1 - r2)
+                freq[xi, xj] += 1
+
+    for xi in range(nX):
+        mean_diff[xi, xi] = 0
+        for xj in range(xi + 1, nX):
+            if freq[xi, xj]:
+                mean_diff[xi, xj] = diff[xi, xj] / freq[xi, xj]
+                mean_diff[xj, xi] = -mean_diff[xi, xj]
+
+    return mean_diff
+
+def msdClone(nX, yr):
+    """compute the 'clone' mean squared difference similarity between all
+    pairs of xs. Some properties as for MSDSim apply."""
+
+    # sum (r_xy - r_x'y - mean_diff(x, x')) for common ys
+    cdef np.ndarray[np.double_t, ndim = 2] diff = np.zeros((nX, nX), np.double)
+    # sum (r_xy - r_x'y)**2 for common ys
+    cdef np.ndarray[np.double_t, ndim = 2] sqDiff = np.zeros((nX, nX), np.double)
+    # number of common ys
+    cdef np.ndarray[np.int_t,    ndim = 2] freq   = np.zeros((nX, nX), np.int)
+    # the similarity matrix
+    cdef np.ndarray[np.double_t, ndim = 2] simMat = np.zeros((nX, nX))
+    # the matrix of mean differences
+    cdef np.ndarray[np.double_t, ndim = 2] mean_diff = compute_mean_diff(nX, yr)
+
+    # these variables need to be cdef'd so that array lookup can be fast
+    cdef int xi = 0
+    cdef int xj = 0
+    cdef int r1 = 0
+    cdef int r2 = 0
+
+    for y, yRatings in yr.items():
+        for xi, r1 in yRatings:
+            for xj, r2 in yRatings:
+                sqDiff[xi, xj] += (r1 - r2 - mean_diff[xi, xj])**2
+                freq[xi, xj] += 1
 
     for xi in range(nX):
         simMat[xi, xi] = 100 # completely arbitrary and useless anyway
-        for xj in range(xi, nX):
-            # comon ys for xi and xj
-            Yij = [y for (y, _) in xr[xi] if rm[xj, y] > 0]
-
-            if not Yij:
-                simMat[xi, xj] = 0
-                continue
-
-            meanDiff = np.mean([rm[xi, y] - rm[xj, y] for y in Yij])
-            # sum of squared differences:
-            ssd = sum((rm[xi, y] - rm[xj, y] - meanDiff)**2 for y in Yij)
-            if ssd == 0:
-                simMat[xi, xj] = len(Yij) # well... ok.
-            else:
-                simMat[xi, xj] = len(Yij) / ssd
+        for xj in range(xi + 1, nX):
+            if sqDiff[xi, xj] == 0: # return number of common ys (arbitrary)
+                simMat[xi, xj] = freq[xi, xj]
+            else:  # return inverse of MSD
+                simMat[xi, xj] = freq[xi, xj] / sqDiff[xi, xj]
 
             simMat[xj, xi] = simMat[xi, xj]
 
     return simMat
+
 
 def pearson(nX, yr):
     """compute the pearson corr coeff between all pairs of xs.
@@ -184,15 +233,14 @@ def pearson(nX, yr):
     cdef int r2 = 0
 
     for y, yRatings in yr.items():
-        for (xi, r1), (xj, r2) in combinations(yRatings, 2):
-            # note : accessing and updating elements takes a looooot of
-            # time. Yet defaultdict is still faster than a numpy array...
-            prods[xi, xj] += r1 * r2
-            freq[xi, xj] += 1
-            sqi[xi, xj] += r1**2
-            sqj[xi, xj] += r2**2
-            si[xi, xj] += r1
-            sj[xi, xj] += r2
+        for xi, r1 in yRatings:
+            for xj, r2 in yRatings:
+                prods[xi, xj] += r1 * r2
+                freq[xi, xj] += 1
+                sqi[xi, xj] += r1**2
+                sqj[xi, xj] += r2**2
+                si[xi, xj] += r1
+                sj[xi, xj] += r2
 
     for xi in range(nX):
         simMat[xi, xi] = 1

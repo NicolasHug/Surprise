@@ -146,17 +146,15 @@ class AlgoUsingSim(AlgoBase):
         """construct the simlarity matrix"""
 
         print("computing the similarity matrix...")
-        if sim == 'cos':
-            self.simMat = sims.cosine(self.nX, self.yr)
-        elif sim == 'MSD':
-            self.simMat = sims.msd(self.nX, self.yr)
-        elif sim == 'MSDClone':
-            self.simMat = sims.msdClone(self.nX, self.xr, self.rm)
-        elif sim == 'pearson':
-            self.simMat = sims.pearson(self.nX, self.yr)
-        else:
-            raise NameError('WrongSimName')
+        sim_measure = {'cos' : sims.cosine,
+                       'MSD' : sims.msd,
+                       'MSDClone' : sims.msdClone,
+                       'pearson' : sims.pearson}
 
+        try:
+            self.simMat = sim_measure[sim](self.nX, self.yr)
+        except KeyError:
+            raise NameError('Wrong sim name')
 
 class AlgoWithBaseline(AlgoBase):
     """Abstract class for algos that need a baseline"""

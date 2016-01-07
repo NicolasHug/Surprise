@@ -5,6 +5,7 @@ import numpy as np
 from .bases import AlgoBase
 from .bases import AlgoUsingSim
 from .bases import PredictionImpossible
+import similarities as sims
 
 
 class AlgoUsingMeanDiff(AlgoBase):
@@ -14,28 +15,7 @@ class AlgoUsingMeanDiff(AlgoBase):
     def __init__(self, trainingData, itemBased=False, **kwargs):
         super().__init__(trainingData, itemBased=itemBased, **kwargs)
 
-        print("computing mean differences between users...")
-        self.meanDiff = np.zeros((self.nX, self.nX))
-        self.meanDiffWeight = np.zeros((self.nX, self.nX))
-
-        diffs = defaultdict(int)  # sum (r_ui - r_vi) for common items
-        freq = defaultdict(int)   # number common items
-
-        for _, yRatings in self.yr.items():
-            for (xi, r1), (xj, r2) in combinations(yRatings, 2):
-                diffs[xi, xj] += (r1 - r2)
-                freq[xi, xj] += 1
-
-        for xi in range(self.nX):
-            for xj in range(xi, self.nX):
-                if freq[xi, xj]:
-                    self.meanDiff[xi, xj] = diffs[xi, xj] / freq[xi, xj]
-                    self.meanDiffWeight[xi, xj] = (
-                        1. / (np.std(diffs[xi, xj]) + 1))
-
-                self.meanDiff[xj, xi] = -self.meanDiff[xi, xj]
-                self.meanDiffWeight[xj, xi] = self.meanDiffWeight[xi, xj]
-
+        self.meanDiff = sims.compute_mean_diff(self.nX, self.yr)
 
 class CloneBruteforce(AlgoBase):
     """Algo based on cloning, quite rough and straightforward:
