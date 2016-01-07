@@ -15,22 +15,22 @@ class Random(AlgoBase):
     :math:`\hat{\mu}` and :math:`\hat{\sigma}` are estimated from the training data.
     """
 
-    def __init__(self, trainingData, **kwargs):
-        super().__init__(trainingData, **kwargs)
+    def __init__(self, training_data, **kwargs):
+        super().__init__(training_data, **kwargs)
         self.infos['name'] = 'random'
 
         # TODO: change it to a more pythonic version
-        # num = sum((r - self.meanRatings)**2 for (_, _, r) in self.allRatings)
+        # num = sum((r - self.global_mean)**2 for (_, _, r) in self.all_ratings)
         # denum = self.n_ratings - 1  <-- need this
 
         # compute unbiased variance of ratings
         num = denum = 0
-        for _, _, r in self.allRatings:
-            num += (r - self.meanRatings)**2
+        for _, _, r in self.all_ratings:
+            num += (r - self.global_mean)**2
             denum += 1
         denum -= 1
 
         self.var = num / denum
 
     def estimate(self, *_):
-        return np.random.normal(self.meanRatings, self.var)
+        return np.random.normal(self.global_mean, self.var)

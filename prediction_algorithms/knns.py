@@ -17,21 +17,21 @@ class KNNBasic(AlgoUsingSim):
     {\\sum\\limits_{v \in N^k_i(u)} \\text{sim}(u, v)}`
     """
 
-    def __init__(self, trainingData, itemBased=False, sim='cos', k=40,
+    def __init__(self, training_data, item_based=False, sim_name='MSD', k=40,
                  **kwargs):
-        super().__init__(trainingData, itemBased=itemBased, sim=sim,
+        super().__init__(training_data, item_based=item_based, sim_name=sim_name,
                  **kwargs)
 
         self.k = k
 
         self.infos['name'] = 'KNNBasic'
-        self.infos['params']['similarity measure'] = sim
+        self.infos['params']['similarity measure'] = sim_name
         self.infos['params']['k'] = self.k
 
     def estimate(self, u0, i0):
         x0, y0 = self.getx0y0(u0, i0)
 
-        neighbors = [(x, self.simMat[x0, x], r) for (x, r) in self.yr[y0]]
+        neighbors = [(x, self.sim[x0, x], r) for (x, r) in self.yr[y0]]
 
         if not neighbors:
             raise PredictionImpossible
@@ -40,14 +40,14 @@ class KNNBasic(AlgoUsingSim):
         neighbors = sorted(neighbors, key=lambda x: x[1], reverse=True)
 
         # compute weighted average
-        sumSim = sumRatings = 0
+        sum_sim = sum_ratings = 0
         for (_, sim, r) in neighbors[:self.k]:
             if sim > 0:
-                sumSim += sim
-                sumRatings += sim * r
+                sum_sim += sim
+                sum_ratings += sim * r
 
         try:
-            est = sumRatings / sumSim
+            est = sum_ratings / sum_sim
         except ZeroDivisionError:
             raise PredictionImpossible
 
@@ -63,24 +63,24 @@ class KNNWithMeans(AlgoUsingSim):
     {\\sum\\limits_{v \in N^k_i(u)} \\text{sim}(u, v)}`
     """
 
-    def __init__(self, trainingData, itemBased=False, sim='cos', k=40,
+    def __init__(self, training_data, item_based=False, sim_name='MSD', k=40,
                  **kwargs):
-        super().__init__(trainingData, itemBased=itemBased, sim=sim)
+        super().__init__(training_data, item_based=item_based, sim_name=sim_name)
 
         self.k = k
 
         self.infos['name'] = 'basicWithMeans'
-        self.infos['params']['similarity measure'] = sim
+        self.infos['params']['similarity measure'] = sim_name
         self.infos['params']['k'] = self.k
 
-        self.means = np.zeros(self.nX)
+        self.means = np.zeros(self.n_x)
         for x, ratings in self.xr.items():
             self.means[x] = np.mean([r for (_, r) in ratings])
 
     def estimate(self, u0, i0):
         x0, y0 = self.getx0y0(u0, i0)
 
-        neighbors = [(x, self.simMat[x0, x], r) for (x, r) in self.yr[y0]]
+        neighbors = [(x, self.sim[x0, x], r) for (x, r) in self.yr[y0]]
 
         est = self.means[x0]
 
@@ -91,14 +91,14 @@ class KNNWithMeans(AlgoUsingSim):
         neighbors = sorted(neighbors, key=lambda x: x[1], reverse=True)
 
         # compute weighted average
-        sumSim = sumRatings = 0
+        sum_sim = sum_ratings = 0
         for (nb, sim, r) in neighbors[:self.k]:
             if sim > 0:
-                sumSim += sim
-                sumRatings += sim * (r - self.means[nb])
+                sum_sim += sim
+                sum_ratings += sim * (r - self.means[nb])
 
         try:
-            est += sumRatings / sumSim
+            est += sum_ratings / sum_sim
         except ZeroDivisionError:
             pass  # return mean
 
@@ -115,10 +115,10 @@ class KNNBaseline(AlgoWithBaseline, AlgoUsingSim):
     {\\sum\\limits_{v \in N^k_i(u)} \\text{sim}(u, v)}`
     """
 
-    def __init__(self, trainingData, itemBased=False, method='als', sim='cos',
-                 k=40, **kwargs):
-        super().__init__(trainingData, itemBased, method=method, sim=sim,
-                         **kwargs)
+    def __init__(self, training_data, item_based=False, method='als',
+                 sim_name='MSD', k=40, **kwargs):
+        super().__init__(training_data, item_based, method=method,
+                         sim_name=sim_name, **kwargs)
 
         self.k = k
         self.infos['name'] = 'neighborhoodWithBaseline'
@@ -126,9 +126,9 @@ class KNNBaseline(AlgoWithBaseline, AlgoUsingSim):
 
     def estimate(self, u0, i0):
         x0, y0 = self.getx0y0(u0, i0)
-        est = self.getBaseline(x0, y0)
+        est = self.get_baseline(x0, y0)
 
-        neighbors = [(x, self.simMat[x0, x], r) for (x, r) in self.yr[y0]]
+        neighbors = [(x, self.sim[x0, x], r) for (x, r) in self.yr[y0]]
 
         if not neighbors:
             return est  # result will be just the baseline
@@ -137,14 +137,14 @@ class KNNBaseline(AlgoWithBaseline, AlgoUsingSim):
         neighbors = sorted(neighbors, key=lambda x: x[1], reverse=True)
 
         # compute weighted average
-        sumSim = sumRatings = 0
+        sum_sim = sum_ratings = 0
         for (nb, sim, r) in neighbors[:self.k]:
             if sim > 0:
-                sumSim += sim
-                sumRatings += sim * (r - self.getBaseline(nb, y0))
+                sum_sim += sim
+                sum_ratings += sim * (r - self.get_baseline(nb, y0))
 
         try:
-            est += sumRatings / sumSim
+            est += sum_ratings / sum_sim
         except ZeroDivisionError:
             pass  # just baseline again
 

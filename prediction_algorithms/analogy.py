@@ -9,8 +9,8 @@ from .bases import PredictionImpossible
 class AlgoUsingAnalogy(AlgoBase):
     """Abstract class for algos that use an analogy framework"""
 
-    def __init__(self, trainingData, itemBased=False):
-        super().__init__(trainingData, itemBased)
+    def __init__(self, training_data, item_based=False):
+        super().__init__(training_data, item_based)
         self.tuples = []  # list of 3-tuple (for the last prediction only)
 
     def isSolvable(self, ra, rb, rc):
@@ -49,9 +49,9 @@ class AlgoUsingAnalogy(AlgoBase):
 class Parall(AlgoUsingSim, AlgoUsingAnalogy):
     """geometrical analogy based recommender"""
 
-    def __init__(self, trainingData, itemBased=False, sim='MSD', k=40,
+    def __init__(self, training_data, item_based=False, sim_name='MSD', k=40,
                  **kwargs):
-        super().__init__(trainingData, itemBased, sim)
+        super().__init__(training_data, item_based, sim)
         self.infos['name'] = 'algoParallKNN' if k else 'algoParall'
 
         self.k = k
@@ -64,7 +64,7 @@ class Parall(AlgoUsingSim, AlgoUsingAnalogy):
         """generator to find triplets amongst the kNN"""
 
         # list of (x, sim(x0, x)) for x having rated y0 or for y rated by x0
-        neighbors = [(x, self.simMat[x0, x], r) for (x, r) in self.yr[y0]]
+        neighbors = [(x, self.sim[x0, x], r) for (x, r) in self.yr[y0]]
 
         # sort neighbors by similarity in decreasing order
         neighbors = sorted(neighbors, key=lambda x: x[1], reverse=True)
@@ -97,11 +97,11 @@ class Parall(AlgoUsingSim, AlgoUsingAnalogy):
             if (xa != xb != xc and xa != xc and
                     self.isSolvable(ra, rb, rc)):
                 # get info about the abcd 'paralellogram'
-                (nYabc0, nrm) = self.getParall(xa, xb, xc, x0)
-                if nrm < 1.5 * np.sqrt(nYabc0):  # we allow some margin
+                (n_yabc0, nrm) = self.getParall(xa, xb, xc, x0)
+                if nrm < 1.5 * np.sqrt(n_yabc0):  # we allow some margin
                     sol = self.solve(ra, rb, rc)
-                    candidates.append((sol, nrm, nYabc0))
-                    self.tuples.append((xa, xb, xc, nYabc0, sol))
+                    candidates.append((sol, nrm, n_yabc0))
+                    self.tuples.append((xa, xb, xc, n_yabc0, sol))
 
         # if there are candidates, estimate rating as a weighted average
         if candidates:
@@ -141,8 +141,8 @@ class Parall(AlgoUsingSim, AlgoUsingAnalogy):
 class Pattern(AlgoUsingAnalogy):
     """analogy based recommender using patterns in 3-tuples"""
 
-    def __init__(self, trainingData, itemBased=False, **kwargs):
-        super().__init__(trainingData, itemBased, **kwargs)
+    def __init__(self, training_data, item_based=False, **kwargs):
+        super().__init__(training_data, item_based, **kwargs)
         self.infos['name'] = 'algoPattern'
 
     def estimate(self, u0, i0):

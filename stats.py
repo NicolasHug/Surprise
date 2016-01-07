@@ -1,21 +1,21 @@
 import numpy as np
 
 
-def computeStats(preds, output=True):
+def compute_stats(preds, output=True):
     """compute some statistics (RMSE, coverage...) on a list of predictions"""
 
     nImp = 0
-    sumSqErr = 0
-    sumAbsErr = 0
+    sum_sq_err = 0
+    sum_abs_err = 0
 
     for _, _, r0, est, imp in preds:
 
-        sumSqErr += (r0 - est)**2
-        sumAbsErr += abs(r0 - est)
+        sum_sq_err += (r0 - est)**2
+        sum_abs_err += abs(r0 - est)
         nImp += imp
 
-    rmse = np.sqrt(sumSqErr / len(preds))
-    mae = np.sqrt(sumAbsErr / len(preds))
+    rmse = np.sqrt(sum_sq_err / len(preds))
+    mae = np.sqrt(sum_abs_err / len(preds))
 
     if output:
         print('Nb impossible predictions:', nImp)

@@ -17,7 +17,7 @@ from prediction_algorithms.analogy import Pattern
 from prediction_algorithms.clone import CloneBruteforce
 from prediction_algorithms.clone import CloneMeanDiff
 from prediction_algorithms.clone import CloneKNNMeanDiff
-from dataset import getRawRatings
+from dataset import get_raw_ratings
 from dataset import TrainingData
 
 
@@ -27,9 +27,9 @@ def main():
         description='run a prediction algorithm for recommendation on given '
         'folds',
         epilog='example: main.py -algo KNNBasic -cv 3 -k 30 -sim cos '
-        '--itemBased')
+        '--item_based')
 
-    algoChoices = {
+    algo_choices = {
         'Random': Random,
         'BaselineOnly': BaselineOnly,
         'KNNBasic': KNNBasic,
@@ -43,27 +43,27 @@ def main():
     }
     parser.add_argument('-algo', type=str,
                         default='KNNBaseline',
-                        choices=algoChoices,
+                        choices=algo_choices,
                         help='the prediction algorithm to use. ' +
-                        'Allowed values are ' + ', '.join(algoChoices.keys()) +
+                        'Allowed values are ' + ', '.join(algo_choices.keys()) +
                         '. (default: KNNBaseline)',
                         metavar='<prediction algorithm>')
 
-    simChoices = ['cos', 'pearson', 'MSD', 'MSDClone']
+    sim_choices = ['cos', 'pearson', 'MSD', 'MSDClone']
     parser.add_argument('-sim', type=str,
                         default='MSD',
-                        choices=simChoices,
+                        choices=sim_choices,
                         help='for algorithms using a similarity measure. ' +
-                        'Allowed values are ' + ', '.join(simChoices) + '.' +
+                        'Allowed values are ' + ', '.join(sim_choices) + '.' +
                         ' (default: MSD)', metavar=' < sim measure >')
 
-    methodChoices = ['als', 'sgd']
+    method_choices = ['als', 'sgd']
     parser.add_argument('-method', type=str,
                         default='als',
-                        choices=methodChoices,
+                        choices=method_choices,
                         help='for algorithms using a baseline, the method ' +
                         'to compute it. Allowed values are ' +
-                        ', '.join(methodChoices) + '. (default: als)',
+                        ', '.join(method_choices) + '. (default: als)',
                         metavar='<method>')
 
     parser.add_argument('-k', type=int,
@@ -72,33 +72,33 @@ def main():
                         help='the number of neighbors to use for k-NN ' +
                         'algorithms (default: 40)')
 
-    parser.add_argument('-trainFile', type=str,
+    parser.add_argument('-train_file', type=str,
                         metavar='<train file>',
                         default=None,
                         help='the file containing raw ratings for training. ' +
                         'The dataset argument needs to be set accordingly ' +
                         '(default: None)')
 
-    parser.add_argument('-testFile', type=str,
+    parser.add_argument('-test_file', type=str,
                         metavar='<test file>',
                         default=None,
                         help='the file containing raw ratings for testing. ' +
                         'The dataset argument needs to be set accordingly. ' +
                         '(default: None)')
 
-    datasetChoices = ['ml-100k', 'ml-1m', 'BX', 'jester']
+    dataset_choices = ['ml-100k', 'ml-1m', 'BX', 'jester']
     parser.add_argument('-dataset', metavar='<dataset>', type=str,
                         default='ml-100k',
-                        choices=datasetChoices,
+                        choices=dataset_choices,
                         help='the dataset to use. Allowed values are ' +
-                        ', '.join(datasetChoices) +
+                        ', '.join(dataset_choices) +
                         '( default: ml-100k -- MovieLens 100k)')
 
     parser.add_argument('-cv', type=int,
                         metavar="<number of folds>",
                         default=5,
                         help='the number of folds for cross validation. ' +
-                        'Ignored if trainFile and testFile are set. ' +
+                        'Ignored if train_file and test_file are set. ' +
                         '(default: 5)')
 
     parser.add_argument('-seed', type=int,
@@ -107,17 +107,17 @@ def main():
                         help='the seed to use for RNG ' +
                         '(default: current system time)')
 
-    parser.add_argument('--itemBased', dest='itemBased', action='store_const',
+    parser.add_argument('--item_based', dest='item_based', action='store_const',
                         const=True,
                         default=False,
                         help='compute similarities on items rather than ' +
                         'on users')
 
-    parser.add_argument('--withDump', dest='withDump', action='store_const',
+    parser.add_argument('--with_dump', dest='with_dump', action='store_const',
                         const=True, default=False, help='tells to dump ' +
                         'results in a file (default: False)')
 
-    parser.add_argument('--indivOutput', dest='indivOutput',
+    parser.add_argument('--indiv_output', dest='indiv_output',
                         action='store_const',
                         const=True,
                         default=False,
@@ -131,7 +131,7 @@ def main():
     if not os.path.exists('datasets'):
         os.makedirs('datasets')
 
-    def kFolds(seq, k):
+    def k_folds(seq, k):
         """inpired from scikit learn KFold method"""
         rd.shuffle(seq)
         start, stop = 0, 0
@@ -144,70 +144,70 @@ def main():
 
     rmses = []  # list of rmse: one per fold
 
-    def getRmse(trainRawRatings, testRawRatings):
-        readerTrain = ReaderClass(trainRawRatings)
-        readerTest = ReaderClass(testRawRatings)
+    def get_rmse(train_raw_ratings, test_raw_ratings):
+        reader_train = reader_klass(train_raw_ratings)
+        reader_test = reader_klass(test_raw_ratings)
 
-        trainingData = TrainingData(readerTrain)
+        training_data = TrainingData(reader_train)
 
-        trainStartTime = time.process_time()
-        trainingTime = time.process_time() - trainStartTime
+        train_start_time = time.process_time()
+        training_time = time.process_time() - train_start_time
 
-        algo = algoChoices[args.algo](trainingData,
-                                      itemBased=args.itemBased,
+        algo = algo_choices[args.algo](training_data,
+                                      item_based=args.item_based,
                                       method=args.method,
-                                      sim=args.sim,
+                                      sim_name=args.sim,
                                       k=args.k,
-                                      withDump=args.withDump)
+                                      with_dump=args.with_dump)
 
         print("computing predictions...")
-        testTimeStart = time.process_time()
-        for u0, i0, r0, _ in readerTest.ratings:
+        test_start_time = time.process_time()
+        for u0, i0, r0, _ in reader_test.ratings:
 
-            if args.indivOutput:
+            if args.indiv_output:
                 print(u0, i0, r0)
 
             try:
-                u0 = trainingData.rawToInnerIdUsers[u0]
-                i0 = trainingData.rawToInnerIdItems[i0]
+                u0 = training_data.raw2inner_id_users[u0]
+                i0 = training_data.raw2inner_id_items[i0]
             except KeyError:
-                if args.indivOutput:
+                if args.indiv_output:
                     print("user or item wasn't used for training. Skipping")
                 continue
 
-            algo.predict(u0, i0, r0, args.indivOutput)
+            algo.predict(u0, i0, r0, args.indiv_output)
 
-            if args.indivOutput:
+            if args.indiv_output:
                 print('-' * 15)
 
-        testingTime = time.process_time() - testTimeStart
+        testingTime = time.process_time() - test_start_time
 
-        if args.indivOutput:
+        if args.indiv_output:
             print('-' * 20)
 
-        algo.infos['trainingTime'] = trainingTime
+        algo.infos['training_time'] = training_time
         algo.infos['testingTime'] = testingTime
 
-        algo.dumpInfos()
+        algo.dump_infos()
         print('-' * 20)
         print('Results:')
-        return stats.computeStats(algo.preds)
+        return stats.compute_stats(algo.preds)
 
-    if args.trainFile and args.testFile:
-        trainRawRatings, ReaderClass = getRawRatings(
-            args.dataset, args.trainFile)
-        testRawRatings, ReaderClass = getRawRatings(
-            args.dataset, args.testFile)
-        rmses.append(getRmse(trainRawRatings, testRawRatings))
+    if args.train_file and args.test_file:
+        train_raw_ratings, reader_klass = get_raw_ratings(args.dataset,
+                                                          args.train_file)
+        test_raw_ratings, reader_klass = get_raw_ratings(args.dataset,
+                                                         args.test_file)
+        rmses.append(get_rmse(train_raw_ratings, test_raw_ratings))
 
     else:
-        rawRatings, ReaderClass = getRawRatings(args.dataset)
-        for foldNumber, (trainSet, testSet) in enumerate(kFolds(rawRatings,
-                                                                args.cv)):
+        raw_ratings, reader_klass = get_raw_ratings(args.dataset)
+        for fold_i, (training_set, test_set) in enumerate(k_folds(raw_ratings,
+                                                                  args.cv)):
             print('-' * 19)
-            print("-- fold numer {0} --".format(foldNumber + 1))
+            print("-- fold numer {0} --".format(fold_i + 1))
             print('-' * 19)
-            rmses.append(getRmse(trainSet, testSet))
+            rmses.append(get_rmse(training_set, test_set))
 
     print(args)
     print("Mean RMSE: {0:1.4f}".format(np.mean(rmses)))

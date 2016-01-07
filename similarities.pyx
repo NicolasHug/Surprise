@@ -13,12 +13,12 @@ import numpy as np
 # validation sets, where all user ids where ordered. Now that ids can appear in
 # any order (because we do our own CV folds), combinations can't be used
 # anymore.
-# We now do it the 'bruteforce' way, which forces us to have a plain nX x nX
+# We now do it the 'bruteforce' way, which forces us to have a plain n_x x n_x
 # matrix (using combinations we could have (but did not) used  symetric matrix
 # structure).
 # We definitely need a proper test campaign.
 
-def cosine(nX, yr):
+def cosine(n_x, yr):
     """Compute the cosine similarity between all pairs of xs.
 
     Only *common* users (or items) are taken into account:
@@ -34,15 +34,15 @@ def cosine(nX, yr):
     """
 
     # sum (r_xy * r_x'y) for common ys
-    cdef np.ndarray[np.int_t, ndim = 2] prods     = np.zeros((nX, nX), np.int)
+    cdef np.ndarray[np.int_t, ndim = 2] prods     = np.zeros((n_x, n_x), np.int)
     # number of common ys
-    cdef np.ndarray[np.int_t, ndim = 2] freq      = np.zeros((nX, nX), np.int)
+    cdef np.ndarray[np.int_t, ndim = 2] freq      = np.zeros((n_x, n_x), np.int)
     # sum (r_xy ^ 2) for common ys
-    cdef np.ndarray[np.int_t, ndim = 2] sqi       = np.zeros((nX, nX), np.int)
+    cdef np.ndarray[np.int_t, ndim = 2] sqi       = np.zeros((n_x, n_x), np.int)
     # sum (r_x'y ^ 2) for common ys
-    cdef np.ndarray[np.int_t, ndim = 2] sqj       = np.zeros((nX, nX), np.int)
+    cdef np.ndarray[np.int_t, ndim = 2] sqj       = np.zeros((n_x, n_x), np.int)
     # the similarity matrix
-    cdef np.ndarray[np.double_t, ndim = 2] simMat = np.zeros((nX, nX))
+    cdef np.ndarray[np.double_t, ndim = 2] sim = np.zeros((n_x, n_x))
 
     # these variables need to be cdef'd so that array lookup can be fast
     cdef int xi = 0
@@ -50,28 +50,28 @@ def cosine(nX, yr):
     cdef int r1 = 0
     cdef int r2 = 0
 
-    for y, yRatings in yr.items():
-        for xi, r1 in yRatings:
-            for xj, r2 in yRatings:
+    for y, y_ratings in yr.items():
+        for xi, r1 in y_ratings:
+            for xj, r2 in y_ratings:
                 freq[xi, xj] += 1
                 prods[xi, xj] += r1 * r2
                 sqi[xi, xj] += r1**2
                 sqj[xi, xj] += r2**2
 
-    for xi in range(nX):
-        simMat[xi, xi] = 1
-        for xj in range(xi + 1, nX):
+    for xi in range(n_x):
+        sim[xi, xi] = 1
+        for xj in range(xi + 1, n_x):
             if freq[xi, xj] == 0:
-                simMat[xi, xj] = 0
+                sim[xi, xj] = 0
             else:
                 denum = np.sqrt(sqi[xi, xj] * sqj[xi, xj])
-                simMat[xi, xj] = prods[xi, xj] / denum
+                sim[xi, xj] = prods[xi, xj] / denum
 
-            simMat[xj, xi] = simMat[xi, xj]
+            sim[xj, xi] = sim[xi, xj]
 
-    return simMat
+    return sim
 
-def msd(nX, yr):
+def msd(n_x, yr):
     """Compute the mean squared difference similarity between all pairs of
     xs.
 
@@ -93,11 +93,11 @@ def msd(nX, yr):
     """
 
     # sum (r_xy - r_x'y)**2 for common ys
-    cdef np.ndarray[np.double_t, ndim = 2] sqDiff = np.zeros((nX, nX), np.double)
+    cdef np.ndarray[np.double_t, ndim = 2] sq_diff = np.zeros((n_x, n_x), np.double)
     # number of common ys
-    cdef np.ndarray[np.int_t,    ndim = 2] freq   = np.zeros((nX, nX), np.int)
+    cdef np.ndarray[np.int_t,    ndim = 2] freq   = np.zeros((n_x, n_x), np.int)
     # the similarity matrix
-    cdef np.ndarray[np.double_t, ndim = 2] simMat = np.zeros((nX, nX))
+    cdef np.ndarray[np.double_t, ndim = 2] sim = np.zeros((n_x, n_x))
 
     # these variables need to be cdef'd so that array lookup can be fast
     cdef int xi = 0
@@ -105,35 +105,35 @@ def msd(nX, yr):
     cdef int r1 = 0
     cdef int r2 = 0
 
-    for y, yRatings in yr.items():
-        for xi, r1 in yRatings:
-            for xj, r2 in yRatings:
-                sqDiff[xi, xj] += (r1 - r2)**2
+    for y, y_ratings in yr.items():
+        for xi, r1 in y_ratings:
+            for xj, r2 in y_ratings:
+                sq_diff[xi, xj] += (r1 - r2)**2
                 freq[xi, xj] += 1
 
-    for xi in range(nX):
-        simMat[xi, xi] = 100 # completely arbitrary and useless anyway
-        for xj in range(xi + 1, nX):
-            if sqDiff[xi, xj] == 0: # return number of common ys (arbitrary)
-                simMat[xi, xj] = freq[xi, xj]
+    for xi in range(n_x):
+        sim[xi, xi] = 100 # completely arbitrary and useless anyway
+        for xj in range(xi + 1, n_x):
+            if sq_diff[xi, xj] == 0: # return number of common ys (arbitrary)
+                sim[xi, xj] = freq[xi, xj]
             else:  # return inverse of MSD
-                simMat[xi, xj] = freq[xi, xj] / sqDiff[xi, xj]
+                sim[xi, xj] = freq[xi, xj] / sq_diff[xi, xj]
 
-            simMat[xj, xi] = simMat[xi, xj]
+            sim[xj, xi] = sim[xi, xj]
 
-    return simMat
+    return sim
 
-def compute_mean_diff(nX, yr):
+def compute_mean_diff(n_x, yr):
     """Compute mean_diff, where
     mean_diff[x, x'] = mean(r_xy - r_x'y) for common ys
     """
 
     # sum (r_xy - r_x'y - mean_diff(r_x - r_x')) for common ys
-    cdef np.ndarray[np.double_t, ndim = 2] diff = np.zeros((nX, nX), np.double)
+    cdef np.ndarray[np.double_t, ndim = 2] diff = np.zeros((n_x, n_x), np.double)
     # number of common ys
-    cdef np.ndarray[np.int_t,    ndim = 2] freq   = np.zeros((nX, nX), np.int)
+    cdef np.ndarray[np.int_t,    ndim = 2] freq   = np.zeros((n_x, n_x), np.int)
     # the mean_diff matrix
-    cdef np.ndarray[np.double_t, ndim = 2] mean_diff = np.zeros((nX, nX))
+    cdef np.ndarray[np.double_t, ndim = 2] mean_diff = np.zeros((n_x, n_x))
 
     # these variables need to be cdef'd so that array lookup can be fast
     cdef int xi = 0
@@ -141,35 +141,35 @@ def compute_mean_diff(nX, yr):
     cdef int r1 = 0
     cdef int r2 = 0
 
-    for y, yRatings in yr.items():
-        for xi, r1 in yRatings:
-            for xj, r2 in yRatings:
+    for y, y_ratings in yr.items():
+        for xi, r1 in y_ratings:
+            for xj, r2 in y_ratings:
                 diff[xi, xj] += (r1 - r2)
                 freq[xi, xj] += 1
 
-    for xi in range(nX):
+    for xi in range(n_x):
         mean_diff[xi, xi] = 0
-        for xj in range(xi + 1, nX):
+        for xj in range(xi + 1, n_x):
             if freq[xi, xj]:
                 mean_diff[xi, xj] = diff[xi, xj] / freq[xi, xj]
                 mean_diff[xj, xi] = -mean_diff[xi, xj]
 
     return mean_diff
 
-def msdClone(nX, yr):
+def msdClone(n_x, yr):
     """compute the 'clone' mean squared difference similarity between all
     pairs of xs. Some properties as for MSDSim apply."""
 
     # sum (r_xy - r_x'y - mean_diff(x, x')) for common ys
-    cdef np.ndarray[np.double_t, ndim = 2] diff = np.zeros((nX, nX), np.double)
+    cdef np.ndarray[np.double_t, ndim = 2] diff = np.zeros((n_x, n_x), np.double)
     # sum (r_xy - r_x'y)**2 for common ys
-    cdef np.ndarray[np.double_t, ndim = 2] sqDiff = np.zeros((nX, nX), np.double)
+    cdef np.ndarray[np.double_t, ndim = 2] sq_diff = np.zeros((n_x, n_x), np.double)
     # number of common ys
-    cdef np.ndarray[np.int_t,    ndim = 2] freq   = np.zeros((nX, nX), np.int)
+    cdef np.ndarray[np.int_t,    ndim = 2] freq   = np.zeros((n_x, n_x), np.int)
     # the similarity matrix
-    cdef np.ndarray[np.double_t, ndim = 2] simMat = np.zeros((nX, nX))
+    cdef np.ndarray[np.double_t, ndim = 2] sim = np.zeros((n_x, n_x))
     # the matrix of mean differences
-    cdef np.ndarray[np.double_t, ndim = 2] mean_diff = compute_mean_diff(nX, yr)
+    cdef np.ndarray[np.double_t, ndim = 2] mean_diff = compute_mean_diff(n_x, yr)
 
     # these variables need to be cdef'd so that array lookup can be fast
     cdef int xi = 0
@@ -177,26 +177,26 @@ def msdClone(nX, yr):
     cdef int r1 = 0
     cdef int r2 = 0
 
-    for y, yRatings in yr.items():
-        for xi, r1 in yRatings:
-            for xj, r2 in yRatings:
-                sqDiff[xi, xj] += (r1 - r2 - mean_diff[xi, xj])**2
+    for y, y_ratings in yr.items():
+        for xi, r1 in y_ratings:
+            for xj, r2 in y_ratings:
+                sq_diff[xi, xj] += (r1 - r2 - mean_diff[xi, xj])**2
                 freq[xi, xj] += 1
 
-    for xi in range(nX):
-        simMat[xi, xi] = 100 # completely arbitrary and useless anyway
-        for xj in range(xi + 1, nX):
-            if sqDiff[xi, xj] == 0: # return number of common ys (arbitrary)
-                simMat[xi, xj] = freq[xi, xj]
+    for xi in range(n_x):
+        sim[xi, xi] = 100 # completely arbitrary and useless anyway
+        for xj in range(xi + 1, n_x):
+            if sq_diff[xi, xj] == 0: # return number of common ys (arbitrary)
+                sim[xi, xj] = freq[xi, xj]
             else:  # return inverse of MSD
-                simMat[xi, xj] = freq[xi, xj] / sqDiff[xi, xj]
+                sim[xi, xj] = freq[xi, xj] / sq_diff[xi, xj]
 
-            simMat[xj, xi] = simMat[xi, xj]
+            sim[xj, xi] = sim[xi, xj]
 
-    return simMat
+    return sim
 
 
-def pearson(nX, yr):
+def pearson(n_x, yr):
     """compute the pearson corr coeff between all pairs of xs.
 
     Only *common* users (or items) are taken into account:
@@ -212,19 +212,19 @@ def pearson(nX, yr):
     """
 
     # number of common ys
-    cdef np.ndarray[np.int_t,    ndim = 2] freq   = np.zeros((nX, nX), np.int)
+    cdef np.ndarray[np.int_t,    ndim = 2] freq   = np.zeros((n_x, n_x), np.int)
     # sum (r_xy * r_x'y) for common ys
-    cdef np.ndarray[np.int_t,    ndim = 2] prods = np.zeros((nX, nX), np.int)
+    cdef np.ndarray[np.int_t,    ndim = 2] prods = np.zeros((n_x, n_x), np.int)
     # sum (rxy ^ 2) for common ys
-    cdef np.ndarray[np.int_t,    ndim = 2] sqi = np.zeros((nX, nX), np.int)
+    cdef np.ndarray[np.int_t,    ndim = 2] sqi = np.zeros((n_x, n_x), np.int)
     # sum (rx'y ^ 2) for common ys
-    cdef np.ndarray[np.int_t,    ndim = 2] sqj = np.zeros((nX, nX), np.int)
+    cdef np.ndarray[np.int_t,    ndim = 2] sqj = np.zeros((n_x, n_x), np.int)
     # sum (rxy) for common ys
-    cdef np.ndarray[np.int_t,    ndim = 2] si = np.zeros((nX, nX), np.int)
+    cdef np.ndarray[np.int_t,    ndim = 2] si = np.zeros((n_x, n_x), np.int)
     # sum (rx'y) for common ys
-    cdef np.ndarray[np.int_t,    ndim = 2] sj = np.zeros((nX, nX), np.int)
+    cdef np.ndarray[np.int_t,    ndim = 2] sj = np.zeros((n_x, n_x), np.int)
     # the similarity matrix
-    cdef np.ndarray[np.double_t, ndim = 2] simMat = np.zeros((nX, nX))
+    cdef np.ndarray[np.double_t, ndim = 2] sim = np.zeros((n_x, n_x))
 
     # these variables need to be cdef'd so that array lookup can be fast
     cdef int xi = 0
@@ -232,9 +232,9 @@ def pearson(nX, yr):
     cdef int r1 = 0
     cdef int r2 = 0
 
-    for y, yRatings in yr.items():
-        for xi, r1 in yRatings:
-            for xj, r2 in yRatings:
+    for y, y_ratings in yr.items():
+        for xi, r1 in y_ratings:
+            for xj, r2 in y_ratings:
                 prods[xi, xj] += r1 * r2
                 freq[xi, xj] += 1
                 sqi[xi, xj] += r1**2
@@ -242,18 +242,18 @@ def pearson(nX, yr):
                 si[xi, xj] += r1
                 sj[xi, xj] += r2
 
-    for xi in range(nX):
-        simMat[xi, xi] = 1
-        for xj in range(xi + 1, nX):
+    for xi in range(n_x):
+        sim[xi, xi] = 1
+        for xj in range(xi + 1, n_x):
             n = freq[xi, xj]
             num = n * prods[xi, xj] - si[xi, xj] * sj[xi, xj]
             denum = np.sqrt((n * sqi[xi, xj] - si[xi, xj]**2) *
                             (n * sqj[xi, xj] - sj[xi, xj]**2))
             if denum == 0:
-                simMat[xi, xj] = 0
+                sim[xi, xj] = 0
             else:
-                simMat[xi, xj] = num / denum
+                sim[xi, xj] = num / denum
 
-            simMat[xj, xi] = simMat[xi, xj]
+            sim[xj, xi] = sim[xi, xj]
 
-    return simMat
+    return sim
