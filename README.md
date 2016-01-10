@@ -19,3 +19,5 @@ And if you intend to use compare tools:
 - Pandas
 - Matplotlib
 - Ipython
+
+We use pytest for testing
