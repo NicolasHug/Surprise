@@ -17,9 +17,9 @@ class KNNBasic(AlgoUsingSim):
     {\\sum\\limits_{v \in N^k_i(u)} \\text{sim}(u, v)}`
     """
 
-    def __init__(self, training_data, item_based=False, sim_name='MSD', k=40,
+    def __init__(self, training_data, user_based=True, sim_name='MSD', k=40,
                  **kwargs):
-        super().__init__(training_data, item_based=item_based, sim_name=sim_name,
+        super().__init__(training_data, user_based=user_based, sim_name=sim_name,
                  **kwargs)
 
         self.k = k
@@ -62,9 +62,9 @@ class KNNWithMeans(AlgoUsingSim):
     {\\sum\\limits_{v \in N^k_i(u)} \\text{sim}(u, v)}`
     """
 
-    def __init__(self, training_data, item_based=False, sim_name='MSD', k=40,
+    def __init__(self, training_data, user_based=True, sim_name='MSD', k=40,
                  **kwargs):
-        super().__init__(training_data, item_based=item_based, sim_name=sim_name)
+        super().__init__(training_data, user_based=user_based, sim_name=sim_name)
 
         self.k = k
 
@@ -113,9 +113,9 @@ class KNNBaseline(AlgoWithBaseline, AlgoUsingSim):
     {\\sum\\limits_{v \in N^k_i(u)} \\text{sim}(u, v)}`
     """
 
-    def __init__(self, training_data, item_based=False, method='als',
+    def __init__(self, training_data, user_based=True, method='als',
                  sim_name='MSD', k=40, **kwargs):
-        super().__init__(training_data, item_based, method=method,
+        super().__init__(training_data, user_based, method=method,
                          sim_name=sim_name, **kwargs)
 
         self.k = k

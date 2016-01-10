@@ -12,8 +12,8 @@ class AlgoUsingMeanDiff(AlgoBase):
     """Astract class for algorithms using the mean difference between the
     ratings of two users/items"""
 
-    def __init__(self, training_data, item_based=False, **kwargs):
-        super().__init__(training_data, item_based=item_based, **kwargs)
+    def __init__(self, training_data, user_based=True, **kwargs):
+        super().__init__(training_data, user_based=user_based, **kwargs)
 
         self.mean_diff = sims.compute_mean_diff(self.n_x, self.yr)
 
@@ -22,8 +22,8 @@ class CloneBruteforce(AlgoBase):
     pred(r_xy) = mean(r_x'y + k) for all x' that are k-clone of x
     """
 
-    def __init__(self, training_data, item_based=False, **kwargs):
-        super().__init__(training_data, item_based=item_based, **kwargs)
+    def __init__(self, training_data, user_based=True, **kwargs):
+        super().__init__(training_data, user_based=user_based, **kwargs)
 
         self.infos['name'] = 'AlgoClonBruteForce'
 
@@ -66,8 +66,8 @@ class CloneMeanDiff(AlgoUsingMeanDiff):
     The mean is weighted by how 'steady' is the mean_diff
     """
 
-    def __init__(self, training_data, item_based=False, **kwargs):
-        super().__init__(training_data, item_based=item_based, **kwargs)
+    def __init__(self, training_data, user_based=True, **kwargs):
+        super().__init__(training_data, user_based=user_based, **kwargs)
 
         self.infos['name'] = 'CloneMeanDiff'
 
@@ -97,9 +97,9 @@ class CloneKNNMeanDiff(AlgoUsingMeanDiff, AlgoUsingSim):
     using an appropriate similarity measure
     """
 
-    def __init__(self, training_data, item_based=False, sim_name='MSDClone', k=40,
+    def __init__(self, training_data, user_based=True, sim_name='MSDClone', k=40,
                  **kwargs):
-        super().__init__(training_data, item_based=item_based, sim_name=sim_name)
+        super().__init__(training_data, user_based=user_based, sim_name=sim_name)
 
         self.infos['name'] = 'CloneKNNMeanDiff'
 

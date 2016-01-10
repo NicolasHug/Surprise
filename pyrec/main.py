@@ -154,7 +154,7 @@ def main():
         training_time = time.process_time() - train_start_time
 
         algo = algo_choices[args.algo](training_data,
-                                      item_based=args.item_based,
+                                      user_based=not args.item_based,
                                       method=args.method,
                                       sim_name=args.sim,
                                       k=args.k,

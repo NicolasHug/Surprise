@@ -9,8 +9,8 @@ from .bases import PredictionImpossible
 class AlgoUsingAnalogy(AlgoBase):
     """Abstract class for algos that use an analogy framework"""
 
-    def __init__(self, training_data, item_based=False):
-        super().__init__(training_data, item_based)
+    def __init__(self, training_data, user_based=True):
+        super().__init__(training_data, user_based)
         self.tuples = []  # list of 3-tuple (for the last prediction only)
 
     def isSolvable(self, ra, rb, rc):
@@ -49,9 +49,9 @@ class AlgoUsingAnalogy(AlgoBase):
 class Parall(AlgoUsingSim, AlgoUsingAnalogy):
     """geometrical analogy based recommender"""
 
-    def __init__(self, training_data, item_based=False, sim_name='MSD', k=40,
+    def __init__(self, training_data, user_based=True, sim_name='MSD', k=40,
                  **kwargs):
-        super().__init__(training_data, item_based, sim)
+        super().__init__(training_data, user_based, sim)
         self.infos['name'] = 'algoParallKNN' if k else 'algoParall'
 
         self.k = k
@@ -140,8 +140,8 @@ class Parall(AlgoUsingSim, AlgoUsingAnalogy):
 class Pattern(AlgoUsingAnalogy):
     """analogy based recommender using patterns in 3-tuples"""
 
-    def __init__(self, training_data, item_based=False, **kwargs):
-        super().__init__(training_data, item_based, **kwargs)
+    def __init__(self, training_data, user_based=True, **kwargs):
+        super().__init__(training_data, user_based, **kwargs)
         self.infos['name'] = 'algoPattern'
 
     def estimate(self, x0, y0):

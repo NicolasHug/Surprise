@@ -20,7 +20,7 @@ class AlgoBase:
     """Abstract Algo class where is defined the basic behaviour of a recomender
     algorithm"""
 
-    def __init__(self, training_data, item_based=False, with_dump=False, **kwargs):
+    def __init__(self, training_data, user_based=True, with_dump=False, **kwargs):
 
         self.training_data = training_data
 
@@ -28,7 +28,7 @@ class AlgoBase:
         # similarities will be computed between users or between items)
         # if the algo is user based, x denotes a user and y an item
         # if the algo is item based, x denotes an item and y a user
-        self.user_based = not item_based
+        self.user_based = user_based
 
         if self.user_based:
             self.rm = training_data.rm
@@ -131,8 +131,8 @@ class AlgoBase:
 class AlgoUsingSim(AlgoBase):
     """Abstract class for algos using a similarity measure"""
 
-    def __init__(self, training_data, item_based, sim_name, **kwargs):
-        super().__init__(training_data, item_based, **kwargs)
+    def __init__(self, training_data, user_based, sim_name, **kwargs):
+        super().__init__(training_data, user_based, **kwargs)
 
         self.infos['params']['sim'] = sim_name
         self.construct_sim_mat(sim_name)  # we'll need the similiarities
@@ -154,8 +154,8 @@ class AlgoUsingSim(AlgoBase):
 class AlgoWithBaseline(AlgoBase):
     """Abstract class for algos that need a baseline"""
 
-    def __init__(self, training_data, item_based, method, **kwargs):
-        super().__init__(training_data, item_based, **kwargs)
+    def __init__(self, training_data, user_based, method, **kwargs):
+        super().__init__(training_data, user_based, **kwargs)
 
         # compute users and items biases
         # see from 5.2.1 of RS handbook

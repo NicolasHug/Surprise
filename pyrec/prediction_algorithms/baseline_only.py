@@ -15,8 +15,8 @@ class BaselineOnly(AlgoWithBaseline):
 
     """
 
-    def __init__(self, training_data, item_based=False, method='als', **kwargs):
-        super().__init__(training_data, item_based, method=method, **kwargs)
+    def __init__(self, training_data, user_based=True, method='als', **kwargs):
+        super().__init__(training_data, user_based, method=method, **kwargs)
         self.infos['name'] = 'algoBaselineOnly'
 
     def estimate(self, x0, y0):
