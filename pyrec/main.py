@@ -7,16 +7,16 @@ import argparse
 import os
 
 import stats
-from prediction_algorithms.random import Random
-from prediction_algorithms.baseline_only import BaselineOnly
-from prediction_algorithms.knns import KNNBasic
-from prediction_algorithms.knns import KNNBaseline
-from prediction_algorithms.knns import KNNWithMeans
-from prediction_algorithms.analogy import Parall
-from prediction_algorithms.analogy import Pattern
-from prediction_algorithms.clone import CloneBruteforce
-from prediction_algorithms.clone import CloneMeanDiff
-from prediction_algorithms.clone import CloneKNNMeanDiff
+from prediction_algorithms import Random
+from prediction_algorithms import BaselineOnly
+from prediction_algorithms import KNNBasic
+from prediction_algorithms import KNNBaseline
+from prediction_algorithms import KNNWithMeans
+from prediction_algorithms import Parall
+from prediction_algorithms import Pattern
+from prediction_algorithms import CloneBruteforce
+from prediction_algorithms import CloneMeanDiff
+from prediction_algorithms import CloneKNNMeanDiff
 from dataset import get_raw_ratings
 from dataset import TrainingData
 
