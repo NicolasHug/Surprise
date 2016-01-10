@@ -8,7 +8,7 @@ cimport numpy as np
 import numpy as np
 
 # OK so I changed some stuff: itertool.combinations is not used anymore, it caused a
-# weird bug in the mean_diff calculation. I'm pretty sure it used to work OK
+# weird bug in the mean_diff calculation. I'm pretty sure* it used to work OK
 # before because we were only testing ml-100k on the 'official' 5-fold cross
 # validation sets, where all user ids where ordered. Now that ids can appear in
 # any order (because we do our own CV folds), combinations can't be used
@@ -17,6 +17,7 @@ import numpy as np
 # matrix (using combinations we could have (but did not) used  symetric matrix
 # structure).
 # We definitely need a proper test campaign.
+# *EDIT: now I'm 100% sure (and test campaign is now officially launched :) )
 
 def cosine(n_x, yr):
     """Compute the cosine similarity between all pairs of xs.
@@ -47,16 +48,16 @@ def cosine(n_x, yr):
     # these variables need to be cdef'd so that array lookup can be fast
     cdef int xi = 0
     cdef int xj = 0
-    cdef int r1 = 0
-    cdef int r2 = 0
+    cdef int ri = 0
+    cdef int rj = 0
 
     for y, y_ratings in yr.items():
-        for xi, r1 in y_ratings:
-            for xj, r2 in y_ratings:
+        for xi, ri in y_ratings:
+            for xj, rj in y_ratings:
                 freq[xi, xj] += 1
-                prods[xi, xj] += r1 * r2
-                sqi[xi, xj] += r1**2
-                sqj[xi, xj] += r2**2
+                prods[xi, xj] += ri * rj
+                sqi[xi, xj] += ri**2
+                sqj[xi, xj] += rj**2
 
     for xi in range(n_x):
         sim[xi, xi] = 1
@@ -102,13 +103,13 @@ def msd(n_x, yr):
     # these variables need to be cdef'd so that array lookup can be fast
     cdef int xi = 0
     cdef int xj = 0
-    cdef int r1 = 0
-    cdef int r2 = 0
+    cdef int ri = 0
+    cdef int rj = 0
 
     for y, y_ratings in yr.items():
-        for xi, r1 in y_ratings:
-            for xj, r2 in y_ratings:
-                sq_diff[xi, xj] += (r1 - r2)**2
+        for xi, ri in y_ratings:
+            for xj, rj in y_ratings:
+                sq_diff[xi, xj] += (ri - rj)**2
                 freq[xi, xj] += 1
 
     for xi in range(n_x):
@@ -138,13 +139,13 @@ def compute_mean_diff(n_x, yr):
     # these variables need to be cdef'd so that array lookup can be fast
     cdef int xi = 0
     cdef int xj = 0
-    cdef int r1 = 0
-    cdef int r2 = 0
+    cdef int ri = 0
+    cdef int rj = 0
 
     for y, y_ratings in yr.items():
-        for xi, r1 in y_ratings:
-            for xj, r2 in y_ratings:
-                diff[xi, xj] += (r1 - r2)
+        for xi, ri in y_ratings:
+            for xj, rj in y_ratings:
+                diff[xi, xj] += (ri - rj)
                 freq[xi, xj] += 1
 
     for xi in range(n_x):
@@ -158,7 +159,8 @@ def compute_mean_diff(n_x, yr):
 
 def msdClone(n_x, yr):
     """compute the 'clone' mean squared difference similarity between all
-    pairs of xs. Some properties as for MSDSim apply."""
+    pairs of xs. This is nothing but the variance of the differences. Same
+    properties as for MSDSim apply."""
 
     # sum (r_xy - r_x'y - mean_diff(x, x')) for common ys
     cdef np.ndarray[np.double_t, ndim = 2] diff = np.zeros((n_x, n_x), np.double)
@@ -174,13 +176,13 @@ def msdClone(n_x, yr):
     # these variables need to be cdef'd so that array lookup can be fast
     cdef int xi = 0
     cdef int xj = 0
-    cdef int r1 = 0
-    cdef int r2 = 0
+    cdef int ri = 0
+    cdef int rj = 0
 
     for y, y_ratings in yr.items():
-        for xi, r1 in y_ratings:
-            for xj, r2 in y_ratings:
-                sq_diff[xi, xj] += (r1 - r2 - mean_diff[xi, xj])**2
+        for xi, ri in y_ratings:
+            for xj, rj in y_ratings:
+                sq_diff[xi, xj] += (ri - rj - mean_diff[xi, xj])**2
                 freq[xi, xj] += 1
 
     for xi in range(n_x):
@@ -229,18 +231,18 @@ def pearson(n_x, yr):
     # these variables need to be cdef'd so that array lookup can be fast
     cdef int xi = 0
     cdef int xj = 0
-    cdef int r1 = 0
-    cdef int r2 = 0
+    cdef int ri = 0
+    cdef int rj = 0
 
     for y, y_ratings in yr.items():
-        for xi, r1 in y_ratings:
-            for xj, r2 in y_ratings:
-                prods[xi, xj] += r1 * r2
+        for xi, ri in y_ratings:
+            for xj, rj in y_ratings:
+                prods[xi, xj] += ri * rj
                 freq[xi, xj] += 1
-                sqi[xi, xj] += r1**2
-                sqj[xi, xj] += r2**2
-                si[xi, xj] += r1
-                sj[xi, xj] += r2
+                sqi[xi, xj] += ri**2
+                sqj[xi, xj] += rj**2
+                si[xi, xj] += ri
+                sj[xi, xj] += rj
 
     for xi in range(n_x):
         sim[xi, xi] = 1
