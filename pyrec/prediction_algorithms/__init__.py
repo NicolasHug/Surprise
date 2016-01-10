@@ -3,7 +3,7 @@ The :mod:`prediction_algorithms` package includes the prediction algorithms
 available for recommendation.
 """
 
-from .random import Random
+from .random_pred import NormalPredictor
 from .baseline_only import BaselineOnly
 from .knns import KNNBasic
 from .knns import KNNBaseline

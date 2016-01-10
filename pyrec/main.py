@@ -7,7 +7,7 @@ import argparse
 import os
 
 import stats
-from prediction_algorithms import Random
+from prediction_algorithms import NormalPredictor
 from prediction_algorithms import BaselineOnly
 from prediction_algorithms import KNNBasic
 from prediction_algorithms import KNNBaseline
@@ -30,7 +30,7 @@ def main():
         '--item_based')
 
     algo_choices = {
-        'Random': Random,
+        'Normal': NormalPredictor,
         'BaselineOnly': BaselineOnly,
         'KNNBasic': KNNBasic,
         'KNNBaseline': KNNBaseline,

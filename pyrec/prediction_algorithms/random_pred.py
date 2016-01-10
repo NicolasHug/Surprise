@@ -7,7 +7,7 @@ import numpy as np
 from .bases import AlgoBase
 
 
-class Random(AlgoBase):
+class NormalPredictor(AlgoBase):
     """Algorithm predicting a random rating based on the distribution of the
     training set, which is assumed to be normal:
 
