@@ -28,9 +28,9 @@ class AlgoBase:
         # similarities will be computed between users or between items)
         # if the algo is user based, x denotes a user and y an item
         # if the algo is item based, x denotes an item and y a user
-        self.ub = not item_based
+        self.user_based = not item_based
 
-        if self.ub:
+        if self.user_based:
             self.rm = training_data.rm
             self.xr = training_data.ur
             self.yr = training_data.ir
@@ -55,8 +55,8 @@ class AlgoBase:
         self.infos = {}
         self.infos['name'] = 'undefined'
         self.infos['params'] = {}  # dict of params specific to any algo
-        self.infos['params']['Based on '] = 'users' if self.ub else 'items'
-        self.infos['ub'] = self.ub
+        self.infos['params']['Based on '] = 'users' if self.user_based else 'items'
+        self.infos['ub'] = self.user_based
         self.infos['preds'] = self.preds  # list of predictions.
         self.infos['ur'] = training_data.ur  # user ratings  dict
         self.infos['ir'] = training_data.ir  # item ratings dict
@@ -71,8 +71,9 @@ class AlgoBase:
         self.preds attribute is updated.
         """
 
+        x0, y0 = (u0, i0) if self.user_based else (i0, u0)
         try:
-            est = self.estimate(u0, i0)
+            est = self.estimate(x0, y0)
             impossible = False
         except PredictionImpossible:
             est = self.global_mean
@@ -125,12 +126,6 @@ class AlgoBase:
                 str(len(self.infos['preds'])))
         pickle.dump(self.infos, open(name, 'wb'))
 
-    def getx0y0(self, u0, i0):
-        """return x0 and y0 based on the self.ub variable (see constructor)"""
-        if self.ub:
-            return u0, i0
-        else:
-            return i0, u0
 
 
 class AlgoUsingSim(AlgoBase):
@@ -197,8 +192,8 @@ class AlgoWithBaseline(AlgoBase):
         reg_i = 10
         n_epochs = 10
 
-        self.reg_x = reg_u if self.ub else reg_i
-        self.reg_y = reg_u if not self.ub else reg_i
+        self.reg_x = reg_u if self.user_based else reg_i
+        self.reg_y = reg_i if self.user_based else reg_u
 
         for dummy in range(n_epochs):
             self.y_biases = np.zeros(self.n_y)

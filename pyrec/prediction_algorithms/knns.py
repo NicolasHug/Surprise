@@ -28,8 +28,7 @@ class KNNBasic(AlgoUsingSim):
         self.infos['params']['similarity measure'] = sim_name
         self.infos['params']['k'] = self.k
 
-    def estimate(self, u0, i0):
-        x0, y0 = self.getx0y0(u0, i0)
+    def estimate(self, x0, y0):
 
         neighbors = [(x, self.sim[x0, x], r) for (x, r) in self.yr[y0]]
 
@@ -77,8 +76,7 @@ class KNNWithMeans(AlgoUsingSim):
         for x, ratings in self.xr.items():
             self.means[x] = np.mean([r for (_, r) in ratings])
 
-    def estimate(self, u0, i0):
-        x0, y0 = self.getx0y0(u0, i0)
+    def estimate(self, x0, y0):
 
         neighbors = [(x, self.sim[x0, x], r) for (x, r) in self.yr[y0]]
 
@@ -124,8 +122,8 @@ class KNNBaseline(AlgoWithBaseline, AlgoUsingSim):
         self.infos['name'] = 'neighborhoodWithBaseline'
         self.infos['params']['k'] = self.k
 
-    def estimate(self, u0, i0):
-        x0, y0 = self.getx0y0(u0, i0)
+    def estimate(self, x0, y0):
+
         est = self.get_baseline(x0, y0)
 
         neighbors = [(x, self.sim[x0, x], r) for (x, r) in self.yr[y0]]

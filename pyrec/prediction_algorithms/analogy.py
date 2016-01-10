@@ -83,8 +83,7 @@ class Parall(AlgoUsingSim, AlgoUsingAnalogy):
             xc, rc = random.choice(self.yr[y0])
             yield (xa, ra), (xb, rb), (xc, rc)
 
-    def estimate(self, u0, i0):
-        x0, y0 = self.getx0y0(u0, i0)
+    def estimate(self, x0, y0):
 
         # if there are no ratings for y0, prediction is impossible
         if not self.yr[y0]:
@@ -145,8 +144,7 @@ class Pattern(AlgoUsingAnalogy):
         super().__init__(training_data, item_based, **kwargs)
         self.infos['name'] = 'algoPattern'
 
-    def estimate(self, u0, i0):
-        x0, y0 = self.getx0y0(u0, i0)
+    def estimate(self, x0, y0):
 
         # if there are no ratings for y0, prediction is impossible
         if not self.yr[y0]:

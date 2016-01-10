@@ -38,8 +38,7 @@ class CloneBruteforce(AlgoBase):
         sigma = sum(abs(diff - k) for diff in diffs)
         return sigma <= len(diffs)
 
-    def estimate(self, u0, i0):
-        x0, y0 = self.getx0y0(u0, i0)
+    def estimate(self, x0, y0):
 
         candidates = []
         for (x, rx) in self.yr[y0]:  # for ALL xs that have rated y0
@@ -72,8 +71,7 @@ class CloneMeanDiff(AlgoUsingMeanDiff):
 
         self.infos['name'] = 'CloneMeanDiff'
 
-    def estimate(self, u0, i0):
-        x0, y0 = self.getx0y0(u0, i0)
+    def estimate(self, x0, y0):
 
         candidates = []
         weights = []
@@ -110,8 +108,7 @@ class CloneKNNMeanDiff(AlgoUsingMeanDiff, AlgoUsingSim):
         self.infos['params']['similarity measure'] = sim
         self.infos['params']['k'] = self.k
 
-    def estimate(self, u0, i0):
-        x0, y0 = self.getx0y0(u0, i0)
+    def estimate(self, x0, y0):
 
         neighbors = [(x, self.sim[x0, x], r) for (x, r) in self.yr[y0]]
 

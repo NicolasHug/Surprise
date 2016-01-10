@@ -33,4 +33,5 @@ class NormalPredictor(AlgoBase):
         self.var = num / denum
 
     def estimate(self, *_):
+
         return np.random.normal(self.global_mean, self.var)
