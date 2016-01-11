@@ -133,6 +133,7 @@ def main():
     args = parser.parse_args()
 
     rd.seed(args.seed)
+    np.random.seed(args.seed)
 
     if not os.path.exists('datasets'):
         os.makedirs('datasets')

@@ -46,6 +46,8 @@ class AlgoBase:
             self.n_x = training_data.n_items
             self.n_y = training_data.n_users
 
+        # number of ratings
+        self.n_ratings = len(self.rm)
         # global mean of all ratings
         self.global_mean = np.mean([r for (_, _, r) in self.all_ratings])
         # list of all predictions computed by the algorithm

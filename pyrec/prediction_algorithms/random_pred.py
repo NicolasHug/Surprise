@@ -19,17 +19,8 @@ class NormalPredictor(AlgoBase):
         super().__init__(training_data, **kwargs)
         self.infos['name'] = 'random'
 
-        # TODO: change it to a more pythonic version
-        # num = sum((r - self.global_mean)**2 for (_, _, r) in self.all_ratings)
-        # denum = self.n_ratings - 1  <-- need this
-
-        # compute unbiased variance of ratings
-        num = denum = 0
-        for _, _, r in self.all_ratings:
-            num += (r - self.global_mean)**2
-            denum += 1
-        denum -= 1
-
+        num = sum((r - self.global_mean)**2 for (_, _, r) in self.all_ratings)
+        denum = self.n_ratings - 1  # unbiased
         self.var = num / denum
 
     def estimate(self, *_):
