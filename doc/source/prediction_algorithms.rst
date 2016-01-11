@@ -8,7 +8,7 @@ prediction_algorithms package
 Basic algorithms
 ----------------
 
-.. autoclass:: prediction_algorithms.random.Random
+.. autoclass:: prediction_algorithms.random_pred.NormalPredictor
 
 .. _baseline_only:
 .. autoclass:: prediction_algorithms.baseline_only.BaselineOnly

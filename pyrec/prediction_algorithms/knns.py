@@ -103,7 +103,7 @@ class KNNWithMeans(AlgoUsingSim):
         return est
 
 
-class KNNBaseline(AlgoWithBaseline, AlgoUsingSim):
+class KNNBaseline(AlgoUsingSim, AlgoWithBaseline):
     """Basic collaborative filtering algorithm taking into account a
     *baseline* rating (see paper *Factor in the Neighbors: Scalable and
     Accurate Collaborative Filtering* by Yehuda Koren for details).

@@ -135,7 +135,7 @@ class AlgoUsingSim(AlgoBase):
         super().__init__(training_data, user_based, **kwargs)
 
         self.infos['params']['sim'] = sim_name
-        self.construct_sim_mat(sim_name)  # we'll need the similiarities
+        self.construct_sim_mat(sim_name)
 
     def construct_sim_mat(self, sim_name):
         """construct the simlarity matrix"""
@@ -144,10 +144,15 @@ class AlgoUsingSim(AlgoBase):
         construction_func = {'cos' : sims.cosine,
                              'MSD' : sims.msd,
                              'MSDClone' : sims.msdClone,
-                             'pearson' : sims.pearson}
+                             'pearson' : sims.pearson,
+                             'pearson_baseline' : sims.pearson_baseline}
+
+        args = [self.n_x, self.yr]
+        if sim_name == 'pearson_baseline':
+            args += [self.global_mean, self.x_biases, self.y_biases]
 
         try:
-            self.sim = construction_func[sim_name](self.n_x, self.yr)
+            self.sim = construction_func[sim_name](*args)
         except KeyError:
             raise NameError('Wrong sim name')
 

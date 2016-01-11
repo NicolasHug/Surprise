@@ -49,7 +49,7 @@ def main():
                         '. (default: KNNBaseline)',
                         metavar='<prediction algorithm>')
 
-    sim_choices = ['cos', 'pearson', 'MSD', 'MSDClone']
+    sim_choices = ['cos', 'pearson', 'MSD', 'MSDClone', 'pearson_baseline']
     parser.add_argument('-sim', type=str,
                         default='MSD',
                         choices=sim_choices,

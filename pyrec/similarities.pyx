@@ -211,6 +211,8 @@ def pearson(n_x, yr):
 
     See details on `Wikipedia
     <https://en.wikipedia.org/wiki/Pearson_product-moment_correlation_coefficient#For_a_sample>`_.
+
+    Note: if there are no common users/items, similarity will be 0 (and not -1)
     """
 
     # number of common ys
@@ -255,6 +257,80 @@ def pearson(n_x, yr):
                 sim[xi, xj] = 0
             else:
                 sim[xi, xj] = num / denum
+
+            sim[xj, xi] = sim[xi, xj]
+
+    return sim
+
+def pearson_baseline(n_x, yr, global_mean, x_biases, y_biases, shrinkage=100):
+    """compute the pearson corr coeff between all pairs of xs. Centering is not
+    performed with means, but with baselines
+
+    Only *common* users (or items) are taken into account:
+
+    :math:`\\text{pearson_baseline_sim}(x, x') = \hat{\\rho}_{xx'} = \\frac{
+    \\sum\\limits_{y \in Y_{xx'}} (r_{xy} -  b_{xy}) \cdot (r_{x'y} - b_{x'y})}
+    {\\sqrt{\\sum\\limits_{y \in Y_{xx'}} (r_{xy} -  b_{xy})^2} \cdot
+    \\sqrt{\\sum\\limits_{y \in Y_{xx'}} (r_{x'y} -  b_{x'y})^2}}`
+
+    :math:`\\text{pearson_baseline_shrunk_sim}(x, x') = \\frac{|Y_{x, x'}| - 1}
+    {|Y_{x, x'}| - 1 + \\text{shrinkage}} \\cdot \hat{\\rho}_{xx'}`
+
+
+
+    See details on the *Recommender System Handbook*, section 5.4.1
+
+    Note: if there are no common users/items, similarity will be 0 (and not -1)
+    """
+
+    # number of common ys
+    cdef np.ndarray[np.int_t,    ndim = 2] freq   = np.zeros((n_x, n_x), np.int)
+    # sum (r_xy - b_xy) * (r_x'y - b_x'y) for common ys
+    cdef np.ndarray[np.double_t,    ndim = 2] prods = np.zeros((n_x, n_x))
+    # sum (r_xy - b_xy)**2 for common ys
+    cdef np.ndarray[np.double_t,    ndim = 2] sq_diff_i = np.zeros((n_x, n_x))
+    # sum (r_x'y - b_x'y)**2 for common ys
+    cdef np.ndarray[np.double_t,    ndim = 2] sq_diff_j = np.zeros((n_x, n_x))
+    # the similarity matrix
+    cdef np.ndarray[np.double_t, ndim = 2] sim = np.zeros((n_x, n_x))
+
+    # copy arguments so that they can be cdef'd
+    cdef np.ndarray[np.double_t,    ndim = 1] x_biases_ = x_biases
+    cdef np.ndarray[np.double_t,    ndim = 1] y_biases_ = y_biases
+    cdef double global_mean_ = global_mean
+
+
+    # these variables need to be cdef'd so that array lookup can be fast
+    cdef int xi = 0
+    cdef int xj = 0
+    cdef double ri = 0
+    cdef double rj = 0
+    cdef double diff_i = 0
+    cdef double diff_j = 0
+    cdef double partial_bias = 0
+
+    for y, y_ratings in yr.items():
+        partial_bias = global_mean_ + y_biases_[y]
+        for xi, ri in y_ratings:
+            for xj, rj in y_ratings:
+                freq[xi, xj] += 1
+                diff_i = (ri - (partial_bias + x_biases_[xi]))
+                diff_j = (rj - (partial_bias + x_biases_[xj]))
+                prods[xi, xj] += diff_i * diff_j
+                sq_diff_i[xi, xj] += diff_i**2
+                sq_diff_j[xi, xj] += diff_j**2
+
+    for xi in range(n_x):
+        sim[xi, xi] = 1
+        for xj in range(xi + 1, n_x):
+            if freq[xi, xj] < 2:  # if freq == 1, pearson_sim is zero anyway
+                sim[xi, xj] = 0
+            else:
+                sim[xi, xj] = prods[xi, xj] / (np.sqrt(sq_diff_i[xi, xj] *
+                                                       sq_diff_j[xi, xj]))
+                # the shrinkage part
+                sim[xi, xj] *= (freq[xi, xj] - 1) / (freq[xi, xj] - 1 +
+                                                     shrinkage)
 
             sim[xj, xi] = sim[xi, xj]
 
