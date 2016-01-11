@@ -72,6 +72,12 @@ def main():
                         help='the number of neighbors to use for k-NN ' +
                         'algorithms (default: 40)')
 
+    parser.add_argument('-shrinkage', type=int,
+                        metavar='<shrinkge value>',
+                        default=100,
+                        help='the shrinkage value to use for pearson ' +
+                        'similarity (default: 100)')
+
     parser.add_argument('-train_file', type=str,
                         metavar='<train file>',
                         default=None,
@@ -158,6 +164,7 @@ def main():
                                       method=args.method,
                                       sim_name=args.sim,
                                       k=args.k,
+                                      shrinkage=args.shrinkage,
                                       with_dump=args.with_dump)
 
         print("computing predictions...")

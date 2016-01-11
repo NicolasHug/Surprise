@@ -135,6 +135,10 @@ class AlgoUsingSim(AlgoBase):
         super().__init__(training_data, user_based, **kwargs)
 
         self.infos['params']['sim'] = sim_name
+
+        # TODO: I don't like it, shrinkage parameter could be handled
+        # differently (see todo.md)
+        self.shrinkage = kwargs['shrinkage']
         self.construct_sim_mat(sim_name)
 
     def construct_sim_mat(self, sim_name):
@@ -149,7 +153,8 @@ class AlgoUsingSim(AlgoBase):
 
         args = [self.n_x, self.yr]
         if sim_name == 'pearson_baseline':
-            args += [self.global_mean, self.x_biases, self.y_biases]
+            args += [self.global_mean, self.x_biases, self.y_biases,
+                    self.shrinkage]
 
         try:
             self.sim = construction_func[sim_name](*args)

@@ -8,9 +8,10 @@ Court terme :
 * set up a nice API
 * handle big datasets (memory error when computing similarities)
 * write some tests (in progress)
-* handle algo-specific parameters (such as 'k' for knn, regularization
-  parameters, shrinkage paramaters, etc.) in a appropriate manner, rather than
-  pass them all to constructors. Maybe a dict would be enough?
+* handle algo-specific or similarity-specific parameters (such as 'k' for knn,
+  regularization parameters, shrinkage paramaters, etc.) in an appropriate
+  manner, rather than pass them all to constructors. Maybe a dict (or more)
+  would be enough?
 
 Long terme :
 ------------
