@@ -106,8 +106,6 @@ class JesterReader(Reader):
 
     @property
     def ratings(self):
-        # TODO: for now only consider the beggining of the file because, else
-        # Python throws MemoryError.
         for line in self.raw_ratings:
             urid, irid, r = line.split()
             yield int(urid), int(irid), float(r) + 11, 0
