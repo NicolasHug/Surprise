@@ -4,19 +4,26 @@ TODO
 Court terme :
 -------------
 
-* mettre au propre le main et la gestion des datasets
-* mettre au propre la structure du projet modules/packages
-* Mettre en place une API
-* gérer les gros datasets (memory error lors du calcul des similarités)
-* avoir un coding style pep8 compliant (noms de variables surtout)
-* écrire des tests
+* clean the main and all the dataset handling stuff
+* set up a nice API
+* handle big datasets (memory error when computing similarities)
+* write some tests (in progress)
+* handle algo-specific parameters (such as 'k' for knn, regularization
+  parameters, shrinkage paramaters, etc.) in a appropriate manner, rather than
+  pass them all to constructors. Maybe a dict would be enough?
 
 Long terme :
 ------------
 
-* gérer plus de datasets + datasets utilisateur
-* implémenter les algos mf
-* plus de doc
-* utilitaires de comparaisons d'algos
-* packager pour open sourcer le truc (trouver un nom, un nom de
-  domaine+serveur, quelles sont les dépendances requises etc)
+* handle more datasets + user-defined datasets
+* implement matrix factorization algorithms (PF)
+* document every usefull piece of code
+* set up algorithm comparation tools (first draft done)
+* package everything properly for future open sourcing
+
+Done:
+-----
+
+* rewrite this TODO in english
+* create a proper project structure
+* from camelCase to snake\_case
