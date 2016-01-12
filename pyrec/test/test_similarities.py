@@ -3,10 +3,6 @@ import os
 import random
 import copy
 
-# I'm not sure if this is good practice...
-# TODO: check that
-sys.path.insert(1, os.path.join(sys.path[0], '../'))
-
 import pyximport
 import numpy as np
 pyximport.install(setup_args={"include_dirs":np.get_include()})
