@@ -41,3 +41,55 @@ Usage: (checkout http://muricoca.github.io/crab/tutorial.html for usage)
 * build a model from it
 * build a similarity object from the model (pearson, cos (I guess?), ...)
 * build a recommender engine from both model and similarity
+
+
+What we want to do
+------------------
+
+the workflow could look like this (names of parameters and methods are subject
+to change):
+
+data = Dataset(...)
+algo = KNNBaseline(user_based=True, options=options, sim=sim)
+data.makeCV(n_folds=5) # optional and depending how data was constructed
+evaluate(algo, data) # this would give us RMSE, MAE, etc...
+
+
+# dataset construction
+data = Dataset(name='ml-100k') or
+data = Dataset(ratings_file='path_to_file', format=format) or
+data = Dataset(train_file='path_to_file', test_file='path_to_file', format=format)
+
+format is a string indicating the format of a line in a rating file:
+format='user :: item :: rating :: timestamp' or
+format='item | rating; user , timestamp' <-- maybe we won't handle such an
+absurd format...
+
+a dataset object would have a 'folds' attribute:
+[(test_1, train_1), (test_2, train_2), ...]
+test_x and train_x are lists of ratings.
+
+if train_file  and test_file are specified, the 'folds' attribute is
+built immediately, else its construction is deferred to the makeCV method.
+
+# algorithm construction
+algo = KNNBaseline(user_based=True, options=options, sim=sim)
+
+options would be a dict of all the options related to the algorithm. For
+example for KNNBaseline, keys would be 'method', and depending on the method
+'reg_u', 'reg_i'... or 'n_epochs'... etc. We should be careful not to have
+conflicting parameters names (clearly n_epoch could be one of them).
+
+sim (optional) is as well a dict with the name of the similarity measure to use, and
+related options, such as the minimum number of items in common, shrinkage
+parameters and stuff...
+We chose to not to include it in the 'options' parameters because sim
+seems to be an entity of its own, but that might change.
+
+The evaluate function could look like:
+def evaluate(algo, data):
+    for train_set, test_set in data.folds:
+        algo.train(train_set)
+        algo.test(test_set)
+
+    ... aggregate results etc...
