@@ -3,37 +3,94 @@ import sys
 import os
 from urllib.request import urlretrieve
 import zipfile
+import itertools
+
+#TODO: convert from raw to inner ids => when? in 'evaluate'?
+# try to give an explicit error messages if reader fails to parse
+# where do we split raw_ratings for CV? Too soon means we would have tons of
+# dupplicate data...
 
 class Dataset:
-    def __init__(self, name='ml-100k', ratings_file=None, test_file=None,
-                 train_file=None, folds_files=None, line_format=None, sep=None,
-                 skip_lines=0):
 
-        if ratings_file and line_format:
-            pass
-        elif train_file and test_file and line_format:
-            pass
-        elif folds_files and line_format:
-            pass
-        else:
-            pass
+    def __init__(self, raw_ratings=None, folds=None):
+        """Should not be called directly. Use load* constructors instead."""
 
-    def read_line(self, ratings_list, line_format, sep):
-        splitted = line_format.split(sep)
-        splitted = [x.strip() for x in splitted]
-        print(splitted)
+        self.raw_ratings = raw_ratings
+        self.folds = folds
+
+    @classmethod
+    def load(cls, name='ml-100k'):
+        # hardcode reader and download dataset if needed
+        pass
+
+    @classmethod
+    def load_from_file(cls, file_name, reader):
+
+        raw_ratings = cls.read_ratings(file_name, reader)
+        return cls(raw_ratings)
+
+
+    @classmethod
+    def load_from_files(cls, train_file, test_file, reader):
+
+        folds_files = [(train_file, test_file)]
+        return cls.load_from_folds(folds_files, reader)
+
+    @classmethod
+    def load_from_folds(cls, folds_files, reader):
+
+        folds = []
+        for train_file, test_file in folds_files:
+            raw_train_ratings = cls.read_ratings(train_file, reader)
+            raw_test_ratings = cls.read_ratings(test_file, reader)
+            folds.append((raw_train_ratings, raw_test_ratings))
+
+        return cls(folds=folds)
+
+    @classmethod
+    def read_ratings(cls, file_name, reader):
+        """Return a list of ratings (user, item, rating, timestamp) read from
+        file_name with given reader"""
+
+        with open(file_name) as f:
+            ratings_raw = [reader.read_line(line) for line in
+                           itertools.islice(f, reader.skip_lines, None)]
+        return ratings_raw
+
+    def make_folds(self, n_folds=5):
+
+        if self.folds:
+            print("This dataset is already split, I'm not doing anything")
+            return
+
+        # else construct the folds...
+
+
+class Reader():
+
+    def __init__(self, line_format, sep, skip_lines):
+        self.sep = sep
+        self.skip_lines = skip_lines
+
         try:
-            user_index = splitted.index('user')
-            item_index = splitted.index('item')
-            rating_index= splitted.index('rating')
-            timestamp_index = splitted.index('timestamp')
+            splitted_format = line_format.split()
+            entities = ('user', 'item', 'rating', 'timestamp')
+            self.indexes = [splitted_format.index(entity) for entity in entities]
         except ValueError:
-            raise ValueError('Wrong format or wrong separator')
+            raise ValueError('Wrong format')
 
-        print(user_index)
-        print(item_index)
-        print(rating_index)
-        print(timestamp_index)
+    def read_line(self, line):
+
+        line = line.split(self.sep)
+        uid, iid, r, timestamp = (line[i].strip() for i in self.indexes)
+        return uid, iid, r, timestamp
+
+
+reader = Reader(line_format='user item rating timestamp', sep='\t',
+                skip_lines=19990)
+
+file_name = '/home/nico/dev/pyrec/pyrec/datasets/ml-100k/ml-100k/u1.test'
+Dataset.load_from_files(train_file, test_file, reader)
 
 
 class TrainingData:
@@ -75,11 +132,6 @@ class TrainingData:
         self.n_users = len(self.ur)  # number of users
         self.n_items = len(self.ir)  # number of items
 
-
-class Reader():
-
-    def __init__(self, raw_ratings):
-        self.raw_ratings = raw_ratings
 
 
 class MovieLensReader(Reader):
