@@ -6,3 +6,4 @@ doc/build
 datasets
 dumps
 .ipynb_checkpoints/
+.chache/
