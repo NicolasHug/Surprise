@@ -56,9 +56,10 @@ evaluate(algo, data) # this would give us RMSE, MAE, etc...
 
 
 # dataset construction
-data = Dataset(name='ml-100k') or
-data = Dataset(ratings_file='path_to_file', format=format) or
-data = Dataset(train_file='path_to_file', test_file='path_to_file', format=format)
+(1) data = Dataset(name='ml-100k') or
+(2) data = Dataset(ratings_file='path_to_file', format=format) or
+(3) data = Dataset(train_file='path_to_file', test_file='path_to_file', format=format)
+(4) data = Dataset(folds_files=folds_file, format=format)
 
 format is a string indicating the format of a line in a rating file:
 format='user :: item :: rating :: timestamp' or
@@ -69,7 +70,7 @@ a dataset object would have a 'folds' attribute:
 [(test_1, train_1), (test_2, train_2), ...]
 test_x and train_x are lists of ratings.
 
-if train_file  and test_file are specified, the 'folds' attribute is
+for (3) and (4), the 'folds' attribute is
 built immediately, else its construction is deferred to the makeCV method.
 
 # algorithm construction
