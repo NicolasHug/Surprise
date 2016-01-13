@@ -4,6 +4,37 @@ import os
 from urllib.request import urlretrieve
 import zipfile
 
+class Dataset:
+    def __init__(self, name='ml-100k', ratings_file=None, test_file=None,
+                 train_file=None, folds_files=None, line_format=None, sep=None,
+                 skip_lines=0):
+
+        if ratings_file and line_format:
+            pass
+        elif train_file and test_file and line_format:
+            pass
+        elif folds_files and line_format:
+            pass
+        else:
+            pass
+
+    def read_line(self, ratings_list, line_format, sep):
+        splitted = line_format.split(sep)
+        splitted = [x.strip() for x in splitted]
+        print(splitted)
+        try:
+            user_index = splitted.index('user')
+            item_index = splitted.index('item')
+            rating_index= splitted.index('rating')
+            timestamp_index = splitted.index('timestamp')
+        except ValueError:
+            raise ValueError('Wrong format or wrong separator')
+
+        print(user_index)
+        print(item_index)
+        print(rating_index)
+        print(timestamp_index)
+
 
 class TrainingData:
 
