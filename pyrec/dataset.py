@@ -4,31 +4,28 @@ import os
 from urllib.request import urlretrieve
 import zipfile
 import itertools
+import random
 
-#TODO: convert from raw to inner ids => when? in 'evaluate'?
-# try to give an explicit error messages if reader fails to parse
-# where do we split raw_ratings for CV? Too soon means we would have tons of
-# dupplicate data...
+# TODO:try to give an explicit error messages if reader fails to parse
+
 
 class Dataset:
 
-    def __init__(self, raw_ratings=None, folds=None):
-        """Should not be called directly. Use load* constructors instead."""
+    def __init__(self, reader=None):
 
-        self.raw_ratings = raw_ratings
-        self.folds = folds
+        self.reader = reader
+        self.raw_ratings = None  # generator defined in subclasses
 
     @classmethod
     def load(cls, name='ml-100k'):
         # hardcode reader and download dataset if needed
+        # and then call load_from_file
         pass
 
     @classmethod
     def load_from_file(cls, file_name, reader):
 
-        raw_ratings = cls.read_ratings(file_name, reader)
-        return cls(raw_ratings)
-
+        return DatasetAutoFolds(ratings_file=file_name, reader=reader)
 
     @classmethod
     def load_from_files(cls, train_file, test_file, reader):
@@ -39,36 +36,74 @@ class Dataset:
     @classmethod
     def load_from_folds(cls, folds_files, reader):
 
-        folds = []
-        for train_file, test_file in folds_files:
-            raw_train_ratings = cls.read_ratings(train_file, reader)
-            raw_test_ratings = cls.read_ratings(test_file, reader)
-            folds.append((raw_train_ratings, raw_test_ratings))
+        return DatasetUserFolds(folds_files=folds_files, reader=reader)
 
-        return cls(folds=folds)
 
-    @classmethod
-    def read_ratings(cls, file_name, reader):
+    def read_ratings(self, file_name):
         """Return a list of ratings (user, item, rating, timestamp) read from
-        file_name with given reader"""
+        file_name"""
 
         with open(file_name) as f:
-            ratings_raw = [reader.read_line(line) for line in
+            raw_ratings = [self.reader.read_line(line) for line in
                            itertools.islice(f, reader.skip_lines, None)]
-        return ratings_raw
+        return raw_ratings
 
-    def make_folds(self, n_folds=5):
+    @property
+    def folds(self):
 
-        if self.folds:
-            print("This dataset is already split, I'm not doing anything")
-            return
+        if not self.raw_folds:
+            raise ValueError("raw_folds is unset. Are you sure your dataset " +
+                             "is split?")
 
-        # else construct the folds...
+        for raw_trainset, raw_testset in self.raw_folds:
+            print(len(raw_trainset), len(raw_testset))
+
+
+class DatasetUserFolds(Dataset):
+
+    def __init__(self, folds_files=None, reader=None):
+
+        super().__init__(reader)
+        self.folds_files = folds_files
+
+    @property
+    def raw_folds(self):
+        for train_file, test_file in self.folds_files:
+            raw_train_ratings = self.read_ratings(train_file)
+            raw_test_ratings = self.read_ratings(test_file)
+            yield raw_train_ratings, raw_test_ratings
+
+
+class DatasetAutoFolds(Dataset):
+
+    def __init__(self, ratings_file=None, reader=None):
+
+        super().__init__(reader)
+        self.ratings_file = ratings_file
+        self.raw_folds = None  # set in 'split' method
+
+    def split(self, n_folds=5, shuffle=True):
+
+        self.raw_ratings = self.read_ratings(self.ratings_file)
+        if shuffle:
+            random.shuffle(self.raw_ratings)
+
+        def k_folds(seq, n_folds):
+            """Inspired from scikit learn KFold method."""
+            start, stop = 0, 0
+            for fold_i in range(n_folds):
+                start = stop
+                stop += len(seq) // n_folds
+                if fold_i < len(seq) % n_folds:
+                    stop += 1
+                yield seq[:start] + seq[stop:], seq[start:stop]
+
+        self.raw_folds = k_folds(self.raw_ratings, n_folds)
 
 
 class Reader():
 
-    def __init__(self, line_format, sep, skip_lines):
+    def __init__(self, line_format, sep, skip_lines=0):
         self.sep = sep
         self.skip_lines = skip_lines
 
@@ -86,12 +121,19 @@ class Reader():
         return uid, iid, r, timestamp
 
 
-reader = Reader(line_format='user item rating timestamp', sep='\t',
-                skip_lines=19990)
+reader = Reader(line_format='user item rating timestamp', sep='\t')
 
+train_name = '/home/nico/dev/pyrec/pyrec/datasets/ml-100k/ml-100k/u1.base'
+test_name = '/home/nico/dev/pyrec/pyrec/datasets/ml-100k/ml-100k/u1.test'
+data = Dataset.load_from_files(train_name, test_name, reader=reader)
+
+"""
 file_name = '/home/nico/dev/pyrec/pyrec/datasets/ml-100k/ml-100k/u1.test'
-Dataset.load_from_files(train_file, test_file, reader)
+data = Dataset.load_from_file(file_name, reader)
+data.split(n_folds=5)
+"""
 
+data.folds
 
 class TrainingData:
 
