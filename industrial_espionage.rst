@@ -52,7 +52,7 @@ to change):
 data = Dataset(...)
 algo = KNNBaseline(user_based=True, options=options, sim=sim)
 data.makeCV(n_folds=5) # optional and depending how data was constructed
-evaluate(algo, data) # this would give us RMSE, MAE, etc...
+evaluate(algo, data, metrics=['RMSE', 'MAE', ...])
 
 
 # dataset construction
@@ -61,17 +61,55 @@ evaluate(algo, data) # this would give us RMSE, MAE, etc...
 (3) data = Dataset(train_file='path_to_file', test_file='path_to_file', format=format)
 (4) data = Dataset(folds_files=folds_file, format=format)
 
+Note: we need to consider having two Dataset subclasses: one when the folds are
+already known (3 and 4) and one when user provides only a single ratings file
+(1 and 2).
+
 format is a string indicating the format of a line in a rating file:
 format='user :: item :: rating :: timestamp' or
 format='item | rating; user , timestamp' <-- maybe we won't handle such an
 absurd format...
+UPDATE: ok so for now user has to explicitely give the sep, and it has to be
+unique.
 
-a dataset object would have a 'folds' attribute:
-[(test_1, train_1), (test_2, train_2), ...]
-test_x and train_x are lists of ratings.
+a dataset object would have a 'raw_folds' attribute, which would be a
+generator:
+((raw_test_1, raw_train_1), (raw_test_2, raw_train_2), ...)
+raw_test_x and raw_train_x are lists of ratings that will be converted to a
+proper data structure suitable for algorithms when the folds() method is called.
 
-for (3) and (4), the 'folds' attribute is
-built immediately, else its construction is deferred to the makeCV method.
+for (3) and (4), the 'raw_folds' attribute is built immediately, else its
+construction is deferred to the makeCV method.
+
+@property
+def raw_folds(self):
+    ## for 3 and 4
+    for trainfile, testfile in self.folds_files:
+        raw_trainset = self.read_ratings(open(trainfile))
+        raw_testset = self.read_ratings(open(testfile))
+        yield raw_trainset, raw_testset
+    ## for 1 and 2
+    combine previou call to makeCV() and yield appropriate raw_****set
+
+
+@property
+def folds(self):
+    for raw_trainset, raw_testset in raw_folds:
+        trainset, testset = self.convert_for_algo(raw_trainset, raw_testset)
+        yield trainset, testset
+
+convert_for_algo (name to be changed) converts a raw dataset (which is just a
+list of ratings) to a structure suitable for algorithms: dictionaries rm, ur
+and ir (change names as well)
+
+def makeCV(self, n_folds=5):
+    # this basically constructs something, which will be used by the raw_folds
+    generator
+
+
+NOTE: as raw_folds and folds are generator, files are only opened and read when
+needed. It might be good idea to check at least if they all exist at the
+beggining, so that the program does not crash on the 10th fold...
 
 # algorithm construction
 algo = KNNBaseline(user_based=True, options=options, sim=sim)
