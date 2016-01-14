@@ -1,4 +1,5 @@
 from collections import defaultdict
+from collections import namedtuple
 import sys
 import os
 from urllib.request import urlretrieve
@@ -7,6 +8,17 @@ import itertools
 import random
 
 # TODO:try to give an explicit error messages if reader fails to parse
+
+Trainset = namedtuple('Trainset',
+                     ['rm',
+                      'ur',
+                      'ir',
+                      'n_users',
+                      'n_items',
+                      'r_min',
+                      'r_max',
+                      'raw2inner_id_users',
+                      'raw2inner_id_items'])
 
 
 class Dataset:
@@ -57,6 +69,53 @@ class Dataset:
 
         for raw_trainset, raw_testset in self.raw_folds:
             print(len(raw_trainset), len(raw_testset))
+            trainset = get_trainset(raw_trainset)
+
+    def construct_trainset(self, raw_trainset):
+
+        raw2inner_id_users = {}
+        raw2inner_id_items = {}
+
+        current_u_index = 0
+        current_i_index = 0
+
+        rm = defaultdict(int)
+        ur = defaultdict(list)
+        ir = defaultdict(list)
+
+        # user raw id, item raw id, rating, time stamp
+        for urid, irid, r, timestamp in raw_trainset:
+            try:
+                uid = raw2inner_id_users[urid]
+            except KeyError:
+                uid = current_u_index
+                raw2inner_id_users[urid] = current_u_index
+                current_u_index += 1
+            try:
+                iid = raw2inner_id_items[irid]
+            except KeyError:
+                iid = current_i_index
+                raw2inner_id_items[irid] = current_i_index
+                current_i_index += 1
+
+            rm[uid, iid] = r
+            ur[uid].append((iid, r))
+            ir[iid].append((uid, r))
+
+        n_users = len(ur)  # number of users
+        n_items = len(ir)  # number of items
+
+        trainset = Trainset(rm,
+                            ur
+                            ir,
+                            n_users,
+                            n_items,
+                            r_min,
+                            r_max,
+                            raw2inner_id_users,
+                            raw2inner_id_items)
+
+        return trainset
 
 
 class DatasetUserFolds(Dataset):
@@ -80,7 +139,6 @@ class DatasetAutoFolds(Dataset):
 
         super().__init__(reader)
         self.ratings_file = ratings_file
-        self.raw_folds = None  # set in 'split' method
 
     def split(self, n_folds=5, shuffle=True):
 
