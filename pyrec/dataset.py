@@ -26,7 +26,6 @@ class Dataset:
     def __init__(self, reader=None):
 
         self.reader = reader
-        self.raw_ratings = None  # generator defined in subclasses
 
     @classmethod
     def load(cls, name='ml-100k'):
@@ -57,7 +56,7 @@ class Dataset:
 
         with open(file_name) as f:
             raw_ratings = [self.reader.read_line(line) for line in
-                           itertools.islice(f, reader.skip_lines, None)]
+                           itertools.islice(f, self.reader.skip_lines, None)]
         return raw_ratings
 
     @property
@@ -68,8 +67,9 @@ class Dataset:
                              "is split?")
 
         for raw_trainset, raw_testset in self.raw_folds:
-            print(len(raw_trainset), len(raw_testset))
-            trainset = get_trainset(raw_trainset)
+            trainset = self.construct_trainset(raw_trainset)
+            testset = self.construct_testset(trainset, raw_testset)
+            yield trainset, testset
 
     def construct_trainset(self, raw_trainset):
 
@@ -105,8 +105,11 @@ class Dataset:
         n_users = len(ur)  # number of users
         n_items = len(ir)  # number of items
 
+        r_min = 1  #TODO: change that
+        r_max = 5
+
         trainset = Trainset(rm,
-                            ur
+                            ur,
                             ir,
                             n_users,
                             n_items,
@@ -116,6 +119,19 @@ class Dataset:
                             raw2inner_id_items)
 
         return trainset
+
+    def construct_testset(self, trainset, raw_testset):
+
+        testset = []
+        for ruid, riid, r, timestamp in raw_testset:
+            try:  #TODO: change that
+                uid = trainset.raw2inner_id_users[ruid]
+                iid = trainset.raw2inner_id_items[riid]
+                testset.append((uid, iid, r))
+            except KeyError:
+                pass
+
+        return testset
 
 
 class DatasetUserFolds(Dataset):
@@ -139,6 +155,7 @@ class DatasetAutoFolds(Dataset):
 
         super().__init__(reader)
         self.ratings_file = ratings_file
+        self.raw_folds = None  # defined by 'split' method
 
     def split(self, n_folds=5, shuffle=True):
 
@@ -176,123 +193,7 @@ class Reader():
 
         line = line.split(self.sep)
         uid, iid, r, timestamp = (line[i].strip() for i in self.indexes)
-        return uid, iid, r, timestamp
-
-
-reader = Reader(line_format='user item rating timestamp', sep='\t')
-
-train_name = '/home/nico/dev/pyrec/pyrec/datasets/ml-100k/ml-100k/u1.base'
-test_name = '/home/nico/dev/pyrec/pyrec/datasets/ml-100k/ml-100k/u1.test'
-data = Dataset.load_from_files(train_name, test_name, reader=reader)
-
-"""
-file_name = '/home/nico/dev/pyrec/pyrec/datasets/ml-100k/ml-100k/u1.test'
-data = Dataset.load_from_file(file_name, reader)
-data.split(n_folds=5)
-"""
-
-data.folds
-
-class TrainingData:
-
-    def __init__(self, reader):
-
-        self.r_max = reader.r_max
-        self.r_min = reader.r_min
-
-        self.raw2inner_id_users = {}
-        self.raw2inner_id_items = {}
-
-        current_u_index = 0
-        current_i_index = 0
-
-        self.rm = defaultdict(int)
-        self.ur = defaultdict(list)
-        self.ir = defaultdict(list)
-
-        # user raw id, item raw id, rating, time stamp
-        for urid, irid, r, timestamp in reader.ratings:
-            try:
-                uid = self.raw2inner_id_users[urid]
-            except KeyError:
-                uid = current_u_index
-                self.raw2inner_id_users[urid] = current_u_index
-                current_u_index += 1
-            try:
-                iid = self.raw2inner_id_items[irid]
-            except KeyError:
-                iid = current_i_index
-                self.raw2inner_id_items[irid] = current_i_index
-                current_i_index += 1
-
-            self.rm[uid, iid] = r
-            self.ur[uid].append((iid, r))
-            self.ir[iid].append((uid, r))
-
-        self.n_users = len(self.ur)  # number of users
-        self.n_items = len(self.ir)  # number of items
-
-
-
-class MovieLensReader(Reader):
-
-    def __init__(self, raw_ratings):
-        super().__init__(raw_ratings)
-        self.r_min, self.r_max = (1, 5)
-
-
-class MovieLens100kReader(MovieLensReader):
-
-    def __init__(self, raw_ratings):
-        super().__init__(raw_ratings)
-
-    @property
-    def ratings(self):
-        for line in self.raw_ratings:
-            urid, irid, r, timestamp = line.split()
-            yield int(urid), int(irid), int(r), timestamp
-
-
-class MovieLens1mReader(MovieLensReader):
-
-    def __init__(self, raw_ratings):
-        super().__init__(raw_ratings)
-
-    @property
-    def ratings(self):
-        for line in self.raw_ratings:
-            urid, irid, r, timestamp = line.split('::')
-            yield int(urid), int(irid), int(r), timestamp
-
-
-class BXReader(Reader):
-
-    def __init__(self, raw_ratings):
-        super().__init__(raw_ratings)
-        # implicit info (null rating) is discarded
-        self.r_min, self.r_max = (1, 10)
-
-    @property
-    def ratings(self):
-        for line in self.raw_ratings:
-            urid, irid, r = line[:-1].split(';')
-            yield urid[1:-1], irid[1:-1], int(r[1:-1]), 0
-
-
-class JesterReader(Reader):
-
-    def __init__(self, raw_ratings):
-        super().__init__(raw_ratings)
-        # raw ratings are in [-10, 10]. We need to offset the of 11 so that
-        # zero correponds to 'unrated'
-        self.r_min, self.r_max = (1, 21)
-
-    @property
-    def ratings(self):
-        for line in self.raw_ratings:
-            urid, irid, r = line.split()
-            yield int(urid), int(irid), float(r) + 11, 0
-
+        return uid, iid, int(r), timestamp
 
 def download_dataset(name):
     answered = False
@@ -324,7 +225,6 @@ def download_dataset(name):
     zf = zipfile.ZipFile('tmp.zip', 'r')
     zf.extractall('datasets/' + name)
     os.remove('tmp.zip')
-
 
 def get_raw_ratings(name, train_file=None):
     if name == 'ml-100k':

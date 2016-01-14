@@ -15,9 +15,13 @@ class NormalPredictor(AlgoBase):
     :math:`\hat{\mu}` and :math:`\hat{\sigma}` are estimated from the training data.
     """
 
-    def __init__(self, training_data, **kwargs):
-        super().__init__(training_data, **kwargs)
+    def __init__(self, **kwargs):
+
+        super().__init__(**kwargs)
         self.infos['name'] = 'random'
+
+    def train(self, trainset):
+        super().train(trainset)
 
         num = sum((r - self.global_mean)**2 for (_, _, r) in self.all_ratings)
         denum = self.n_ratings - 1  # unbiased

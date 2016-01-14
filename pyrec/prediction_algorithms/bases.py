@@ -20,9 +20,8 @@ class AlgoBase:
     """Abstract Algo class where is defined the basic behaviour of a recomender
     algorithm"""
 
-    def __init__(self, training_data, user_based=True, with_dump=False, **kwargs):
+    def __init__(self, user_based=True, with_dump=False, **kwargs):
 
-        self.training_data = training_data
 
         # whether the algo will be based on users (basically means that the
         # similarities will be computed between users or between items)
@@ -30,21 +29,27 @@ class AlgoBase:
         # if the algo is item based, x denotes an item and y a user
         self.user_based = user_based
 
+        self.with_dump = with_dump
+        self.infos = {}
+
+    def train(self, trainset):
+        self.trainset = trainset
+
         if self.user_based:
-            self.rm = training_data.rm
-            self.xr = training_data.ur
-            self.yr = training_data.ir
-            self.n_x = training_data.n_users
-            self.n_y = training_data.n_items
+            self.rm = trainset.rm
+            self.xr = trainset.ur
+            self.yr = trainset.ir
+            self.n_x = trainset.n_users
+            self.n_y = trainset.n_items
         else:
             self.rm = defaultdict(int)
             # @TODO: maybe change that...
-            for (ui, mi), r in training_data.rm.items():
+            for (ui, mi), r in trainset.rm.items():
                 self.rm[mi, ui] = r
-            self.xr = training_data.ir
-            self.yr = training_data.ur
-            self.n_x = training_data.n_items
-            self.n_y = training_data.n_users
+            self.xr = trainset.ir
+            self.yr = trainset.ur
+            self.n_x = trainset.n_items
+            self.n_y = trainset.n_users
 
         # number of ratings
         self.n_ratings = len(self.rm)
@@ -53,15 +58,13 @@ class AlgoBase:
         # list of all predictions computed by the algorithm
         self.preds = []
 
-        self.with_dump = with_dump
-        self.infos = {}
         self.infos['name'] = 'undefined'
         self.infos['params'] = {}  # dict of params specific to any algo
         self.infos['params']['Based on '] = 'users' if self.user_based else 'items'
         self.infos['ub'] = self.user_based
         self.infos['preds'] = self.preds  # list of predictions.
-        self.infos['ur'] = training_data.ur  # user ratings  dict
-        self.infos['ir'] = training_data.ir  # item ratings dict
+        self.infos['ur'] = trainset.ur  # user ratings  dict
+        self.infos['ir'] = trainset.ir  # item ratings dict
         self.infos['rm'] = self.rm  # rating matrix
         # Note: there is a lot of duplicated data, the dumped file will be
         # HUGE.
@@ -82,8 +85,8 @@ class AlgoBase:
             impossible = True
 
         # clip estimate into [self.r_min, self.r_max]
-        est = min(self.training_data.r_max, est)
-        est = max(self.training_data.r_min, est)
+        est = min(self.trainset.r_max, est)
+        est = max(self.trainset.r_min, est)
 
         if output:
             if impossible:
@@ -96,6 +99,11 @@ class AlgoBase:
         self.preds.append(pred)
 
         return pred
+
+    def test(self, testset):
+
+        for uid, iid, r in testset:
+            self.predict(uid, iid, r)
 
     @property
     def all_ratings(self):
@@ -133,8 +141,8 @@ class AlgoBase:
 class AlgoUsingSim(AlgoBase):
     """Abstract class for algos using a similarity measure"""
 
-    def __init__(self, training_data, user_based, sim_name, **kwargs):
-        super().__init__(training_data, user_based, **kwargs)
+    def __init__(self, trainset, user_based, sim_name, **kwargs):
+        super().__init__(trainset, user_based, **kwargs)
 
         self.infos['params']['sim'] = sim_name
 
@@ -166,8 +174,8 @@ class AlgoUsingSim(AlgoBase):
 class AlgoWithBaseline(AlgoBase):
     """Abstract class for algos that need a baseline"""
 
-    def __init__(self, training_data, user_based, method, **kwargs):
-        super().__init__(training_data, user_based, **kwargs)
+    def __init__(self, trainset, user_based, method, **kwargs):
+        super().__init__(trainset, user_based, **kwargs)
 
         # compute users and items biases
         # see from 5.2.1 of RS handbook

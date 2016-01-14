@@ -3,10 +3,13 @@ import os
 import random
 import copy
 
+print(sys.path)
+
 import pyximport
 import numpy as np
 pyximport.install(setup_args={"include_dirs":np.get_include()})
-import similarities as sims
+from pyrec import similarities as sims
+from pyrec.prediction_algorithms import BaselineOnly
 
 n_x = 7
 yr_global = {
