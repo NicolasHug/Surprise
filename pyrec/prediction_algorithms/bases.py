@@ -78,7 +78,12 @@ class AlgoBase:
         """
 
         x0, y0 = (u0, i0) if self.user_based else (i0, u0)
+
         try:
+            if u0 == 'unknown' or i0 == 'unknown':
+                raise PredictionImpossible('user or item were not part of ' +
+                                           'training set')
+
             est = self.estimate(x0, y0)
             impossible = False
         except PredictionImpossible:

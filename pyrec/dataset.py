@@ -124,12 +124,17 @@ class Dataset:
 
         testset = []
         for ruid, riid, r, timestamp in raw_testset:
-            try:  #TODO: change that
+            # if user or item were not part of the training set, we still add
+            # them to testset but they're set to 'unknown'
+            try:
                 uid = trainset.raw2inner_id_users[ruid]
-                iid = trainset.raw2inner_id_items[riid]
-                testset.append((uid, iid, r))
             except KeyError:
-                pass
+                uid = 'unknown'
+            try:
+                iid = trainset.raw2inner_id_items[riid]
+            except KeyError:
+                iid = 'unknown'
+            testset.append((uid, iid, r))
 
         return testset
 
@@ -175,25 +180,45 @@ class DatasetAutoFolds(Dataset):
 
         self.raw_folds = k_folds(self.raw_ratings, n_folds)
 
-
 class Reader():
 
-    def __init__(self, line_format, sep, skip_lines=0):
-        self.sep = sep
-        self.skip_lines = skip_lines
+    def __init__(self, name=None, line_format=None, sep=None, skip_lines=0, ):
 
-        try:
-            splitted_format = line_format.split()
-            entities = ('user', 'item', 'rating', 'timestamp')
-            self.indexes = [splitted_format.index(entity) for entity in entities]
-        except ValueError:
-            raise ValueError('Wrong format')
+        # TODO: I'm not sure this is a nice way to handle a builtin
+        # constructor... needs to be checked
+        if name:
+            try:
+                self.__init__(**builtin_readers[name])
+            except KeyError:
+                raise ValueError('unknown reader ' + name +
+                                 '. Accepted values are ' +
+                                 ', '.join(builtin_readers.keys()) +
+                                 '.')
+
+
+        else:
+            self.sep = sep
+            self.skip_lines = skip_lines
+
+            try:
+                splitted_format = line_format.split()
+                entities = ('user', 'item', 'rating', 'timestamp')
+                self.indexes = [splitted_format.index(entity) for entity in entities]
+            except ValueError:
+                raise ValueError('Wrong format')
 
     def read_line(self, line):
 
         line = line.split(self.sep)
         uid, iid, r, timestamp = (line[i].strip() for i in self.indexes)
         return uid, iid, int(r), timestamp
+
+builtin_readers = {'ml-100k' : dict(line_format='user item rating timestamp',
+                                    sep='\t'),
+                   'ml-1m' :   dict(line_format='user item rating timestamp',
+                                    sep='::')
+                  }
+
 
 def download_dataset(name):
     answered = False
