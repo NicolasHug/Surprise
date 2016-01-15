@@ -22,6 +22,44 @@ Trainset = namedtuple('Trainset',
                       'raw2inner_id_items'])
 
 
+datasets_dir = 'datasets/'  # directory where builtin datasets are stored
+
+# a builtin dataset has
+# - an url (where to download it)
+# - a path (where it is located on the filesystem)
+# - the parameters of the corresponding reader
+BuiltinDataset = namedtuple('BuiltinDataset', ['url', 'path', 'reader_params'])
+builtin_datasets = {
+    'ml-100k' :
+        BuiltinDataset(
+            url='http://files.grouplens.org/datasets/movielens/ml-100k.zip',
+            path=datasets_dir + 'ml-100k/ml-100k/u.data',
+            reader_params=dict(line_format='user item rating timestamp',
+                               sep='\t')
+        ),
+    'ml-1m' :
+        BuiltinDataset(
+            url='http://files.grouplens.org/datasets/movielens/ml-1m.zip',
+            path=datasets_dir + 'ml-1m/ml-1m/ratings.dat',
+            reader_params=dict(line_format='user item rating timestamp',
+                               sep='::')
+        ),
+    # TODO: handle BX and jester
+    'BX' :
+        BuiltinDataset(
+            url='http://www2.informatik.uni-freiburg.de/~cziegler/BX/BX-CSV-Dump.zip',
+            path=datasets_dir + 'LETS_GET_SOME_PIZZA',
+            reader_params={}
+        ),
+    'jester' :
+        BuiltinDataset(
+            url='http://eigentaste.berkeley.edu/dataset/jester_dataset_2.zip',
+            path=datasets_dir + 'LETS_GET_SOME_PIZZA',
+            reader_params={}
+        )
+}
+
+
 class Dataset:
 
     def __init__(self, reader=None):
@@ -30,9 +68,40 @@ class Dataset:
 
     @classmethod
     def load(cls, name='ml-100k'):
-        # hardcode reader and download dataset if needed
-        # and then call load_from_file
-        pass
+
+        try:
+            dataset = builtin_datasets[name]
+        except KeyError:
+            raise ValueError('unknown dataset ' + name +
+                             '. Accepted values are ' +
+                             ', '.join(builtin_datasets.keys()) + '.')
+
+        # if dataset does not exist, offer to download it
+        if not os.path.isfile(dataset.path):
+            answered = False
+            while not answered:
+                print('dataset ' + name + ' could not be found. Do you want to '
+                      'download it? [Y/n]')
+                choice = input().lower()
+                if choice in ['yes', 'y', '', 'omg this is so nice of you!!']:
+                    answered = True
+                elif choice in ['no', 'n', 'hell no why would i want that?!']:
+                    answered = True
+                    print("Ok then, I'm out")
+                    sys.exit()
+
+            print('trying to download dataset from ' + dataset.url)
+            print('downloading...')
+            urlretrieve(dataset.url, 'tmp.zip')
+            print('done!')
+
+            with zipfile.ZipFile('tmp.zip', 'r') as tmp_zip:
+                tmp_zip.extractall(datasets_dir + name)
+            os.remove('tmp.zip')
+
+        reader = Reader(**dataset.reader_params)
+
+        return cls.load_from_file(file_name=dataset.path, reader=reader)
 
     @classmethod
     def load_from_file(cls, file_name, reader):
@@ -189,14 +258,11 @@ class Reader():
         # constructor... needs to be checked
         if name:
             try:
-                self.__init__(**builtin_readers[name])
+                self.__init__(**builtin_datasets[name].reader_params)
             except KeyError:
                 raise ValueError('unknown reader ' + name +
                                  '. Accepted values are ' +
-                                 ', '.join(builtin_readers.keys()) +
-                                 '.')
-
-
+                                 ', '.join(builtin_datasets.keys()) + '.')
         else:
             self.sep = sep
             self.skip_lines = skip_lines
@@ -213,41 +279,3 @@ class Reader():
         line = line.split(self.sep)
         uid, iid, r, timestamp = (line[i].strip() for i in self.indexes)
         return uid, iid, int(r), timestamp
-
-builtin_readers = {'ml-100k' : dict(line_format='user item rating timestamp',
-                                    sep='\t'),
-                   'ml-1m' :   dict(line_format='user item rating timestamp',
-                                    sep='::')
-                  }
-
-
-def download_dataset(name):
-    answered = False
-    while not answered:
-        print('dataset ' + name + ' could not be found. Do you want to '
-              'download it? [Y/n]')
-        choice = input().lower()
-        if choice in ['yes', 'y', '']:
-            answered = True
-        elif choice in ['no', 'n']:
-            answered = True
-            print("Ok then, I'm out")
-            sys.exit()
-
-    if name == 'ml-100k':
-        url = 'http://files.grouplens.org/datasets/movielens/ml-100k.zip'
-    elif name == 'ml-1m':
-        url = 'http://files.grouplens.org/datasets/movielens/ml-1m.zip'
-    elif name == 'BX':
-        url = 'http://www2.informatik.uni-freiburg.de/~cziegler/BX/BX-CSV-Dump.zip'
-    elif name == 'jester':
-        url = 'http://eigentaste.berkeley.edu/dataset/jester_dataset_2.zip'
-
-    print('downloading...')
-    urlretrieve(url, 'tmp.zip')
-    print('done')
-
-    # TODO: close zipfile before removing? use a context manager if available
-    zf = zipfile.ZipFile('tmp.zip', 'r')
-    zf.extractall('datasets/' + name)
-    os.remove('tmp.zip')
