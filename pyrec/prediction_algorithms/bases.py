@@ -29,8 +29,16 @@ class AlgoBase:
         # if the algo is item based, x denotes an item and y a user
         self.user_based = user_based
 
+        # list of all predictions computed by the algorithm
+        self.preds = []
         self.with_dump = with_dump
+
         self.infos = {}
+        self.infos['params'] = {}  # dict of params specific to any algo
+        self.infos['name'] = 'undefined'
+        self.infos['params']['Based on '] = 'users' if self.user_based else 'items'
+        self.infos['user_based'] = self.user_based
+        self.infos['preds'] = self.preds  # list of predictions.
 
     def train(self, trainset):
         self.trainset = trainset
@@ -55,14 +63,7 @@ class AlgoBase:
         self.n_ratings = len(self.rm)
         # global mean of all ratings
         self.global_mean = np.mean([r for (_, _, r) in self.all_ratings])
-        # list of all predictions computed by the algorithm
-        self.preds = []
 
-        self.infos['name'] = 'undefined'
-        self.infos['params'] = {}  # dict of params specific to any algo
-        self.infos['params']['Based on '] = 'users' if self.user_based else 'items'
-        self.infos['ub'] = self.user_based
-        self.infos['preds'] = self.preds  # list of predictions.
         self.infos['ur'] = trainset.ur  # user ratings  dict
         self.infos['ir'] = trainset.ir  # item ratings dict
         self.infos['rm'] = self.rm  # rating matrix
@@ -141,17 +142,27 @@ class AlgoBase:
 class AlgoUsingSim(AlgoBase):
     """Abstract class for algos using a similarity measure"""
 
-    def __init__(self, trainset, user_based, sim_name, **kwargs):
-        super().__init__(trainset, user_based, **kwargs)
+    def __init__(self, user_based, sim_name, **kwargs):
+
+        super().__init__(user_based, **kwargs)
 
         self.infos['params']['sim'] = sim_name
 
+        self.sim_name = sim_name
+
         # TODO: I don't like it, shrinkage parameter could be handled
         # differently (see todo.md)
-        self.shrinkage = kwargs['shrinkage']
-        self.construct_sim_mat(sim_name)
+        try:
+            self.shrinkage = kwargs['shrinkage']
+        except KeyError:
+            pass
 
-    def construct_sim_mat(self, sim_name):
+    def train(self, trainset):
+
+        super().train(trainset)
+        self.construct_sim_mat()
+
+    def construct_sim_mat(self):
         """construct the simlarity matrix"""
 
         print("computing the similarity matrix...")
@@ -162,12 +173,12 @@ class AlgoUsingSim(AlgoBase):
                              'pearson_baseline' : sims.pearson_baseline}
 
         args = [self.n_x, self.yr]
-        if sim_name == 'pearson_baseline':
+        if self.sim_name == 'pearson_baseline':
             args += [self.global_mean, self.x_biases, self.y_biases,
                     self.shrinkage]
 
         try:
-            self.sim = construction_func[sim_name](*args)
+            self.sim = construction_func[self.sim_name](*args)
         except KeyError:
             raise NameError('Wrong sim name')
 

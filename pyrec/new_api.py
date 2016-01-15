@@ -3,6 +3,9 @@ from dataset import Dataset
 from dataset import Reader
 from prediction_algorithms import NormalPredictor
 from prediction_algorithms import BaselineOnly
+from prediction_algorithms import KNNBasic
+from prediction_algorithms import KNNWithMeans
+from prediction_algorithms import KNNBaseline
 
 def evaluate(algo, data):
     for trainset, testset in data.folds:
@@ -12,7 +15,10 @@ def evaluate(algo, data):
 
 
 #algo = NormalPredictor(user_based=True)
-algo = BaselineOnly(user_based=True)
+#algo = BaselineOnly(user_based=True)
+#algo = KNNBasic(user_based=True)
+#algo = KNNWithMeans(user_based=True)
+algo = KNNBaseline(user_based=True, sim_name='pearson_baseline', shrinkage=100)
 
 reader = Reader(line_format='user item rating timestamp', sep='\t')
 """

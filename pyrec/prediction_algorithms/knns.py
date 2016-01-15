@@ -17,16 +17,19 @@ class KNNBasic(AlgoUsingSim):
     {\\sum\\limits_{v \in N^k_i(u)} \\text{sim}(u, v)}`
     """
 
-    def __init__(self, training_data, user_based=True, sim_name='MSD', k=40,
-                 **kwargs):
-        super().__init__(training_data, user_based=user_based, sim_name=sim_name,
-                 **kwargs)
+    def __init__(self, user_based=True, sim_name='MSD', k=40, **kwargs):
+
+        super().__init__(user_based=user_based, sim_name=sim_name, **kwargs)
 
         self.k = k
 
         self.infos['name'] = 'KNNBasic'
         self.infos['params']['similarity measure'] = sim_name
         self.infos['params']['k'] = self.k
+
+    def train(self, trainset):
+
+        super().train(trainset)
 
     def estimate(self, x0, y0):
 
@@ -62,9 +65,9 @@ class KNNWithMeans(AlgoUsingSim):
     {\\sum\\limits_{v \in N^k_i(u)} \\text{sim}(u, v)}`
     """
 
-    def __init__(self, training_data, user_based=True, sim_name='MSD', k=40,
-                 **kwargs):
-        super().__init__(training_data, user_based=user_based, sim_name=sim_name)
+    def __init__(self, user_based=True, sim_name='MSD', k=40, **kwargs):
+
+        super().__init__(user_based=user_based, sim_name=sim_name)
 
         self.k = k
 
@@ -72,9 +75,13 @@ class KNNWithMeans(AlgoUsingSim):
         self.infos['params']['similarity measure'] = sim_name
         self.infos['params']['k'] = self.k
 
+    def train(self, trainset):
+
+        super().train(trainset)
         self.means = np.zeros(self.n_x)
         for x, ratings in self.xr.items():
             self.means[x] = np.mean([r for (_, r) in ratings])
+
 
     def estimate(self, x0, y0):
 
@@ -113,14 +120,19 @@ class KNNBaseline(AlgoUsingSim, AlgoWithBaseline):
     {\\sum\\limits_{v \in N^k_i(u)} \\text{sim}(u, v)}`
     """
 
-    def __init__(self, training_data, user_based=True, method='als',
-                 sim_name='MSD', k=40, **kwargs):
-        super().__init__(training_data, user_based, method=method,
-                         sim_name=sim_name, **kwargs)
+    def __init__(self, user_based=True, method='als', sim_name='MSD', k=40,
+                 **kwargs):
+
+        super().__init__(user_based, method=method, sim_name=sim_name,
+                         **kwargs)
 
         self.k = k
         self.infos['name'] = 'neighborhoodWithBaseline'
         self.infos['params']['k'] = self.k
+
+    def train(self, trainset):
+
+        super().train(trainset)
 
     def estimate(self, x0, y0):
 
