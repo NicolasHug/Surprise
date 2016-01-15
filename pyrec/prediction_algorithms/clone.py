@@ -12,20 +12,29 @@ class AlgoUsingMeanDiff(AlgoBase):
     """Astract class for algorithms using the mean difference between the
     ratings of two users/items"""
 
-    def __init__(self, training_data, user_based=True, **kwargs):
-        super().__init__(training_data, user_based=user_based, **kwargs)
+    def __init__(self, user_based=True, **kwargs):
 
+        super().__init__(user_based=user_based, **kwargs)
+
+    def train(self, trainset):
+
+        super().train(trainset)
         self.mean_diff = sims.compute_mean_diff(self.n_x, self.yr)
+
 
 class CloneBruteforce(AlgoBase):
     """Algo based on cloning, quite rough and straightforward:
     pred(r_xy) = mean(r_x'y + k) for all x' that are k-clone of x
     """
 
-    def __init__(self, training_data, user_based=True, **kwargs):
-        super().__init__(training_data, user_based=user_based, **kwargs)
+    def __init__(self, user_based=True, **kwargs):
+        super().__init__(user_based=user_based, **kwargs)
 
         self.infos['name'] = 'AlgoClonBruteForce'
+
+    def train(self, trainset):
+
+        super().train(trainset)
 
     def isClone(self, ra, rb, k):
         """ return True if xa (with ratings ra) is a k-clone of xb (with
@@ -59,36 +68,6 @@ class CloneBruteforce(AlgoBase):
             raise PredictionImpossible
 
 
-class CloneMeanDiff(AlgoUsingMeanDiff):
-    """Algo based on cloning:
-
-    pred(r_xy) = av_mean(r_x'y + mean_diff(x', x)) for all x' having rated y.
-    The mean is weighted by how 'steady' is the mean_diff
-    """
-
-    def __init__(self, training_data, user_based=True, **kwargs):
-        super().__init__(training_data, user_based=user_based, **kwargs)
-
-        self.infos['name'] = 'CloneMeanDiff'
-
-    def estimate(self, x0, y0):
-
-        candidates = []
-        weights = []
-        for (x, rx) in self.yr[y0]:  # for ALL xs that have rated y0
-
-            weight = self.mean_diffWeight[x0, x]
-            if weight:  # if x and x0 have ys in common
-                candidates.append(rx + self.mean_diff[x0, x])
-                weights.append(weight)
-
-        if candidates:
-            est = np.average(candidates, weights=weights)
-            return est
-        else:
-            raise PredictionImpossible
-
-
 class CloneKNNMeanDiff(AlgoUsingMeanDiff, AlgoUsingSim):
     """Algo based on cloning:
 
@@ -97,16 +76,18 @@ class CloneKNNMeanDiff(AlgoUsingMeanDiff, AlgoUsingSim):
     using an appropriate similarity measure
     """
 
-    def __init__(self, training_data, user_based=True, sim_name='MSDClone', k=40,
-                 **kwargs):
-        super().__init__(training_data, user_based=user_based, sim_name=sim_name)
+    def __init__(self, user_based=True, sim_name='MSDClone', k=40, **kwargs):
 
-        self.infos['name'] = 'CloneKNNMeanDiff'
+        super().__init__(user_based=user_based, sim_name=sim_name)
 
         self.k = k
-
-        self.infos['params']['similarity measure'] = sim
+        self.infos['name'] = 'CloneKNNMeanDiff'
+        self.infos['params']['similarity measure'] = sim_name
         self.infos['params']['k'] = self.k
+
+    def train(self, trainset):
+
+        super().train(trainset)
 
     def estimate(self, x0, y0):
 

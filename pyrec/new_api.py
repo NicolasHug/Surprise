@@ -6,6 +6,8 @@ from prediction_algorithms import BaselineOnly
 from prediction_algorithms import KNNBasic
 from prediction_algorithms import KNNWithMeans
 from prediction_algorithms import KNNBaseline
+from prediction_algorithms import CloneBruteforce
+from prediction_algorithms import CloneKNNMeanDiff
 
 def evaluate(algo, data):
     for trainset, testset in data.folds:
@@ -15,10 +17,12 @@ def evaluate(algo, data):
 
 
 #algo = NormalPredictor(user_based=True)
-algo = BaselineOnly(user_based=True)
+#algo = BaselineOnly(user_based=True)
 #algo = KNNBasic(user_based=True)
 #algo = KNNWithMeans(user_based=True)
 #algo = KNNBaseline(user_based=True, sim_name='pearson_baseline', shrinkage=100)
+#algo = CloneBruteforce(user_based=True)
+algo = CloneKNNMeanDiff(user_based=True)
 
 #reader = Reader(line_format='user item rating timestamp', sep='\t')
 reader = Reader('ml-100k')

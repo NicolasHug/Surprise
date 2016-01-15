@@ -7,7 +7,8 @@ import zipfile
 import itertools
 import random
 
-# TODO:try to give an explicit error messages if reader fails to parse
+# TODO: try to give an explicit error messages if reader fails to parse
+# TODO: handle non existing timestamp
 
 Trainset = namedtuple('Trainset',
                      ['rm',
