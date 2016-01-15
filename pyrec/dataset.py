@@ -250,29 +250,3 @@ def download_dataset(name):
     zf = zipfile.ZipFile('tmp.zip', 'r')
     zf.extractall('datasets/' + name)
     os.remove('tmp.zip')
-
-def get_raw_ratings(name, train_file=None):
-    if name == 'ml-100k':
-        data_file = train_file or './datasets/ml-100k/ml-100k/u.data'
-        reader_klass = MovieLens100kReader
-    elif name == 'ml-1m':
-        data_file = train_file or './datasets/ml-1m/ml-1m/ratings.dat'
-        reader_klass = MovieLens1mReader
-    elif name == 'BX':
-        reader_klass = BXReader
-        data_file = train_file or './datasets/BX/BX-Book-Ratings.csv'
-    elif name == 'jester':
-        reader_klass = JesterReader
-        data_file = train_file or './datasets/jester/jester_ratings.dat'
-
-    if not os.path.isfile(data_file):
-        download_dataset(name)
-
-    # open file in latin, else the Book-Ratings dataset raises an utf8 error
-    with open(data_file, encoding='latin') as f:
-        data = [line for line in f]
-
-    if name == 'BX':
-        data = data[1:]  # this really sucks TODO: change that
-
-    return data, reader_klass
