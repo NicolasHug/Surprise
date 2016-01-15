@@ -174,8 +174,14 @@ class AlgoUsingSim(AlgoBase):
 class AlgoWithBaseline(AlgoBase):
     """Abstract class for algos that need a baseline"""
 
-    def __init__(self, trainset, user_based, method, **kwargs):
-        super().__init__(trainset, user_based, **kwargs)
+    def __init__(self, user_based, method, **kwargs):
+
+        super().__init__(user_based, **kwargs)
+        self.method = method
+
+    def train(self, trainset):
+
+        super().train(trainset)
 
         # compute users and items biases
         # see from 5.2.1 of RS handbook
@@ -184,9 +190,9 @@ class AlgoWithBaseline(AlgoBase):
         self.y_biases = np.zeros(self.n_y)
 
         print('Estimating biases...')
-        if method == 'sgd':
+        if self.method == 'sgd':
             self.optimize_sgd()
-        elif method == 'als':
+        elif self.method == 'als':
             self.optimize_als()
 
     def optimize_sgd(self):
