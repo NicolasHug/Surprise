@@ -8,12 +8,8 @@ from prediction_algorithms import KNNWithMeans
 from prediction_algorithms import KNNBaseline
 from prediction_algorithms import CloneBruteforce
 from prediction_algorithms import CloneKNNMeanDiff
+from evaluate import evaluate
 
-def evaluate(algo, data):
-    for trainset, testset in data.folds:
-        algo.train(trainset)
-        algo.test(testset)
-        stats.compute_stats(algo.preds)
 
 
 #algo = NormalPredictor(user_based=True)

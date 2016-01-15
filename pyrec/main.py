@@ -15,10 +15,9 @@ from prediction_algorithms import KNNWithMeans
 from prediction_algorithms import Parall
 from prediction_algorithms import Pattern
 from prediction_algorithms import CloneBruteforce
-from prediction_algorithms import CloneMeanDiff
 from prediction_algorithms import CloneKNNMeanDiff
-from dataset import get_raw_ratings
-from dataset import TrainingData
+from dataset import Dataset
+from evaluate import evaluate
 
 
 def main():
@@ -38,7 +37,6 @@ def main():
         'Parall': Parall,
         'Pattern': Pattern,
         'CloneBruteforce': CloneBruteforce,
-        'CloneMeanDiff': CloneMeanDiff,
         'CloneKNNMeanDiff': CloneKNNMeanDiff
     }
     parser.add_argument('-algo', type=str,
@@ -77,20 +75,6 @@ def main():
                         default=100,
                         help='the shrinkage value to use for pearson ' +
                         'similarity (default: 100)')
-
-    parser.add_argument('-train_file', type=str,
-                        metavar='<train file>',
-                        default=None,
-                        help='the file containing raw ratings for training. ' +
-                        'The dataset argument needs to be set accordingly ' +
-                        '(default: None)')
-
-    parser.add_argument('-test_file', type=str,
-                        metavar='<test file>',
-                        default=None,
-                        help='the file containing raw ratings for testing. ' +
-                        'The dataset argument needs to be set accordingly. ' +
-                        '(default: None)')
 
     dataset_choices = ['ml-100k', 'ml-1m', 'BX', 'jester']
     parser.add_argument('-dataset', metavar='<dataset>', type=str,
@@ -135,90 +119,16 @@ def main():
     rd.seed(args.seed)
     np.random.seed(args.seed)
 
-    if not os.path.exists('datasets'):
-        os.makedirs('datasets')
+    algo = algo_choices[args.algo](user_based=not args.item_based,
+                                   method=args.method,
+                                   sim_name=args.sim,
+                                   k=args.k,
+                                   shrinkage=args.shrinkage,
+                                   with_dump=args.with_dump)
 
-    def k_folds(seq, k):
-        """inpired from scikit learn KFold method"""
-        rd.shuffle(seq)
-        start, stop = 0, 0
-        for fold in range(k):
-            start = stop
-            stop += len(seq) // k
-            if fold < len(seq) % k:
-                stop += 1
-            yield seq[:start] + seq[stop:], seq[start:stop]
-
-    rmses = []  # list of rmse: one per fold
-
-    def get_rmse(train_raw_ratings, test_raw_ratings):
-        reader_train = reader_klass(train_raw_ratings)
-        reader_test = reader_klass(test_raw_ratings)
-
-        training_data = TrainingData(reader_train)
-
-        train_start_time = time.process_time()
-        training_time = time.process_time() - train_start_time
-
-        algo = algo_choices[args.algo](training_data,
-                                      user_based=not args.item_based,
-                                      method=args.method,
-                                      sim_name=args.sim,
-                                      k=args.k,
-                                      shrinkage=args.shrinkage,
-                                      with_dump=args.with_dump)
-
-        print("computing predictions...")
-        test_start_time = time.process_time()
-        for u0, i0, r0, _ in reader_test.ratings:
-
-            if args.indiv_output:
-                print(u0, i0, r0)
-
-            try:
-                u0 = training_data.raw2inner_id_users[u0]
-                i0 = training_data.raw2inner_id_items[i0]
-            except KeyError:
-                if args.indiv_output:
-                    print("user or item wasn't used for training. Skipping")
-                continue
-
-            algo.predict(u0, i0, r0, args.indiv_output)
-
-            if args.indiv_output:
-                print('-' * 15)
-
-        testingTime = time.process_time() - test_start_time
-
-        if args.indiv_output:
-            print('-' * 20)
-
-        algo.infos['training_time'] = training_time
-        algo.infos['testingTime'] = testingTime
-
-        algo.dump_infos()
-        print('-' * 20)
-        print('Results:')
-        return stats.compute_stats(algo.preds)
-
-    if args.train_file and args.test_file:
-        train_raw_ratings, reader_klass = get_raw_ratings(args.dataset,
-                                                          args.train_file)
-        test_raw_ratings, reader_klass = get_raw_ratings(args.dataset,
-                                                         args.test_file)
-        rmses.append(get_rmse(train_raw_ratings, test_raw_ratings))
-
-    else:
-        raw_ratings, reader_klass = get_raw_ratings(args.dataset)
-        for fold_i, (training_set, test_set) in enumerate(k_folds(raw_ratings,
-                                                                  args.cv)):
-            print('-' * 19)
-            print("-- fold numer {0} --".format(fold_i + 1))
-            print('-' * 19)
-            rmses.append(get_rmse(training_set, test_set))
-
-    print(args)
-    print("Mean RMSE: {0:1.4f}".format(np.mean(rmses)))
+    data = Dataset.load(args.dataset)
+    data.split(n_folds=args.cv)
+    evaluate(algo, data)
 
 if __name__ == "__main__":
     main()
