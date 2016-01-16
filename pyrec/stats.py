@@ -1,6 +1,5 @@
 import numpy as np
 
-
 def compute_stats(preds, output=True):
     """compute some statistics (RMSE, coverage...) on a list of predictions"""
 
@@ -22,4 +21,4 @@ def compute_stats(preds, output=True):
         print('RMSE: {0:1.4f}'.format(rmse))
         print('MAE: {0:1.4f}'.format(mae))
 
-    return rmse
+    return rmse, mae
