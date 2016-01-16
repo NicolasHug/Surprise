@@ -4,14 +4,14 @@ TODO
 Court terme :
 -------------
 
-* clean the main and all the dataset handling stuff
-* set up a nice API
+* set up a nice API (in progress)
 * handle big datasets (memory error when computing similarities)
 * write some tests (in progress)
 * handle algo-specific or similarity-specific parameters (such as 'k' for knn,
   regularization parameters, shrinkage paramaters, etc.) in an appropriate
-  manner, rather than pass them all to constructors. Maybe a dict (or more)
-  would be enough?
+  manner, rather than pass them all to constructors... UPDATE: ok so using
+  kwargs like matplotlib.pyplot might be enough. should we create a
+  'Similarity' class?
 
 Long terme :
 ------------
@@ -25,6 +25,8 @@ Long terme :
 Done:
 -----
 
+* clean the main and all the dataset handling stuff (still needs to be
+  polished)
 * rewrite this TODO in english
 * create a proper project structure
 * from camelCase to snake\_case
