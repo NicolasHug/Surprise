@@ -12,8 +12,8 @@ from evaluate import evaluate
 
 
 
-#algo = NormalPredictor(user_based=True)
-algo = BaselineOnly(user_based=True)
+algo = NormalPredictor(user_based=True)
+#algo = BaselineOnly(user_based=True)
 #algo = KNNBasic(user_based=True)
 #algo = KNNWithMeans(user_based=True)
 #algo = KNNBaseline(user_based=True, sim_name='pearson_baseline', shrinkage=100)
@@ -31,7 +31,7 @@ data = Dataset.load_from_folds(folds_files, reader=reader)
 """
 
 data = Dataset.load('ml-100k')
-data.split(n_folds=5)
+data.split(n_folds=3)
 
 evaluate(algo, data)
 

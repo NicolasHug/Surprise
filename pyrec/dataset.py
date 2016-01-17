@@ -230,12 +230,15 @@ class DatasetAutoFolds(Dataset):
 
         super().__init__(reader)
         self.ratings_file = ratings_file
-        self.raw_folds = None  # defined by 'split' method
+        self.n_folds = 5
+        self.shuffle = True
 
-    def split(self, n_folds=5, shuffle=True):
+    @property
+    def raw_folds(self):
 
         self.raw_ratings = self.read_ratings(self.ratings_file)
-        if shuffle:
+
+        if self.shuffle:
             random.shuffle(self.raw_ratings)
 
         def k_folds(seq, n_folds):
@@ -248,7 +251,13 @@ class DatasetAutoFolds(Dataset):
                     stop += 1
                 yield seq[:start] + seq[stop:], seq[start:stop]
 
-        self.raw_folds = k_folds(self.raw_ratings, n_folds)
+        return k_folds(self.raw_ratings, self.n_folds)
+
+    def split(self, n_folds, shuffle=True):
+
+        self.n_folds = n_folds
+        self.shuffle = shuffle
+
 
 class Reader():
 
@@ -270,7 +279,8 @@ class Reader():
             try:
                 splitted_format = line_format.split()
                 entities = ('user', 'item', 'rating', 'timestamp')
-                self.indexes = [splitted_format.index(entity) for entity in entities]
+                self.indexes = [splitted_format.index(entity) for entity in
+                                entities]
             except ValueError:
                 raise ValueError('Wrong format')
 
