@@ -213,7 +213,7 @@ class DatasetUserFolds(Dataset):
 
     def __init__(self, folds_files=None, reader=None):
 
-        super().__init__(reader)
+        Dataset.__init__(self, reader)
         self.folds_files = folds_files
 
     @property
@@ -228,7 +228,7 @@ class DatasetAutoFolds(Dataset):
 
     def __init__(self, ratings_file=None, reader=None):
 
-        super().__init__(reader)
+        Dataset.__init__(self, reader)
         self.ratings_file = ratings_file
         self.n_folds = 5
         self.shuffle = True

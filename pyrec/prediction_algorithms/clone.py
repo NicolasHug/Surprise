@@ -3,9 +3,10 @@ from itertools import combinations
 import numpy as np
 
 from .bases import AlgoBase
-from .bases import AlgoUsingSim
 from .bases import PredictionImpossible
 import similarities as sims
+
+#TODO: update methods and constructor signatures
 
 
 class AlgoUsingMeanDiff(AlgoBase):
@@ -68,7 +69,7 @@ class CloneBruteforce(AlgoBase):
             raise PredictionImpossible
 
 
-class CloneKNNMeanDiff(AlgoUsingMeanDiff, AlgoUsingSim):
+class CloneKNNMeanDiff(AlgoUsingMeanDiff):
     """Algo based on cloning:
 
     pred(r_xy) = av_mean(rx'y + mean_diff(x', x)) for all x' that are "close" to

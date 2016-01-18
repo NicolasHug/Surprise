@@ -20,7 +20,7 @@ class AlgoBase:
     """Abstract Algo class where is defined the basic behaviour of a recomender
     algorithm"""
 
-    def __init__(self, user_based=True, baseline={}, with_dump=False, **kwargs):
+    def __init__(self, user_based=True, **kwargs):
 
         # whether the algo will be based on users (basically means that the
         # similarities will be computed between users or between items)
@@ -28,11 +28,12 @@ class AlgoBase:
         # if the algo is item based, x denotes an item and y a user
         self.user_based = user_based
 
-        self.bsl_options = baseline
+        self.bsl_options = kwargs.get('baseline', {})
+        self.sim_options = kwargs.get('sim', {})
 
         # list of all predictions computed by the algorithm
         self.preds = []
-        self.with_dump = with_dump
+        self.with_dump = kwargs.get('with_dump', False)
 
         self.infos = {}
         self.infos['params'] = {}  # dict of params specific to any algo
@@ -70,6 +71,9 @@ class AlgoBase:
         self.infos['rm'] = self.rm  # rating matrix
         # Note: there is a lot of duplicated data, the dumped file will be
         # HUGE.
+
+        self.x_biases = self.y_biases = None
+        self.sim = None
 
     def predict(self, u0, i0, r0=0, output=False):
         """Predict the rating for u0 and i0 by calling the estimate method of
@@ -114,6 +118,14 @@ class AlgoBase:
 
     def compute_baselines(self):
         """Compute users and items biases. See from 5.2.1 of RS handbook"""
+
+        # if this method has already been called before on the same trainset,
+        # then don't do anything.  it's useful to handle cases where the
+        # similarity metric (pearson_baseline for example) uses baseline
+        # estimates.
+        # I don't quite like the way it's handled but it works...
+        if self.x_biases is not None:
+            return
 
         def optimize_sgd():
             """optimize biases using sgd"""
@@ -176,6 +188,29 @@ class AlgoBase:
     def get_baseline(self, x, y):
         return self.global_mean + self.x_biases[x] + self.y_biases[y]
 
+    def compute_similarities(self):
+        """construct the simlarity matrix"""
+
+        print("computing the similarity matrix...")
+        construction_func = {'cos' : sims.cosine,
+                             'MSD' : sims.msd,
+                             'MSDClone' : sims.msdClone,
+                             'pearson' : sims.pearson,
+                             'pearson_baseline' : sims.pearson_baseline}
+
+        name = self.sim_options.get('name', 'MSD')
+        args = [self.n_x, self.yr]
+        if name == 'pearson_baseline':
+            shrinkage = self.sim_options.get('shrinkage', 100)
+            self.compute_baselines()
+            args += [self.global_mean, self.x_biases, self.y_biases, shrinkage]
+
+        try:
+            self.sim = construction_func[name](*args)
+        except KeyError:
+            raise NameError('Wrong sim name ' + name + '. Allowed values ' +
+                            'are ' + ', '.join(construction_func.keys()) + '.')
+
     @property
     def all_ratings(self):
         """generator to iter over all ratings"""
@@ -206,48 +241,3 @@ class AlgoBase:
         name = ('dumps/' + date + '-' + self.infos['name'] + '-' +
                 str(len(self.infos['preds'])))
         pickle.dump(self.infos, open(name, 'wb'))
-
-
-
-class AlgoUsingSim(AlgoBase):
-    """Abstract class for algos using a similarity measure"""
-
-    def __init__(self, sim_name, **kwargs):
-
-        super().__init__(**kwargs)
-
-        self.infos['params']['sim'] = sim_name
-
-        self.sim_name = sim_name
-
-        # TODO: I don't like it, shrinkage parameter could be handled
-        # differently (see todo.md)
-        try:
-            self.shrinkage = kwargs['shrinkage']
-        except KeyError:
-            pass
-
-    def train(self, trainset):
-
-        super().train(trainset)
-        self.construct_sim_mat()
-
-    def construct_sim_mat(self):
-        """construct the simlarity matrix"""
-
-        print("computing the similarity matrix...")
-        construction_func = {'cos' : sims.cosine,
-                             'MSD' : sims.msd,
-                             'MSDClone' : sims.msdClone,
-                             'pearson' : sims.pearson,
-                             'pearson_baseline' : sims.pearson_baseline}
-
-        args = [self.n_x, self.yr]
-        if self.sim_name == 'pearson_baseline':
-            args += [self.global_mean, self.x_biases, self.y_biases,
-                    self.shrinkage]
-
-        try:
-            self.sim = construction_func[self.sim_name](*args)
-        except KeyError:
-            raise NameError('Wrong sim name')

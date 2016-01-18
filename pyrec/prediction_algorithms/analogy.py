@@ -2,7 +2,6 @@ import random
 import numpy as np
 
 from .bases import AlgoBase
-from .bases import AlgoUsingSim
 from .bases import PredictionImpossible
 
 
@@ -46,7 +45,7 @@ class AlgoUsingAnalogy(AlgoBase):
             return 1 - max(abs(ra - rb), abs(rc - rd))
 
 
-class Parall(AlgoUsingSim, AlgoUsingAnalogy):
+class Parall(AlgoUsingAnalogy):
     """geometrical analogy based recommender"""
 
     def __init__(self, training_data, user_based=True, sim_name='MSD', k=40,

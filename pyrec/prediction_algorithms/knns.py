@@ -4,11 +4,11 @@ the :mod:`knns` module includes some some k-NN inspired algorithms.
 
 import numpy as np
 
-from .bases import AlgoUsingSim
 from .bases import PredictionImpossible
+from .bases import AlgoBase
 
 
-class KNNBasic(AlgoUsingSim):
+class KNNBasic(AlgoBase):
     """Basic collaborative filtering algorithm.
 
     :math:`\hat{r}_{ui} = \\frac{
@@ -16,19 +16,15 @@ class KNNBasic(AlgoUsingSim):
     {\\sum\\limits_{v \in N^k_i(u)} \\text{sim}(u, v)}`
     """
 
-    def __init__(self, user_based=True, sim_name='MSD', k=40, **kwargs):
+    def __init__(self, k=40, **kwargs):
 
-        super().__init__(user_based=user_based, sim_name=sim_name, **kwargs)
-
+        AlgoBase.__init__(self, **kwargs)
         self.k = k
-
-        self.infos['name'] = 'KNNBasic'
-        self.infos['params']['similarity measure'] = sim_name
-        self.infos['params']['k'] = self.k
 
     def train(self, trainset):
 
-        super().train(trainset)
+        AlgoBase.train(self, trainset)
+        self.compute_similarities()
 
     def estimate(self, x0, y0):
 
@@ -55,7 +51,7 @@ class KNNBasic(AlgoUsingSim):
         return est
 
 
-class KNNWithMeans(AlgoUsingSim):
+class KNNWithMeans(AlgoBase):
     """Basic collaborative filtering algorithm, taking into account the mean
     ratings of each user.
 
@@ -64,19 +60,16 @@ class KNNWithMeans(AlgoUsingSim):
     {\\sum\\limits_{v \in N^k_i(u)} \\text{sim}(u, v)}`
     """
 
-    def __init__(self, user_based=True, sim_name='MSD', k=40, **kwargs):
+    def __init__(self, k=40, **kwargs):
 
-        super().__init__(user_based=user_based, sim_name=sim_name)
-
+        AlgoBase.__init__(self, **kwargs)
         self.k = k
-
-        self.infos['name'] = 'basicWithMeans'
-        self.infos['params']['similarity measure'] = sim_name
-        self.infos['params']['k'] = self.k
 
     def train(self, trainset):
 
-        super().train(trainset)
+        AlgoBase.train(self, trainset)
+        self.compute_similarities()
+
         self.means = np.zeros(self.n_x)
         for x, ratings in self.xr.items():
             self.means[x] = np.mean([r for (_, r) in ratings])
@@ -109,7 +102,7 @@ class KNNWithMeans(AlgoUsingSim):
         return est
 
 
-class KNNBaseline(AlgoUsingSim):
+class KNNBaseline(AlgoBase):
     """Basic collaborative filtering algorithm taking into account a
     *baseline* rating (see paper *Factor in the Neighbors: Scalable and
     Accurate Collaborative Filtering* by Yehuda Koren for details).
@@ -119,18 +112,16 @@ class KNNBaseline(AlgoUsingSim):
     {\\sum\\limits_{v \in N^k_i(u)} \\text{sim}(u, v)}`
     """
 
-    def __init__(self, sim_name='MSD', k=40, **kwargs):
+    def __init__(self, k=40, **kwargs):
 
-        super().__init__(sim_name=sim_name, **kwargs)
-
+        AlgoBase.__init__(self, **kwargs)
         self.k = k
-        self.infos['name'] = 'neighborhoodWithBaseline'
-        self.infos['params']['k'] = self.k
 
     def train(self, trainset):
 
-        super().train(trainset)
+        AlgoBase.train(self, trainset)
         self.compute_baselines()
+        self.compute_similarities()
 
     def estimate(self, x0, y0):
 

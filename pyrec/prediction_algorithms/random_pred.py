@@ -17,11 +17,11 @@ class NormalPredictor(AlgoBase):
 
     def __init__(self, **kwargs):
 
-        super().__init__(**kwargs)
-        self.infos['name'] = 'random'
+        AlgoBase.__init__(self, **kwargs)
 
     def train(self, trainset):
-        super().train(trainset)
+
+        AlgoBase.train(self, trainset)
 
         num = sum((r - self.global_mean)**2 for (_, _, r) in self.all_ratings)
         denum = self.n_ratings - 1  # unbiased

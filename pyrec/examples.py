@@ -1,3 +1,5 @@
+import random
+
 import stats
 from dataset import Dataset
 from dataset import Reader
@@ -11,12 +13,13 @@ from prediction_algorithms import CloneKNNMeanDiff
 from evaluate import evaluate
 
 
+random.seed(0)
 
 #algo = NormalPredictor(user_based=True)
 #algo = BaselineOnly(baseline=dict(method='sgd', n_epochs=1))
-#algo = KNNBasic(user_based=True)
+#algo = KNNBasic()
 #algo = KNNWithMeans(user_based=True)
-algo = KNNBaseline(baseline=dict(method='sgd', n_epochs=1))
+algo = KNNBaseline(sim=dict(name='pearson_baseline'))
 #algo = CloneBruteforce(user_based=True)
 #algo = CloneKNNMeanDiff(user_based=True)
 
