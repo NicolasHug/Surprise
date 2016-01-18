@@ -12,11 +12,11 @@ from evaluate import evaluate
 
 
 
-algo = NormalPredictor(user_based=True)
-#algo = BaselineOnly(user_based=True)
+#algo = NormalPredictor(user_based=True)
+#algo = BaselineOnly(baseline=dict(method='sgd', n_epochs=1))
 #algo = KNNBasic(user_based=True)
 #algo = KNNWithMeans(user_based=True)
-#algo = KNNBaseline(user_based=True, sim_name='pearson_baseline', shrinkage=100)
+algo = KNNBaseline(baseline=dict(method='sgd', n_epochs=1))
 #algo = CloneBruteforce(user_based=True)
 #algo = CloneKNNMeanDiff(user_based=True)
 

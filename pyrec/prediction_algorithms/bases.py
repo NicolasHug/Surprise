@@ -20,14 +20,15 @@ class AlgoBase:
     """Abstract Algo class where is defined the basic behaviour of a recomender
     algorithm"""
 
-    def __init__(self, user_based=True, with_dump=False, **kwargs):
-
+    def __init__(self, user_based=True, baseline={}, with_dump=False, **kwargs):
 
         # whether the algo will be based on users (basically means that the
         # similarities will be computed between users or between items)
         # if the algo is user based, x denotes a user and y an item
         # if the algo is item based, x denotes an item and y a user
         self.user_based = user_based
+
+        self.bsl_options = baseline
 
         # list of all predictions computed by the algorithm
         self.preds = []
@@ -111,6 +112,70 @@ class AlgoBase:
         for uid, iid, r in testset:
             self.predict(uid, iid, r)
 
+    def compute_baselines(self):
+        """Compute users and items biases. See from 5.2.1 of RS handbook"""
+
+        def optimize_sgd():
+            """optimize biases using sgd"""
+
+            lambda4 = self.bsl_options.get('lambda4', 0.02)
+            gamma = self.bsl_options.get('gamma', 0.005)
+            n_epochs = self.bsl_options.get('n_epochs', 20)
+
+            for dummy in range(n_epochs):
+                for x, y, r in self.all_ratings:
+                    err = (r -
+                          (self.global_mean + self.x_biases[x] + self.y_biases[y]))
+                    # update x_biases
+                    self.x_biases[x] += gamma * (err - lambda4 *
+                                                self.x_biases[x])
+                    # udapte y_biases
+                    self.y_biases[y] += gamma * (err - lambda4 *
+                                                self.y_biases[y])
+
+        def optimize_als():
+            """alternatively optimize y_biases and x_biases. Probably not
+            really an als"""
+
+            reg_u = self.bsl_options.get('reg_u', 15)
+            reg_i = self.bsl_options.get('reg_i', 10)
+            n_epochs = self.bsl_options.get('n_epochs', 10)
+
+            self.reg_x = reg_u if self.user_based else reg_i
+            self.reg_y = reg_i if self.user_based else reg_u
+
+            for dummy in range(n_epochs):
+                self.y_biases = np.zeros(self.n_y)
+                for y in self.all_ys:
+                    devY = sum(r - self.global_mean -
+                               self.x_biases[x] for (x, r) in self.yr[y])
+                    self.y_biases[y] = devY / (self.reg_y + len(self.yr[y]))
+
+                self.x_biases = np.zeros(self.n_x)
+                for x in self.all_xs:
+                    devX = sum(r - self.global_mean -
+                               self.y_biases[y] for (y, r) in self.xr[x])
+                    self.x_biases[x] = devX / (self.reg_x + len(self.xr[x]))
+
+        self.x_biases = np.zeros(self.n_x)
+        self.y_biases = np.zeros(self.n_y)
+
+        optimize = dict(als=optimize_als,
+                        sgd=optimize_sgd)
+
+        method = self.bsl_options.get('method', 'als')
+
+        try:
+            print('Estimating biases...')
+            optimize[method]()
+        except KeyError:
+            raise ValueError('invalid method ' + method + ' for baseline ' +
+                             'computation. Available methods are als, sgd.')
+
+
+    def get_baseline(self, x, y):
+        return self.global_mean + self.x_biases[x] + self.y_biases[y]
+
     @property
     def all_ratings(self):
         """generator to iter over all ratings"""
@@ -147,9 +212,9 @@ class AlgoBase:
 class AlgoUsingSim(AlgoBase):
     """Abstract class for algos using a similarity measure"""
 
-    def __init__(self, user_based, sim_name, **kwargs):
+    def __init__(self, sim_name, **kwargs):
 
-        super().__init__(user_based, **kwargs)
+        super().__init__(**kwargs)
 
         self.infos['params']['sim'] = sim_name
 
@@ -186,69 +251,3 @@ class AlgoUsingSim(AlgoBase):
             self.sim = construction_func[self.sim_name](*args)
         except KeyError:
             raise NameError('Wrong sim name')
-
-class AlgoWithBaseline(AlgoBase):
-    """Abstract class for algos that need a baseline"""
-
-    def __init__(self, user_based, method, **kwargs):
-
-        super().__init__(user_based, **kwargs)
-        self.method = method
-
-    def train(self, trainset):
-
-        super().train(trainset)
-
-        # compute users and items biases
-        # see from 5.2.1 of RS handbook
-
-        self.x_biases = np.zeros(self.n_x)
-        self.y_biases = np.zeros(self.n_y)
-
-        print('Estimating biases...')
-        if self.method == 'sgd':
-            self.optimize_sgd()
-        elif self.method == 'als':
-            self.optimize_als()
-
-    def optimize_sgd(self):
-        """optimize biases using sgd"""
-        lambda4 = 0.02
-        gamma = 0.005
-        n_epochs = 20
-        for dummy in range(n_epochs):
-            for x, y, r in self.all_ratings:
-                err = (r -
-                      (self.global_mean + self.x_biases[x] + self.y_biases[y]))
-                # update x_biases
-                self.x_biases[x] += gamma * (err - lambda4 *
-                                            self.x_biases[x])
-                # udapte y_biases
-                self.y_biases[y] += gamma * (err - lambda4 *
-                                            self.y_biases[y])
-
-    def optimize_als(self):
-        """alternatively optimize y_biases and x_biases. Probably not really an
-        als"""
-        reg_u = 15
-        reg_i = 10
-        n_epochs = 10
-
-        self.reg_x = reg_u if self.user_based else reg_i
-        self.reg_y = reg_i if self.user_based else reg_u
-
-        for dummy in range(n_epochs):
-            self.y_biases = np.zeros(self.n_y)
-            for y in self.all_ys:
-                devY = sum(r - self.global_mean -
-                           self.x_biases[x] for (x, r) in self.yr[y])
-                self.y_biases[y] = devY / (self.reg_y + len(self.yr[y]))
-
-            self.x_biases = np.zeros(self.n_x)
-            for x in self.all_xs:
-                devX = sum(r - self.global_mean -
-                           self.y_biases[y] for (y, r) in self.xr[x])
-                self.x_biases[x] = devX / (self.reg_x + len(self.xr[x]))
-
-    def get_baseline(self, x, y):
-        return self.global_mean + self.x_biases[x] + self.y_biases[y]

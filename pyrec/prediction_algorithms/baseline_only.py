@@ -2,10 +2,10 @@
 Algorithm predicting only the baseline.
 """
 
-from .bases import AlgoWithBaseline
+from .bases import AlgoBase
 
 
-class BaselineOnly(AlgoWithBaseline):
+class BaselineOnly(AlgoBase):
     """Algorithm predicting the *baseline rating* for given user and item.
 
     :math:`\hat{r}_{ui} = b_{ui}`
@@ -15,14 +15,14 @@ class BaselineOnly(AlgoWithBaseline):
 
     """
 
-    def __init__(self, user_based=True, method='als', **kwargs):
+    def __init__(self, **kwargs):
 
-        super().__init__(user_based, method=method, **kwargs)
-        self.infos['name'] = 'algoBaselineOnly'
+        AlgoBase.__init__(self, **kwargs)
 
     def train(self, trainset):
 
-        super().train(trainset)
+        AlgoBase.train(self, trainset)
+        self.compute_baselines()
 
     def estimate(self, x0, y0):
 

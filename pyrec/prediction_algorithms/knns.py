@@ -5,7 +5,6 @@ the :mod:`knns` module includes some some k-NN inspired algorithms.
 import numpy as np
 
 from .bases import AlgoUsingSim
-from .bases import AlgoWithBaseline
 from .bases import PredictionImpossible
 
 
@@ -110,7 +109,7 @@ class KNNWithMeans(AlgoUsingSim):
         return est
 
 
-class KNNBaseline(AlgoUsingSim, AlgoWithBaseline):
+class KNNBaseline(AlgoUsingSim):
     """Basic collaborative filtering algorithm taking into account a
     *baseline* rating (see paper *Factor in the Neighbors: Scalable and
     Accurate Collaborative Filtering* by Yehuda Koren for details).
@@ -120,11 +119,9 @@ class KNNBaseline(AlgoUsingSim, AlgoWithBaseline):
     {\\sum\\limits_{v \in N^k_i(u)} \\text{sim}(u, v)}`
     """
 
-    def __init__(self, user_based=True, method='als', sim_name='MSD', k=40,
-                 **kwargs):
+    def __init__(self, sim_name='MSD', k=40, **kwargs):
 
-        super().__init__(user_based, method=method, sim_name=sim_name,
-                         **kwargs)
+        super().__init__(sim_name=sim_name, **kwargs)
 
         self.k = k
         self.infos['name'] = 'neighborhoodWithBaseline'
@@ -133,6 +130,7 @@ class KNNBaseline(AlgoUsingSim, AlgoWithBaseline):
     def train(self, trainset):
 
         super().train(trainset)
+        self.compute_baselines()
 
     def estimate(self, x0, y0):
 
