@@ -24,7 +24,7 @@ algo = KNNBaseline(sim=dict(name='pearson_baseline'))
 #algo = CloneKNNMeanDiff(user_based=True)
 
 #reader = Reader(line_format='user item rating timestamp', sep='\t')
-reader = Reader('ml-100k')
+#reader = Reader('BX')
 
 """
 train_file = '/home/nico/dev/pyrec/pyrec/datasets/ml-100k/ml-100k/u%d.base'

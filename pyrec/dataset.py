@@ -8,7 +8,6 @@ import itertools
 import random
 
 # TODO: try to give an explicit error messages if reader fails to parse
-# TODO: handle non existing timestamp
 
 Trainset = namedtuple('Trainset',
                      ['rm',
@@ -35,6 +34,7 @@ builtin_datasets = {
             url='http://files.grouplens.org/datasets/movielens/ml-100k.zip',
             path=datasets_dir + 'ml-100k/ml-100k/u.data',
             reader_params=dict(line_format='user item rating timestamp',
+                               interval=(1, 5),
                                sep='\t')
         ),
     'ml-1m' :
@@ -42,20 +42,24 @@ builtin_datasets = {
             url='http://files.grouplens.org/datasets/movielens/ml-1m.zip',
             path=datasets_dir + 'ml-1m/ml-1m/ratings.dat',
             reader_params=dict(line_format='user item rating timestamp',
+                               interval=(1, 5),
                                sep='::')
         ),
-    # TODO: handle BX and jester
-    'BX' :
+    'BX' :  # Note that implicit ratings are discarded
         BuiltinDataset(
             url='http://www2.informatik.uni-freiburg.de/~cziegler/BX/BX-CSV-Dump.zip',
-            path=datasets_dir + 'LETS_GET_SOME_PIZZA',
-            reader_params={}
+            path=datasets_dir + 'BX/BX-Book-Ratings.csv',
+            reader_params=dict(line_format='user item rating',
+                               sep=';',
+                               interval=(1, 10),
+                               skip_lines=1)
         ),
     'jester' :
         BuiltinDataset(
             url='http://eigentaste.berkeley.edu/dataset/jester_dataset_2.zip',
-            path=datasets_dir + 'LETS_GET_SOME_PIZZA',
-            reader_params={}
+            path=datasets_dir + 'jester/jester_ratings.dat',
+            reader_params=dict(line_format='user item rating',
+                               interval=(-10, 10))
         )
 }
 
@@ -65,6 +69,8 @@ class Dataset:
     def __init__(self, reader=None):
 
         self.reader = reader
+        self.r_min = reader.inf + reader.offset
+        self.r_max = reader.sup + reader.offset
 
     @classmethod
     def load(cls, name='ml-100k'):
@@ -124,7 +130,7 @@ class Dataset:
         """Return a list of ratings (user, item, rating, timestamp) read from
         file_name"""
 
-        with open(file_name) as f:
+        with open(file_name, errors='replace') as f:
             raw_ratings = [self.reader.read_line(line) for line in
                            itertools.islice(f, self.reader.skip_lines, None)]
         return raw_ratings
@@ -175,16 +181,13 @@ class Dataset:
         n_users = len(ur)  # number of users
         n_items = len(ir)  # number of items
 
-        r_min = 1  #TODO: change that
-        r_max = 5
-
         trainset = Trainset(rm,
                             ur,
                             ir,
                             n_users,
                             n_items,
-                            r_min,
-                            r_max,
+                            self.r_min,
+                            self.r_max,
                             raw2inner_id_users,
                             raw2inner_id_items)
 
@@ -261,7 +264,8 @@ class DatasetAutoFolds(Dataset):
 
 class Reader():
 
-    def __init__(self, name=None, line_format=None, sep=None, skip_lines=0, ):
+    def __init__(self, name=None, line_format=None, sep=None, interval=(1, 5),
+                 skip_lines=0):
 
         # TODO: I'm not sure this is a nice way to handle a builtin
         # constructor... needs to be checked
@@ -275,10 +279,19 @@ class Reader():
         else:
             self.sep = sep
             self.skip_lines = skip_lines
+            self.inf, self.sup = interval
+            self.offset = -self.inf + 1 if self.inf <= 0 else 0
 
             try:
                 splitted_format = line_format.split()
-                entities = ('user', 'item', 'rating', 'timestamp')
+
+                entities = ['user', 'item', 'rating']
+                if 'timestamp' in splitted_format:
+                    self.with_timestamp = True
+                    entities.append('timestamp')
+                else:
+                    self.with_timestamp = False
+
                 self.indexes = [splitted_format.index(entity) for entity in
                                 entities]
             except ValueError:
@@ -287,5 +300,10 @@ class Reader():
     def read_line(self, line):
 
         line = line.split(self.sep)
-        uid, iid, r, timestamp = (line[i].strip() for i in self.indexes)
-        return uid, iid, int(r), timestamp
+        uid, iid, *remaining = (line[i].strip().strip('"') for i in self.indexes)
+        if self.with_timestamp:
+            r, timestamp = remaining
+        else:
+            r, timestamp = *remaining, None
+
+        return uid, iid, float(r) + self.offset, timestamp

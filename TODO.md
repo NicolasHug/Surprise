@@ -1,13 +1,13 @@
 TODO
 ====
 
-Court terme :
+Short term :
 -------------
 
 * handle big datasets (memory error when computing similarities)
 * write some tests (in progress)
 
-Long terme :
+Long term :
 ------------
 
 * handle more datasets + user-defined datasets
