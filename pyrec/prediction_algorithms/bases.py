@@ -32,7 +32,6 @@ class AlgoBase:
         self.sim_options = kwargs.get('sim', {})
 
         # list of all predictions computed by the algorithm
-        self.preds = []
         self.with_dump = kwargs.get('with_dump', False)
 
         self.infos = {}
@@ -40,7 +39,6 @@ class AlgoBase:
         self.infos['name'] = 'undefined'
         self.infos['params']['Based on '] = 'users' if self.user_based else 'items'
         self.infos['user_based'] = self.user_based
-        self.infos['preds'] = self.preds  # list of predictions.
 
     def train(self, trainset):
         self.trainset = trainset
@@ -78,8 +76,7 @@ class AlgoBase:
     def predict(self, u0, i0, r0=0, output=False):
         """Predict the rating for u0 and i0 by calling the estimate method of
         the algorithm (defined in every sub-class). If prediction is impossible
-        (for any reason), set prediction to the global mean of all ratings. the
-        self.preds attribute is updated.
+        (for any reason), set prediction to the global mean of all ratings.
         """
 
         x0, y0 = (u0, i0) if self.user_based else (i0, u0)
@@ -107,14 +104,12 @@ class AlgoBase:
             print(col + "err = {0:1.2f}".format(err) + colors.ENDC)
 
         pred = (u0, i0, r0, est, impossible)
-        self.preds.append(pred)
-
         return pred
 
     def test(self, testset):
 
-        for uid, iid, r in testset:
-            self.predict(uid, iid, r)
+        predictions = [self.predict(uid, iid, r) for (uid, iid, r) in testset]
+        return predictions
 
     def compute_baselines(self):
         """Compute users and items biases. See from 5.2.1 of RS handbook"""
@@ -238,6 +233,5 @@ class AlgoBase:
             os.makedirs('./dumps')
 
         date = time.strftime('%y%m%d-%Hh%Mm%S', time.localtime())
-        name = ('dumps/' + date + '-' + self.infos['name'] + '-' +
-                str(len(self.infos['preds'])))
+        name = ('dumps/' + date + '-' + self.infos['name'])
         pickle.dump(self.infos, open(name, 'wb'))

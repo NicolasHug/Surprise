@@ -16,10 +16,10 @@ from evaluate import evaluate
 random.seed(0)
 
 #algo = NormalPredictor(user_based=True)
-#algo = BaselineOnly(baseline=dict(method='sgd', n_epochs=1))
+algo = BaselineOnly()
 #algo = KNNBasic()
 #algo = KNNWithMeans(user_based=True)
-algo = KNNBaseline(sim=dict(name='pearson_baseline'))
+#algo = KNNBaseline(sim=dict(name='pearson_baseline'))
 #algo = CloneBruteforce(user_based=True)
 #algo = CloneKNNMeanDiff(user_based=True)
 

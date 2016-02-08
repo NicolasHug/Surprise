@@ -1,40 +1,53 @@
-import numpy as np
+from statistics import mean
+from math import sqrt
+from collections import defaultdict
 
-def get_rmse_mae(preds, output=True):
-    """compute some statistics (RMSE, coverage...) on a list of predictions"""
+def rmse(predictions, output=True):
+    """Compute RMSE (Root Mean Squared Error) on a list of predictions"""
 
-    nImp = 0
-    sum_sq_err = 0
-    sum_abs_err = 0
-
-    for _, _, r0, est, imp in preds:
-
-        sum_sq_err += (r0 - est)**2
-        sum_abs_err += abs(r0 - est)
-        nImp += imp
-
-    rmse = np.sqrt(sum_sq_err / len(preds))
-    mae = np.sqrt(sum_abs_err / len(preds))
+    mse = mean(float((true_r - est)**2) for (_, _, true_r, est, _) in predictions)
+    rmse_ = sqrt(mse)
 
     if output:
-        print('Nb impossible predictions:', nImp)
-        print('RMSE: {0:1.4f}'.format(rmse))
-        print('MAE: {0:1.4f}'.format(mae))
+        print('RMSE: {0:1.4f}'.format(rmse_))
 
-    return rmse, mae
+    return rmse_
 
-def get_FCP(preds, output=True):
+def mae(predictions, output=True):
+    """Compute MAE (Mean Absolute Error) on a list of predictions"""
 
-    nc = 0
-    nd = 0
-    for _, _, r0i, esti, _ in preds:
-        for _, _, r0j, estj, _ in preds:
-            if esti > estj and r0i > r0j:
-                nc += 1
-            if esti >= estj and r0i < r0j:
-                nd += 1
+    mae_ = mean(float(abs(true_r - est)) for (_, _, true_r, est, _) in predictions)
+
+    if output:
+        print('MAE: {0:1.4f}'.format(mae_))
+
+    return mae_
+
+def fcp(predictions, output=True):
+    """Compute FCP (Fraction of Concordant Pairs) on a list of preditions"""
+
+    predictions_u = defaultdict(list)
+    nc_u = defaultdict(int)
+    nd_u = defaultdict(int)
+
+    for u0, _, r0, est, _ in predictions:
+        predictions_u[u0].append((r0, est))
+
+    for u0, preds in predictions_u.items():
+        for r0i, esti in preds:
+            for r0j, estj in preds:
+                if esti > estj and r0i > r0j:
+                    nc_u[u0] += 1
+                if esti >= estj and r0i < r0j:
+                    nd_u[u0] += 1
+
+    nc = mean(nc_u.values())
+    nd = mean(nd_u.values())
 
     fcp = nc / (nc + nd)
-    print('FCP: {0:1.4f}'.format(fcp))
+
+    if output:
+        print('FCP: {0:1.4f}'.format(fcp))
 
     return fcp
+
