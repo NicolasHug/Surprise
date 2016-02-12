@@ -123,12 +123,11 @@ def main():
                                    method=args.method,
                                    sim_name=args.sim,
                                    k=args.k,
-                                   shrinkage=args.shrinkage,
-                                   with_dump=args.with_dump)
+                                   shrinkage=args.shrinkage)
 
     data = Dataset.load(args.dataset)
     data.split(n_folds=args.cv)
-    evaluate(algo, data)
+    evaluate(algo, data, args.with_dump)
 
 if __name__ == "__main__":
     main()

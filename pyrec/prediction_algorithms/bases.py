@@ -1,7 +1,5 @@
 from collections import defaultdict
-import pickle
-import time
-import os
+from collections import namedtuple
 import numpy as np
 
 import pyximport
@@ -15,6 +13,7 @@ class PredictionImpossible(Exception):
     """Exception raised when a prediction is impossible"""
     pass
 
+Prediction = namedtuple('Prediction', ['uid', 'iid', 'r0', 'est', 'details'])
 
 class AlgoBase:
     """Abstract Algo class where is defined the basic behaviour of a recomender
@@ -30,15 +29,6 @@ class AlgoBase:
 
         self.bsl_options = kwargs.get('baseline', {})
         self.sim_options = kwargs.get('sim', {})
-
-        # list of all predictions computed by the algorithm
-        self.with_dump = kwargs.get('with_dump', False)
-
-        self.infos = {}
-        self.infos['params'] = {}  # dict of params specific to any algo
-        self.infos['name'] = 'undefined'
-        self.infos['params']['Based on '] = 'users' if self.user_based else 'items'
-        self.infos['user_based'] = self.user_based
 
     def train(self, trainset):
         self.trainset = trainset
@@ -64,26 +54,24 @@ class AlgoBase:
         # global mean of all ratings
         self.global_mean = np.mean([r for (_, _, r) in self.all_ratings])
 
-        self.infos['ur'] = trainset.ur  # user ratings  dict
-        self.infos['ir'] = trainset.ir  # item ratings dict
-        self.infos['rm'] = self.rm  # rating matrix
-        # Note: there is a lot of duplicated data, the dumped file will be
-        # HUGE.
-
         self.x_biases = self.y_biases = None
         self.sim = None
 
     def predict(self, u0, i0, r0=0, output=False):
         """Predict the rating for u0 and i0 by calling the estimate method of
         the algorithm (defined in every sub-class). If prediction is impossible
-        (for any reason), set prediction to the global mean of all ratings.
+        (for any reason), set estimation to the global mean of all ratings.
         """
 
         x0, y0 = (u0, i0) if self.user_based else (i0, u0)
 
+        # TODO: handle prediction details in a better way (possibly avoiding
+        # side effects)
+        self.pred_details= {}
+
         try:
             if u0 == 'unknown' or i0 == 'unknown':
-                raise PredictionImpossible('user or item were not part of ' +
+                raise PredictionImpossible('user or item was not part of ' +
                                            'training set')
 
             est = self.estimate(x0, y0)
@@ -103,8 +91,8 @@ class AlgoBase:
             col = colors.FAIL if err > 1 else colors.OKGREEN
             print(col + "err = {0:1.2f}".format(err) + colors.ENDC)
 
-        pred = (u0, i0, r0, est, impossible)
-        return pred
+        self.pred_details['was_impossible'] = impossible
+        return Prediction(u0, i0, r0, est, self.pred_details)
 
     def test(self, testset):
 
@@ -223,15 +211,3 @@ class AlgoBase:
     def all_ys(self):
         """generator to iter over all ys"""
         return range(self.n_y)
-
-    def dump_infos(self):
-        """dump the dict self.infos into a file"""
-
-        if not self.with_dump:
-            return
-        if not os.path.exists('./dumps'):
-            os.makedirs('./dumps')
-
-        date = time.strftime('%y%m%d-%Hh%Mm%S', time.localtime())
-        name = ('dumps/' + date + '-' + self.infos['name'])
-        pickle.dump(self.infos, open(name, 'wb'))

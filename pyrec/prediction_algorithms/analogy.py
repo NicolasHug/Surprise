@@ -51,7 +51,6 @@ class Parall(AlgoUsingAnalogy):
     def __init__(self, training_data, user_based=True, sim_name='MSD', k=40,
                  **kwargs):
         super().__init__(training_data, user_based, sim)
-        self.infos['name'] = 'algoParallKNN' if k else 'algoParall'
 
         self.k = k
 
@@ -141,7 +140,6 @@ class Pattern(AlgoUsingAnalogy):
 
     def __init__(self, training_data, user_based=True, **kwargs):
         super().__init__(training_data, user_based, **kwargs)
-        self.infos['name'] = 'algoPattern'
 
     def estimate(self, x0, y0):
 

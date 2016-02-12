@@ -35,11 +35,9 @@ data = Dataset.load_from_folds(folds_files, reader=reader)
 """
 
 data = Dataset.load('ml-100k')
-data.split(n_folds=3)
+data.split(n_folds=5)
 
-evaluate(algo, data)
-
-
+evaluate(algo, data, with_dump=True)
 
 """
 # this is like... cool

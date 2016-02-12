@@ -50,8 +50,6 @@ def fcp(predictions, output=True):
                 if esti >= estj and r0i < r0j:
                     nd_u[u0] += 1
 
-    print(nc_u.values())
-    print(nd_u.values())
     nc = mean(nc_u.values()) if nc_u else 0
     nd = mean(nd_u.values()) if nd_u else 0
 
@@ -59,7 +57,7 @@ def fcp(predictions, output=True):
         fcp = nc / (nc + nd)
     except ZeroDivisionError:
         raise ValueError('cannot compute fcp on this list of prediction. ' +
-                         'every user have at least two predictions?')
+                         'does every user have at least two predictions?')
 
     if output:
         print('FCP: {0:1.4f}'.format(fcp))

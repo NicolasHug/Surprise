@@ -31,8 +31,6 @@ class CloneBruteforce(AlgoBase):
     def __init__(self, user_based=True, **kwargs):
         super().__init__(user_based=user_based, **kwargs)
 
-        self.infos['name'] = 'AlgoClonBruteForce'
-
     def train(self, trainset):
 
         super().train(trainset)
@@ -82,9 +80,6 @@ class CloneKNNMeanDiff(AlgoUsingMeanDiff):
         super().__init__(user_based=user_based, sim_name=sim_name)
 
         self.k = k
-        self.infos['name'] = 'CloneKNNMeanDiff'
-        self.infos['params']['similarity measure'] = sim_name
-        self.infos['params']['k'] = self.k
 
     def train(self, trainset):
 
