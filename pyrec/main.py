@@ -12,8 +12,6 @@ from prediction_algorithms import BaselineOnly
 from prediction_algorithms import KNNBasic
 from prediction_algorithms import KNNBaseline
 from prediction_algorithms import KNNWithMeans
-from prediction_algorithms import Parall
-from prediction_algorithms import Pattern
 from dataset import Dataset
 from evaluate import evaluate
 
@@ -31,9 +29,7 @@ def main():
         'BaselineOnly': BaselineOnly,
         'KNNBasic': KNNBasic,
         'KNNBaseline': KNNBaseline,
-        'KNNWithMeans': KNNWithMeans,
-        'Parall': Parall,
-        'Pattern': Pattern,
+        'KNNWithMeans': KNNWithMeans
     }
     parser.add_argument('-algo', type=str,
                         default='KNNBaseline',

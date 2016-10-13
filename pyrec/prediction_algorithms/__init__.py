@@ -8,5 +8,3 @@ from .baseline_only import BaselineOnly
 from .knns import KNNBasic
 from .knns import KNNBaseline
 from .knns import KNNWithMeans
-from .analogy import Parall
-from .analogy import Pattern
