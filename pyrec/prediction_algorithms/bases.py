@@ -16,8 +16,8 @@ class PredictionImpossible(Exception):
 Prediction = namedtuple('Prediction', ['uid', 'iid', 'r0', 'est', 'details'])
 
 class AlgoBase:
-    """Abstract Algo class where is defined the basic behaviour of a recomender
-    algorithm"""
+    """Abstract Algo class where is defined the basic behaviour of a
+    recommender algorithm"""
 
     def __init__(self, user_based=True, **kwargs):
 
