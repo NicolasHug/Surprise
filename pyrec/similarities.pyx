@@ -7,17 +7,6 @@ between users or items. Please refer to the :ref:`notation standards
 cimport numpy as np
 import numpy as np
 
-# OK so I changed some stuff: itertool.combinations is not used anymore, it caused a
-# weird bug in the mean_diff calculation. I'm pretty sure* it used to work OK
-# before because we were only testing ml-100k on the 'official' 5-fold cross
-# validation sets, where all user ids where ordered. Now that ids can appear in
-# any order (because we do our own CV folds), combinations can't be used
-# anymore.
-# We now do it the 'bruteforce' way, which forces us to have a plain n_x x n_x
-# matrix (using combinations we could have (but did not) used  symetric matrix
-# structure).
-# We definitely need a proper test campaign.
-# *EDIT: now I'm 100% sure (and test campaign is now officially launched :) )
 
 def cosine(n_x, yr):
     """Compute the cosine similarity between all pairs of xs.
