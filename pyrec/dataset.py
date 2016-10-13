@@ -21,6 +21,7 @@ Trainset = namedtuple('Trainset',
                       'raw2inner_id_items'])
 
 
+# TODO: make this independent of CWD!
 datasets_dir = 'datasets/'  # directory where builtin datasets are stored
 
 # a builtin dataset has
