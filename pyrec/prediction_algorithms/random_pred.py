@@ -11,8 +11,8 @@ class NormalPredictor(AlgoBase):
     """Algorithm predicting a random rating based on the distribution of the
     training set, which is assumed to be normal:
 
-    :math:`\hat{r}_{ui} \sim \mathcal{N}(\hat{\mu}, \hat{\sigma})` where
-    :math:`\hat{\mu}` and :math:`\hat{\sigma}` are estimated from the training data.
+    :math:`\hat{r}_{ui} \sim \mathcal{N}(\hat{\mu}, \hat{\sigma}^2)` where
+    :math:`\hat{\mu}` and :math:`\hat{\sigma}^2` are estimated from the training data.
     """
 
     def __init__(self, **kwargs):
