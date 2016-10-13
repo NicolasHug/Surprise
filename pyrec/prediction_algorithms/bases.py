@@ -177,7 +177,6 @@ class AlgoBase:
         print("computing the similarity matrix...")
         construction_func = {'cos' : sims.cosine,
                              'MSD' : sims.msd,
-                             'MSDClone' : sims.msdClone,
                              'pearson' : sims.pearson,
                              'pearson_baseline' : sims.pearson_baseline}
 

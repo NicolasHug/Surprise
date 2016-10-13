@@ -10,5 +10,3 @@ from .knns import KNNBaseline
 from .knns import KNNWithMeans
 from .analogy import Parall
 from .analogy import Pattern
-from .clone import CloneBruteforce
-from .clone import CloneKNNMeanDiff

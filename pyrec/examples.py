@@ -8,21 +8,16 @@ from prediction_algorithms import BaselineOnly
 from prediction_algorithms import KNNBasic
 from prediction_algorithms import KNNWithMeans
 from prediction_algorithms import KNNBaseline
-from prediction_algorithms import CloneBruteforce
-from prediction_algorithms import CloneKNNMeanDiff
 from evaluate import evaluate
 
 
 random.seed(0)
 
 #algo = NormalPredictor(user_based=True)
-algo = BaselineOnly()
-#algo = KNNBasic()
+#algo = BaselineOnly()
+algo = KNNBasic(sim=dict(name='cos'))
 #algo = KNNWithMeans(user_based=True)
 #algo = KNNBaseline(sim=dict(name='pearson_baseline', shrinkage=100))
-#algo = CloneBruteforce(user_based=True)
-#algo = CloneKNNMeanDiff(user_based=True, sim=dict(name='MSDClone'))
-#algo = Zob()
 
 #reader = Reader(line_format='user item rating timestamp', sep='\t')
 #reader = Reader('BX')

@@ -14,8 +14,6 @@ from prediction_algorithms import KNNBaseline
 from prediction_algorithms import KNNWithMeans
 from prediction_algorithms import Parall
 from prediction_algorithms import Pattern
-from prediction_algorithms import CloneBruteforce
-from prediction_algorithms import CloneKNNMeanDiff
 from dataset import Dataset
 from evaluate import evaluate
 
@@ -36,8 +34,6 @@ def main():
         'KNNWithMeans': KNNWithMeans,
         'Parall': Parall,
         'Pattern': Pattern,
-        'CloneBruteforce': CloneBruteforce,
-        'CloneKNNMeanDiff': CloneKNNMeanDiff
     }
     parser.add_argument('-algo', type=str,
                         default='KNNBaseline',
@@ -47,7 +43,7 @@ def main():
                         '. (default: KNNBaseline)',
                         metavar='<prediction algorithm>')
 
-    sim_choices = ['cos', 'pearson', 'MSD', 'MSDClone', 'pearson_baseline']
+    sim_choices = ['cos', 'pearson', 'MSD', 'pearson_baseline']
     parser.add_argument('-sim', type=str,
                         default='MSD',
                         choices=sim_choices,

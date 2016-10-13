@@ -146,46 +146,6 @@ def compute_mean_diff(n_x, yr):
 
     return mean_diff
 
-def msdClone(n_x, yr):
-    """compute the 'clone' mean squared difference similarity between all
-    pairs of xs. This is nothing but the variance of the differences. Same
-    properties as for MSDSim apply."""
-
-    # sum (r_xy - r_x'y - mean_diff(x, x')) for common ys
-    cdef np.ndarray[np.double_t, ndim = 2] diff = np.zeros((n_x, n_x), np.double)
-    # sum (r_xy - r_x'y)**2 for common ys
-    cdef np.ndarray[np.double_t, ndim = 2] sq_diff = np.zeros((n_x, n_x), np.double)
-    # number of common ys
-    cdef np.ndarray[np.int_t,    ndim = 2] freq   = np.zeros((n_x, n_x), np.int)
-    # the similarity matrix
-    cdef np.ndarray[np.double_t, ndim = 2] sim = np.zeros((n_x, n_x))
-    # the matrix of mean differences
-    cdef np.ndarray[np.double_t, ndim = 2] mean_diff = compute_mean_diff(n_x, yr)
-
-    # these variables need to be cdef'd so that array lookup can be fast
-    cdef int xi = 0
-    cdef int xj = 0
-    cdef int ri = 0
-    cdef int rj = 0
-
-    for y, y_ratings in yr.items():
-        for xi, ri in y_ratings:
-            for xj, rj in y_ratings:
-                sq_diff[xi, xj] += (ri - rj - mean_diff[xi, xj])**2
-                freq[xi, xj] += 1
-
-    for xi in range(n_x):
-        sim[xi, xi] = 100 # completely arbitrary and useless anyway
-        for xj in range(xi + 1, n_x):
-            if sq_diff[xi, xj] == 0: # return number of common ys (arbitrary)
-                sim[xi, xj] = freq[xi, xj]
-            else:  # return inverse of MSD
-                sim[xi, xj] = freq[xi, xj] / sq_diff[xi, xj]
-
-            sim[xj, xi] = sim[xi, xj]
-
-    return sim
-
 
 def pearson(n_x, yr):
     """compute the pearson corr coeff between all pairs of xs.
