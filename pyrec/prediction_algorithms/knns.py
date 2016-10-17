@@ -1,5 +1,5 @@
 """
-the :mod:`knns` module includes some some k-NN inspired algorithms.
+the :mod:`knns` module includes some k-NN inspired algorithms.
 """
 
 import numpy as np
@@ -11,9 +11,10 @@ from .bases import AlgoBase
 class KNNBasic(AlgoBase):
     """Basic collaborative filtering algorithm.
 
-    :math:`\hat{r}_{ui} = \\frac{
-    \\sum\\limits_{v \in N^k_i(u)} \\text{sim}(u, v) \cdot r_{vi}}
-    {\\sum\\limits_{v \in N^k_i(u)} \\text{sim}(u, v)}`
+    .. math::
+        \hat{r}_{ui} = \\frac{
+        \\sum\\limits_{v \in N^k_i(u)} \\text{sim}(u, v) \cdot r_{vi}}
+        {\\sum\\limits_{v \in N^k_i(u)} \\text{sim}(u, v)}
     """
 
     def __init__(self, k=40, **kwargs):
@@ -55,9 +56,10 @@ class KNNWithMeans(AlgoBase):
     """Basic collaborative filtering algorithm, taking into account the mean
     ratings of each user.
 
-    :math:`\hat{r}_{ui} = \mu_u + \\frac{
-    \\sum\\limits_{v \in N^k_i(u)} \\text{sim}(u, v) \cdot (r_{vi} - \mu_v)}
-    {\\sum\\limits_{v \in N^k_i(u)} \\text{sim}(u, v)}`
+    .. math::
+        \hat{r}_{ui} = \mu_u + \\frac{
+        \\sum\\limits_{v \in N^k_i(u)} \\text{sim}(u, v) \cdot (r_{vi} - \mu_v)}
+        {\\sum\\limits_{v \in N^k_i(u)} \\text{sim}(u, v)}
     """
 
     def __init__(self, k=40, **kwargs):
@@ -107,9 +109,10 @@ class KNNBaseline(AlgoBase):
     *baseline* rating (see paper *Factor in the Neighbors: Scalable and
     Accurate Collaborative Filtering* by Yehuda Koren for details).
 
-    :math:`\hat{r}_{ui} = b_{ui} + \\frac{
-    \\sum\\limits_{v \in N^k_i(u)} \\text{sim}(u, v) \cdot (r_{vi} - b_{vi})}
-    {\\sum\\limits_{v \in N^k_i(u)} \\text{sim}(u, v)}`
+    .. math::
+        \hat{r}_{ui} = b_{ui} + \\frac{
+        \\sum\\limits_{v \in N^k_i(u)} \\text{sim}(u, v) \cdot (r_{vi} - b_{vi})}
+        {\\sum\\limits_{v \in N^k_i(u)} \\text{sim}(u, v)}
     """
 
     def __init__(self, k=40, **kwargs):
