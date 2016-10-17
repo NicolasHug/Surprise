@@ -1,14 +1,13 @@
 import random
 
-import stats
-from dataset import Dataset
-from dataset import Reader
-from prediction_algorithms import NormalPredictor
-from prediction_algorithms import BaselineOnly
-from prediction_algorithms import KNNBasic
-from prediction_algorithms import KNNWithMeans
-from prediction_algorithms import KNNBaseline
-from evaluate import evaluate
+from pyrec.dataset import Dataset
+from pyrec.dataset import Reader
+from pyrec.prediction_algorithms import NormalPredictor
+from pyrec.prediction_algorithms import BaselineOnly
+from pyrec.prediction_algorithms import KNNBasic
+from pyrec.prediction_algorithms import KNNWithMeans
+from pyrec.prediction_algorithms import KNNBaseline
+from pyrec.evaluate import evaluate
 
 
 random.seed(0)

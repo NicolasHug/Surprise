@@ -3,7 +3,7 @@ import pickle
 import time
 import os
 
-import stats
+from . import stats
 
 def evaluate(algo, data, with_dump=False):
 

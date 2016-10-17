@@ -1,7 +1,7 @@
-from prediction_algorithms import *
-from dataset import Dataset
-from dataset import Reader
-from evaluate import evaluate
+from pyrec.prediction_algorithms import *
+from pyrec.dataset import Dataset
+from pyrec.dataset import Reader
+from pyrec.evaluate import evaluate
 
 algorithms = (NormalPredictor, BaselineOnly, KNNBasic, KNNWithMeans,
               KNNBaseline)

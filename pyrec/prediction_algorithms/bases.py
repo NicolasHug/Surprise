@@ -5,8 +5,8 @@ import numpy as np
 import pyximport
 pyximport.install(setup_args={"include_dirs":np.get_include()})
 
-import similarities as sims
-import colors
+from .. import similarities as sims
+from .. import colors
 
 
 class PredictionImpossible(Exception):
