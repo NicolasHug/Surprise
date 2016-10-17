@@ -21,8 +21,9 @@ Trainset = namedtuple('Trainset',
                       'raw2inner_id_items'])
 
 
-# TODO: make this independent of CWD!
-datasets_dir = 'datasets/'  # directory where builtin datasets are stored
+# directory where builtin datasets are stored. For now it's in the home
+# directory under the .pyrec_dataset. May be ask user to define it?
+datasets_dir = os.path.expanduser('~') + '/.pyrec_datasets/'
 
 # a builtin dataset has
 # - an url (where to download it)
@@ -100,11 +101,13 @@ class Dataset:
             print('trying to download dataset from ' + dataset.url)
             print('downloading...')
             urlretrieve(dataset.url, 'tmp.zip')
-            print('done!')
 
             with zipfile.ZipFile('tmp.zip', 'r') as tmp_zip:
                 tmp_zip.extractall(datasets_dir + name)
+
             os.remove('tmp.zip')
+            print('done ! Dataset', name, 'has been saved to',  datasets_dir +
+                  name)
 
         reader = Reader(**dataset.reader_params)
 
