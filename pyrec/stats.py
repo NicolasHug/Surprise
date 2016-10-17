@@ -3,7 +3,20 @@ from math import sqrt
 from collections import defaultdict
 
 def rmse(predictions, output=True):
-    """Compute RMSE (Root Mean Squared Error) on a list of predictions"""
+    """Compute RMSE (Root Mean Squared Error) on a list of predictions.
+
+    Args:
+        predictions (:obj:`list` of :obj:`Prediction`): The list on which to
+            compute the statistic.
+        output: If True, will print computed value.
+
+
+    Returns:
+        The Root Mean Square(d) Error of predictions.
+
+    Raises:
+        ValueError: when  `predictions` is empty
+    """
 
     if not predictions:
         raise ValueError('prediction list is empty')
@@ -16,8 +29,22 @@ def rmse(predictions, output=True):
 
     return rmse_
 
+
 def mae(predictions, output=True):
-    """Compute MAE (Mean Absolute Error) on a list of predictions"""
+    """Compute MAE (Mean Absolute Error) on a list of predictions
+
+    Args:
+        predictions (:obj:`list` of :obj:`Prediction`): The list on which to
+            compute the statistic.
+        output: If True, will print computed value.
+
+
+    Returns:
+        The Mean Absolute Error of predictions.
+
+    Raises:
+        ValueError: when  `predictions` is empty
+    """
 
     if not predictions:
         raise ValueError('prediction list is empty')

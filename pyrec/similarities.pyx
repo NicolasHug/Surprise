@@ -1,5 +1,5 @@
 """
-The :mod:`similarities` module includes tools to compute similarity metrics
+The :mod:`pyrec.similarities` module includes tools to compute similarity metrics
 between users or items. Please refer to the :ref:`notation standards
 <notation_standards>`.
 """
@@ -11,16 +11,17 @@ import numpy as np
 def cosine(n_x, yr):
     """Compute the cosine similarity between all pairs of xs.
 
-    Only *common* users (or items) are taken into account:
+    Only **common** users (or items) are taken into account:
 
-    :math:`\\text{cos_sim}(x, x') = \\frac{
-    \\sum\\limits_{y \in Y_{xx'}} r_{xy} \cdot r_{x'y}}
-    {\\sqrt{\\sum\\limits_{y \in Y_{xx'}} r_{xy}^2} \cdot
-    \\sqrt{\\sum\\limits_{y \in Y_{xx'}} r_{x'y}^2}
-    }`
+    .. math::
+        \\text{cos_sim}(x, x') = \\frac{
+        \\sum\\limits_{y \in Y_{xx'}} r_{xy} \cdot r_{x'y}}
+        {\\sqrt{\\sum\\limits_{y \in Y_{xx'}} r_{xy}^2} \cdot
+        \\sqrt{\\sum\\limits_{y \in Y_{xx'}} r_{x'y}^2}
+        }
 
     See details on `Wikipedia
-    <https://en.wikipedia.org/wiki/Cosine_similarity#Definition>`_.
+    <https://en.wikipedia.org/wiki/Cosine_similarity#Definition>`__.
     """
 
     # sum (r_xy * r_x'y) for common ys
@@ -65,20 +66,22 @@ def msd(n_x, yr):
     """Compute the mean squared difference similarity between all pairs of
     xs.
 
-    Only *common* users (or items) are taken into account:
+    Only **common** users (or items) are taken into account:
 
-    :math:`\\text{msd}(x, x') = \\frac{1}{|Y_{xx'}|} \cdot
-    \\sum\\limits_{y \in Y_{xx'}} (r_{xy} - r_{x'y})^2`
+    .. math ::
+        \\text{msd}(x, x') = \\frac{1}{|Y_{xx'}|} \cdot
+        \\sum\\limits_{y \in Y_{xx'}} (r_{xy} - r_{x'y})^2
 
-    :math:`\\text{msd_sim}(x, x') = \\left\\{
-    \\begin{array}{ll}
-    \\frac{1}{\\text{msd}(x, x')} & \mbox{if }\\text{msd}(x, x') \\neq 0 \\\\
-    |Y_{xx'}|& \mbox{else (which is quite arbitrary).}
-    \end{array}
-    \\right.`
+    .. math ::
+        \\text{msd_sim}(x, x') = \\left\\{
+        \\begin{array}{ll}
+        \\frac{1}{\\text{msd}(x, x')} & \mbox{if }\\text{msd}(x, x') \\neq 0 \\\\
+        |Y_{xx'}|& \mbox{else (which is quite arbitrary).}
+        \end{array}
+        \\right.
 
     For details, see third definition on `Wikipedia
-    <https://en.wikipedia.org/wiki/Root-mean-square_deviation#Formula>`_.
+    <https://en.wikipedia.org/wiki/Root-mean-square_deviation#Formula>`__.
 
     """
 
@@ -148,20 +151,22 @@ def compute_mean_diff(n_x, yr):
 
 
 def pearson(n_x, yr):
-    """compute the pearson corr coeff between all pairs of xs.
+    """Compute the pearson correlation coefficient between all pairs of xs.
 
-    Only *common* users (or items) are taken into account:
+    Only **common** users (or items) are taken into account:
 
-    :math:`\\text{pearson_sim}(x, x') = \\frac{
-    \\sum\\limits_{y \in Y_{xx'}} (r_{xy} -  \mu_x) \cdot (r_{x'y} - \mu_{x'})}
-    {\\sqrt{\\sum\\limits_{y \in Y_{xx'}} (r_{xy} -  \mu_x)^2} \cdot
-    \\sqrt{\\sum\\limits_{y \in Y_{xx'}} (r_{x'y} -  \mu_{x'})^2}
-    }`
+    .. math ::
+        \\text{pearson_sim}(x, x') = \\frac{
+        \\sum\\limits_{y \in Y_{xx'}} (r_{xy} -  \mu_x) \cdot (r_{x'y} - \mu_{x'})}
+        {\\sqrt{\\sum\\limits_{y \in Y_{xx'}} (r_{xy} -  \mu_x)^2} \cdot
+        \\sqrt{\\sum\\limits_{y \in Y_{xx'}} (r_{x'y} -  \mu_{x'})^2}
+        }
 
     See details on `Wikipedia
-    <https://en.wikipedia.org/wiki/Pearson_product-moment_correlation_coefficient#For_a_sample>`_.
+    <https://en.wikipedia.org/wiki/Pearson_product-moment_correlation_coefficient#For_a_sample>`__.
 
     Note: if there are no common users/items, similarity will be 0 (and not -1)
+
     """
 
     # number of common ys
@@ -212,18 +217,24 @@ def pearson(n_x, yr):
     return sim
 
 def pearson_baseline(n_x, yr, global_mean, x_biases, y_biases, shrinkage=100):
-    """compute the pearson corr coeff between all pairs of xs. Centering is not
-    performed with means, but with baselines
+    """Compute the pearson correlation coefficient between all pairs of xs.
+    The difference with the classical pearson similarity is that instead of
+    using means to center ratings, we use baselines. Plus, you can shrink
+    estimates to avoid overfitting when only few ratings are available.
 
-    Only *common* users (or items) are taken into account:
+    Only **common** users (or items) are taken into account:
 
-    :math:`\\text{pearson_baseline_sim}(x, x') = \hat{\\rho}_{xx'} = \\frac{
-    \\sum\\limits_{y \in Y_{xx'}} (r_{xy} -  b_{xy}) \cdot (r_{x'y} - b_{x'y})}
-    {\\sqrt{\\sum\\limits_{y \in Y_{xx'}} (r_{xy} -  b_{xy})^2} \cdot
-    \\sqrt{\\sum\\limits_{y \in Y_{xx'}} (r_{x'y} -  b_{x'y})^2}}`
+    .. math::
+        \\text{pearson_baseline_sim}(x, x') = \hat{\\rho}_{xx'} = \\frac{
+        \\sum\\limits_{y \in Y_{xx'}} (r_{xy} -  b_{xy}) \cdot (r_{x'y} - b_{x'y})}
+        {\\sqrt{\\sum\\limits_{y \in Y_{xx'}} (r_{xy} -  b_{xy})^2} \cdot
+        \\sqrt{\\sum\\limits_{y \in Y_{xx'}} (r_{x'y} -  b_{x'y})^2}}
 
-    :math:`\\text{pearson_baseline_shrunk_sim}(x, x') = \\frac{|Y_{x, x'}| - 1}
-    {|Y_{x, x'}| - 1 + \\text{shrinkage}} \\cdot \hat{\\rho}_{xx'}`
+
+
+    .. math::
+        \\text{pearson_baseline_shrunk_sim}(x, x') = \\frac{|Y_{x, x'}| - 1}
+        {|Y_{x, x'}| - 1 + \\text{shrinkage}} \\cdot \hat{\\rho}_{xx'}
 
 
 

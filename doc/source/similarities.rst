@@ -3,7 +3,7 @@
 similarities module
 ===================
 
-.. automodule:: similarities
+.. automodule:: pyrec.similarities
     :members:
     :undoc-members:
     :show-inheritance:

@@ -3,22 +3,21 @@
 prediction_algorithms package
 =============================
 
-.. automodule:: prediction_algorithms
+.. automodule:: pyrec.prediction_algorithms
 
 Basic algorithms
 ----------------
 
-.. autoclass:: prediction_algorithms.random_pred.NormalPredictor
+.. autoclass:: pyrec.prediction_algorithms.random_pred.NormalPredictor
 
-.. _baseline_only:
-.. autoclass:: prediction_algorithms.baseline_only.BaselineOnly
+.. autoclass:: pyrec.prediction_algorithms.baseline_only.BaselineOnly
 
 
 k-NN inspired algorithms
 ------------------------
 
-.. autoclass:: prediction_algorithms.knns.KNNBasic
+.. autoclass:: pyrec.prediction_algorithms.knns.KNNBasic
 
-.. autoclass:: prediction_algorithms.knns.KNNWithMeans
+.. autoclass:: pyrec.prediction_algorithms.knns.KNNWithMeans
 
-.. autoclass:: prediction_algorithms.knns.KNNBaseline
+.. autoclass:: pyrec.prediction_algorithms.knns.KNNBaseline
