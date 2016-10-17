@@ -28,8 +28,15 @@ folds_files = [(train_file % i, test_file % i) for i in (1, 2, 3, 4, 5)]
 data = Dataset.load_from_folds(folds_files, reader=reader)
 """
 
+"""
 data = Dataset.load('ml-100k')
 data.split(n_folds=5)
+"""
+
+data = Dataset.load_from_files(
+       '/home/nico/.pyrec_datasets/ml-100k/ml-100k/u1.base',
+       '/home/nico/.pyrec_datasets/ml-100k/ml-100k/u1.test',
+       reader=Reader('ml-100k'))
 
 evaluate(algo, data, with_dump=True)
 

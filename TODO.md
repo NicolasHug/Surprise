@@ -1,20 +1,17 @@
 TODO
 ====
 
-Short term :
--------------
+* keep on testing
+* keep on documenting and commenting code
+* Matrix facto algo
+* create option in __main__ to clean the .pyrec directory
 
-* handle big datasets (memory error when computing similarities)
-* write some tests (in progress)
+Some random observations
+------------------------
 
-Long term :
-------------
-
-* handle more datasets + user-defined datasets
-* implement matrix factorization algorithms (PF)
-* document every usefull piece of code
-* set up algorithm comparation tools (first draft done)
-* package everything properly for future open sourcing
+* maybe clean a little all the dataset machinery? Plus, are the
+    raw2inner_id_users and raw2inner_id_items worth keeping? May be for
+    analysing tools, I don't know right now.
 
 Done:
 -----

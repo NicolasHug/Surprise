@@ -22,8 +22,8 @@ Trainset = namedtuple('Trainset',
 
 
 # directory where builtin datasets are stored. For now it's in the home
-# directory under the .pyrec_dataset. May be ask user to define it?
-datasets_dir = os.path.expanduser('~') + '/.pyrec_datasets/'
+# directory under the .pyrec_data. May be ask user to define it?
+datasets_dir = os.path.expanduser('~') + '/.pyrec_data/'
 
 # a builtin dataset has
 # - an url (where to download it)
@@ -68,7 +68,7 @@ builtin_datasets = {
 
 class Dataset:
 
-    def __init__(self, reader=None):
+    def __init__(self, reader):
 
         self.reader = reader
         self.r_min = reader.inf + reader.offset

@@ -65,8 +65,6 @@ class AlgoBase:
 
         x0, y0 = (u0, i0) if self.user_based else (i0, u0)
 
-        # TODO: handle prediction details in a better way (possibly avoiding
-        # side effects)
         self.pred_details= {}
 
         try:
@@ -100,13 +98,14 @@ class AlgoBase:
         return predictions
 
     def compute_baselines(self):
-        """Compute users and items biases. See from 5.2.1 of RS handbook"""
+        """Compute users and items biases. See details from 5.2.1 of RS
+           handbook"""
 
-        # if this method has already been called before on the same trainset,
-        # then don't do anything.  it's useful to handle cases where the
-        # similarity metric (pearson_baseline for example) uses baseline
-        # estimates.
-        # I don't quite like the way it's handled but it works...
+        # Firt of, if this method has already been called before on the same
+        # trainset, then just return. Indeed, compute_baselines may be called
+        # more than one time, for example when a similarity metric (e.g.
+        # pearson_baseline) uses baseline estimates.  I don't quite like the
+        # way it's handled but it works...
         if self.x_biases is not None:
             return
 
@@ -131,6 +130,9 @@ class AlgoBase:
         def optimize_als():
             """alternatively optimize y_biases and x_biases. Probably not
             really an als"""
+
+            # This piece of code is largely inspired by that of MyMediaLite:
+            # https://github.com/zenogantner/MyMediaLite/blob/master/src/MyMediaLite/RatingPrediction/UserItemBaseline.cs
 
             reg_u = self.bsl_options.get('reg_u', 15)
             reg_i = self.bsl_options.get('reg_i', 10)
