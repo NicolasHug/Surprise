@@ -36,6 +36,4 @@ class NormalPredictor(AlgoBase):
 
     def estimate(self, *_):
 
-        #TODO: this is actually incorrect.
-        # Argument should be std dev
         return np.random.normal(self.global_mean, self.sigma)
