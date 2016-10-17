@@ -6,14 +6,14 @@ import time
 import argparse
 import os
 
-import stats
-from prediction_algorithms import NormalPredictor
-from prediction_algorithms import BaselineOnly
-from prediction_algorithms import KNNBasic
-from prediction_algorithms import KNNBaseline
-from prediction_algorithms import KNNWithMeans
-from dataset import Dataset
-from evaluate import evaluate
+from . import stats
+from pyrec.prediction_algorithms import NormalPredictor
+from pyrec.prediction_algorithms import BaselineOnly
+from pyrec.prediction_algorithms import KNNBasic
+from pyrec.prediction_algorithms import KNNBaseline
+from pyrec.prediction_algorithms import KNNWithMeans
+from pyrec.dataset import Dataset
+from pyrec.evaluate import evaluate
 
 
 def main():

@@ -6,8 +6,9 @@ import copy
 import pyximport
 import numpy as np
 pyximport.install(setup_args={"include_dirs":np.get_include()})
-import similarities as sims
-from prediction_algorithms import BaselineOnly
+
+import pyrec.similarities as sims
+from pyrec.prediction_algorithms import BaselineOnly
 
 n_x = 7
 yr_global = {
