@@ -37,15 +37,18 @@ def evaluate(algo, data, with_dump=False):
     if with_dump:
         dump['user_based'] = algo.user_based
         dump['algo'] = algo.__class__.__name__
-        dump_algo(dump)
+        dump_evaluation(dump)
 
 
-def dump_algo(dump):
+def dump_evaluation(dump):
 
-    if not os.path.exists('./dumps'):
-        os.makedirs('./dumps')
+    dump_dir = os.path.expanduser('~') + '/.pyrec_data/dumps/'
+
+    if not os.path.exists(dump_dir):
+        os.makedirs(dump_dir)
 
     date = time.strftime('%y%m%d-%Hh%Mm%S', time.localtime())
-    name = ('dumps/' + date + '-' + dump['algo'])
+    name = (dump_dir + date + '-' + dump['algo'])
 
     pickle.dump(dump, open(name, 'wb'))
+    print('File has been dumped to', dump_dir)
