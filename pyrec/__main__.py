@@ -117,7 +117,7 @@ def main():
                                    k=args.k,
                                    shrinkage=args.shrinkage)
 
-    data = Dataset.load(args.dataset)
+    data = Dataset.load_builtin(args.dataset)
     data.split(n_folds=args.cv)
     evaluate(algo, data, args.with_dump)
 

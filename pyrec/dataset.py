@@ -117,7 +117,7 @@ class Dataset:
         self.r_max = reader.sup + reader.offset
 
     @classmethod
-    def load(cls, name='ml-100k'):
+    def load_builtin(cls, name='ml-100k'):
         """TODO"""
 
         try:

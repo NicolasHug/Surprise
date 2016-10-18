@@ -10,7 +10,7 @@ from pyrec import evaluate
 
 # Load the movielens-100k dataset and split it into 5 folds for
 # cross-validation.
-data = Dataset.load('ml-100k')
+data = Dataset.load_builtin('ml-100k')
 data.split(n_folds=5)
 
 # We'll use an algorithm that predicts a random rating.
