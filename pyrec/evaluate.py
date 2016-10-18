@@ -3,7 +3,7 @@ import pickle
 import time
 import os
 
-from . import stats
+from . import accuracy
 
 def evaluate(algo, data, with_dump=False):
 
@@ -21,9 +21,9 @@ def evaluate(algo, data, with_dump=False):
         predictions = algo.test(testset)
 
         # compute needed performance statistics
-        rmses.append(stats.rmse(predictions))
-        maes.append(stats.mae(predictions))
-        fcps.append(stats.fcp(predictions))
+        rmses.append(accuracy.rmse(predictions))
+        maes.append(accuracy.mae(predictions))
+        fcps.append(accuracy.fcp(predictions))
 
         if with_dump:
             fold_dump = dict(trainset=trainset, predictions=predictions)

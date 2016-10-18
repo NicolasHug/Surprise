@@ -1,9 +1,9 @@
-.. _stats:
+.. _accuracy:
 
-stats module
+accuracy module
 ===================
 
-.. automodule:: pyrec.stats
+.. automodule:: pyrec.accuracy
     :members:
     :undoc-members:
     :show-inheritance:

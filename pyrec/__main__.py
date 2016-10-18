@@ -6,7 +6,7 @@ import time
 import argparse
 import os
 
-from . import stats
+from . import accuracy
 from pyrec.prediction_algorithms import NormalPredictor
 from pyrec.prediction_algorithms import BaselineOnly
 from pyrec.prediction_algorithms import KNNBasic

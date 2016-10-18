@@ -1,5 +1,5 @@
 """
-The :mod:`pyrec.stats` module provides with tools for computing accuracy
+The :mod:`pyrec.accuracy` module provides with tools for computing accuracy
 metrics on a set of predictions.
 """
 

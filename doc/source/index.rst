@@ -82,7 +82,7 @@ depending on the context.
 
    prediction_algorithms
    similarities
-   stats
+   accuracy 
 
 
 Indices and tables
