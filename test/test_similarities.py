@@ -1,3 +1,7 @@
+"""
+Module for testing the similarity measures
+"""
+
 import sys
 import os
 import random

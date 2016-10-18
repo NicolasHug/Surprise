@@ -1,3 +1,8 @@
+"""
+The :mod:`pyrec.prediction_algorithms.bases` module defines the base class
+:class:`AlgoBase` from
+which every single prediction algorithm has to inherit.
+"""
 from collections import defaultdict
 from collections import namedtuple
 import numpy as np
@@ -10,14 +15,42 @@ from .. import colors
 
 
 class PredictionImpossible(Exception):
-    """Exception raised when a prediction is impossible"""
+    """Exception raised when a prediction is impossible."""
     pass
 
-Prediction = namedtuple('Prediction', ['uid', 'iid', 'r0', 'est', 'details'])
+# This is a weird way of creating a named tuple but else the documentation
+# would be awful.
+class Prediction(namedtuple('Prediction',
+                            ['uid', 'iid', 'r0', 'est', 'details'])):
+    """A name tuple for storing the results of a prediction.
+
+    Args:
+        uid: The user id.
+        iid: The item id.
+        r0: The true rating :math:`r_{ui}`.
+        est: The estimated rating :math:`\\hat{r}_{ui}`.
+        details (dict): Stores additional details about the prediction that
+            might be useful for later analysis.
+        """
 
 class AlgoBase:
-    """Abstract Algo class where is defined the basic behaviour of a
-    recommender algorithm"""
+    """Abstract class where is defined the basic behaviour of a prediction
+    algorithm.
+
+    Args:
+        user_based(bool, optional): Defines whether the algorithm will be based
+            on users or on items. Technichally, it means that the similarities
+            will be computed between users or between items. Default is True.
+        baseline_options(dict, optional): If the algorithm needs to compute a
+            baseline estimate, the `baseline_options` parameter is used to
+            configure how they are computed. See :ref:`user
+            guide<baseline_estimates>` for usage.
+        sim_options:(dict, optional): If the algorithm uses a similarity
+            measure, the `sim_options` parameter indicates which measure is
+            used and what are its parameters (if any).  See :ref:`user guide
+            <similarity_measures>` for usage.
+
+    """
 
     def __init__(self, user_based=True, **kwargs):
 
@@ -27,10 +60,20 @@ class AlgoBase:
         # if the algo is item based, x denotes an item and y a user
         self.user_based = user_based
 
-        self.bsl_options = kwargs.get('baseline', {})
-        self.sim_options = kwargs.get('sim', {})
+        self.bsl_options = kwargs.get('baseline_options', {})
+        self.sim_options = kwargs.get('sim_options', {})
 
     def train(self, trainset):
+        """Train an algorithm on a given training set.
+
+        This method is called by every derived class as the first basic step
+        for training an algorithm. It basically just initializes some internal
+        structures and compute the global mean of all ratings.
+
+        Args:
+            trainset(:obj:`Trainset <pyrec.dataset.Trainset>`) : The training set.
+        """
+
         self.trainset = trainset
 
         if self.user_based:
@@ -54,13 +97,29 @@ class AlgoBase:
         # global mean of all ratings
         self.global_mean = np.mean([r for (_, _, r) in self.all_ratings])
 
+        # initialise baselines and sim structure
         self.x_biases = self.y_biases = None
         self.sim = None
 
     def predict(self, u0, i0, r0=0, output=False):
-        """Predict the rating for u0 and i0 by calling the estimate method of
-        the algorithm (defined in every sub-class). If prediction is impossible
-        (for any reason), set estimation to the global mean of all ratings.
+        """Compute the rating prediction for user u0 and item i0.
+
+        The `predict` method calls the `estimate` method which is defined in
+        every derived class. If the prediction is impossible (for whatever
+        reason), the prediction is set to the global mean of all ratings. Also,
+        if :math:`\\hat{r}_{ui}` is outside the bounds of the rating scale,
+        (e.g. :math:`\\hat{r}_{ui} = 6` for a rating scale of :math:`[1, 5]`),
+        then it is capped.
+
+        Args:
+            u0: Id of user.
+            i0: Id of item.
+            r0: The true rating :math:`r_{ui}`.
+            output: If True, will print the error :math:`|r_{ui} -
+                \\hat{r}_{ui}|`. Default is False.
+
+        Returns:
+            A :obj:`Prediction` object.
         """
 
         x0, y0 = (u0, i0) if self.user_based else (i0, u0)
@@ -98,8 +157,7 @@ class AlgoBase:
         return predictions
 
     def compute_baselines(self):
-        """Compute users and items biases. See details from 5.2.1 of RS
-           handbook"""
+        """Compute users and items baselines."""
 
         # Firt of, if this method has already been called before on the same
         # trainset, then just return. Indeed, compute_baselines may be called
@@ -111,7 +169,6 @@ class AlgoBase:
 
         def optimize_sgd():
             """optimize biases using sgd"""
-
             lambda4 = self.bsl_options.get('lambda4', 0.02)
             gamma = self.bsl_options.get('gamma', 0.005)
             n_epochs = self.bsl_options.get('n_epochs', 20)
@@ -174,7 +231,7 @@ class AlgoBase:
         return self.global_mean + self.x_biases[x] + self.y_biases[y]
 
     def compute_similarities(self):
-        """construct the simlarity matrix"""
+        """Construct the simlarity matrix using the `sim` attribute."""
 
         print("computing the similarity matrix...")
         construction_func = {'cos' : sims.cosine,

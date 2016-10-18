@@ -7,7 +7,7 @@ import pyrec.accuracy
 
 
 def pred(true_r, est, u0=None):
-    """Just a small tool to build a prediction with appropriate format"""
+    """Just a small tool to build a prediction with appropriate format."""
     return (u0, None, true_r, est, None)
 
 

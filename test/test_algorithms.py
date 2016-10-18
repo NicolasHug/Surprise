@@ -1,3 +1,7 @@
+"""
+Module for testing prediction algorithms. Right now, it just ensures that every
+algorithm can run gracefully without errors.
+"""
 import os
 
 from pyrec.prediction_algorithms import *

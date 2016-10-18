@@ -1,3 +1,7 @@
+"""
+the :mod:`dataset` module defines some tools for managing datasets.
+"""
+
 from collections import defaultdict
 from collections import namedtuple
 import sys
@@ -8,17 +12,40 @@ import itertools
 import random
 
 # TODO: try to give an explicit error messages if reader fails to parse
+# TODO: change name 'rm' ? it used to mean ratings matrix but now it's a
+# dict...
+# TODO: Raw2innerId stuff ? Is it usefull to keep it in the Trainset ?? 
+# TODO: Plus, is it useful at all to make the mapping as we are now using
+# dictionnaries for storing ratings?
 
-Trainset = namedtuple('Trainset',
-                     ['rm',
-                      'ur',
-                      'ir',
-                      'n_users',
-                      'n_items',
-                      'r_min',
-                      'r_max',
-                      'raw2inner_id_users',
-                      'raw2inner_id_items'])
+# Again, weird way of creating a named tuple but else the documentation would
+# be awful.
+class Trainset(namedtuple('Trainset',
+                          ['rm', 'ur', 'ir', 'n_users', 'n_items', 'r_min',
+                           'r_max', 'raw2inner_id_users',
+                           'raw2inner_id_items'])):
+    """A named tuple for containing all useful data that constitutes a training
+    set.
+
+    Args:
+        rm(defaultdict of int): A dictionary containing containing all known ratings.
+            Keys are tuples (user_id, item_id), values are ratings.
+        ur(defaultdict of list): A dictionary containing lists of tuples of the
+            form (item_id, rating). Keys are user ids.
+        ir(defaultdict of list): A dictionary containing lists of tuples of the
+            form (user_id, rating). Keys are item ids.
+        n_users: Total number of users :math:`|U|`.
+        n_items: Total number of items :math:`|I|`.
+        r_min: Minimum value of the rating scale.
+        r_max: Maximum value of the rating scale.
+        raw2inner_id_users(dict): A mapping between raw user id and inner user
+            id. A raw id is an id as written on a dataset file, e.g. for the BX
+            dataset it might be '034545104X'. An inner id is an integer from 0
+            to n_users, which is a lot more convenient to manage.
+        raw2inner_id_items(dict): A mapping between raw item id and inner item
+            id. See previous note on `raw2inner_id_users` parameter.
+
+    """
 
 
 # directory where builtin datasets are stored. For now it's in the home
