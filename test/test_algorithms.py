@@ -17,7 +17,7 @@ algorithms = (NormalPredictor, BaselineOnly, KNNBasic, KNNWithMeans,
 # 10 % of u1.test)
 train_file = os.path.join(os.path.dirname(__file__), './u1_ml100k_train')
 test_file = os.path.join(os.path.dirname(__file__), './u1_ml100k_test')
-data = Dataset.load_from_files(train_file, test_file, Reader('ml-100k'))
+data = Dataset.load_from_folds([(train_file, test_file)], Reader('ml-100k'))
 
 def test_algos():
     for klass in algorithms:

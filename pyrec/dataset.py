@@ -161,12 +161,6 @@ class Dataset:
         return DatasetAutoFolds(ratings_file=file_name, reader=reader)
 
     @classmethod
-    def load_from_files(cls, train_file, test_file, reader):
-
-        folds_files = [(train_file, test_file)]
-        return cls.load_from_folds(folds_files, reader)
-
-    @classmethod
     def load_from_folds(cls, folds_files, reader):
 
         return DatasetUserFolds(folds_files=folds_files, reader=reader)
