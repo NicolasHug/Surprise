@@ -1,5 +1,19 @@
 """
 the :mod:`dataset` module defines some tools for managing datasets.
+
+Users may use both *built-in* and user-defined datasets (see the
+:ref:`getting_started` page for examples). Right now, four built-in datasets
+are available:
+
+* The `movielens-100k <http://grouplens.org/datasets/movielens/>`_ dataset.
+* The `movielens-1m <http://grouplens.org/datasets/movielens/>`_ dataset.
+* The `Jester <http://eigentaste.berkeley.edu/dataset/>`_ dataset 2.
+* The `Book-Crossing <http://www2.informatik.uni-freiburg.de/~cziegler/BX/>`_
+  dataset.
+
+They can all be loaded using the :meth:`Dataset.load` method.
+
+
 """
 
 from collections import defaultdict
@@ -94,7 +108,7 @@ builtin_datasets = {
 
 
 class Dataset:
-    """TODO base class for subclasses"""
+    """Base class for a dataset."""
 
     def __init__(self, reader):
 
@@ -104,6 +118,7 @@ class Dataset:
 
     @classmethod
     def load(cls, name='ml-100k'):
+        """TODO"""
 
         try:
             dataset = builtin_datasets[name]
