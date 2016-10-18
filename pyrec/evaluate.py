@@ -1,3 +1,6 @@
+"""
+the :mod:`evaluate` module defines the :func:`evaluate` function.
+"""
 from statistics import mean
 import pickle
 import time
@@ -5,7 +8,23 @@ import os
 
 from . import accuracy
 
+#TODO: the accuracy measures should be chosen by user
 def evaluate(algo, data, with_dump=False):
+    """Evaluate the performance of the algorithm on given data.
+
+    Depending on the nature of the ``data`` parameter, it may or may not
+    perform cross validation.
+
+    Args:
+        algo(:obj:`AlgoBase <pyrec.prediction_algorithms.bases.AlgoBase>`): The
+            algorithm to evaluate.
+        data(:obj:`Dataset <pyrec.dataset.Dataset>`): The dataset on which to
+            evaluate the algorithm.
+        with_dump(bool): If True, the algorithm parameters and every prediction
+            prediction will be dumped (using `Pickle
+            <https://docs.python.org/3/library/pickle.html>`_) for potential
+            further analysis. Default is False.
+    """
 
     dump = {}
     rmses = []

@@ -94,6 +94,7 @@ builtin_datasets = {
 
 
 class Dataset:
+    """TODO base class for subclasses"""
 
     def __init__(self, reader):
 
@@ -115,25 +116,24 @@ class Dataset:
         if not os.path.isfile(dataset.path):
             answered = False
             while not answered:
-                print('dataset ' + name + ' could not be found. Do you want to '
-                      'download it? [Y/n]')
+                print('Dataset ' + name + ' could not be found. Do you want to '
+                      'download it? [Y/n] ', end='')
                 choice = input().lower()
                 if choice in ['yes', 'y', '', 'omg this is so nice of you!!']:
                     answered = True
                 elif choice in ['no', 'n', 'hell no why would i want that?!']:
                     answered = True
-                    print("Ok then, I'm out")
+                    print("Ok then, I'm out!")
                     sys.exit()
 
-            print('trying to download dataset from ' + dataset.url)
-            print('downloading...')
+            print('Trying to download dataset from ' + dataset.url + '...')
             urlretrieve(dataset.url, 'tmp.zip')
 
             with zipfile.ZipFile('tmp.zip', 'r') as tmp_zip:
                 tmp_zip.extractall(datasets_dir + name)
 
             os.remove('tmp.zip')
-            print('done ! Dataset', name, 'has been saved to',  datasets_dir +
+            print('Done! Dataset', name, 'has been saved to',  datasets_dir +
                   name)
 
         reader = Reader(**dataset.reader_params)
@@ -244,6 +244,7 @@ class Dataset:
 
 
 class DatasetUserFolds(Dataset):
+    """TODO"""
 
     def __init__(self, folds_files=None, reader=None):
 
@@ -259,6 +260,7 @@ class DatasetUserFolds(Dataset):
 
 
 class DatasetAutoFolds(Dataset):
+    """TODO"""
 
     def __init__(self, ratings_file=None, reader=None):
 
@@ -288,6 +290,7 @@ class DatasetAutoFolds(Dataset):
         return k_folds(self.raw_ratings, self.n_folds)
 
     def split(self, n_folds, shuffle=True):
+        """Split da dataset yo"""
 
         self.n_folds = n_folds
         self.shuffle = shuffle

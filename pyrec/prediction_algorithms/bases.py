@@ -42,11 +42,11 @@ class AlgoBase:
             on users or on items. Technichally, it means that the similarities
             will be computed between users or between items. Default is True.
         baseline_options(dict, optional): If the algorithm needs to compute a
-            baseline estimate, the `baseline_options` parameter is used to
+            baseline estimate, the ``baseline_options`` parameter is used to
             configure how they are computed. See :ref:`user
             guide<baseline_estimates>` for usage.
         sim_options:(dict, optional): If the algorithm uses a similarity
-            measure, the `sim_options` parameter indicates which measure is
+            measure, the ``sim_options`` parameter indicates which measure is
             used and what are its parameters (if any).  See :ref:`user guide
             <similarity_measures>` for usage.
 
@@ -104,8 +104,8 @@ class AlgoBase:
     def predict(self, u0, i0, r0=0, output=False):
         """Compute the rating prediction for user u0 and item i0.
 
-        The `predict` method calls the `estimate` method which is defined in
-        every derived class. If the prediction is impossible (for whatever
+        The ``predict`` method calls the ``estimate`` method which is defined
+        in every derived class. If the prediction is impossible (for whatever
         reason), the prediction is set to the global mean of all ratings. Also,
         if :math:`\\hat{r}_{ui}` is outside the bounds of the rating scale,
         (e.g. :math:`\\hat{r}_{ui} = 6` for a rating scale of :math:`[1, 5]`),
