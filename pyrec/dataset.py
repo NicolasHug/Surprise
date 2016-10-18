@@ -251,6 +251,11 @@ class DatasetUserFolds(Dataset):
         Dataset.__init__(self, reader)
         self.folds_files = folds_files
 
+    # TODO: as raw_folds and folds are generator, files are only opened and
+    # read when needed. It might be good idea to check at least if they all
+    # exist at the beggining, so that the program does not crash on the 10th
+    # fold...
+
     @property
     def raw_folds(self):
         for train_file, test_file in self.folds_files:
