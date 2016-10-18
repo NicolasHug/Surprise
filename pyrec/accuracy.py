@@ -17,7 +17,7 @@ def rmse(predictions, output=True):
     Args:
         predictions (:obj:`list` of :obj:`Prediction`): The list on which to
             compute the statistic.
-        output: If True, will print computed value. Default is True.
+        output: If True, will print computed value. Default is ``True``.
 
 
     Returns:
@@ -49,7 +49,7 @@ def mae(predictions, output=True):
     Args:
         predictions (:obj:`list` of :obj:`Prediction`): The list on which to
             compute the statistic.
-        output: If True, will print computed value. Default is True.
+        output: If True, will print computed value. Default is ``True``.
 
 
     Returns:
@@ -79,7 +79,7 @@ def fcp(predictions, output=True):
     Args:
         predictions (:obj:`list` of :obj:`Prediction`): The list on which to
             compute the statistic.
-        output: If True, will print computed value. Default is true.
+        output: If True, will print computed value. Default is ``True``.
 
 
     Returns:

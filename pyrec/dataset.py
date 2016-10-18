@@ -11,7 +11,10 @@ are available:
 * The `Book-Crossing <http://www2.informatik.uni-freiburg.de/~cziegler/BX/>`_
   dataset.
 
-They can all be loaded using the :meth:`Dataset.load` method.
+Built-in datasets can all be loaded (or downloaded if you haven't already)
+using the :meth:`Dataset.load_builtin` method. For each built-in dataset, Pyrec
+also provide predefined :class:`readers <Reader>` which are useful if you want
+to use a custom dataset that has the same format as a built-in one.
 
 
 """
@@ -28,7 +31,7 @@ import random
 # TODO: try to give an explicit error messages if reader fails to parse
 # TODO: change name 'rm' ? it used to mean ratings matrix but now it's a
 # dict...
-# TODO: Raw2innerId stuff ? Is it usefull to keep it in the Trainset ?? 
+# TODO: Raw2innerId stuff ? Is it usefull to keep it in the Trainset ??
 # TODO: Plus, is it useful at all to make the mapping as we are now using
 # dictionnaries for storing ratings?
 
@@ -42,11 +45,11 @@ class Trainset(namedtuple('Trainset',
     set.
 
     Args:
-        rm(defaultdict of int): A dictionary containing containing all known ratings.
+        rm(:obj:`defaultdict` of :obj:`int`): A dictionary containing all known ratings.
             Keys are tuples (user_id, item_id), values are ratings.
-        ur(defaultdict of list): A dictionary containing lists of tuples of the
+        ur(:obj:`defaultdict` of :obj:`list`): A dictionary containing lists of tuples of the
             form (item_id, rating). Keys are user ids.
-        ir(defaultdict of list): A dictionary containing lists of tuples of the
+        ir(:obj:`defaultdict` of :obj:`list`): A dictionary containing lists of tuples of the
             form (user_id, rating). Keys are item ids.
         n_users: Total number of users :math:`|U|`.
         n_items: Total number of items :math:`|I|`.
@@ -108,7 +111,11 @@ builtin_datasets = {
 
 
 class Dataset:
-    """Base class for a dataset."""
+    """Base class for loading datasets.
+
+    Note that you should never instantiate the :class:`Dataset` class directly
+    (same goes for its derived classes), but instead use one of the three
+    available methods for loading datasets."""
 
     def __init__(self, reader):
 
@@ -118,7 +125,25 @@ class Dataset:
 
     @classmethod
     def load_builtin(cls, name='ml-100k'):
-        """TODO"""
+        """Load a built-in dataset.
+
+        If the dataset has not already been loaded, it will be downloaded and
+        saved. You will have to split your dataset using the :meth:`split
+        <DatasetAutoFolds.split>` method. See an example in the :ref:`User
+        Guide <load_builtin_example>`.
+
+
+        Args:
+            name(:obj:`string`): The name of the built-in dataset to load. Accepted
+                values are 'ml-100k', 'ml-1m', 'jester' and 'BX'. Default is
+                'ml-100k'.
+
+        Returns:
+            A :obj:`Dataset` object.
+
+        Raises:
+            ValueError: If the ``name`` parameter is incorrect.
+        """
 
         try:
             dataset = builtin_datasets[name]
@@ -156,12 +181,43 @@ class Dataset:
         return cls.load_from_file(file_name=dataset.path, reader=reader)
 
     @classmethod
-    def load_from_file(cls, file_name, reader):
+    def load_from_file(cls, file_path, reader):
+        """Load a dataset from a (custom) file.
 
-        return DatasetAutoFolds(ratings_file=file_name, reader=reader)
+        Use this if you want to use a custom dataset and all of the ratings are
+        stored in one file. You will have to split your dataset using the
+        :meth:`split <DatasetAutoFolds.split>` method. See an example in the
+        :ref:`User Guide <load_from_file_example>`.
+
+
+        Args:
+            file_path(:obj:`string`): The path to the file containing ratings.
+            reader(:obj:`Reader`): A reader to read the file.
+        """
+
+        return DatasetAutoFolds(ratings_file=file_path, reader=reader)
 
     @classmethod
     def load_from_folds(cls, folds_files, reader):
+        """Load a dataset where folds (for cross validation) are already
+        defined by files.
+
+        The purpose of this method is to cover a common use case where a
+        dataset is already split into predefined folds, such as the
+        movielens-100k dataset which defines files u1.base, u1.test, u2.base,
+        u2.test, etc... It can also be used when you don't want to perform
+        cross validation but still want to specify your training and testing
+        data (which comes down to 1-fold cross validation anyway). See an
+        example in the :ref:`User Guide <load_from_folds_example>`.
+
+
+        Args:
+            folds_files(:obj:`list` of :obj:`tuples`): The list of the folds. A
+                fold is a tuple of the form ``(path_to_train_file,
+                path_to_test_file)``.
+            reader(:obj:`Reader`): A reader to read the files.
+
+        """
 
         return DatasetUserFolds(folds_files=folds_files, reader=reader)
 
@@ -253,7 +309,8 @@ class Dataset:
 
 
 class DatasetUserFolds(Dataset):
-    """TODO"""
+    """A derived class from :class:`Dataset` for which folds (for
+    cross-validation) are predefined."""
 
     def __init__(self, folds_files=None, reader=None):
 
@@ -274,7 +331,8 @@ class DatasetUserFolds(Dataset):
 
 
 class DatasetAutoFolds(Dataset):
-    """TODO"""
+    """A derived class from :class:`Dataset` for which folds (for
+    cross-validation) are not predefined."""
 
     def __init__(self, ratings_file=None, reader=None):
 
@@ -304,13 +362,46 @@ class DatasetAutoFolds(Dataset):
         return k_folds(self.raw_ratings, self.n_folds)
 
     def split(self, n_folds, shuffle=True):
-        """Split da dataset yo"""
+        """Split the dataset into folds for futur cross validation.
+
+        Args:
+            n_folds(:obj:`int`): The number of folds.
+            shuffle(:obj:`bool`): Whether or not to shuffle ratings before
+                splitting. If ``False``, folds will always be the same each
+                time the experiment is run. Default is ``True``.
+        """
 
         self.n_folds = n_folds
         self.shuffle = shuffle
 
 
 class Reader():
+    """A Reader is used by Pyrec to parse a file containing ratings.
+
+    Such a file is assumed to specify only one rating per line, and each line
+    needs to respect the following structure: ::
+
+        user ; item ; rating ; [timestamp]
+
+    where the order of the fields and the seperator (here ';') may be
+    arbitrarily defined (see below).  brackets indicate that the timestamp
+    field is optional.
+
+
+    Args:
+        name(:obj:`string`, optional): If specified, a Reader for one of the built-in
+            datasets is returned and any other parameter is ignored. Accepted
+            values are 'ml-100k', 'ml-1m', 'jester' and 'BX'. Default is
+            ``None``.
+        line_format(:obj:`string`): The fields names, in the order at which they are
+            encountered on a line. Example: ``'item user rating'``.
+        sep(char): the separator between fields. Example : ``';'``.
+        interval(:obj:`tuple`, optional): The rating scale used for every rating.
+            Default is ``(1, 5)``.
+        skip_lines(:obj:`int`, optional): Number of lines to skip at the beggining of
+            the file. Default is ``0``.
+
+    """
 
     def __init__(self, name=None, line_format=None, sep=None, interval=(1, 5),
                  skip_lines=0):

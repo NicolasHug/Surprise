@@ -40,7 +40,8 @@ class AlgoBase:
     Args:
         user_based(bool, optional): Defines whether the algorithm will be based
             on users or on items. Technichally, it means that the similarities
-            will be computed between users or between items. Default is True.
+            will be computed between users or between items. Default is
+            ``True``.
         baseline_options(dict, optional): If the algorithm needs to compute a
             baseline estimate, the ``baseline_options`` parameter is used to
             configure how they are computed. See :ref:`user
@@ -116,7 +117,7 @@ class AlgoBase:
             i0: Id of item.
             r0: The true rating :math:`r_{ui}`.
             output: If True, will print the error :math:`|r_{ui} -
-                \\hat{r}_{ui}|`. Default is False.
+                \\hat{r}_{ui}|`. Default is ``False``.
 
         Returns:
             A :obj:`Prediction` object.

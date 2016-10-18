@@ -5,4 +5,4 @@ dataset module
 
 .. automodule:: pyrec.dataset
     :members:
-    :exclude-members: BuiltinDataset
+    :exclude-members: BuiltinDataset, read_ratings, DatasetUserFolds

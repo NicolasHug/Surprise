@@ -23,7 +23,7 @@ def evaluate(algo, data, with_dump=False):
         with_dump(bool): If True, the algorithm parameters and every prediction
             prediction will be dumped (using `Pickle
             <https://docs.python.org/3/library/pickle.html>`_) for potential
-            further analysis. Default is False.
+            further analysis. Default is ``False``.
     """
 
     dump = {}

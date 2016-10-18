@@ -2,6 +2,7 @@ TODO
 ====
 
 * keep on testing
+* extensively test the reader class, + check that the doc is OK for reader
 * keep on documenting and commenting code
 * Matrix facto algo
 * create option in __main__ to clean the .pyrec directory

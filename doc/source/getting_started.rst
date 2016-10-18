@@ -4,6 +4,11 @@ Getting Started
 ===============
 
 
+Basic usage
+-----------
+
+.. _load_builtin_example:
+
 Pyrec has a set of built-in :ref:`algorithms<prediction_algorithms>` and
 :ref:`datasets <dataset>` for you to play with. In its simplest form, it takes
 about four lines of code to evaluate the performance of an algorithm:
@@ -21,3 +26,8 @@ will store it under the ``.pyrec_data`` folder in your home directory.  The
 splits the dataset into 5 folds and the :func:`evaluate
 <pyrec.evaluate.evaluate>` function runs the cross-validation procedure and
 compute some :mod:`accuracy <pyrec.accuracy>` measures.
+
+
+
+.. _load_from_file_example:
+.. _load_from_folds_example:
