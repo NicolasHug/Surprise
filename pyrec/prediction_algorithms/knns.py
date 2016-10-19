@@ -35,9 +35,9 @@ class KNNBasic(AlgoBase):
 
     """
 
-    def __init__(self, user_based=True, k=40, **kwargs):
+    def __init__(self, sim_options={}, k=40, **kwargs):
 
-        AlgoBase.__init__(self, user_based=user_based, **kwargs)
+        AlgoBase.__init__(self, sim_options=sim_options, **kwargs)
         self.k = k
 
     def train(self, trainset):

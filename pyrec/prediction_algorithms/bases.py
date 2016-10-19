@@ -53,14 +53,15 @@ class AlgoBase:
 
     def __init__(self, **kwargs):
 
-        # whether the algo will be based on users (basically means that the
-        # similarities will be computed between users or between items)
-        # if the algo is user based, x denotes a user and y an item
-        # if the algo is item based, x denotes an item and y a user
-        self.user_based = kwargs.get('user_based', True)
 
         self.bsl_options = kwargs.get('baseline_options', {})
         self.sim_options = kwargs.get('sim_options', {})
+
+        # whether the algo will be based on users (basically means that the
+        # similarities will be computed between users or between items) if the
+        # algo is user based, x denotes a user and y an item if the algo is
+        # item based, x denotes an item and y a user
+        self.user_based = sim_options.get('user_based', True)
 
     def train(self, trainset):
         """Train an algorithm on a given training set.
