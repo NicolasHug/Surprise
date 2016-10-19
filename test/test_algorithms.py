@@ -30,16 +30,16 @@ def test_user_based_param():
 
     algorithms = (KNNBasic, KNNWithMeans, KNNBaseline)
     for klass in algorithms:
-        algo = klass(user_based=True)
+        algo = klass(sim_options={'user_based':True})
         rmses_user_based, _, _ = evaluate(algo, data)
-        algo = klass(user_based=False)
+        algo = klass(sim_options={'user_based':False})
         rmses_item_based, _, _ = evaluate(algo, data)
         assert rmses_user_based != rmses_item_based
 
     algorithms = (BaselineOnly, )
     for klass in algorithms:
-        algo = klass(user_based=True)
+        algo = klass(sim_options={'user_based':True})
         rmses_user_based, _, _ = evaluate(algo, data)
-        algo = klass(user_based=False)
+        algo = klass(sim_options={'user_based':False})
         rmses_item_based, _, _ = evaluate(algo, data)
         assert np.allclose(rmses_user_based, rmses_item_based)

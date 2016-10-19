@@ -218,6 +218,7 @@ def pearson(n_x, yr):
 
 def pearson_baseline(n_x, yr, global_mean, x_biases, y_biases, shrinkage=100):
     """Compute the pearson correlation coefficient between all pairs of xs.
+
     The difference with the classical pearson similarity is that instead of
     using means to center ratings, we use baselines. Plus, you can shrink
     estimates to avoid overfitting when only few ratings are available.

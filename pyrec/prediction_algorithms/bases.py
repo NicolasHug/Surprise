@@ -37,18 +37,11 @@ class AlgoBase:
     """Abstract class where is defined the basic behaviour of a prediction
     algorithm.
 
-    TODO: Moves these into relevent sub classes!
-
     Keyword Args:
         baseline_options(dict, optional): If the algorithm needs to compute a
             baseline estimate, the ``baseline_options`` parameter is used to
             configure how they are computed. See :ref:`user
             guide<baseline_estimates>` for usage.
-        sim_options:(dict, optional): If the algorithm uses a similarity
-            measure, the ``sim_options`` parameter indicates which measure is
-            used and what are its parameters (if any).  See :ref:`user guide
-            <similarity_measures>` for usage.
-
     """
 
     def __init__(self, **kwargs):
@@ -61,7 +54,7 @@ class AlgoBase:
         # similarities will be computed between users or between items) if the
         # algo is user based, x denotes a user and y an item if the algo is
         # item based, x denotes an item and y a user
-        self.user_based = sim_options.get('user_based', True)
+        self.user_based = self.sim_options.get('user_based', True)
 
     def train(self, trainset):
         """Train an algorithm on a given training set.
@@ -112,8 +105,8 @@ class AlgoBase:
         then it is capped.
 
         Args:
-            u0: Id of user.
-            i0: Id of item.
+            u0: (Inner) id of user.
+            i0: (Inner) id of item.
             r0: The true rating :math:`r_{ui}`.
             output: If True, will print the error :math:`|r_{ui} -
                 \\hat{r}_{ui}|`. Default is ``False``.
@@ -231,7 +224,7 @@ class AlgoBase:
         return self.global_mean + self.x_biases[x] + self.y_biases[y]
 
     def compute_similarities(self):
-        """Construct the simlarity matrix using the `sim` attribute."""
+        """Build the simlarity matrix."""
 
         print("computing the similarity matrix...")
         construction_func = {'cos' : sims.cosine,

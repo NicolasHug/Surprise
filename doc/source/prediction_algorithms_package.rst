@@ -5,6 +5,9 @@ prediction_algorithms package
 
 .. automodule:: pyrec.prediction_algorithms
 
+You may want to check the :ref:`notation_standards` before diving into the
+formulas.
+
 Base class
 ----------
 

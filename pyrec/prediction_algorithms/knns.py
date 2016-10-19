@@ -25,17 +25,16 @@ class KNNBasic(AlgoBase):
         \\sum\\limits_{j \in N^k_u(i)} \\text{sim}(i, j) \cdot r_{uj}}
         {\\sum\\limits_{j \in N^k_u(j)} \\text{sim}(i, j)}
 
-    depending on the ``user_based`` parameter.
+    depending on the ``user_based`` field of the ``sim_options`` parameter.
 
     Args:
-        user_based(bool): Defines whether the algorithm will be based on users
-            or on items. If True, it means that the similarities will be
-            computed between users, else between items. Default is ``True``.
-
-
+        k(int): The number of neighbors to take into account for aggregation.
+        sim_options(dict): A dictionary of options for the similarity
+            measure. See the :mod:`similarities <pyrec.similarities>` module
+            documentation for accepted options.
     """
 
-    def __init__(self, sim_options={}, k=40, **kwargs):
+    def __init__(self, k=40, sim_options={}, **kwargs):
 
         AlgoBase.__init__(self, sim_options=sim_options, **kwargs)
         self.k = k
@@ -74,15 +73,34 @@ class KNNWithMeans(AlgoBase):
     """Basic collaborative filtering algorithm, taking into account the mean
     ratings of each user.
 
+    The prediction :math:`\\hat{r}_{ui}` is set as:
+
     .. math::
         \hat{r}_{ui} = \mu_u + \\frac{
         \\sum\\limits_{v \in N^k_i(u)} \\text{sim}(u, v) \cdot (r_{vi} - \mu_v)}
         {\\sum\\limits_{v \in N^k_i(u)} \\text{sim}(u, v)}
+
+    or
+
+    .. math::
+        \hat{r}_{ui} = \mu_i + \\frac{
+        \\sum\\limits_{j \in N^k_u(i)} \\text{sim}(i, j) \cdot (r_{uj} - \mu_j)}
+        {\\sum\\limits_{j \in N^k_u(i)} \\text{sim}(i, j)}
+
+    depending on the ``user_based`` field of the ``sim_options`` parameter.
+
+
+    Args:
+        k(int): The number of neighbors to take into account for aggregation.
+        sim_options(dict): A dictionary of options for the similarity
+            measure. See the :mod:`similarities <pyrec.similarities>` module
+            documentation for accepted options.
     """
 
-    def __init__(self, user_based=True, k=40, **kwargs):
+    def __init__(self, k=40, sim_options={}, **kwargs):
 
-        AlgoBase.__init__(self, user_based=user_based, **kwargs)
+        AlgoBase.__init__(self, sim_options=sim_options, **kwargs)
+
         self.k = k
 
     def train(self, trainset):
@@ -124,18 +142,42 @@ class KNNWithMeans(AlgoBase):
 
 class KNNBaseline(AlgoBase):
     """Basic collaborative filtering algorithm taking into account a
-    *baseline* rating (see paper *Factor in the Neighbors: Scalable and
-    Accurate Collaborative Filtering* by Yehuda Koren for details).
+    *baseline* rating.
+
+
+    The prediction :math:`\\hat{r}_{ui}` is set as:
 
     .. math::
         \hat{r}_{ui} = b_{ui} + \\frac{
         \\sum\\limits_{v \in N^k_i(u)} \\text{sim}(u, v) \cdot (r_{vi} - b_{vi})}
         {\\sum\\limits_{v \in N^k_i(u)} \\text{sim}(u, v)}
+
+    or
+
+
+    .. math::
+        \hat{r}_{ui} = b_{ui} + \\frac{
+        \\sum\\limits_{j \in N^k_u(i)} \\text{sim}(i, j) \cdot (r_{uj} - b_{uj})}
+        {\\sum\\limits_{j \in N^k_u(j)} \\text{sim}(i, j)}
+
+    depending on the ``user_based`` field of the ``sim_options`` parameter.
+
+    For details, see paper `Factor in the Neighbors: Scalable and Accurate
+    Collaborative Filtering
+    <http://courses.ischool.berkeley.edu/i290-dm/s11/SECURE/a1-koren.pdf>`_  by
+    Yehuda Koren.
+
+    Args:
+        k(int): The number of neighbors to take into account for aggregation.
+        sim_options(dict): A dictionary of options for the similarity
+            measure. See the :mod:`similarities <pyrec.similarities>` module
+            documentation for accepted options.
     """
 
-    def __init__(self, user_based=True, k=40, **kwargs):
+    def __init__(self, k=40, sim_options={}, **kwargs):
 
-        AlgoBase.__init__(self, user_based=user_based, **kwargs)
+        AlgoBase.__init__(self, sim_options=sim_options, **kwargs)
+
         self.k = k
 
     def train(self, trainset):
