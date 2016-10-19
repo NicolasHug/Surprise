@@ -37,7 +37,8 @@ class AlgoBase:
     """Abstract class where is defined the basic behaviour of a prediction
     algorithm.
 
-    Args:
+    TODO: Moves these into relevent sub classes!
+    Keyword Args:
         user_based(bool, optional): Defines whether the algorithm will be based
             on users or on items. Technichally, it means that the similarities
             will be computed between users or between items. Default is
@@ -53,13 +54,13 @@ class AlgoBase:
 
     """
 
-    def __init__(self, user_based=True, **kwargs):
+    def __init__(self, **kwargs):
 
         # whether the algo will be based on users (basically means that the
         # similarities will be computed between users or between items)
         # if the algo is user based, x denotes a user and y an item
         # if the algo is item based, x denotes an item and y a user
-        self.user_based = user_based
+        self.user_based = kwargs.get('user_based', True)
 
         self.bsl_options = kwargs.get('baseline_options', {})
         self.sim_options = kwargs.get('sim_options', {})

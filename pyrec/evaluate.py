@@ -24,6 +24,9 @@ def evaluate(algo, data, with_dump=False):
             prediction will be dumped (using `Pickle
             <https://docs.python.org/3/library/pickle.html>`_) for potential
             further analysis. Default is ``False``.
+
+    Return:
+        TODO: TODO
     """
 
     dump = {}
@@ -57,6 +60,8 @@ def evaluate(algo, data, with_dump=False):
         dump['user_based'] = algo.user_based
         dump['algo'] = algo.__class__.__name__
         dump_evaluation(dump)
+
+    return rmses, maes, fcps
 
 
 def dump_evaluation(dump):

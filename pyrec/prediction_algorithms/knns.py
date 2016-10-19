@@ -10,16 +10,27 @@ from .bases import AlgoBase
 
 class KNNBasic(AlgoBase):
     """Basic collaborative filtering algorithm.
+    The prediction :math:`\\hat{r}_{ui}` is set as:
 
     .. math::
         \hat{r}_{ui} = \\frac{
         \\sum\\limits_{v \in N^k_i(u)} \\text{sim}(u, v) \cdot r_{vi}}
         {\\sum\\limits_{v \in N^k_i(u)} \\text{sim}(u, v)}
+
+    or
+
+    .. math::
+        \hat{r}_{ui} = \\frac{
+        \\sum\\limits_{j \in N^k_u(i)} \\text{sim}(i, j) \cdot r_{uj}}
+        {\\sum\\limits_{j \in N^k_u(j)} \\text{sim}(i, j)}
+
+    depending on the ``user_based`` attribute.
+
     """
 
-    def __init__(self, k=40, **kwargs):
+    def __init__(self, user_based=True, k=40, **kwargs):
 
-        AlgoBase.__init__(self, **kwargs)
+        AlgoBase.__init__(self, user_based=user_based, **kwargs)
         self.k = k
 
     def train(self, trainset):
@@ -62,9 +73,9 @@ class KNNWithMeans(AlgoBase):
         {\\sum\\limits_{v \in N^k_i(u)} \\text{sim}(u, v)}
     """
 
-    def __init__(self, k=40, **kwargs):
+    def __init__(self, user_based=True, k=40, **kwargs):
 
-        AlgoBase.__init__(self, **kwargs)
+        AlgoBase.__init__(self, user_based=user_based, **kwargs)
         self.k = k
 
     def train(self, trainset):
@@ -115,9 +126,9 @@ class KNNBaseline(AlgoBase):
         {\\sum\\limits_{v \in N^k_i(u)} \\text{sim}(u, v)}
     """
 
-    def __init__(self, k=40, **kwargs):
+    def __init__(self, user_based=True, k=40, **kwargs):
 
-        AlgoBase.__init__(self, **kwargs)
+        AlgoBase.__init__(self, user_based=user_based, **kwargs)
         self.k = k
 
     def train(self, trainset):
