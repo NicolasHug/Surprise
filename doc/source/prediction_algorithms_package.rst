@@ -8,8 +8,8 @@ prediction_algorithms package
 You may want to check the :ref:`notation_standards` before diving into the
 formulas.
 
-Base class
-----------
+The algorithm base class
+------------------------
 
 .. automodule:: pyrec.prediction_algorithms.bases
     :members:

@@ -3,6 +3,7 @@ The :mod:`pyrec.prediction_algorithms.bases` module defines the base class
 :class:`AlgoBase` from
 which every single prediction algorithm has to inherit.
 """
+
 from collections import defaultdict
 from collections import namedtuple
 import numpy as np
@@ -161,7 +162,8 @@ class AlgoBase:
             return
 
         def optimize_sgd():
-            """optimize biases using sgd"""
+            """Optimize biases using sgd"""
+
             lambda4 = self.bsl_options.get('lambda4', 0.02)
             gamma = self.bsl_options.get('gamma', 0.005)
             n_epochs = self.bsl_options.get('n_epochs', 20)
@@ -178,8 +180,7 @@ class AlgoBase:
                                                 self.y_biases[y])
 
         def optimize_als():
-            """alternatively optimize y_biases and x_biases. Probably not
-            really an als"""
+            """Alternatively optimize y_biases and x_biases."""
 
             # This piece of code is largely inspired by that of MyMediaLite:
             # https://github.com/zenogantner/MyMediaLite/blob/master/src/MyMediaLite/RatingPrediction/UserItemBaseline.cs
