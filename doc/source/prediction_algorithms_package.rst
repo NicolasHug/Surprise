@@ -1,0 +1,42 @@
+.. _prediction_algorithms_package:
+
+prediction_algorithms package
+=============================
+
+.. automodule:: pyrec.prediction_algorithms
+
+Base class
+----------
+
+.. automodule:: pyrec.prediction_algorithms.bases
+    :members:
+    :exclude-members: all_ratings, all_xs, all_ys
+
+Basic algorithms
+----------------
+
+These are basic algorithm that do not do much work but that are still useful
+for comparing accuracies.
+
+.. autoclass:: pyrec.prediction_algorithms.random_pred.NormalPredictor
+    :show-inheritance:
+
+.. autoclass:: pyrec.prediction_algorithms.baseline_only.BaselineOnly
+    :show-inheritance:
+
+
+k-NN inspired algorithms
+------------------------
+
+These are algorithm that are directly derived from a basic nearest neighbors
+approach.
+
+.. autoclass:: pyrec.prediction_algorithms.knns.KNNBasic
+    :show-inheritance:
+
+.. autoclass:: pyrec.prediction_algorithms.knns.KNNWithMeans
+    :show-inheritance:
+
+.. autoclass:: pyrec.prediction_algorithms.knns.KNNBaseline
+    :show-inheritance:
+

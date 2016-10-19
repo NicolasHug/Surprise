@@ -45,12 +45,13 @@ class Trainset(namedtuple('Trainset',
     set.
 
     Args:
-        rm(:obj:`defaultdict` of :obj:`int`): A dictionary containing all known ratings.
+        rm(:obj:`defaultdict` of :obj:`int`): A dictionary containing all known
+            ratings.
             Keys are tuples (user_id, item_id), values are ratings.
-        ur(:obj:`defaultdict` of :obj:`list`): A dictionary containing lists of tuples of the
-            form (item_id, rating). Keys are user ids.
-        ir(:obj:`defaultdict` of :obj:`list`): A dictionary containing lists of tuples of the
-            form (user_id, rating). Keys are item ids.
+        ur(:obj:`defaultdict` of :obj:`list`): A dictionary containing lists of
+            tuples of the form (item_id, rating). Keys are user ids.
+        ir(:obj:`defaultdict` of :obj:`list`): A dictionary containing lists of
+            tuples of the form (user_id, rating). Keys are item ids.
         n_users: Total number of users :math:`|U|`.
         n_items: Total number of items :math:`|I|`.
         r_min: Minimum value of the rating scale.
@@ -61,7 +62,6 @@ class Trainset(namedtuple('Trainset',
             to n_users, which is a lot more convenient to manage.
         raw2inner_id_items(dict): A mapping between raw item id and inner item
             id. See previous note on `raw2inner_id_users` parameter.
-
     """
 
 
@@ -134,9 +134,9 @@ class Dataset:
 
 
         Args:
-            name(:obj:`string`): The name of the built-in dataset to load. Accepted
-                values are 'ml-100k', 'ml-1m', 'jester' and 'BX'. Default is
-                'ml-100k'.
+            name(:obj:`string`): The name of the built-in dataset to load.
+                Accepted values are 'ml-100k', 'ml-1m', 'jester' and 'BX'.
+                Default is 'ml-100k'.
 
         Returns:
             A :obj:`Dataset` object.
@@ -178,7 +178,7 @@ class Dataset:
 
         reader = Reader(**dataset.reader_params)
 
-        return cls.load_from_file(file_name=dataset.path, reader=reader)
+        return cls.load_from_file(file_path=dataset.path, reader=reader)
 
     @classmethod
     def load_from_file(cls, file_path, reader):
@@ -212,8 +212,8 @@ class Dataset:
 
 
         Args:
-            folds_files(:obj:`list` of :obj:`tuples`): The list of the folds. A
-                fold is a tuple of the form ``(path_to_train_file,
+            folds_files(:obj:`iterable` of :obj:`tuples`): The list of the
+                folds. A fold is a tuple of the form ``(path_to_train_file,
                 path_to_test_file)``.
             reader(:obj:`Reader`): A reader to read the files.
 
@@ -319,7 +319,7 @@ class DatasetUserFolds(Dataset):
 
     # TODO: as raw_folds and folds are generator, files are only opened and
     # read when needed. It might be good idea to check at least if they all
-    # exist at the beggining, so that the program does not crash on the 10th
+    # exist at the beginning, so that the program does not crash on the 10th
     # fold...
 
     @property
@@ -364,11 +364,14 @@ class DatasetAutoFolds(Dataset):
     def split(self, n_folds, shuffle=True):
         """Split the dataset into folds for futur cross validation.
 
+        If you forget to call :meth:`split`, the dataset will be automatically
+        shuffled and split for 5-folds cross-validation.
+
         Args:
             n_folds(:obj:`int`): The number of folds.
-            shuffle(:obj:`bool`): Whether or not to shuffle ratings before
-                splitting. If ``False``, folds will always be the same each
-                time the experiment is run. Default is ``True``.
+            shuffle(:obj:`bool`): Whether to shuffle ratings before splitting.
+                If ``False``, folds will always be the same each time the
+                experiment is run. Default is ``True``.
         """
 
         self.n_folds = n_folds
@@ -389,17 +392,17 @@ class Reader():
 
 
     Args:
-        name(:obj:`string`, optional): If specified, a Reader for one of the built-in
-            datasets is returned and any other parameter is ignored. Accepted
-            values are 'ml-100k', 'ml-1m', 'jester' and 'BX'. Default is
-            ``None``.
-        line_format(:obj:`string`): The fields names, in the order at which they are
-            encountered on a line. Example: ``'item user rating'``.
+        name(:obj:`string`, optional): If specified, a Reader for one of the
+            built-in datasets is returned and any other parameter is ignored.
+            Accepted values are 'ml-100k', 'ml-1m', 'jester' and 'BX'. Default
+            is ``None``.
+        line_format(:obj:`string`): The fields names, in the order at which
+            they are encountered on a line. Example: ``'item user rating'``.
         sep(char): the separator between fields. Example : ``';'``.
-        interval(:obj:`tuple`, optional): The rating scale used for every rating.
-            Default is ``(1, 5)``.
-        skip_lines(:obj:`int`, optional): Number of lines to skip at the beggining of
-            the file. Default is ``0``.
+        interval(:obj:`tuple`, optional): The rating scale used for every
+            rating.  Default is ``(1, 5)``.
+        skip_lines(:obj:`int`, optional): Number of lines to skip at the
+            beginning of the file. Default is ``0``.
 
     """
 

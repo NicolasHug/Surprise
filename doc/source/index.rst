@@ -21,6 +21,7 @@ in order for the practitioner to have perfect control over his experiments.
 
    getting_started
    notation_standards
+   prediction_algorithms
    baseline_estimates
    similarity_measures
    faq
@@ -30,7 +31,7 @@ in order for the practitioner to have perfect control over his experiments.
    :maxdepth: 2
    :caption: API Reference
 
-   prediction_algorithms
+   prediction_algorithms_package
    similarities
    accuracy
    dataset

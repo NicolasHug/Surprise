@@ -1,5 +1,5 @@
 """
-The :mod:`pyrec.similarities` module includes tools to compute similarity metrics
+The :mod:`similarities <pyrec.similarities>` module includes tools to compute similarity metrics
 between users or items. Please refer to the :ref:`notation standards
 <notation_standards>`.
 """

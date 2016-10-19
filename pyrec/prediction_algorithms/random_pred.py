@@ -10,14 +10,14 @@ class NormalPredictor(AlgoBase):
     """Algorithm predicting a random rating based on the distribution of the
     training set, which is assumed to be normal:
 
-    :math:`\hat{r}_{ui}` is generated from a normal distribution
+    The prediction :math:`\hat{r}_{ui}` is generated from a normal distribution
     :math:`\mathcal{N}(\hat{\mu}, \hat{\sigma}^2)` where :math:`\hat{\mu}` and
     :math:`\hat{\sigma}` are estimated from the training data using Maximum
     Likelihood Estimation:
 
     .. math::
         \\hat{\mu} &= \\frac{1}{|R_{train}|} \\sum_{r_{ui} \\in R_{train}}
-        r_{ui}\\\\
+        r_{ui}\\\\\\\\\
         \\hat{\sigma} &= \\sqrt{\\sum_{r_{ui} \\in R_{train}}
         \\frac{(r_{ui} - \\hat{\mu})^2}{|R_{train}|}}
     """
