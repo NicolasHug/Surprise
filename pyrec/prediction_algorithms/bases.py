@@ -38,11 +38,8 @@ class AlgoBase:
     algorithm.
 
     TODO: Moves these into relevent sub classes!
+
     Keyword Args:
-        user_based(bool, optional): Defines whether the algorithm will be based
-            on users or on items. Technichally, it means that the similarities
-            will be computed between users or between items. Default is
-            ``True``.
         baseline_options(dict, optional): If the algorithm needs to compute a
             baseline estimate, the ``baseline_options`` parameter is used to
             configure how they are computed. See :ref:`user

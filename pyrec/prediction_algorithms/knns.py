@@ -10,6 +10,7 @@ from .bases import AlgoBase
 
 class KNNBasic(AlgoBase):
     """Basic collaborative filtering algorithm.
+
     The prediction :math:`\\hat{r}_{ui}` is set as:
 
     .. math::
@@ -24,7 +25,13 @@ class KNNBasic(AlgoBase):
         \\sum\\limits_{j \in N^k_u(i)} \\text{sim}(i, j) \cdot r_{uj}}
         {\\sum\\limits_{j \in N^k_u(j)} \\text{sim}(i, j)}
 
-    depending on the ``user_based`` attribute.
+    depending on the ``user_based`` parameter.
+
+    Args:
+        user_based(bool): Defines whether the algorithm will be based on users
+            or on items. If True, it means that the similarities will be
+            computed between users, else between items. Default is ``True``.
+
 
     """
 
