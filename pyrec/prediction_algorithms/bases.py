@@ -48,7 +48,7 @@ class AlgoBase:
     def __init__(self, **kwargs):
 
 
-        self.bsl_options = kwargs.get('baseline_options', {})
+        self.bsl_options = kwargs.get('bsl_options', {})
         self.sim_options = kwargs.get('sim_options', {})
 
         # whether the algo will be based on users (basically means that the
@@ -164,8 +164,8 @@ class AlgoBase:
         def optimize_sgd():
             """Optimize biases using sgd"""
 
-            lambda4 = self.bsl_options.get('lambda4', 0.02)
-            gamma = self.bsl_options.get('gamma', 0.005)
+            reg = self.bsl_options.get('reg', 0.02)
+            lr = self.bsl_options.get('learning_rate', 0.005)
             n_epochs = self.bsl_options.get('n_epochs', 20)
 
             for dummy in range(n_epochs):
@@ -173,11 +173,9 @@ class AlgoBase:
                     err = (r -
                           (self.global_mean + self.x_biases[x] + self.y_biases[y]))
                     # update x_biases
-                    self.x_biases[x] += gamma * (err - lambda4 *
-                                                self.x_biases[x])
+                    self.x_biases[x] += lr * (err - reg * self.x_biases[x])
                     # udapte y_biases
-                    self.y_biases[y] += gamma * (err - lambda4 *
-                                                self.y_biases[y])
+                    self.y_biases[y] += lr * (err - reg * self.y_biases[y])
 
         def optimize_als():
             """Alternatively optimize y_biases and x_biases."""
@@ -214,7 +212,7 @@ class AlgoBase:
         method = self.bsl_options.get('method', 'als')
 
         try:
-            print('Estimating biases...')
+            print('Estimating biases using', method + '...')
             optimize[method]()
         except KeyError:
             raise ValueError('invalid method ' + method + ' for baseline ' +

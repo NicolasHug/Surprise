@@ -43,3 +43,36 @@ def test_user_based_param():
         algo = klass(sim_options={'user_based':False})
         rmses_item_based, _, _ = evaluate(algo, data)
         assert np.allclose(rmses_user_based, rmses_item_based)
+
+def test_baseline_computation():
+    """Ensure that options for baseline estimates are taken into account."""
+
+    bsl_options = {'method' : 'als',
+                   'n_epochs' : 1,
+    }
+    algo = BaselineOnly(bsl_options=bsl_options)
+    rmse_als_n_epochs_5, _, _ = evaluate(algo, data)
+
+    bsl_options = {'method' : 'als',
+                   'n_epochs' : 10,
+    }
+    algo = BaselineOnly(bsl_options=bsl_options)
+    rmse_als_n_epochs_10, _, _ = evaluate(algo, data)
+
+    assert rmse_als_n_epochs_5 != rmse_als_n_epochs_10
+
+    bsl_options = {'method' : 'sgd',
+                   'learning_rate' : .005,
+    }
+    algo = BaselineOnly(bsl_options=bsl_options)
+    rmse_sgd_lr_005, _, _ = evaluate(algo, data)
+
+    assert rmse_als_n_epochs_5 != rmse_sgd_lr_005
+
+    bsl_options = {'method' : 'sgd',
+                   'learning_rate' : .00005,
+    }
+    algo = BaselineOnly(bsl_options=bsl_options)
+    rmse_sgd_lr_00005, _, _ = evaluate(algo, data)
+
+    assert rmse_sgd_lr_005 != rmse_sgd_lr_00005

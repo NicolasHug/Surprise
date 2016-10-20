@@ -14,15 +14,25 @@ similarities are computed.
 Baselines estimates configuration
 ---------------------------------
 
-If you do not want to configure the way baselines are computed, you don't have
-to: the default parameteres will do just fine. However, if you want to have
-better control on these parameters, we will need to get dirty and dive into the
-ugly details of baseline computation.
+.. note::
+  If you do not want to configure the way baselines are computed, you don't
+  have to: the default parameteres will do just fine.
 
-A baseline estimate :math:`b_{ui}` (sometimes called *bias*) is in itself a
-rating prediction. Its goal is to capture the fact that some users are more
-inclined to give good ratings than others, and symmetrically, some items tend
-to be rated leniently:
+Before continuing, you may want to read section 2.1 of `Factor in the
+Neighbors: Scalable and Accurate Collaborative Filtering
+<http://courses.ischool.berkeley.edu/i290-dm/s11/SECURE/a1-koren.pdf>`_ by
+Yehuda Koren to get a good idea of what are baseline estimates.
+
+Baselines can be computed in two different ways:
+
+* Using Stochastic Gradient Descent (SGD).
+* Using Alternating Least Squares (ALS).
+
+You can configure the way baselines are computed using the ``bsl_options``
+parameter passed at the creation of an algorithm. This parameter is a
+dictionary for which the key ``method`` indicates the method to use. Accepted
+values are ``'als'`` (default) and ``'sgd'``. Depending on its value, other
+options may be set.
 
 .. math::
     b_{ui} = \mu + b_u + b_i
@@ -35,10 +45,10 @@ We define an error :math:`e_{ui}` by:
 The way baselines are computed is by minimizing the following cost function:
 
 .. math::
-    \sum_{r_{ui} \in R_{train}} e_{ui}^2 + \lambda_4(b_u^2 + b_i^2)
+    \sum_{r_{ui} \in R_{train}} e_{ui}^2 + \lambda(b_u^2 + b_i^2)
 
-where :math:`\lambda_4` is a regularization parameter. A classical stochastic
-gradient descent (SGD) would perform the following steps ``n_epoch`` times:
+where :math:`\lambda` is a regularization parameter. A classical SGD would
+perform the following steps ``n_epoch`` times:
 
 * :math:`b_u \leftarrow b_u + \gamma (e_{ui} - \lambda_4 b_u)`
 * :math:`b_i \leftarrow b_i + \gamma (e_{ui} - \lambda_4 b_i)`

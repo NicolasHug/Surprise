@@ -57,11 +57,12 @@ Load an entire dataset
     :name: load_custom_dataset.py
     :lines: 14-23
 
-Actually, as the Movielens-100k dataset is builtin, Pyrec provides with a
-proper reader so in this case, we could have just created the reader like 
-this: ::
+.. note::
+    Actually, as the Movielens-100k dataset is builtin, Pyrec provides with a
+    proper reader so in this case, we could have just created the reader like
+    this: ::
 
-    reader = Reader('ml-100k')
+      reader = Reader('ml-100k')
 
 For more details about readers and how to use them, see the :class:`Reader
 class <pyrec.dataset.Reader>` documentation.
