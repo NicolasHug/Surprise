@@ -6,10 +6,20 @@ Prediction algorithms
 Pyrec provides with a bunch of built-in algorithms. You can find the details of
 each of these in the :mod:`pyrec.prediction_algorithms` package documentation.
 
-Some of these algorithms may use *baseline estimates*, some may use a
-similarity metric. We will here review how to configure the way baselines and
-similarities are computed.
+Every algorithm is part of the global Pyrec namespace, so you only need to
+import their names from the Pyrec package, for example: ::
 
+    from pyrec import KNNBasic
+    algo = KNNBasic()
+
+
+Some of these algorithms may use :ref:`baseline estimates
+<baseline_estimates_configuration>`, some may use a :ref:`similarity measure
+<similarity_measures_configuration>`. We will here review how to configure the
+way baselines and similarities are computed.
+
+
+.. _baseline_estimates_configuration:
 
 Baselines estimates configuration
 ---------------------------------
@@ -23,39 +33,103 @@ Neighbors: Scalable and Accurate Collaborative Filtering
 <http://courses.ischool.berkeley.edu/i290-dm/s11/SECURE/a1-koren.pdf>`_ by
 Yehuda Koren to get a good idea of what are baseline estimates.
 
-Baselines can be computed in two different ways:
+Baselines can be estimated in two different ways:
 
 * Using Stochastic Gradient Descent (SGD).
 * Using Alternating Least Squares (ALS).
 
 You can configure the way baselines are computed using the ``bsl_options``
 parameter passed at the creation of an algorithm. This parameter is a
-dictionary for which the key ``method`` indicates the method to use. Accepted
+dictionary for which the key ``'method'`` indicates the method to use. Accepted
 values are ``'als'`` (default) and ``'sgd'``. Depending on its value, other
-options may be set.
+options may be set. For ALS:
 
-.. math::
-    b_{ui} = \mu + b_u + b_i
+- ``'reg_i'``: The regularization parameter for items. Corresponding to
+  :math:`\lambda_2` in the `paper
+  <http://courses.ischool.berkeley.edu/i290-dm/s11/SECURE/a1-koren.pdf>`_.
+  Default is 10.
+- ``'reg_u'``: The regularization parameter for users, orresponding to
+  :math:`\lambda_3` in the `paper
+  <http://courses.ischool.berkeley.edu/i290-dm/s11/SECURE/a1-koren.pdf>`_.
+  Default is 15.
+- ``'n_epochs'``: The number of iteration of the ALS procedure. Default is 10.
+  Note that in the `paper
+  <http://courses.ischool.berkeley.edu/i290-dm/s11/SECURE/a1-koren.pdf>`_, what
+  is described is a **single** iteration ALS process.
 
-We define an error :math:`e_{ui}` by:
+And for SGD:
 
-.. math::
-    e_{ui} = r_{ui} - b_{ui}
+- ``'reg'``: The regularization parameter of the cost function that is
+  optimized, corresponding to :math:`\lambda_1` and then :math:`\lambda_5` in
+  the `paper
+  <http://courses.ischool.berkeley.edu/i290-dm/s11/SECURE/a1-koren.pdf>`_.
+  Default is 0.02.
+- ``'learning_rate'``: The learning rate of SGD, corresponding to
+  :math:`\gamma` in the `paper
+  <http://courses.ischool.berkeley.edu/i290-dm/s11/SECURE/a1-koren.pdf>`_.
+  Default is 0.005.
+- ``'n_epochs'``: The number of iteration of the SGD procedure. Default is 20. 
 
-The way baselines are computed is by minimizing the following cost function:
+.. note::
+  For both procedures (ALS and SGD), user and item biases (:math:`b_u` and
+  :math:`b_i`) are initialized to zero.
 
-.. math::
-    \sum_{r_{ui} \in R_{train}} e_{ui}^2 + \lambda(b_u^2 + b_i^2)
+Usage examples:
 
-where :math:`\lambda` is a regularization parameter. A classical SGD would
-perform the following steps ``n_epoch`` times:
+.. literalinclude:: ../../examples/baselines_conf.py
+    :caption: from file ``examples/baselines_conf.py``
+    :name: baselines_als
+    :lines: 14-21
 
-* :math:`b_u \leftarrow b_u + \gamma (e_{ui} - \lambda_4 b_u)`
-* :math:`b_i \leftarrow b_i + \gamma (e_{ui} - \lambda_4 b_i)`
+.. literalinclude:: ../../examples/baselines_conf.py
+    :caption: from file ``examples/baselines_conf.py``
+    :name: baselines_sgd
+    :lines: 25-30
 
-where :math:`\gamma` is the learning rate and all values of :math:`b_u` and
-:math:`b_i` are first initialized to zero.
+Note that some similarity measures may use baselines, such as the
+:func:`pearson_baseline <pyrec.similarities.pearson_baseline>` similarity.
+Configuration works just the same, whether the baselines are used in the actual
+prediction :math:`\hat{r}_{ui}` or not:
+
+.. literalinclude:: ../../examples/baselines_conf.py
+    :caption: from file ``examples/baselines_conf.py``
+    :name: baselines_als_pearson_sim
+    :lines: 35-41
 
 
-Similarities configuration
---------------------------
+This leads us to similarity measure configuration, which we will review right
+now.
+
+.. _similarity_measures_configuration:
+
+Similarity measure configuration
+--------------------------------
+
+Many algorithms use a similarity measure to estimate a rating. The way they can
+be configured is done in a similar fashion as for baseline ratings: you just
+need to pass a ``sim_options`` argument at the creation of an algorithm. This
+argument is a dictionary with the following (all optional) keys:
+
+- ``'name'``: The name of the similarity to use, as defined in the
+  :mod:`similarities <pyrec.similarities>` module. Default is ``'MSD'``.
+- ``'user_based'``: Whether similarities will be computed between users or
+  between items. This has a **huge** impact on the performance of a prediction
+  algorithm.  Default is ``True``.
+- ``'shrinkage'``: Shrinkage parameter to apply (only relevent for
+  :func:`pearson_baseline <pyrec.similarities.pearson_baseline>` similarity).
+  Default is 100.
+
+Usage examples:
+
+.. literalinclude:: ../../examples/similarity_conf.py
+    :caption: from file ``examples/similarity_conf.py``
+    :name: sim_conf_cos
+    :lines: 15-17
+
+.. literalinclude:: ../../examples/similarity_conf.py
+    :caption: from file ``examples/similarity_conf.py``
+    :name: sim_conf_pearson_baseline
+    :lines: 21-24
+
+.. seealso::
+    The :mod:`similarities <pyrec.similarities>` module.

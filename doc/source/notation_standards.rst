@@ -8,8 +8,8 @@ In the documentation, you will find the following notation:
 * :math:`R` : the set of all ratings.
 * :math:`R_{train}`, :math:`R_{test}` and :math:`\hat{R}` denote the training
   set, the test set, and the set of predicted ratings.
-* :math:`U` : the set of all users.
-* :math:`I` : the set of all items.
+* :math:`U` : the set of all users. :math:`u` and :math:`v` denotes users.
+* :math:`I` : the set of all items. :math:`i` and :math:`j` denotes items.
 * :math:`U_i` : the set of all users that have rated item :math:`i`.
 * :math:`U_{ij}` : the set of all users that have rated both items :math:`i`
   and :math:`j`.

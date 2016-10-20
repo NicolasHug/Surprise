@@ -1,6 +1,7 @@
 """
-the :mod:`evaluate` module defines the :func:`evaluate` function.
+The :mod:`evaluate` module defines the :func:`evaluate` function.
 """
+
 from statistics import mean
 import pickle
 import time
@@ -26,7 +27,7 @@ def evaluate(algo, data, with_dump=False):
             further analysis. Default is ``False``.
 
     Return:
-        TODO: TODO
+        Three lists containing RMSE, MAE and FCP evaluations on each fold.
     """
 
     dump = {}

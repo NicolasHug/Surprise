@@ -41,8 +41,8 @@ class AlgoBase:
     Keyword Args:
         baseline_options(dict, optional): If the algorithm needs to compute a
             baseline estimate, the ``baseline_options`` parameter is used to
-            configure how they are computed. See :ref:`user
-            guide<baseline_estimates>` for usage.
+            configure how they are computed. See
+            :ref:`baseline_estimates_configuration` for usage.
     """
 
     def __init__(self, **kwargs):
@@ -226,7 +226,7 @@ class AlgoBase:
         """Build the simlarity matrix."""
 
         print("computing the similarity matrix...")
-        construction_func = {'cos' : sims.cosine,
+        construction_func = {'cosine' : sims.cosine,
                              'MSD' : sims.msd,
                              'pearson' : sims.pearson,
                              'pearson_baseline' : sims.pearson_baseline}

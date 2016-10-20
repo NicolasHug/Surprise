@@ -36,7 +36,7 @@ custom dataset:
 
 - you can either specify a single file with all the ratings and
   use the :meth:`split<pyrec.dataset.DatasetAutoFolds.split>` method to perform
-  cross validation ;
+  cross-validation ;
 - or if your dataset is already split into predefined folds, you can specify a
   list of files for training and testing.
 

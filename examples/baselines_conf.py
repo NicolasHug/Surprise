@@ -4,6 +4,7 @@ computation.
 """
 
 from pyrec import BaselineOnly
+from pyrec import KNNBasic
 from pyrec import Dataset
 from pyrec import evaluate
 
@@ -31,6 +32,12 @@ algo = BaselineOnly(bsl_options=bsl_options)
 
 evaluate(algo, data)
 
+# Some similarity measures may use baselines. It works just the same.
+print('Using ALS with pearson_baseline similarity')
+bsl_options = {'method' : 'als',
+               'n_epochs' : 20,
+}
+sim_options = {'name' : 'pearson_baseline'}
+algo = KNNBasic(bsl_options=bsl_options, sim_options=sim_options)
 
-# TODO: make example with pearson baseline sim
-
+evaluate(algo, data)

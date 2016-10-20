@@ -30,8 +30,8 @@ class KNNBasic(AlgoBase):
     Args:
         k(int): The number of neighbors to take into account for aggregation.
         sim_options(dict): A dictionary of options for the similarity
-            measure. See the :mod:`similarities <pyrec.similarities>` module
-            documentation for accepted options.
+            measure. See :ref:`similarity_measures_configuration` for accepted
+            options.
     """
 
     def __init__(self, k=40, sim_options={}, **kwargs):
@@ -93,8 +93,8 @@ class KNNWithMeans(AlgoBase):
     Args:
         k(int): The number of neighbors to take into account for aggregation.
         sim_options(dict): A dictionary of options for the similarity
-            measure. See the :mod:`similarities <pyrec.similarities>` module
-            documentation for accepted options.
+            measure. See :ref:`similarity_measures_configuration` for accepted
+            options.
     """
 
     def __init__(self, k=40, sim_options={}, **kwargs):
@@ -170,8 +170,8 @@ class KNNBaseline(AlgoBase):
     Args:
         k(int): The number of neighbors to take into account for aggregation.
         sim_options(dict): A dictionary of options for the similarity
-            measure. See the :mod:`similarities <pyrec.similarities>` module
-            documentation for accepted options.
+            measure. See :ref:`similarity_measures_configuration` for accepted
+            options.
     """
 
     def __init__(self, k=40, sim_options={}, **kwargs):

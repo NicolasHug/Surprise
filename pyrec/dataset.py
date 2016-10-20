@@ -16,7 +16,17 @@ using the :meth:`Dataset.load_builtin` method. For each built-in dataset, Pyrec
 also provide predefined :class:`readers <Reader>` which are useful if you want
 to use a custom dataset that has the same format as a built-in one.
 
+Summary:
 
+.. autosummary::
+    :nosignatures:
+
+    Dataset.load_builtin
+    Dataset.load_from_file
+    Dataset.load_from_folds
+    DatasetAutoFolds.split
+    Reader
+    Trainset
 """
 
 from collections import defaultdict
@@ -199,15 +209,15 @@ class Dataset:
 
     @classmethod
     def load_from_folds(cls, folds_files, reader):
-        """Load a dataset where folds (for cross validation) are already
-        defined by files.
+        """Load a dataset where folds (for cross-validation) are predifined by
+        some files.
 
         The purpose of this method is to cover a common use case where a
         dataset is already split into predefined folds, such as the
         movielens-100k dataset which defines files u1.base, u1.test, u2.base,
         u2.test, etc... It can also be used when you don't want to perform
-        cross validation but still want to specify your training and testing
-        data (which comes down to 1-fold cross validation anyway). See an
+        cross-validation but still want to specify your training and testing
+        data (which comes down to 1-fold cross-validation anyway). See an
         example in the :ref:`User Guide <load_from_folds_example>`.
 
 
@@ -362,7 +372,7 @@ class DatasetAutoFolds(Dataset):
         return k_folds(self.raw_ratings, self.n_folds)
 
     def split(self, n_folds, shuffle=True):
-        """Split the dataset into folds for futur cross validation.
+        """Split the dataset into folds for futur cross-validation.
 
         If you forget to call :meth:`split`, the dataset will be automatically
         shuffled and split for 5-folds cross-validation.
@@ -379,7 +389,7 @@ class DatasetAutoFolds(Dataset):
 
 
 class Reader():
-    """A Reader is used by Pyrec to parse a file containing ratings.
+    """The Reader class is used to parse a file containing ratings.
 
     Such a file is assumed to specify only one rating per line, and each line
     needs to respect the following structure: ::

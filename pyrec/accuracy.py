@@ -1,6 +1,15 @@
 """
 The :mod:`pyrec.accuracy` module provides with tools for computing accuracy
 metrics on a set of predictions.
+
+Available accuracy metrics:
+
+.. autosummary::
+    :nosignatures:
+
+    fcp
+    mae
+    rmse
 """
 
 from statistics import mean
@@ -24,7 +33,7 @@ def rmse(predictions, output=True):
         The Root Mean Squared Error of predictions.
 
     Raises:
-        ValueError: when  `predictions` is empty.
+        ValueError: When  ``predictions`` is empty.
     """
 
     if not predictions:
@@ -56,7 +65,7 @@ def mae(predictions, output=True):
         The Mean Absolute Error of predictions.
 
     Raises:
-        ValueError: when  `predictions` is empty.
+        ValueError: When  ``predictions`` is empty.
     """
 
     if not predictions:
@@ -86,7 +95,7 @@ def fcp(predictions, output=True):
         The Fraction of Concordant Pairs.
 
     Raises:
-        ValueError: when  `predictions` is empty.
+        ValueError: When  ``predictions`` is empty.
     """
 
     if not predictions:

@@ -8,6 +8,7 @@ prediction_algorithms package
 You may want to check the :ref:`notation_standards` before diving into the
 formulas.
 
+
 The algorithm base class
 ------------------------
 
@@ -42,4 +43,3 @@ approach.
 
 .. autoclass:: pyrec.prediction_algorithms.knns.KNNBaseline
     :show-inheritance:
-

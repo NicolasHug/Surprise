@@ -79,7 +79,7 @@ def main():
     parser.add_argument('-cv', type=int,
                         metavar="<number of folds>",
                         default=5,
-                        help='the number of folds for cross validation. ' +
+                        help='the number of folds for cross-validation. ' +
                         'Ignored if train_file and test_file are set. ' +
                         '(default: 5)')
 

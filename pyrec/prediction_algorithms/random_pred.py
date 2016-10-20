@@ -8,7 +8,7 @@ from .bases import AlgoBase
 
 class NormalPredictor(AlgoBase):
     """Algorithm predicting a random rating based on the distribution of the
-    training set, which is assumed to be normal:
+    training set, which is assumed to be normal.
 
     The prediction :math:`\hat{r}_{ui}` is generated from a normal distribution
     :math:`\mathcal{N}(\hat{\mu}, \hat{\sigma}^2)` where :math:`\hat{\mu}` and

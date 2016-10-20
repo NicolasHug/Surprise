@@ -1,7 +1,18 @@
 """
-The :mod:`similarities <pyrec.similarities>` module includes tools to compute similarity metrics
-between users or items. Please refer to the :ref:`notation standards
-<notation_standards>`.
+The :mod:`similarities <pyrec.similarities>` module includes tools to compute
+similarity metrics between users or items. You may need to refer to the
+:ref:`notation_standards` page. See also the
+:ref:`similarity_measures_configuration` section of the User Guide.
+
+Available similarity measures:
+
+.. autosummary::
+    :nosignatures:
+
+    cosine
+    msd
+    pearson
+    pearson_baseline
 """
 
 cimport numpy as np
@@ -9,18 +20,31 @@ import numpy as np
 
 
 def cosine(n_x, yr):
-    """Compute the cosine similarity between all pairs of xs.
+    """Compute the cosine similarity between all pairs of users (or items).
 
-    Only **common** users (or items) are taken into account:
+    Only **common** users (or items) are taken into account. The cosine
+    similarity is defined as:
 
     .. math::
-        \\text{cos_sim}(x, x') = \\frac{
-        \\sum\\limits_{y \in Y_{xx'}} r_{xy} \cdot r_{x'y}}
-        {\\sqrt{\\sum\\limits_{y \in Y_{xx'}} r_{xy}^2} \cdot
-        \\sqrt{\\sum\\limits_{y \in Y_{xx'}} r_{x'y}^2}
+        \\text{cosine_sim}(u, v) = \\frac{
+        \\sum\\limits_{i \in I_{uv}} r_{ui} \cdot r_{vi}}
+        {\\sqrt{\\sum\\limits_{i \in I_{uv}} r_{ui}^2} \cdot
+        \\sqrt{\\sum\\limits_{i \in I_{uv}} r_{vi}^2}
         }
 
-    See details on `Wikipedia
+    or
+
+    .. math::
+        \\text{cosine_sim}(i, j) = \\frac{
+        \\sum\\limits_{u \in U_{ij}} r_{ui} \cdot r_{uj}}
+        {\\sqrt{\\sum\\limits_{u \in U_{ij}} r_{ui}^2} \cdot
+        \\sqrt{\\sum\\limits_{u \in U_{ij}} r_{uj}^2}
+        }
+
+    depending on the ``user_based`` field of ``sim_options`` (see
+    :ref:`similarity_measures_configuration`).
+
+    For details on cosine similarity, see on `Wikipedia
     <https://en.wikipedia.org/wiki/Cosine_similarity#Definition>`__.
     """
 
@@ -63,24 +87,35 @@ def cosine(n_x, yr):
     return sim
 
 def msd(n_x, yr):
-    """Compute the mean squared difference similarity between all pairs of
-    xs.
+    """Compute the Mean Squared Difference similarity between all pairs of
+    users (or items).
 
-    Only **common** users (or items) are taken into account:
-
-    .. math ::
-        \\text{msd}(x, x') = \\frac{1}{|Y_{xx'}|} \cdot
-        \\sum\\limits_{y \in Y_{xx'}} (r_{xy} - r_{x'y})^2
+    Only **common** users (or items) are taken into account. The Mean Squared
+    Difference is defined as:
 
     .. math ::
-        \\text{msd_sim}(x, x') = \\left\\{
-        \\begin{array}{ll}
-        \\frac{1}{\\text{msd}(x, x')} & \mbox{if }\\text{msd}(x, x') \\neq 0 \\\\
-        |Y_{xx'}|& \mbox{else (which is quite arbitrary).}
-        \end{array}
-        \\right.
+        \\text{msd}(u, v) = \\frac{1}{|I_{uv}|} \cdot
+        \\sum\\limits_{i \in I_{uv}} (r_{ui} - r_{vi})^2
 
-    For details, see third definition on `Wikipedia
+    or
+
+    .. math ::
+        \\text{msd}(i, j) = \\frac{1}{|U_{ij}|} \cdot
+        \\sum\\limits_{u \in U_{ij}} (r_{ui} - r_{uj})^2
+
+    depending on the ``user_based`` field of ``sim_options`` (see
+    :ref:`similarity_measures_configuration`).
+
+    The MSD-similarity is then defined as:
+
+    .. math ::
+        \\text{msd_sim}(u, v) &= \\frac{1}{\\text{msd}(u, v) + 1}\\\\
+        \\text{msd_sim}(i, j) &= \\frac{1}{\\text{msd}(i, j) + 1}
+
+    The :math:`+ 1` term is just here to avoid dividing by zero.
+
+
+    For details on MSD, see third definition on `Wikipedia
     <https://en.wikipedia.org/wiki/Root-mean-square_deviation#Formula>`__.
 
     """
@@ -107,18 +142,22 @@ def msd(n_x, yr):
     for xi in range(n_x):
         sim[xi, xi] = 100 # completely arbitrary and useless anyway
         for xj in range(xi + 1, n_x):
-            if sq_diff[xi, xj] == 0: # return number of common ys (arbitrary)
-                sim[xi, xj] = freq[xi, xj]
-            else:  # return inverse of MSD
-                sim[xi, xj] = freq[xi, xj] / sq_diff[xi, xj]
+            if freq[xi, xj] == 0:
+                sim[xi, xj] == 0
+            else:
+                # return inverse of (msd + 1) (+ 1 to avoid dividing by zero)
+                sim[xi, xj] = 1 / (sq_diff[xi, xj] / freq[xi, xj] + 1)
 
             sim[xj, xi] = sim[xi, xj]
 
     return sim
 
 def compute_mean_diff(n_x, yr):
-    """Compute mean_diff, where
+    """Compute the mean difference between all pairs of users (or items).
     mean_diff[x, x'] = mean(r_xy - r_x'y) for common ys
+
+    I leave it here for now but it might be deleted in the future (plus, it's
+    not a similarity but a distance...)
     """
 
     # sum (r_xy - r_x'y - mean_diff(r_x - r_x')) for common ys
@@ -151,21 +190,38 @@ def compute_mean_diff(n_x, yr):
 
 
 def pearson(n_x, yr):
-    """Compute the pearson correlation coefficient between all pairs of xs.
+    """Compute the Pearson correlation coefficient between all pairs of users
+    (or items).
 
-    Only **common** users (or items) are taken into account:
+    Only **common** users (or items) are taken into account. The Pearson
+    correlation coefficient can be seen as a mean-centered cosine similarity,
+    and is defined as:
 
     .. math ::
-        \\text{pearson_sim}(x, x') = \\frac{
-        \\sum\\limits_{y \in Y_{xx'}} (r_{xy} -  \mu_x) \cdot (r_{x'y} - \mu_{x'})}
-        {\\sqrt{\\sum\\limits_{y \in Y_{xx'}} (r_{xy} -  \mu_x)^2} \cdot
-        \\sqrt{\\sum\\limits_{y \in Y_{xx'}} (r_{x'y} -  \mu_{x'})^2}
+        \\text{pearson_sim}(u, v) = \\frac{
+        \\sum\\limits_{i \in I_{uv}} (r_{ui} -  \mu_u) \cdot (r_{vi} - \mu_{v})}
+        {\\sqrt{\\sum\\limits_{i \in I_{uv}} (r_{ui} -  \mu_u)^2} \cdot
+        \\sqrt{\\sum\\limits_{i \in I_{uv}} (r_{vi} -  \mu_{v})^2}
         }
 
-    See details on `Wikipedia
-    <https://en.wikipedia.org/wiki/Pearson_product-moment_correlation_coefficient#For_a_sample>`__.
+    or
 
-    Note: if there are no common users/items, similarity will be 0 (and not -1)
+    .. math ::
+        \\text{pearson_sim}(i, j) = \\frac{
+        \\sum\\limits_{u \in U_{ij}} (r_{ui} -  \mu_i) \cdot (r_{uj} - \mu_{j})}
+        {\\sqrt{\\sum\\limits_{u \in U_{ij}} (r_{ui} -  \mu_i)^2} \cdot
+        \\sqrt{\\sum\\limits_{u \in U_{ij}} (r_{uj} -  \mu_{j})^2}
+        }
+
+    depending on the ``user_based`` field of ``sim_options`` (see
+    :ref:`similarity_measures_configuration`).
+
+
+    Note: if there are no common users or items, similarity will be 0 (and not
+    -1).
+
+    For details on Pearson coefficient, see `Wikipedia
+    <https://en.wikipedia.org/wiki/Pearson_product-moment_correlation_coefficient#For_a_sample>`__.
 
     """
 
@@ -217,31 +273,45 @@ def pearson(n_x, yr):
     return sim
 
 def pearson_baseline(n_x, yr, global_mean, x_biases, y_biases, shrinkage=100):
-    """Compute the pearson correlation coefficient between all pairs of xs.
+    """Compute the (shrunk) Pearson correlation coefficient between all pairs
+    of users (or items) using baselines for centering instead of means.
 
-    The difference with the classical pearson similarity is that instead of
-    using means to center ratings, we use baselines. Plus, you can shrink
-    estimates to avoid overfitting when only few ratings are available.
+    The shrinkage parameter helps to avoid overfitting when only few ratings
+    are available (see :ref:`similarity_measures_configuration`).
 
-    Only **common** users (or items) are taken into account:
-
-    .. math::
-        \\text{pearson_baseline_sim}(x, x') = \hat{\\rho}_{xx'} = \\frac{
-        \\sum\\limits_{y \in Y_{xx'}} (r_{xy} -  b_{xy}) \cdot (r_{x'y} - b_{x'y})}
-        {\\sqrt{\\sum\\limits_{y \in Y_{xx'}} (r_{xy} -  b_{xy})^2} \cdot
-        \\sqrt{\\sum\\limits_{y \in Y_{xx'}} (r_{x'y} -  b_{x'y})^2}}
-
-
+    The Pearson-baseline correlation coefficient is defined as:
 
     .. math::
-        \\text{pearson_baseline_shrunk_sim}(x, x') = \\frac{|Y_{x, x'}| - 1}
-        {|Y_{x, x'}| - 1 + \\text{shrinkage}} \\cdot \hat{\\rho}_{xx'}
+        \\text{pearson_baseline_sim}(u, v) = \hat{\\rho}_{uv} = \\frac{
+        \\sum\\limits_{i \in I_{uv}} (r_{ui} -  b_{ui}) \cdot (r_{vi} - b_{vi})}
+        {\\sqrt{\\sum\\limits_{i \in I_{uv}} (r_{ui} -  b_{ui})^2} \cdot
+        \\sqrt{\\sum\\limits_{i \in I_{uv}} (r_{vi} -  b_{vi})^2}}
+
+    or
+
+    .. math::
+        \\text{pearson_baseline_sim}(i, j) = \hat{\\rho}_{ij} = \\frac{
+        \\sum\\limits_{u \in U_{ij}} (r_{ui} -  b_{ui}) \cdot (r_{uj} - b_{uj})}
+        {\\sqrt{\\sum\\limits_{u \in U_{ij}} (r_{ui} -  b_{ui})^2} \cdot
+        \\sqrt{\\sum\\limits_{u \in U_{ij}} (r_{uj} -  b_{uj})^2}}
+
+    The shrunk Pearson-baseline correlation coefficient is then defined as:
+
+    .. math::
+        \\text{pearson_baseline_shrunk_sim}(u, v) &= \\frac{|I_{uv}| - 1}
+        {|I_{uv}| - 1 + \\text{shrinkage}} \\cdot \hat{\\rho}_{uv}
+
+        \\text{pearson_baseline_shrunk_sim}(i, j) &= \\frac{|U_{ij}| - 1}
+        {|U_{ij}| - 1 + \\text{shrinkage}} \\cdot \hat{\\rho}_{ij}
 
 
+    Obviously, a shrinkage parameter of 0 amounts to no shrinkage at all.
 
-    See details on the *Recommender System Handbook*, section 5.4.1
+    Note: here again, if there are no common users/items, similarity will be 0
+    (and not -1).
 
-    Note: if there are no common users/items, similarity will be 0 (and not -1)
+    Motivations for such a similarity measure can be foun on the *Recommender
+    System Handbook*, section 5.4.1.
     """
 
     # number of common ys
