@@ -227,11 +227,11 @@ class AlgoBase:
 
         print("computing the similarity matrix...")
         construction_func = {'cosine' : sims.cosine,
-                             'MSD' : sims.msd,
+                             'msd' : sims.msd,
                              'pearson' : sims.pearson,
                              'pearson_baseline' : sims.pearson_baseline}
 
-        name = self.sim_options.get('name', 'MSD')
+        name = self.sim_options.get('name', 'msd').lower()
         args = [self.n_x, self.yr]
         if name == 'pearson_baseline':
             shrinkage = self.sim_options.get('shrinkage', 100)
