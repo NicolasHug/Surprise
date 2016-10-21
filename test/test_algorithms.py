@@ -47,32 +47,108 @@ def test_user_based_param():
 def test_baseline_computation():
     """Ensure that options for baseline estimates are taken into account."""
 
+    # method
+    bsl_options = {'method' : 'als'}
+    algo = BaselineOnly(bsl_options=bsl_options)
+    rmse_als, _, _ = evaluate(algo, data)
+
+    bsl_options = {'method' : 'sgd'}
+    algo = BaselineOnly(bsl_options=bsl_options)
+    rmse_sgd , _, _ = evaluate(algo, data)
+
+    assert rmse_als != rmse_sgd
+
+    # als n_epochs
     bsl_options = {'method' : 'als',
                    'n_epochs' : 1,
     }
     algo = BaselineOnly(bsl_options=bsl_options)
-    rmse_als_n_epochs_5, _, _ = evaluate(algo, data)
+    rmse_als_n_epochs_1, _, _ = evaluate(algo, data)
 
     bsl_options = {'method' : 'als',
-                   'n_epochs' : 10,
+                   'n_epochs' : 5,
     }
     algo = BaselineOnly(bsl_options=bsl_options)
-    rmse_als_n_epochs_10, _, _ = evaluate(algo, data)
+    rmse_als_n_epochs_5, _, _ = evaluate(algo, data)
 
-    assert rmse_als_n_epochs_5 != rmse_als_n_epochs_10
+    assert rmse_als_n_epochs_1 != rmse_als_n_epochs_5
+
+    # als reg_u
+    bsl_options = {'method' : 'als',
+                   'reg_u' : 0,
+    }
+    algo = BaselineOnly(bsl_options=bsl_options)
+    rmse_als_regu_0, _, _ = evaluate(algo, data)
+
+    bsl_options = {'method' : 'als',
+                   'reg_u' : 10,
+    }
+    algo = BaselineOnly(bsl_options=bsl_options)
+    rmse_als_regu_10, _, _ = evaluate(algo, data)
+
+    assert rmse_als_regu_0!= rmse_als_regu_10
+
+    # als reg_i
+    bsl_options = {'method' : 'als',
+                   'reg_i' : 0,
+    }
+    algo = BaselineOnly(bsl_options=bsl_options)
+    rmse_als_regi_0, _, _ = evaluate(algo, data)
+
+    bsl_options = {'method' : 'als',
+                   'reg_i' : 10,
+    }
+    algo = BaselineOnly(bsl_options=bsl_options)
+    rmse_als_regi_10, _, _ = evaluate(algo, data)
+
+    assert rmse_als_regi_0!= rmse_als_regi_10
+
+
+    # sgd n_epoch
+    bsl_options = {'method' : 'sgd',
+                   'n_epochs' : 1,
+    }
+    algo = BaselineOnly(bsl_options=bsl_options)
+    rmse_sgd_n_epoch_1, _, _ = evaluate(algo, data)
 
     bsl_options = {'method' : 'sgd',
+                   'n_epochs' : 20,
+    }
+    algo = BaselineOnly(bsl_options=bsl_options)
+    rmse_sgd_n_epoch_5, _, _ = evaluate(algo, data)
+
+    assert rmse_sgd_n_epoch_1 != rmse_sgd_n_epoch_5
+
+    # sgd learning_rate
+    bsl_options = {'method' : 'sgd',
+                   'n_epochs' : 1,
                    'learning_rate' : .005,
     }
     algo = BaselineOnly(bsl_options=bsl_options)
     rmse_sgd_lr_005, _, _ = evaluate(algo, data)
 
-    assert rmse_als_n_epochs_5 != rmse_sgd_lr_005
-
     bsl_options = {'method' : 'sgd',
+                   'n_epochs' : 1,
                    'learning_rate' : .00005,
     }
     algo = BaselineOnly(bsl_options=bsl_options)
     rmse_sgd_lr_00005, _, _ = evaluate(algo, data)
 
     assert rmse_sgd_lr_005 != rmse_sgd_lr_00005
+
+    # sgd reg
+    bsl_options = {'method' : 'sgd',
+                   'n_epochs' : 1,
+                   'reg' : 0.02,
+    }
+    algo = BaselineOnly(bsl_options=bsl_options)
+    rmse_sgd_reg_002, _, _ = evaluate(algo, data)
+
+    bsl_options = {'method' : 'sgd',
+                   'n_epochs' : 1,
+                   'reg' : 1,
+    }
+    algo = BaselineOnly(bsl_options=bsl_options)
+    rmse_sgd_reg_1, _, _ = evaluate(algo, data)
+
+    assert rmse_sgd_reg_002 != rmse_sgd_reg_1
