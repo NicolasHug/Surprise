@@ -244,10 +244,6 @@ class Dataset:
     @property
     def folds(self):
 
-        if not self.raw_folds:
-            raise ValueError("raw_folds is unset. Are you sure your dataset " +
-                             "is split?")
-
         for raw_trainset, raw_testset in self.raw_folds:
             trainset = self.construct_trainset(raw_trainset)
             testset = self.construct_testset(trainset, raw_testset)
@@ -350,14 +346,15 @@ class DatasetAutoFolds(Dataset):
         self.ratings_file = ratings_file
         self.n_folds = 5
         self.shuffle = True
+        self.raw_ratings = self.read_ratings(self.ratings_file)
 
     @property
     def raw_folds(self):
 
-        self.raw_ratings = self.read_ratings(self.ratings_file)
 
         if self.shuffle:
             random.shuffle(self.raw_ratings)
+            self.shuffle = False  # set to false for future calls to raw_folds
 
         def k_folds(seq, n_folds):
             """Inspired from scikit learn KFold method."""
@@ -371,7 +368,7 @@ class DatasetAutoFolds(Dataset):
 
         return k_folds(self.raw_ratings, self.n_folds)
 
-    def split(self, n_folds, shuffle=True):
+    def split(self, n_folds=5, shuffle=True):
         """Split the dataset into folds for futur cross-validation.
 
         If you forget to call :meth:`split`, the dataset will be automatically
