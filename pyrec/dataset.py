@@ -237,7 +237,7 @@ class Dataset:
         file_name"""
 
         with open(file_name, errors='replace') as f:
-            raw_ratings = [self.reader.read_line(line) for line in
+            raw_ratings = [self.reader.parse_line(line) for line in
                            itertools.islice(f, self.reader.skip_lines, None)]
         return raw_ratings
 
@@ -449,7 +449,16 @@ class Reader():
             except ValueError:
                 raise ValueError('Wrong format')
 
-    def read_line(self, line):
+    def parse_line(self, line):
+        '''Parse a line.
+
+        Args:
+            line(str): The line to parse
+
+        Returns:
+            tuple: User id, item id, rating and timestamp. The timestamp is set
+            to ``None`` if it does no exist.
+            '''
 
         line = line.split(self.sep)
         uid, iid, *remaining = (line[i].strip().strip('"') for i in self.indexes)

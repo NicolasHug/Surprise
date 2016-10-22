@@ -24,4 +24,3 @@ def test_gracefull_stop():
     for klass in all_algorithms:
         algo = klass()
         evaluate(algo, data)
-
