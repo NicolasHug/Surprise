@@ -358,6 +358,10 @@ class DatasetAutoFolds(Dataset):
 
         def k_folds(seq, n_folds):
             """Inspired from scikit learn KFold method."""
+
+            if n_folds > len(seq) or n_folds < 2:
+                raise ValueError('Incorrect value for n_folds.')
+
             start, stop = 0, 0
             for fold_i in range(n_folds):
                 start = stop
