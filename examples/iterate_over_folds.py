@@ -22,4 +22,4 @@ for trainset, testset in data.folds:
     predictions = algo.test(testset)
 
     # Compute and print Root Mean Squared Error
-    rmse(predictions, output=True)
+    rmse(predictions, verbose=True)
