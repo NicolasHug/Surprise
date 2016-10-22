@@ -24,9 +24,9 @@ Summary:
     Dataset.load_builtin
     Dataset.load_from_file
     Dataset.load_from_folds
+    Dataset.folds
     DatasetAutoFolds.split
     Reader
-    Trainset
 """
 
 from collections import defaultdict
@@ -243,6 +243,13 @@ class Dataset:
 
     @property
     def folds(self):
+        """Generator over the folds of the Dataset.
+
+        See :ref:`User Guide <iterate_over_folds>` for usage.
+
+        Yields:
+            tuple: trainset and testset of current fold.
+        """
 
         for raw_trainset, raw_testset in self.raw_folds:
             trainset = self.construct_trainset(raw_trainset)

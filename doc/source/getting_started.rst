@@ -55,7 +55,7 @@ Load an entire dataset
 .. literalinclude:: ../../examples/load_custom_dataset.py
     :caption: from file ``examples/load_custom_dataset.py``
     :name: load_custom_dataset.py
-    :lines: 14-23
+    :lines: 11-22
 
 .. note::
     Actually, as the Movielens-100k dataset is builtin, Pyrec provides with a
@@ -75,8 +75,26 @@ Load a dataset with predefined folds
 .. literalinclude:: ../../examples/load_custom_dataset_predefined_folds.py
     :caption: from file ``examples/load_custom_dataset_predefined_folds.py``
     :name: load_custom_dataset_predefined_folds.py
-    :lines: 15-27
+    :lines: 12-26
 
 Of course, nothing prevents you from only loading a single file for training
 and a single file for testing. However, the ``folds_files`` parameter still
 needs to be a ``list`` (or any iterable).
+
+.. _iterate_over_folds:
+
+Advanced usage: manually iterate over folds
+-------------------------------------------
+
+We have so far used the :func:`evaluate <pyrec.evaluate.evaluate>` function
+that does all the hard work for us. If you want to have better control on your
+experiments, you can use the :meth:`folds <pyrec.dataset.Dataset.folds>`
+generator of your dataset, and then the :meth:`train
+<pyrec.prediction_algorithms.bases.AlgoBase.train>` and :meth:`test
+<pyrec.prediction_algorithms.bases.AlgoBase.test>` methods of your algorithm on
+each of the folds:
+
+.. literalinclude:: ../../examples/iterate_over_folds.py
+    :caption: from file ``examples/iterate_over_folds.py``
+    :name: iterate_over_folds.py
+    :lines: 6-25

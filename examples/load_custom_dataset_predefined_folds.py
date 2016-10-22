@@ -8,9 +8,8 @@ if it were not built-in.
 
 from pyrec import BaselineOnly
 from pyrec import Dataset
-from pyrec import Reader
 from pyrec import evaluate
-
+from pyrec import Reader
 
 # path to dataset folder
 files_dir = '/home/nico/.pyrec_data/ml-100k/ml-100k/' # change this

@@ -65,7 +65,9 @@ class AlgoBase:
         structures and compute the global mean of all ratings.
 
         Args:
-            trainset(:obj:`Trainset <pyrec.dataset.Trainset>`) : The training set.
+            trainset(:obj:`Trainset <pyrec.dataset.Trainset>`) : A training
+                set, as returned by the :meth:`folds
+                <pyrec.dataset.Dataset.folds>` method.
         """
 
         self.trainset = trainset
@@ -146,6 +148,14 @@ class AlgoBase:
         return Prediction(u0, i0, r0, est, self.pred_details)
 
     def test(self, testset):
+        """Test the algorithm on given testset.
+
+        Args:
+            testset: A test set, as returned by the :meth:`folds
+                <pyrec.dataset.Dataset.folds>` method.
+
+        Returns:
+            A list of :obj:`prediction` objects."""
 
         predictions = [self.predict(uid, iid, r) for (uid, iid, r) in testset]
         return predictions
