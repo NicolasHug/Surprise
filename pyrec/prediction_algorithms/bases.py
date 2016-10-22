@@ -91,7 +91,7 @@ class AlgoBase:
         # global mean of all ratings
         self.global_mean = np.mean([r for (_, _, r) in self.all_ratings])
 
-        # initialise baselines and sim structure
+        # (re) Initialise baselines and sim structure
         self.x_biases = self.y_biases = None
         self.sim = None
 
