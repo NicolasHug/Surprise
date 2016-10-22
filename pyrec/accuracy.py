@@ -16,7 +16,7 @@ from statistics import mean
 from math import sqrt
 from collections import defaultdict
 
-def rmse(predictions, output=True):
+def rmse(predictions, verbose=True):
     """Compute RMSE (Root Mean Squared Error).
 
     .. math::
@@ -26,7 +26,7 @@ def rmse(predictions, output=True):
     Args:
         predictions (:obj:`list` of :obj:`Prediction`): The list on which to
             compute the statistic.
-        output: If True, will print computed value. Default is ``True``.
+        verbose: If True, will print computed value. Default is ``True``.
 
 
     Returns:
@@ -42,13 +42,13 @@ def rmse(predictions, output=True):
     mse = mean(float((true_r - est)**2) for (_, _, true_r, est, _) in predictions)
     rmse_ = sqrt(mse)
 
-    if output:
+    if verbose:
         print('RMSE: {0:1.4f}'.format(rmse_))
 
     return rmse_
 
 
-def mae(predictions, output=True):
+def mae(predictions, verbose=True):
     """Compute MAE (Mean Absolute Error).
 
     .. math::
@@ -58,7 +58,7 @@ def mae(predictions, output=True):
     Args:
         predictions (:obj:`list` of :obj:`Prediction`): The list on which to
             compute the statistic.
-        output: If True, will print computed value. Default is ``True``.
+        verbose: If True, will print computed value. Default is ``True``.
 
 
     Returns:
@@ -73,12 +73,12 @@ def mae(predictions, output=True):
 
     mae_ = mean(float(abs(true_r - est)) for (_, _, true_r, est, _) in predictions)
 
-    if output:
+    if verbose:
         print('MAE: {0:1.4f}'.format(mae_))
 
     return mae_
 
-def fcp(predictions, output=True):
+def fcp(predictions, verbose=True):
     """Compute FCP (Fraction of Concordant Pairs).
 
     Computed as described in paper `Collaborative Filtering on Ordinal User
@@ -88,7 +88,7 @@ def fcp(predictions, output=True):
     Args:
         predictions (:obj:`list` of :obj:`Prediction`): The list on which to
             compute the statistic.
-        output: If True, will print computed value. Default is ``True``.
+        verbose: If True, will print computed value. Default is ``True``.
 
 
     Returns:
@@ -125,7 +125,7 @@ def fcp(predictions, output=True):
         raise ValueError('cannot compute fcp on this list of prediction. ' +
                          'Does every user have at least two predictions?')
 
-    if output:
+    if verbose:
         print('FCP: {0:1.4f}'.format(fcp))
 
     return fcp

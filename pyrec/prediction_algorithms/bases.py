@@ -97,7 +97,7 @@ class AlgoBase:
         self.x_biases = self.y_biases = None
         self.sim = None
 
-    def predict(self, u0, i0, r0=0, output=False):
+    def predict(self, u0, i0, r0=0, verbose=False):
         """Compute the rating prediction for user u0 and item i0.
 
         The ``predict`` method calls the ``estimate`` method which is defined
@@ -111,7 +111,7 @@ class AlgoBase:
             u0: (Inner) id of user.
             i0: (Inner) id of item.
             r0: The true rating :math:`r_{ui}`.
-            output: If True, will print the error :math:`|r_{ui} -
+            verbose: If True, will print the error :math:`|r_{ui} -
                 \\hat{r}_{ui}|`. Default is ``False``.
 
         Returns:
@@ -137,7 +137,7 @@ class AlgoBase:
         est = min(self.trainset.r_max, est)
         est = max(self.trainset.r_min, est)
 
-        if output:
+        if verbose:
             if impossible:
                 print(colors.FAIL + 'Impossible to predict' + colors.ENDC)
             err = abs(est - r0)
