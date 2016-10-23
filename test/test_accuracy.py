@@ -12,6 +12,7 @@ def pred(true_r, est, u0=None):
 
 
 def test_mae():
+    """Tests for the MAE function."""
 
     predictions = [pred(0, 0), pred(1, 1), pred(2, 2), pred(100, 100)]
     assert pyrec.accuracy.mae(predictions) == 0
@@ -23,6 +24,7 @@ def test_mae():
     assert pyrec.accuracy.mae(predictions) == (abs(2 - 0) + abs(3 - 4)) / 2
 
 def test_rmse():
+    """Tests for the RMSE function."""
 
     predictions = [pred(0, 0), pred(1, 1), pred(2, 2), pred(100, 100)]
     assert pyrec.accuracy.rmse(predictions) == 0
@@ -34,6 +36,7 @@ def test_rmse():
     assert pyrec.accuracy.rmse(predictions) == sqrt(((2 - 0)**2 + (3 - 4)**2) / 2)
 
 def test_fcp():
+    """Tests for the FCP function."""
 
     predictions = [pred(0, 0, u0='u1'), pred(1, 1, u0='u1'), pred(2, 2,
                    u0='u2'), pred(100, 100, u0='u2')]

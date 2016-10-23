@@ -111,8 +111,8 @@ class AlgoBase:
             u0: (Inner) id of user.
             i0: (Inner) id of item.
             r0: The true rating :math:`r_{ui}`.
-            verbose: If True, will print the error :math:`|r_{ui} -
-                \\hat{r}_{ui}|`. Default is ``False``.
+            verbose(bool): Whether to print details of the prediction.  Default
+                is False.
 
         Returns:
             A :obj:`Prediction` object.
@@ -137,27 +137,35 @@ class AlgoBase:
         est = min(self.trainset.r_max, est)
         est = max(self.trainset.r_min, est)
 
+        self.pred_details['was_impossible'] = impossible
+
         if verbose:
-            if impossible:
-                print(colors.FAIL + 'Impossible to predict' + colors.ENDC)
+            print('user:', u0, '| item:', i0, '| r0:', r0,
+                  '| est: {0:1.2f} | '.format(est), end='')
             err = abs(est - r0)
             col = colors.FAIL if err > 1 else colors.OKGREEN
-            print(col + "err = {0:1.2f}".format(err) + colors.ENDC)
+            print(col + "err = {0:1.2f}".format(err) + colors.ENDC, end=' ')
+            if impossible:
+                print(colors.FAIL + 'Impossible to predict' + colors.ENDC)
+            else:
+                print()
 
-        self.pred_details['was_impossible'] = impossible
         return Prediction(u0, i0, r0, est, self.pred_details)
 
-    def test(self, testset):
+    def test(self, testset, verbose=False):
         """Test the algorithm on given testset.
 
         Args:
             testset: A test set, as returned by the :meth:`folds
                 <pyrec.dataset.Dataset.folds>` method.
+            verbose(bool): Whether to print details for each predictions.
+                Default is False.
 
         Returns:
             A list of :obj:`prediction` objects."""
 
-        predictions = [self.predict(uid, iid, r) for (uid, iid, r) in testset]
+        predictions = [self.predict(uid, iid, r, verbose=verbose)
+                       for (uid, iid, r) in testset]
         return predictions
 
     def compute_baselines(self):
