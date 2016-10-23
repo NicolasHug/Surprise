@@ -6,7 +6,7 @@ the evaluate() function.
 from pyrec import BaselineOnly
 from pyrec import Dataset
 from pyrec import evaluate
-from pyrec.accuracy import rmse
+from pyrec import accuracy
 
 # Load the movielens-100k dataset and split it into 3 folds for
 # cross-validation.
@@ -22,4 +22,4 @@ for trainset, testset in data.folds:
     predictions = algo.test(testset)
 
     # Compute and print Root Mean Squared Error
-    rmse(predictions, verbose=True)
+    rmse = accuracy.rmse(predictions, verbose=True)

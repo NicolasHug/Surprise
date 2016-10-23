@@ -90,7 +90,7 @@ builtin_datasets = {
             url='http://files.grouplens.org/datasets/movielens/ml-100k.zip',
             path=datasets_dir + 'ml-100k/ml-100k/u.data',
             reader_params=dict(line_format='user item rating timestamp',
-                               interval=(1, 5),
+                               rating_scale=(1, 5),
                                sep='\t')
         ),
     'ml-1m' :
@@ -98,7 +98,7 @@ builtin_datasets = {
             url='http://files.grouplens.org/datasets/movielens/ml-1m.zip',
             path=datasets_dir + 'ml-1m/ml-1m/ratings.dat',
             reader_params=dict(line_format='user item rating timestamp',
-                               interval=(1, 5),
+                               rating_scale=(1, 5),
                                sep='::')
         ),
     'BX' :  # Note that implicit ratings are discarded
@@ -107,7 +107,7 @@ builtin_datasets = {
             path=datasets_dir + 'BX/BX-Book-Ratings.csv',
             reader_params=dict(line_format='user item rating',
                                sep=';',
-                               interval=(1, 10),
+                               rating_scale=(1, 10),
                                skip_lines=1)
         ),
     'jester' :
@@ -115,7 +115,7 @@ builtin_datasets = {
             url='http://eigentaste.berkeley.edu/dataset/jester_dataset_2.zip',
             path=datasets_dir + 'jester/jester_ratings.dat',
             reader_params=dict(line_format='user item rating',
-                               interval=(-10, 10))
+                               rating_scale=(-10, 10))
         )
 }
 
@@ -311,11 +311,11 @@ class Dataset:
             try:
                 uid = trainset.raw2inner_id_users[ruid]
             except KeyError:
-                uid = 'unknown'
+                uid = 'unknown_' + str(ruid)
             try:
                 iid = trainset.raw2inner_id_items[riid]
             except KeyError:
-                iid = 'unknown'
+                iid = 'unknown_' + str(riid)
             testset.append((uid, iid, r))
 
         return testset
@@ -417,14 +417,14 @@ class Reader():
         line_format(:obj:`string`): The fields names, in the order at which
             they are encountered on a line. Example: ``'item user rating'``.
         sep(char): the separator between fields. Example : ``';'``.
-        interval(:obj:`tuple`, optional): The rating scale used for every
+        rating_scale(:obj:`tuple`, optional): The rating scale used for every
             rating.  Default is ``(1, 5)``.
         skip_lines(:obj:`int`, optional): Number of lines to skip at the
             beginning of the file. Default is ``0``.
 
     """
 
-    def __init__(self, name=None, line_format=None, sep=None, interval=(1, 5),
+    def __init__(self, name=None, line_format=None, sep=None, rating_scale=(1, 5),
                  skip_lines=0):
 
         # TODO: I'm not sure this is a nice way to handle a builtin
@@ -439,7 +439,7 @@ class Reader():
         else:
             self.sep = sep
             self.skip_lines = skip_lines
-            self.inf, self.sup = interval
+            self.inf, self.sup = rating_scale
             self.offset = -self.inf + 1 if self.inf <= 0 else 0
 
             try:

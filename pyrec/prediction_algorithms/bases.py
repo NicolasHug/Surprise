@@ -123,7 +123,7 @@ class AlgoBase:
         self.pred_details= {}
 
         try:
-            if u0 == 'unknown' or i0 == 'unknown':
+            if str(u0).startswith('unknown') or str(i0).startswith('unknown'):
                 raise PredictionImpossible('user or item was not part of ' +
                                            'training set')
 
