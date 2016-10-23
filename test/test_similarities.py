@@ -24,6 +24,7 @@ yr_global = {
             }
 
 def test_cosine_sim():
+    """Tests for the cosine similarity."""
 
     yr = yr_global.copy()
 
@@ -42,7 +43,7 @@ def test_cosine_sim():
             assert sim[xi, xj] == sim[xj, xi]
             assert 0 <= sim[xi, xj] <= 1
 
-    # on common items, users 0 and 1 have the same ratings
+    # on common items, users 0, 1 and 2 have the same ratings
     assert sim[0, 1] == 1
     assert sim[0, 2] == 1
 
@@ -58,8 +59,39 @@ def test_cosine_sim():
     # non constant and different ratings: cosine sim must be in ]0, 1[
     assert 0 < sim[5, 6] < 1
 
+def test_msd_sim():
+    """Tests for the MSD similarity."""
+
+    yr = yr_global.copy()
+
+    # shuffle every rating list, to ensure the order in which ratings are
+    # processed does not matter (it's important because it used to be error
+    # prone when we were using itertools.combinations)
+    for _, ratings in yr.items():
+        random.shuffle(ratings)
+
+    sim = sims.msd(n_x, yr)
+
+    # check symetry and bounds. MSD sim must be in [0, 1]
+    for xi in range(n_x):
+        assert sim[xi, xi] == 1
+        for xj in range(n_x):
+            assert sim[xi, xj] == sim[xj, xi]
+            assert 0 <= sim[xi, xj] <= 1
+
+    # on common items, users 0, 1 and 2 have the same ratings
+    assert sim[0, 1] == 1
+    assert sim[0, 2] == 1
+
+    # msd(3, 4) = mean(1^2, 1^2). sim = (1 / (1 + msd)) = 1 / 2
+    assert sim[3, 4] == .5
+
+    # pairs of users (0, 3)  have no common items
+    assert sim[0, 3] == 0
+    assert sim[0, 4] == 0
 
 def test_pearson_sim():
+    """Tests for the pearson similarity."""
 
     yr = yr_global.copy()
 
@@ -77,7 +109,7 @@ def test_pearson_sim():
             assert sim[xi, xj] == sim[xj, xi]
             assert -1 <= sim[xi, xj] <= 1
 
-    # on common items, users 0, and 1 have the same ratings
+    # on common items, users 0, 1 and 2 have the same ratings
     assert sim[0, 1] == 1
     assert sim[0, 2] == 1
 
@@ -97,4 +129,34 @@ def test_pearson_sim():
     # ratings vary in the same direction
     assert sim[2, 5] > 0
     # ratings vary in inverse direction
-    assert sim[1, 5] < 0
+
+def test_pearson_baseline_sim():
+    """Tests for the pearson_baseline similarity."""
+
+    yr = yr_global.copy()
+
+    # shuffle every rating list, to ensure the order in which ratings are
+    # processed does not matter (it's important because it used to be error
+    # prone when we were using itertools.combinations)
+    for _, ratings in yr.items():
+        random.shuffle(ratings)
+
+    global_mean = 3 # fake
+    x_biases = np.random.normal(0, 1, n_x)  # fake
+    y_biases = np.random.normal(0, 1, 5)  # fake (there are 5 ys)
+    sim = sims.pearson_baseline(n_x, yr, global_mean, x_biases, y_biases)
+    # check symetry and bounds. -1 <= pearson coeff <= 1
+    for xi in range(n_x):
+        assert sim[xi, xi] == 1
+        for xj in range(n_x):
+            assert sim[xi, xj] == sim[xj, xi]
+            assert -1 <= sim[xi, xj] <= 1
+
+    # Note: as sim now depends on baselines, which depend on both users and
+    # items ratings, it's now impossible to test assertions such that 'as users
+    # have the same ratings, they should have a maximal similarity'. Both users
+    # AND common items should have same ratings.
+
+    # pairs of users (0, 3), have no common items
+    assert sim[0, 3] == 0
+    assert sim[0, 4] == 0

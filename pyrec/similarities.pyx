@@ -140,7 +140,7 @@ def msd(n_x, yr):
                 freq[xi, xj] += 1
 
     for xi in range(n_x):
-        sim[xi, xi] = 100 # completely arbitrary and useless anyway
+        sim[xi, xi] = 1 # completely arbitrary and useless anyway
         for xj in range(xi + 1, n_x):
             if freq[xi, xj] == 0:
                 sim[xi, xj] == 0

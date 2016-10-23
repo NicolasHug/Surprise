@@ -1,5 +1,5 @@
 """
-Module for testing the Dataset class
+Module for testing the Dataset class.
 """
 
 import os
