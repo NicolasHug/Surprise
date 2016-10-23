@@ -4,7 +4,7 @@ Module for testing the Reader class.
 
 import pytest
 
-from pyrec import Reader
+from recsys import Reader
 
 def test_parse_line():
     """Test the parse_line method"""

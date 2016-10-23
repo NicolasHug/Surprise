@@ -1,12 +1,12 @@
-.. PyRec documentation master file, created by
+.. RecSys documentation master file, created by
    sphinx-quickstart on Tue Dec 29 20:08:18 2015.
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to PyRec's documentation!
-=================================
+Welcome to RecSys's documentation!
+==================================
 
-PyRec is an open source Python package that provides with tools to build and
+RecSys is an open source Python package that provides with tools to build and
 evaluate the performance of many recommender system prediction algorithms. Its
 goal is to make life easy(-ier) for reseachers and students who want to play
 around with new recommender algorithm ideas.

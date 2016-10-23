@@ -1,8 +1,8 @@
 .. _evaluate:
 
 evaluate module
-===================
+===============
 
-.. automodule:: pyrec.evaluate
+.. automodule:: recsys.evaluate
     :members:
 

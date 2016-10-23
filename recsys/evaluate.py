@@ -18,9 +18,9 @@ def evaluate(algo, data, measures=['rmse', 'mae', 'fcp'], with_dump=False,
     perform cross validation.
 
     Args:
-        algo(:obj:`AlgoBase <pyrec.prediction_algorithms.bases.AlgoBase>`): The
+        algo(:obj:`AlgoBase <recsys.prediction_algorithms.bases.AlgoBase>`): The
             algorithm to evaluate.
-        data(:obj:`Dataset <pyrec.dataset.Dataset>`): The dataset on which to
+        data(:obj:`Dataset <recsys.dataset.Dataset>`): The dataset on which to
             evaluate the algorithm.
         with_dump(bool): If True, the algorithm parameters and every prediction
             prediction will be dumped (using `Pickle
@@ -28,7 +28,7 @@ def evaluate(algo, data, measures=['rmse', 'mae', 'fcp'], with_dump=False,
             further analysis. Default is ``False``.
         measures(list of string): The performance measures to compute. Allowed
             names are function names as defined in the :mod:`accuracy
-            <pyrec.accuracy>` module. Default is ``['rmse', 'mae', 'fcp']``.
+            <recsys.accuracy>` module. Default is ``['rmse', 'mae', 'fcp']``.
         verbose(int): Level of verbosity. If 0, nothing is printed. If 1
             (default), accuracy measures for each folds are printed, with a
             final summary. If 2, every prediction is printed.
@@ -76,7 +76,7 @@ def evaluate(algo, data, measures=['rmse', 'mae', 'fcp'], with_dump=False,
 
 def dump_evaluation(dump):
 
-    dump_dir = os.path.expanduser('~') + '/.pyrec_data/dumps/'
+    dump_dir = os.path.expanduser('~') + '/.recsys_data/dumps/'
 
     if not os.path.exists(dump_dir):
         os.makedirs(dump_dir)

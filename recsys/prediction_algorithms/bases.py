@@ -1,5 +1,5 @@
 """
-The :mod:`pyrec.prediction_algorithms.bases` module defines the base class
+The :mod:`recsys.prediction_algorithms.bases` module defines the base class
 :class:`AlgoBase` from
 which every single prediction algorithm has to inherit.
 """
@@ -65,9 +65,9 @@ class AlgoBase:
         structures and compute the global mean of all ratings.
 
         Args:
-            trainset(:obj:`Trainset <pyrec.dataset.Trainset>`) : A training
+            trainset(:obj:`Trainset <recsys.dataset.Trainset>`) : A training
                 set, as returned by the :meth:`folds
-                <pyrec.dataset.Dataset.folds>` method.
+                <recsys.dataset.Dataset.folds>` method.
         """
 
         self.trainset = trainset
@@ -157,7 +157,7 @@ class AlgoBase:
 
         Args:
             testset: A test set, as returned by the :meth:`folds
-                <pyrec.dataset.Dataset.folds>` method.
+                <recsys.dataset.Dataset.folds>` method.
             verbose(bool): Whether to print details for each predictions.
                 Default is False.
 

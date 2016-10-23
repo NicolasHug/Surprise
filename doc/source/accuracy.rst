@@ -4,7 +4,7 @@ accuracy module
 ===================
 
 
-.. automodule:: pyrec.accuracy
+.. automodule:: recsys.accuracy
     :members:
     :undoc-members:
     :show-inheritance:

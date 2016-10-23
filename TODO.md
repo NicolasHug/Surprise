@@ -4,7 +4,7 @@ TODO
 * keep on testing
 * keep on documenting and commenting code
 * Matrix facto algo
-* create option in __main__ to clean the .pyrec directory
+* create option in __main__ to clean the .recsys directory
 
 Some random observations
 ------------------------

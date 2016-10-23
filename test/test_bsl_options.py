@@ -2,10 +2,10 @@
 
 import os
 
-from pyrec.prediction_algorithms import *
-from pyrec.dataset import Dataset
-from pyrec.dataset import Reader
-from pyrec.evaluate import evaluate
+from recsys.prediction_algorithms import *
+from recsys.dataset import Dataset
+from recsys.dataset import Reader
+from recsys.evaluate import evaluate
 
 
 # the test and train files are from the ml-100k dataset (10% of u1.base and

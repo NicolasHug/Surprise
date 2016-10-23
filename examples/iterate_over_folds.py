@@ -3,10 +3,10 @@ This module descibes how to manually train and test an algorithm without using
 the evaluate() function.
 """
 
-from pyrec import BaselineOnly
-from pyrec import Dataset
-from pyrec import evaluate
-from pyrec import accuracy
+from recsys import BaselineOnly
+from recsys import Dataset
+from recsys import evaluate
+from recsys import accuracy
 
 # Load the movielens-100k dataset and split it into 3 folds for
 # cross-validation.

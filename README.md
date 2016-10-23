@@ -1,7 +1,7 @@
-Pyrec
-=====
+RecSys
+======
 
-PyRec is an open source Python package that provides with tools to build and
+RecSys is an open source Python package that provides with tools to build and
 evaluate the performance of many recommender system prediction algorithms. Its
 goal is to make life easy(-ier) for reseachers and students who want to play
 around with new recommender algorithm ideas.
@@ -14,7 +14,7 @@ in order for the practitioner to have perfect control over his experiments.
 Dependecies
 -----------
 
-To run pyrec, you'll need:
+To run RecSys, you'll need:
 
 - Python 3
 - Numpy

@@ -1,11 +1,11 @@
 """
-This module descibes the most basic usage of Pyrec: you define a prediction
+This module descibes the most basic usage of RecSys: you define a prediction
 algorithm, (down)load a dataset and evaluate the performances of the algorithm.
 """
 
-from pyrec import NormalPredictor
-from pyrec import Dataset
-from pyrec import evaluate
+from recsys import NormalPredictor
+from recsys import Dataset
+from recsys import evaluate
 
 
 # Load the movielens-100k dataset and split it into 3 folds for

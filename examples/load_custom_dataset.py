@@ -5,13 +5,13 @@ As a custom dataset we will actually use the movielens-100k dataset, but act as
 if it were not built-in.
 """
 
-from pyrec import BaselineOnly
-from pyrec import Dataset
-from pyrec import evaluate
-from pyrec import Reader
+from recsys import BaselineOnly
+from recsys import Dataset
+from recsys import evaluate
+from recsys import Reader
 
 # path to dataset file
-file_path = '/home/nico/.pyrec_data/ml-100k/ml-100k/u.data' # change this
+file_path = '/home/nico/.recsys_data/ml-100k/ml-100k/u.data' # change this
 
 # As we're loading a custom dataset, we need to define a reader. In the
 # movielens-100k dataset, each line has the following format:

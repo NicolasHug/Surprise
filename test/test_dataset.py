@@ -5,8 +5,8 @@ Module for testing the Dataset class.
 import os
 import pytest
 
-from pyrec import Dataset
-from pyrec import Reader
+from recsys import Dataset
+from recsys import Reader
 
 
 reader = Reader(line_format='user item rating', sep=' ', skip_lines=3,

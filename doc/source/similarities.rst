@@ -3,7 +3,7 @@
 similarities module
 ===================
 
-.. automodule:: pyrec.similarities
+.. automodule:: recsys.similarities
     :members:
     :exclude-members: compute_mean_diff
     :show-inheritance:

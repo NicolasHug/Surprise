@@ -12,9 +12,9 @@ are available:
   dataset.
 
 Built-in datasets can all be loaded (or downloaded if you haven't already)
-using the :meth:`Dataset.load_builtin` method. For each built-in dataset, Pyrec
-also provide predefined :class:`readers <Reader>` which are useful if you want
-to use a custom dataset that has the same format as a built-in one.
+using the :meth:`Dataset.load_builtin` method. For each built-in dataset,
+Recsys also provide predefined :class:`readers <Reader>` which are useful if
+you want to use a custom dataset that has the same format as a built-in one.
 
 Summary:
 
@@ -75,8 +75,8 @@ class Trainset(namedtuple('Trainset',
 
 
 # directory where builtin datasets are stored. For now it's in the home
-# directory under the .pyrec_data. May be ask user to define it?
-datasets_dir = os.path.expanduser('~') + '/.pyrec_data/'
+# directory under the .recsys_data. May be ask user to define it?
+datasets_dir = os.path.expanduser('~') + '/.recsys_data/'
 
 # a builtin dataset has
 # - an url (where to download it)

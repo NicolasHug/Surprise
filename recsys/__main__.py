@@ -7,13 +7,13 @@ import argparse
 import os
 
 from . import accuracy
-from pyrec.prediction_algorithms import NormalPredictor
-from pyrec.prediction_algorithms import BaselineOnly
-from pyrec.prediction_algorithms import KNNBasic
-from pyrec.prediction_algorithms import KNNBaseline
-from pyrec.prediction_algorithms import KNNWithMeans
-from pyrec.dataset import Dataset
-from pyrec.evaluate import evaluate
+from recsys.prediction_algorithms import NormalPredictor
+from recsys.prediction_algorithms import BaselineOnly
+from recsys.prediction_algorithms import KNNBasic
+from recsys.prediction_algorithms import KNNBaseline
+from recsys.prediction_algorithms import KNNWithMeans
+from recsys.dataset import Dataset
+from recsys.evaluate import evaluate
 
 
 def main():

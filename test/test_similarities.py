@@ -11,8 +11,8 @@ import pyximport
 import numpy as np
 pyximport.install(setup_args={"include_dirs":np.get_include()})
 
-import pyrec.similarities as sims
-from pyrec.prediction_algorithms import BaselineOnly
+import recsys.similarities as sims
+from recsys.prediction_algorithms import BaselineOnly
 
 n_x = 7
 yr_global = {

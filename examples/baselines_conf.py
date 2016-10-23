@@ -3,10 +3,10 @@ This module gives an example of how to configure baseline estimates
 computation.
 """
 
-from pyrec import BaselineOnly
-from pyrec import KNNBasic
-from pyrec import Dataset
-from pyrec import evaluate
+from recsys import BaselineOnly
+from recsys import KNNBasic
+from recsys import Dataset
+from recsys import evaluate
 
 
 # Load the movielens-100k dataset.

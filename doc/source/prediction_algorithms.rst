@@ -3,13 +3,14 @@
 Prediction algorithms
 =====================
 
-Pyrec provides with a bunch of built-in algorithms. You can find the details of
-each of these in the :mod:`pyrec.prediction_algorithms` package documentation.
+RecSys provides with a bunch of built-in algorithms. You can find the details
+of each of these in the :mod:`recsys.prediction_algorithms` package
+documentation.
 
-Every algorithm is part of the global Pyrec namespace, so you only need to
-import their names from the Pyrec package, for example: ::
+Every algorithm is part of the global RecSys namespace, so you only need to
+import their names from the RecSys package, for example: ::
 
-    from pyrec import KNNBasic
+    from recsys import KNNBasic
     algo = KNNBasic()
 
 
@@ -87,7 +88,7 @@ Usage examples:
     :lines: 25-30
 
 Note that some similarity measures may use baselines, such as the
-:func:`pearson_baseline <pyrec.similarities.pearson_baseline>` similarity.
+:func:`pearson_baseline <recsys.similarities.pearson_baseline>` similarity.
 Configuration works just the same, whether the baselines are used in the actual
 prediction :math:`\hat{r}_{ui}` or not:
 
@@ -111,12 +112,12 @@ need to pass a ``sim_options`` argument at the creation of an algorithm. This
 argument is a dictionary with the following (all optional) keys:
 
 - ``'name'``: The name of the similarity to use, as defined in the
-  :mod:`similarities <pyrec.similarities>` module. Default is ``'MSD'``.
+  :mod:`similarities <recsys.similarities>` module. Default is ``'MSD'``.
 - ``'user_based'``: Whether similarities will be computed between users or
   between items. This has a **huge** impact on the performance of a prediction
   algorithm.  Default is ``True``.
 - ``'shrinkage'``: Shrinkage parameter to apply (only relevent for
-  :func:`pearson_baseline <pyrec.similarities.pearson_baseline>` similarity).
+  :func:`pearson_baseline <recsys.similarities.pearson_baseline>` similarity).
   Default is 100.
 
 Usage examples:
@@ -132,4 +133,4 @@ Usage examples:
     :lines: 21-24
 
 .. seealso::
-    The :mod:`similarities <pyrec.similarities>` module.
+    The :mod:`similarities <recsys.similarities>` module.
