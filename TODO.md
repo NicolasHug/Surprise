@@ -1,6 +1,12 @@
 TODO
 ====
 
+* set up travis
+* improve test coverage
+* add the cool stickers on the readme just like scikit learn
+* write the custom algorithm tutorial (+ custom sim)
+* get less restrictive requirements.txt
+* sort out this warning issue coming from cython
 * Matrix facto algo
 * create option in __main__ to clean the .recsys directory. Actually, the
   __main__ module should be entirely reviewed.
