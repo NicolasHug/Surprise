@@ -3,14 +3,15 @@ The :mod:`evaluate` module defines the :func:`evaluate` function.
 """
 
 from statistics import mean
+from collections import defaultdict
 import pickle
 import time
 import os
 
 from . import accuracy
 
-#TODO: the accuracy measures should be chosen by user
-def evaluate(algo, data, with_dump=False, verbose=1):
+def evaluate(algo, data, measures=['rmse', 'mae', 'fcp'], with_dump=False,
+             verbose=1):
     """Evaluate the performance of the algorithm on given data.
 
     Depending on the nature of the ``data`` parameter, it may or may not
@@ -25,18 +26,20 @@ def evaluate(algo, data, with_dump=False, verbose=1):
             prediction will be dumped (using `Pickle
             <https://docs.python.org/3/library/pickle.html>`_) for potential
             further analysis. Default is ``False``.
+        measures(list of string): The performance measures to compute. Allowed
+            names are function names as defined in the :mod:`accuracy
+            <pyrec.accuracy>` module. Default is ``['rmse', 'mae', 'fcp']``.
         verbose(int): Level of verbosity. If 0, nothing is printed. If 1
             (default), accuracy measures for each folds are printed, with a
             final summary. If 2, every prediction is printed.
 
-    Return:
-        Three lists containing RMSE, MAE and FCP evaluations on each fold.
+    Returns:
+        A dictionary containing measures as keys and lists as values. Each list
+        contains on entry per fold.
     """
 
     dump = {}
-    rmses = []
-    maes = []
-    fcps = []
+    performances = defaultdict(list)
 
     for fold_i, (trainset, testset) in enumerate(data.folds):
 
@@ -49,9 +52,9 @@ def evaluate(algo, data, with_dump=False, verbose=1):
         predictions = algo.test(testset, verbose=(verbose==2))
 
         # compute needed performance statistics
-        rmses.append(accuracy.rmse(predictions, verbose=verbose))
-        maes.append(accuracy.mae(predictions, verbose=verbose))
-        fcps.append(accuracy.fcp(predictions, verbose=verbose))
+        for measure in measures:
+            f = getattr(accuracy, measure.lower())
+            performances[measure].append(f(predictions, verbose=verbose))
 
         if with_dump:
             fold_dump = dict(trainset=trainset, predictions=predictions)
@@ -59,16 +62,16 @@ def evaluate(algo, data, with_dump=False, verbose=1):
 
     if verbose:
         print('-' * 20)
-        print('mean RMSE: {0:1.4f}'.format(mean(rmses)))
-        print('mean MAE : {0:1.4f}'.format(mean(maes)))
-        print('mean FCP : {0:1.4f}'.format(mean(fcps)))
+        for measure in measures:
+            print('mean', measure.upper(),
+                  ': {0:1.4f}'.format(mean(performances[measure])))
 
     if with_dump:
         dump['user_based'] = algo.user_based
         dump['algo'] = algo.__class__.__name__
         dump_evaluation(dump)
 
-    return rmses, maes, fcps
+    return performances
 
 
 def dump_evaluation(dump):

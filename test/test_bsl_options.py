@@ -19,11 +19,11 @@ def test_method_field():
 
     bsl_options = {'method' : 'als'}
     algo = BaselineOnly(bsl_options=bsl_options)
-    rmse_als, _, _ = evaluate(algo, data)
+    rmse_als = evaluate(algo, data, measures=['rmse'])['rmse']
 
     bsl_options = {'method' : 'sgd'}
     algo = BaselineOnly(bsl_options=bsl_options)
-    rmse_sgd , _, _ = evaluate(algo, data)
+    rmse_sgd  = evaluate(algo, data, measures=['rmse'])['rmse']
 
     assert rmse_als != rmse_sgd
 
@@ -34,13 +34,13 @@ def test_als_n_epochs_field():
                    'n_epochs' : 1,
     }
     algo = BaselineOnly(bsl_options=bsl_options)
-    rmse_als_n_epochs_1, _, _ = evaluate(algo, data)
+    rmse_als_n_epochs_1 = evaluate(algo, data, measures=['rmse'])['rmse']
 
     bsl_options = {'method' : 'als',
                    'n_epochs' : 5,
     }
     algo = BaselineOnly(bsl_options=bsl_options)
-    rmse_als_n_epochs_5, _, _ = evaluate(algo, data)
+    rmse_als_n_epochs_5 = evaluate(algo, data, measures=['rmse'])['rmse']
 
     assert rmse_als_n_epochs_1 != rmse_als_n_epochs_5
 
@@ -51,13 +51,13 @@ def test_als_reg_u_field():
                    'reg_u' : 0,
     }
     algo = BaselineOnly(bsl_options=bsl_options)
-    rmse_als_regu_0, _, _ = evaluate(algo, data)
+    rmse_als_regu_0 = evaluate(algo, data, measures=['rmse'])['rmse']
 
     bsl_options = {'method' : 'als',
                    'reg_u' : 10,
     }
     algo = BaselineOnly(bsl_options=bsl_options)
-    rmse_als_regu_10, _, _ = evaluate(algo, data)
+    rmse_als_regu_10 = evaluate(algo, data, measures=['rmse'])['rmse']
 
     assert rmse_als_regu_0!= rmse_als_regu_10
 
@@ -68,13 +68,13 @@ def test_als_reg_i_field():
                    'reg_i' : 0,
     }
     algo = BaselineOnly(bsl_options=bsl_options)
-    rmse_als_regi_0, _, _ = evaluate(algo, data)
+    rmse_als_regi_0 = evaluate(algo, data, measures=['rmse'])['rmse']
 
     bsl_options = {'method' : 'als',
                    'reg_i' : 10,
     }
     algo = BaselineOnly(bsl_options=bsl_options)
-    rmse_als_regi_10, _, _ = evaluate(algo, data)
+    rmse_als_regi_10 = evaluate(algo, data, measures=['rmse'])['rmse']
 
     assert rmse_als_regi_0!= rmse_als_regi_10
 
@@ -86,13 +86,13 @@ def test_sgd_n_epoch_field():
                    'n_epochs' : 1,
     }
     algo = BaselineOnly(bsl_options=bsl_options)
-    rmse_sgd_n_epoch_1, _, _ = evaluate(algo, data)
+    rmse_sgd_n_epoch_1 = evaluate(algo, data, measures=['rmse'])['rmse']
 
     bsl_options = {'method' : 'sgd',
                    'n_epochs' : 20,
     }
     algo = BaselineOnly(bsl_options=bsl_options)
-    rmse_sgd_n_epoch_5, _, _ = evaluate(algo, data)
+    rmse_sgd_n_epoch_5 = evaluate(algo, data, measures=['rmse'])['rmse']
 
     assert rmse_sgd_n_epoch_1 != rmse_sgd_n_epoch_5
 
@@ -104,14 +104,14 @@ def test_sgd_learning_rate_field():
                    'learning_rate' : .005,
     }
     algo = BaselineOnly(bsl_options=bsl_options)
-    rmse_sgd_lr_005, _, _ = evaluate(algo, data)
+    rmse_sgd_lr_005 = evaluate(algo, data, measures=['rmse'])['rmse']
 
     bsl_options = {'method' : 'sgd',
                    'n_epochs' : 1,
                    'learning_rate' : .00005,
     }
     algo = BaselineOnly(bsl_options=bsl_options)
-    rmse_sgd_lr_00005, _, _ = evaluate(algo, data)
+    rmse_sgd_lr_00005 = evaluate(algo, data, measures=['rmse'])['rmse']
 
     assert rmse_sgd_lr_005 != rmse_sgd_lr_00005
 
@@ -123,13 +123,13 @@ def test_sgd_reg_field():
                    'reg' : 0.02,
     }
     algo = BaselineOnly(bsl_options=bsl_options)
-    rmse_sgd_reg_002, _, _ = evaluate(algo, data)
+    rmse_sgd_reg_002 = evaluate(algo, data, measures=['rmse'])['rmse']
 
     bsl_options = {'method' : 'sgd',
                    'n_epochs' : 1,
                    'reg' : 1,
     }
     algo = BaselineOnly(bsl_options=bsl_options)
-    rmse_sgd_reg_1, _, _ = evaluate(algo, data)
+    rmse_sgd_reg_1 = evaluate(algo, data, measures=['rmse'])['rmse']
 
     assert rmse_sgd_reg_002 != rmse_sgd_reg_1
