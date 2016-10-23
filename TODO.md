@@ -2,7 +2,6 @@ TODO
 ====
 
 * keep on testing
-* extensively test the reader class, + check that the doc is OK for reader
 * keep on documenting and commenting code
 * Matrix facto algo
 * create option in __main__ to clean the .pyrec directory
@@ -17,6 +16,7 @@ Some random observations
 Done:
 -----
 
+* extensively test the reader class, + check that the doc is OK for reader
 * set up a nice API (looks ok now)
 * handle algo-specific or similarity-specific parameters (such as 'k' for knn,
   regularization parameters, shrinkage paramaters, etc.) in an appropriate
