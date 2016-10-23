@@ -1,10 +1,10 @@
 TODO
 ====
 
-* keep on testing
-* keep on documenting and commenting code
 * Matrix facto algo
-* create option in __main__ to clean the .recsys directory
+* create option in __main__ to clean the .recsys directory. Actually, the
+  __main__ module should be entirely reviewed.
+* Add a 'min_support' parameter to sim_options?
 
 Some random observations
 ------------------------
@@ -16,6 +16,8 @@ Some random observations
 Done:
 -----
 
+* keep on testing
+* keep on documenting and commenting code
 * extensively test the reader class, + check that the doc is OK for reader
 * set up a nice API (looks ok now)
 * handle algo-specific or similarity-specific parameters (such as 'k' for knn,
