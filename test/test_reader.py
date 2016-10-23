@@ -2,6 +2,8 @@
 Module for testing the Reader class.
 """
 
+import pytest
+
 from pyrec import Reader
 
 def test_parse_line():
@@ -44,3 +46,17 @@ def test_parse_line():
     assert uid == 'me'
     assert iid == 'best_movie_ever'
     assert rating == 5
+
+    # Wrong sep
+    line_format = 'rating item user'
+    sep = ';'
+    reader = Reader(line_format=line_format, sep=sep)
+
+    line = '5 - best_movie_ever - me'
+    with pytest.raises(ValueError):
+        uid, iid, rating, _ = reader.parse_line(line)
+
+    # Wrong number of fields
+    line = '5 - best_movie_ever'
+    with pytest.raises(ValueError):
+        uid, iid, rating, _ = reader.parse_line(line)

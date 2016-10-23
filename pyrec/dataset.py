@@ -38,7 +38,6 @@ import zipfile
 import itertools
 import random
 
-# TODO: try to give an explicit error messages if reader fails to parse
 # TODO: change name 'rm' ? it used to mean ratings matrix but now it's a
 # dict...
 # TODO: Raw2innerId stuff ? Is it usefull to keep it in the Trainset ??
@@ -469,7 +468,13 @@ class Reader():
             '''
 
         line = line.split(self.sep)
-        uid, iid, *remaining = (line[i].strip().strip('"') for i in self.indexes)
+        try:
+            uid, iid, *remaining = (line[i].strip().strip('"')
+                                    for i in self.indexes)
+        except IndexError:
+            raise ValueError(('Impossible to parse line.' +
+                             ' Check the line_format  and sep parameters.'))
+
         if self.with_timestamp:
             r, timestamp = remaining
         else:
