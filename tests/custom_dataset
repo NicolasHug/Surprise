@@ -1,0 +1,8 @@
+There are three lines to be ignored
+Line format is user - item - rating
+
+user0 item0 4
+user1 item0 4
+user2 item0 1
+user3 item1 5
+user4 item1 1
