@@ -12,6 +12,13 @@ from recsys import Reader
 reader = Reader(line_format='user item rating', sep=' ', skip_lines=3,
                 rating_scale=(1, 5))
 
+def test_wrong_file_name():
+    """Ensure file names are checked when creating a (custom) Dataset."""
+    wrong_files = [('does_not_exist', 'does_not_either')]
+
+    with pytest.raises(ValueError):
+        data = Dataset.load_from_folds(folds_files=wrong_files, reader=reader)
+
 def test_split():
     """Test the split method."""
 

@@ -329,10 +329,11 @@ class DatasetUserFolds(Dataset):
         Dataset.__init__(self, reader)
         self.folds_files = folds_files
 
-    # TODO: as raw_folds and folds are generator, files are only opened and
-    # read when needed. It might be good idea to check at least if they all
-    # exist at the beginning, so that the program does not crash on the 10th
-    # fold...
+        # check that all files actually exist.
+        for train_test_files in self.folds_files:
+            for f in train_test_files:
+                if not os.path.isfile(f):
+                    raise ValueError('File', f, 'does not exist.')
 
     @property
     def raw_folds(self):
@@ -426,8 +427,6 @@ class Reader():
     def __init__(self, name=None, line_format=None, sep=None, rating_scale=(1, 5),
                  skip_lines=0):
 
-        # TODO: I'm not sure this is a nice way to handle a builtin
-        # constructor... needs to be checked
         if name:
             try:
                 self.__init__(**builtin_datasets[name].reader_params)
