@@ -477,6 +477,6 @@ class Reader():
         if self.with_timestamp:
             r, timestamp = remaining
         else:
-            r, timestamp = *remaining, None
+            r, timestamp = remaining[0], None
 
         return uid, iid, float(r) + self.offset, timestamp
