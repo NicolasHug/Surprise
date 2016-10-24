@@ -27,6 +27,7 @@ Summary:
     Dataset.folds
     DatasetAutoFolds.split
     Reader
+    Trainset
 """
 
 from collections import defaultdict
@@ -58,9 +59,9 @@ class Trainset(namedtuple('Trainset',
             ratings.
             Keys are tuples (user_id, item_id), values are ratings.
         ur(:obj:`defaultdict` of :obj:`list`): A dictionary containing lists of
-            tuples of the form (item_id, rating). Keys are user ids.
+            tuples of the form ``(item_id, rating)``. Keys are user ids.
         ir(:obj:`defaultdict` of :obj:`list`): A dictionary containing lists of
-            tuples of the form (user_id, rating). Keys are item ids.
+            tuples of the form ``(user_id, rating)``. Keys are item ids.
         n_users: Total number of users :math:`|U|`.
         n_items: Total number of items :math:`|I|`.
         r_min: Minimum value of the rating scale.

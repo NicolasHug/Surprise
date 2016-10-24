@@ -174,9 +174,10 @@ class KNNBaseline(AlgoBase):
             options.
     """
 
-    def __init__(self, k=40, sim_options={}, **kwargs):
+    def __init__(self, k=40, sim_options={}, bsl_options={}, **kwargs):
 
-        AlgoBase.__init__(self, sim_options=sim_options, **kwargs)
+        AlgoBase.__init__(self, sim_options=sim_options,
+                          bsl_options=bsl_options, **kwargs)
 
         self.k = k
 

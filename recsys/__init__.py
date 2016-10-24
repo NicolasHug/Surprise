@@ -1,3 +1,4 @@
+from .prediction_algorithms import AlgoBase
 from .prediction_algorithms import NormalPredictor
 from .prediction_algorithms import BaselineOnly
 from .prediction_algorithms import KNNBasic

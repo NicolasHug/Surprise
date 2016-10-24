@@ -78,12 +78,12 @@ And for SGD:
 Usage examples:
 
 .. literalinclude:: ../../examples/baselines_conf.py
-    :caption: from file ``examples/baselines_conf.py``
+    :caption: From file ``examples/baselines_conf.py``
     :name: baselines_als
     :lines: 14-21
 
 .. literalinclude:: ../../examples/baselines_conf.py
-    :caption: from file ``examples/baselines_conf.py``
+    :caption: From file ``examples/baselines_conf.py``
     :name: baselines_sgd
     :lines: 25-30
 
@@ -93,7 +93,7 @@ Configuration works just the same, whether the baselines are used in the actual
 prediction :math:`\hat{r}_{ui}` or not:
 
 .. literalinclude:: ../../examples/baselines_conf.py
-    :caption: from file ``examples/baselines_conf.py``
+    :caption: From file ``examples/baselines_conf.py``
     :name: baselines_als_pearson_sim
     :lines: 35-41
 
@@ -123,12 +123,12 @@ argument is a dictionary with the following (all optional) keys:
 Usage examples:
 
 .. literalinclude:: ../../examples/similarity_conf.py
-    :caption: from file ``examples/similarity_conf.py``
+    :caption: From file ``examples/similarity_conf.py``
     :name: sim_conf_cos
     :lines: 15-17
 
 .. literalinclude:: ../../examples/similarity_conf.py
-    :caption: from file ``examples/similarity_conf.py``
+    :caption: From file ``examples/similarity_conf.py``
     :name: sim_conf_pearson_baseline
     :lines: 21-24
 

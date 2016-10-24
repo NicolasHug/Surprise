@@ -14,6 +14,7 @@ The available prediction algorithms are:
     knns.KNNBaseline
 """
 
+from .bases import AlgoBase
 from .random_pred import NormalPredictor
 from .baseline_only import BaselineOnly
 from .knns import KNNBasic

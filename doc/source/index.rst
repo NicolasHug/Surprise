@@ -22,6 +22,7 @@ in order for the practitioner to have perfect control over his experiments.
    getting_started
    notation_standards
    prediction_algorithms
+   building_custom_algo
    faq
 
 

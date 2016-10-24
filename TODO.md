@@ -1,8 +1,9 @@
 TODO
 ====
 
-* improve test coverage
+* say something about the sim > 0 in knns algos
 * write the custom algorithm tutorial (+ custom sim)
+* write tuto for using only predict() (and not test)
 * get less restrictive requirements.txt
 * sort out this warning issue coming from cython
 * Matrix facto algo
@@ -20,6 +21,7 @@ Some random observations
 Done:
 -----
 
+* improve test coverage
 * add the cool stickers on the readme just like scikit learn
 * set up travis
 * keep on testing

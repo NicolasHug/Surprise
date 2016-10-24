@@ -14,7 +14,7 @@ RecSys has a set of built-in :ref:`algorithms<prediction_algorithms>` and
 about four lines of code to evaluate the performance of an algorithm:
 
 .. literalinclude:: ../../examples/basic_usage.py
-    :caption: from file ``examples/basic_usage.py``
+    :caption: From file ``examples/basic_usage.py``
     :name: basic_usage.py
     :lines: 6-
 
@@ -53,7 +53,7 @@ Load an entire dataset
 ~~~~~~~~~~~~~~~~~~~~~~
 
 .. literalinclude:: ../../examples/load_custom_dataset.py
-    :caption: from file ``examples/load_custom_dataset.py``
+    :caption: From file ``examples/load_custom_dataset.py``
     :name: load_custom_dataset.py
     :lines: 11-22
 
@@ -73,7 +73,7 @@ Load a dataset with predefined folds
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. literalinclude:: ../../examples/load_custom_dataset_predefined_folds.py
-    :caption: from file ``examples/load_custom_dataset_predefined_folds.py``
+    :caption: From file ``examples/load_custom_dataset_predefined_folds.py``
     :name: load_custom_dataset_predefined_folds.py
     :lines: 12-26
 
@@ -95,6 +95,6 @@ generator of your dataset, and then the :meth:`train
 each of the folds:
 
 .. literalinclude:: ../../examples/iterate_over_folds.py
-    :caption: from file ``examples/iterate_over_folds.py``
+    :caption: From file ``examples/iterate_over_folds.py``
     :name: iterate_over_folds.py
     :lines: 6-25

@@ -62,7 +62,7 @@ class AlgoBase:
 
         This method is called by every derived class as the first basic step
         for training an algorithm. It basically just initializes some internal
-        structures and compute the global mean of all ratings.
+        structures and set the self.trainset attribute.
 
         Args:
             trainset(:obj:`Trainset <recsys.dataset.Trainset>`) : A training
@@ -265,6 +265,8 @@ class AlgoBase:
     @property
     def all_ratings(self):
         """generator to iter over all ratings"""
+
+        # TODO: why not just use rm.values() ??
 
         for x, x_ratings in self.xr.items():
             for y, r in x_ratings:
