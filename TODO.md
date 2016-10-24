@@ -2,7 +2,7 @@ TODO
 ====
 
 * say something about the sim > 0 in knns algos
-* write the custom algorithm tutorial (+ custom sim)
+* write the custom sim tutorial
 * write tuto for using only predict() (and not test)
 * get less restrictive requirements.txt
 * sort out this warning issue coming from cython
@@ -21,6 +21,7 @@ Some random observations
 Done:
 -----
 
+* write the custom algorithm tutorial
 * improve test coverage
 * add the cool stickers on the readme just like scikit learn
 * set up travis
