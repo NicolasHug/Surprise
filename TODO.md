@@ -1,9 +1,7 @@
 TODO
 ====
 
-* set up travis
 * improve test coverage
-* add the cool stickers on the readme just like scikit learn
 * write the custom algorithm tutorial (+ custom sim)
 * get less restrictive requirements.txt
 * sort out this warning issue coming from cython
@@ -22,6 +20,8 @@ Some random observations
 Done:
 -----
 
+* add the cool stickers on the readme just like scikit learn
+* set up travis
 * keep on testing
 * keep on documenting and commenting code
 * extensively test the reader class, + check that the doc is OK for reader
