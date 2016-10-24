@@ -162,7 +162,7 @@ class AlgoBase:
                 Default is False.
 
         Returns:
-            A list of :obj:`prediction` objects."""
+            A list of :obj:`Prediction` objects."""
 
         predictions = [self.predict(uid, iid, r, verbose=verbose)
                        for (uid, iid, r) in testset]

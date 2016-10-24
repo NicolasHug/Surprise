@@ -7,9 +7,9 @@ Available accuracy metrics:
 .. autosummary::
     :nosignatures:
 
-    fcp
-    mae
     rmse
+    mae
+    fcp
 """
 
 from statistics import mean
@@ -20,12 +20,13 @@ def rmse(predictions, verbose=True):
     """Compute RMSE (Root Mean Squared Error).
 
     .. math::
-        \\text{RMSE} = \\sqrt{\\frac{1}{|\\hat{R}|} \\sum_{\\hat{r}_{ui} \in \\hat{R}}(r_{ui}
-        - \\hat{r}_{ui})^2}.
+        \\text{RMSE} = \\sqrt{\\frac{1}{|\\hat{R}|} \\sum_{\\hat{r}_{ui} \in
+        \\hat{R}}(r_{ui} - \\hat{r}_{ui})^2}.
 
     Args:
-        predictions (:obj:`list` of :obj:`Prediction`): The list on which to
-            compute the statistic.
+        predictions (:obj:`list` of :obj:`Prediction <recsys.prediction_algorithms.bases.Prediction>`):
+            A list of predictions, as returned by the :meth:`test
+            <recsys.prediction_algorithms.bases.AlgoBase.test>` method.
         verbose: If True, will print computed value. Default is ``True``.
 
 
@@ -56,8 +57,9 @@ def mae(predictions, verbose=True):
         - \\hat{r}_{ui}|
 
     Args:
-        predictions (:obj:`list` of :obj:`Prediction`): The list on which to
-            compute the statistic.
+        predictions (:obj:`list` of :obj:`Prediction <recsys.prediction_algorithms.bases.Prediction>`):
+            A list of predictions, as returned by the :meth:`test
+            <recsys.prediction_algorithms.bases.AlgoBase.test>` method.
         verbose: If True, will print computed value. Default is ``True``.
 
 
@@ -86,8 +88,9 @@ def fcp(predictions, verbose=True):
     and Sill, section 5.2.
 
     Args:
-        predictions (:obj:`list` of :obj:`Prediction`): The list on which to
-            compute the statistic.
+        predictions (:obj:`list` of :obj:`Prediction <recsys.prediction_algorithms.bases.Prediction>`):
+            A list of predictions, as returned by the :meth:`test
+            <recsys.prediction_algorithms.bases.AlgoBase.test>` method.
         verbose: If True, will print computed value. Default is ``True``.
 
 
