@@ -5,6 +5,7 @@ Module for testing the sim_options parameter.
 import os
 from itertools import combinations
 import numpy as np
+import pytest
 
 from recsys.prediction_algorithms import *
 from recsys.dataset import Dataset
@@ -41,6 +42,11 @@ def test_name_field():
     for rmse_a, rmse_b in combinations((rmse_cosine, rmse_msd, rmse_pearson,
                                         rmse_pearson_bsl), 2):
         assert (rmse_a != rmse_b)
+
+    with pytest.raises(NameError):
+        sim_options = {'name' : 'wrong_name'}
+        algo = KNNBasic(sim_options=sim_options)
+        evaluate(algo, data)
 
 def test_user_based_field():
     """Ensure that the user_based field is taken into account (only) when

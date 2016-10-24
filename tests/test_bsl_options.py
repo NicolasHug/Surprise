@@ -1,6 +1,7 @@
 """Ensure that options for baseline estimates are taken into account."""
 
 import os
+import pytest
 
 from recsys.prediction_algorithms import *
 from recsys.dataset import Dataset
@@ -26,6 +27,11 @@ def test_method_field():
     rmse_sgd  = evaluate(algo, data, measures=['rmse'])['rmse']
 
     assert rmse_als != rmse_sgd
+
+    with pytest.raises(ValueError):
+        bsl_options = {'method' : 'wrong_name'}
+        algo = BaselineOnly(bsl_options=bsl_options)
+        evaluate(algo, data)
 
 def test_als_n_epochs_field():
     """Ensure the n_epochs field is taken into account."""

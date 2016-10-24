@@ -440,20 +440,21 @@ class Reader():
             self.inf, self.sup = rating_scale
             self.offset = -self.inf + 1 if self.inf <= 0 else 0
 
-            try:
-                splitted_format = line_format.split()
+            splitted_format = line_format.split()
 
-                entities = ['user', 'item', 'rating']
-                if 'timestamp' in splitted_format:
-                    self.with_timestamp = True
-                    entities.append('timestamp')
-                else:
-                    self.with_timestamp = False
+            entities = ['user', 'item', 'rating']
+            if 'timestamp' in splitted_format:
+                self.with_timestamp = True
+                entities.append('timestamp')
+            else:
+                self.with_timestamp = False
 
-                self.indexes = [splitted_format.index(entity) for entity in
-                                entities]
-            except ValueError:
-                raise ValueError('Wrong format')
+            # check that all fields are correct
+            if any(field not in entities for field in splitted_format):
+                raise ValueError('line_format parameter is incorrect.')
+
+            self.indexes = [splitted_format.index(entity) for entity in
+                            entities]
 
     def parse_line(self, line):
         '''Parse a line.

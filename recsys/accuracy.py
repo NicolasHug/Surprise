@@ -38,7 +38,7 @@ def rmse(predictions, verbose=True):
     """
 
     if not predictions:
-        raise ValueError('prediction list is empty')
+        raise ValueError('Prediction list is empty.')
 
     mse = mean(float((true_r - est)**2) for (_, _, true_r, est, _) in predictions)
     rmse_ = sqrt(mse)
@@ -71,7 +71,7 @@ def mae(predictions, verbose=True):
     """
 
     if not predictions:
-        raise ValueError('prediction list is empty')
+        raise ValueError('Prediction list is empty.')
 
     mae_ = mean(float(abs(true_r - est)) for (_, _, true_r, est, _) in predictions)
 
@@ -102,7 +102,7 @@ def fcp(predictions, verbose=True):
     """
 
     if not predictions:
-        raise ValueError('prediction list is empty')
+        raise ValueError('Prediction list is empty.')
 
     predictions_u = defaultdict(list)
     nc_u = defaultdict(int)

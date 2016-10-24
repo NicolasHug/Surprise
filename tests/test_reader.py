@@ -6,6 +6,24 @@ import pytest
 
 from recsys import Reader
 
+def test_params():
+    """Test Reader parameters"""
+
+    with pytest.raises(ValueError):
+        Reader(name='wrong_name')
+
+    with pytest.raises(ValueError):
+        Reader(line_format='users item rating')
+
+    with pytest.raises(ValueError):
+        Reader(line_format='user itemm rating')
+
+    with pytest.raises(ValueError):
+        Reader(line_format='item user rrating')
+
+    with pytest.raises(ValueError):
+        Reader(line_format='item BLABLA user rating')
+
 def test_parse_line():
     """Test the parse_line method"""
 

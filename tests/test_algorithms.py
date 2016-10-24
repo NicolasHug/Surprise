@@ -46,7 +46,8 @@ def test_unknown_user_or_item():
     algo = NormalPredictor()
     algo.train(trainset)
 
-    predictions = algo.test(testset)
+    # set verbose to true for more coverage.
+    predictions = algo.test(testset, verbose=True)
 
     global_mean = np.mean([r for (_, _, r) in algo.all_ratings])
     assert predictions[2].est == global_mean

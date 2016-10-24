@@ -23,6 +23,9 @@ def test_mae():
     predictions = [pred(2, 0), pred(3, 4)]
     assert recsys.accuracy.mae(predictions) == (abs(2 - 0) + abs(3 - 4)) / 2
 
+    with pytest.raises(ValueError):
+        recsys.accuracy.mae([])
+
 def test_rmse():
     """Tests for the RMSE function."""
 
@@ -34,6 +37,9 @@ def test_rmse():
 
     predictions = [pred(2, 0), pred(3, 4)]
     assert recsys.accuracy.rmse(predictions) == sqrt(((2 - 0)**2 + (3 - 4)**2) / 2)
+
+    with pytest.raises(ValueError):
+        recsys.accuracy.rmse([])
 
 def test_fcp():
     """Tests for the FCP function."""
@@ -53,3 +59,6 @@ def test_fcp():
     predictions = [pred(0, 1, u0='u1'), pred(1, 0, u0='u1'), pred(2, 0.5,
                    u0='u2'), pred(0, 0.6, u0='u2')]
     assert recsys.accuracy.fcp(predictions) == 0
+
+    with pytest.raises(ValueError):
+        recsys.accuracy.fcp([])
