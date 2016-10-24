@@ -12,9 +12,11 @@ Available accuracy metrics:
     fcp
 """
 
-from statistics import mean
-from math import sqrt
+from __future__ import print_function
+from __future__ import division
+
 from collections import defaultdict
+import numpy as np
 
 def rmse(predictions, verbose=True):
     """Compute RMSE (Root Mean Squared Error).
@@ -34,14 +36,15 @@ def rmse(predictions, verbose=True):
         The Root Mean Squared Error of predictions.
 
     Raises:
-        ValueError: When  ``predictions`` is empty.
+        ValueError: When ``predictions`` is empty.
     """
 
     if not predictions:
         raise ValueError('Prediction list is empty.')
 
-    mse = mean(float((true_r - est)**2) for (_, _, true_r, est, _) in predictions)
-    rmse_ = sqrt(mse)
+    mse = np.mean([float((true_r - est)**2)
+                   for (_, _, true_r, est, _) in predictions])
+    rmse_ = np.sqrt(mse)
 
     if verbose:
         print('RMSE: {0:1.4f}'.format(rmse_))
@@ -67,13 +70,14 @@ def mae(predictions, verbose=True):
         The Mean Absolute Error of predictions.
 
     Raises:
-        ValueError: When  ``predictions`` is empty.
+        ValueError: When ``predictions`` is empty.
     """
 
     if not predictions:
         raise ValueError('Prediction list is empty.')
 
-    mae_ = mean(float(abs(true_r - est)) for (_, _, true_r, est, _) in predictions)
+    mae_ = np.mean([float(abs(true_r - est))
+                    for (_, _, true_r, est, _) in predictions])
 
     if verbose:
         print('MAE: {0:1.4f}'.format(mae_))
@@ -98,7 +102,7 @@ def fcp(predictions, verbose=True):
         The Fraction of Concordant Pairs.
 
     Raises:
-        ValueError: When  ``predictions`` is empty.
+        ValueError: When ``predictions`` is empty.
     """
 
     if not predictions:
@@ -119,8 +123,8 @@ def fcp(predictions, verbose=True):
                 if esti >= estj and r0i < r0j:
                     nd_u[u0] += 1
 
-    nc = mean(nc_u.values()) if nc_u else 0
-    nd = mean(nd_u.values()) if nd_u else 0
+    nc = np.mean(nc_u.values()) if nc_u else 0
+    nd = np.mean(nd_u.values()) if nd_u else 0
 
     try:
         fcp = nc / (nc + nd)
