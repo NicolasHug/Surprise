@@ -2,11 +2,12 @@
 The :mod:`evaluate` module defines the :func:`evaluate` function.
 """
 
-from statistics import mean
+from __future__ import print_function
 from collections import defaultdict
 import pickle
 import time
 import os
+import numpy as np
 
 from . import accuracy
 
@@ -64,7 +65,7 @@ def evaluate(algo, data, measures=['rmse', 'mae', 'fcp'], with_dump=False,
         print('-' * 20)
         for measure in measures:
             print('mean', measure.upper(),
-                  ': {0:1.4f}'.format(mean(performances[measure])))
+                  ': {0:1.4f}'.format(np.mean(performances[measure])))
 
     if with_dump:
         dump['user_based'] = algo.user_based

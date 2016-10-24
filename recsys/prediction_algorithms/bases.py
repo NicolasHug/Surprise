@@ -4,6 +4,8 @@ The :mod:`recsys.prediction_algorithms.bases` module defines the base class
 which every single prediction algorithm has to inherit.
 """
 
+from __future__ import print_function
+from __future__ import division
 from collections import defaultdict
 from collections import namedtuple
 import numpy as np

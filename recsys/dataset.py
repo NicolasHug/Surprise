@@ -30,14 +30,19 @@ Summary:
     Trainset
 """
 
+from __future__ import print_function
 from collections import defaultdict
 from collections import namedtuple
 import sys
 import os
-from urllib.request import urlretrieve
 import zipfile
 import itertools
 import random
+
+try:
+        from urllib.request import urlretrieve
+except ImportError:
+        from urllib2 import urlopen as urlretrieve
 
 # TODO: change name 'rm' ? it used to mean ratings matrix but now it's a
 # dict...
@@ -236,7 +241,7 @@ class Dataset:
         """Return a list of ratings (user, item, rating, timestamp) read from
         file_name"""
 
-        with open(file_name, errors='replace') as f:
+        with open(file_name) as f:
             raw_ratings = [self.reader.parse_line(line) for line in
                            itertools.islice(f, self.reader.skip_lines, None)]
         return raw_ratings
@@ -470,15 +475,16 @@ class Reader():
 
         line = line.split(self.sep)
         try:
-            uid, iid, *remaining = (line[i].strip().strip('"')
-                                    for i in self.indexes)
+            if self.with_timestamp:
+                uid, iid, r, timestamp = (line[i].strip().strip('"')
+                                          for i in self.indexes)
+            else:
+                uid, iid, r = (line[i].strip().strip('"')
+                                          for i in self.indexes)
+                timestamp = None
+
         except IndexError:
             raise ValueError(('Impossible to parse line.' +
                              ' Check the line_format  and sep parameters.'))
-
-        if self.with_timestamp:
-            r, timestamp = remaining
-        else:
-            r, timestamp = remaining[0], None
 
         return uid, iid, float(r) + self.offset, timestamp
