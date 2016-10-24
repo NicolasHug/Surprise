@@ -1,4 +1,0 @@
-python:
-     version: 3.5
-dependencies:
-  - python=3.5.1=0
