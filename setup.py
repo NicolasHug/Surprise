@@ -20,6 +20,7 @@ with open(path.join(here, 'requirements.txt'), encoding='utf-8') as f:
 install_requires = [x.strip() for x in all_reqs if 'git+' not in x]
 dependency_links = [x.strip().replace('git+', '') for x in all_reqs if x.startswith('git+')]
 
+
 setup(
     name='recsys',
     version=__version__,
@@ -41,8 +42,13 @@ setup(
     keywords='',
     packages=find_packages(exclude=['docs', 'tests*']),
     include_package_data=True,
+
     ext_modules = cythonize('recsys/similarities.pyx',
                             include_path = [numpy.get_include()]),
+    # apparently, include_path does not work (yet it's from the doc).
+    # include_dirs does, but it's from distutils and not setuptools so WTF ???
+    include_dirs = [numpy.get_include()],
+
     author='Nicolas Hug',
     install_requires=install_requires,
     dependency_links=dependency_links,
