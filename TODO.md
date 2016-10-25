@@ -2,7 +2,6 @@ TODO
 ====
 
 * write tuto for using only predict() (and not test)
-* sort out this warning issue coming from cython
 * Matrix facto algo
 * create option in __main__ to clean the .recsys directory. Actually, the
   __main__ module should be entirely reviewed.
@@ -18,6 +17,7 @@ Some random observations
 Done:
 -----
 
+* sort out this warning issue coming from cython
 * say something about the sim > 0 in knns algos
 * get less restrictive requirements.txt
 * write the custom algorithm tutorial

@@ -2,6 +2,8 @@ from setuptools import setup, find_packages
 from codecs import open
 from os import path
 
+from Cython.Build import cythonize
+
 __version__ = '0.0.3'
 
 here = path.abspath(path.dirname(__file__))
@@ -38,6 +40,7 @@ setup(
     keywords='',
     packages=find_packages(exclude=['docs', 'tests*']),
     include_package_data=True,
+    ext_modules = cythonize('recsys/similarities.pyx'),
     author='Nicolas Hug',
     install_requires=install_requires,
     dependency_links=dependency_links,

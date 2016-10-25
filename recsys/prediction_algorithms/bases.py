@@ -11,9 +11,6 @@ from collections import defaultdict
 from collections import namedtuple
 import numpy as np
 
-import pyximport
-pyximport.install(setup_args={"include_dirs":np.get_include()})
-
 from .. import similarities as sims
 from .. import colors
 

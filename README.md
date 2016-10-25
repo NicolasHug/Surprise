@@ -34,6 +34,7 @@ To install use pip:
 Or clone the repo:
 
     $ git clone https://github.com/Niourf/recsys.git
+    $ pip install cython # needed to run setup.py
     $ python setup.py install
 
 

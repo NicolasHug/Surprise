@@ -9,10 +9,7 @@ import sys
 import os
 import random
 import copy
-
-import pyximport
 import numpy as np
-pyximport.install(setup_args={"include_dirs":np.get_include()})
 
 import recsys.similarities as sims
 from recsys.prediction_algorithms import BaselineOnly

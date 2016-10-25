@@ -3,11 +3,11 @@
 *.swp
 
 doc/build
-datasets
-dumps
 .ipynb_checkpoints/
 .cache/
 
 recsys.egg-info/
 build
 dist/
+recsys/similarities.c
+*.so
