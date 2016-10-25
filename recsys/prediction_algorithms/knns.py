@@ -32,6 +32,7 @@ class KNNBasic(AlgoBase):
 
     Args:
         k(int): The number of neighbors to take into account for aggregation.
+            Pease read :ref:`this note <actual_k_note>`.
         sim_options(dict): A dictionary of options for the similarity
             measure. See :ref:`similarity_measures_configuration` for accepted
             options.
@@ -95,6 +96,7 @@ class KNNWithMeans(AlgoBase):
 
     Args:
         k(int): The number of neighbors to take into account for aggregation.
+            Pease read :ref:`this note <actual_k_note>`.
         sim_options(dict): A dictionary of options for the similarity
             measure. See :ref:`similarity_measures_configuration` for accepted
             options.
@@ -172,6 +174,7 @@ class KNNBaseline(AlgoBase):
 
     Args:
         k(int): The number of neighbors to take into account for aggregation.
+            Pease read :ref:`this note <actual_k_note>`.
         sim_options(dict): A dictionary of options for the similarity
             measure. See :ref:`similarity_measures_configuration` for accepted
             options.

@@ -73,14 +73,15 @@ Using similarities and baselines
 
 Should your algorithm use a similarity measure or baseline estimates, you'll
 need to accept ``bsl_options`` and ``sim_options`` as parmeters to the
-``__init__`` method, and pass them along to the Base class.  Methods
-:meth:`compute_baselines
+``__init__`` method, and pass them along to the Base class. See how to use
+these parameters in the :ref:`prediction_algorithms` section.
+
+Methods :meth:`compute_baselines
 <recsys.prediction_algorithms.bases.AlgoBase.compute_baselines>`   and
 :meth:`compute_similarities
-<recsys.prediction_algorithms.bases.AlgoBase.compute_similarities>` can then be
-called in the ``train`` method.
-
-Baselines estimates are then available using the :meth:`get_baseline
+<recsys.prediction_algorithms.bases.AlgoBase.compute_similarities>` can be
+called in the ``train`` method.  Baselines estimates are then available using
+the :meth:`get_baseline
 <recsys.prediction_algorithms.bases.AlgoBase.get_baseline>` method and
 similarities can be retrieved using the ``self.sim`` attribute:
 
