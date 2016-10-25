@@ -313,7 +313,7 @@ def pearson_baseline(n_x, yr, global_mean, x_biases, y_biases, shrinkage=100):
     Note: here again, if there are no common users/items, similarity will be 0
     (and not -1).
 
-    Motivations for such a similarity measure can be foun on the *Recommender
+    Motivations for such a similarity measure can be found on the *Recommender
     System Handbook*, section 5.4.1.
     """
 

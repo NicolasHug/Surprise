@@ -38,7 +38,7 @@ def evaluate(algo, data, measures=['rmse', 'mae', 'fcp'], with_dump=False,
 
     Returns:
         A dictionary containing measures as keys and lists as values. Each list
-        contains on entry per fold.
+        contains one entry per fold.
     """
 
     dump = {}
