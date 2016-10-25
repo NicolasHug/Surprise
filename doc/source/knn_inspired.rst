@@ -3,7 +3,7 @@
 k-NN inspired algorithms
 ------------------------
 
-These are algorithm that are directly derived from a basic nearest neighbors
+These are algorithms that are directly derived from a basic nearest neighbors
 approach.
 
 .. _actual_k_note:

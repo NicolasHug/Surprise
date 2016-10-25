@@ -20,7 +20,7 @@ around with new recommender algorithm ideas.
 A strong emphasis is laid on
 [documentation](http://recsys.readthedocs.io/en/latest/index.html), which we
 have tried to make as clear and precise as possible by pointing out every
-details of the algorithms, in order for the practitioner to have perfect
+detail of the algorithms, in order for the practitioner to have perfect
 control over his experiments.
 
 Installation / Usage
