@@ -6,7 +6,6 @@
 RecSys
 ======
 
-version number: 0.0.2
 author: Nicolas Hug
 
 Overview
