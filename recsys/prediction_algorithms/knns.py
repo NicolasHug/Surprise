@@ -2,6 +2,9 @@
 the :mod:`knns` module includes some k-NN inspired algorithms.
 """
 
+from __future__ import (absolute_import, division, print_function,
+                        unicode_literals)
+
 import numpy as np
 
 from .bases import PredictionImpossible

@@ -2,7 +2,9 @@
 The :mod:`evaluate` module defines the :func:`evaluate` function.
 """
 
-from __future__ import print_function
+from __future__ import (absolute_import, division, print_function,
+                        unicode_literals)
+
 from collections import defaultdict
 import pickle
 import time

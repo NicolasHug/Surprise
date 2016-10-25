@@ -3,6 +3,9 @@ This module gives an example of how to configure baseline estimates
 computation.
 """
 
+from __future__ import (absolute_import, division, print_function,
+                        unicode_literals)
+
 from recsys import BaselineOnly
 from recsys import KNNBasic
 from recsys import Dataset

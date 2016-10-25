@@ -10,3 +10,8 @@ install:
 
 # command to run tests
 script: pytest
+
+# safelist
+branches:
+  only:
+  - master

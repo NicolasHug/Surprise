@@ -12,8 +12,8 @@ Available accuracy metrics:
     fcp
 """
 
-from __future__ import print_function
-from __future__ import division
+from __future__ import (absolute_import, division, print_function,
+                        unicode_literals)
 
 from collections import defaultdict
 import numpy as np

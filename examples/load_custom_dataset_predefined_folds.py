@@ -6,6 +6,9 @@ As a custom dataset we will actually use the movielens-100k dataset, but act as
 if it were not built-in.
 """
 
+from __future__ import (absolute_import, division, print_function,
+                        unicode_literals)
+
 from recsys import BaselineOnly
 from recsys import Dataset
 from recsys import evaluate

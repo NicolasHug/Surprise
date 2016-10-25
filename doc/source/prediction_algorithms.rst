@@ -80,12 +80,12 @@ Usage examples:
 .. literalinclude:: ../../examples/baselines_conf.py
     :caption: From file ``examples/baselines_conf.py``
     :name: baselines_als
-    :lines: 14-21
+    :lines: 19-25
 
 .. literalinclude:: ../../examples/baselines_conf.py
     :caption: From file ``examples/baselines_conf.py``
     :name: baselines_sgd
-    :lines: 25-30
+    :lines: 30-34
 
 Note that some similarity measures may use baselines, such as the
 :func:`pearson_baseline <recsys.similarities.pearson_baseline>` similarity.
@@ -95,7 +95,7 @@ prediction :math:`\hat{r}_{ui}` or not:
 .. literalinclude:: ../../examples/baselines_conf.py
     :caption: From file ``examples/baselines_conf.py``
     :name: baselines_als_pearson_sim
-    :lines: 35-41
+    :lines: 40-44
 
 
 This leads us to similarity measure configuration, which we will review right
@@ -125,12 +125,12 @@ Usage examples:
 .. literalinclude:: ../../examples/similarity_conf.py
     :caption: From file ``examples/similarity_conf.py``
     :name: sim_conf_cos
-    :lines: 15-17
+    :lines: 18-20
 
 .. literalinclude:: ../../examples/similarity_conf.py
     :caption: From file ``examples/similarity_conf.py``
     :name: sim_conf_pearson_baseline
-    :lines: 21-24
+    :lines: 25-27
 
 .. seealso::
     The :mod:`similarities <recsys.similarities>` module.

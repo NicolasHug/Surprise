@@ -3,6 +3,9 @@ This module descibes the most basic usage of RecSys: you define a prediction
 algorithm, (down)load a dataset and evaluate the performances of the algorithm.
 """
 
+from __future__ import (absolute_import, division, print_function,
+                        unicode_literals)
+
 from recsys import NormalPredictor
 from recsys import Dataset
 from recsys import evaluate

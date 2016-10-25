@@ -3,6 +3,9 @@ This module descibes how to manually train and test an algorithm without using
 the evaluate() function.
 """
 
+from __future__ import (absolute_import, division, print_function,
+                        unicode_literals)
+
 from recsys import BaselineOnly
 from recsys import Dataset
 from recsys import evaluate

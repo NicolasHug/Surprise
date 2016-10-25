@@ -3,11 +3,14 @@ This module descibes how to build your own prediction algorithm. Please refer
 to User Guide for more insight.
 """
 
+from __future__ import (absolute_import, division, print_function,
+                        unicode_literals)
+
 from recsys import AlgoBase
 from recsys import Dataset
 from recsys import evaluate
 
-from statistics import mean
+import numpy as np
 
 class MyOwnAlgorithm(AlgoBase):
 
@@ -22,7 +25,7 @@ class MyOwnAlgorithm(AlgoBase):
         AlgoBase.train(self, trainset)
 
         # Compute the average rating.
-        self.the_mean = mean(r for r in self.trainset.rm.values())
+        self.the_mean = np.mean([r for r in self.trainset.rm.values()])
 
     def estimate(self, u, i):
 

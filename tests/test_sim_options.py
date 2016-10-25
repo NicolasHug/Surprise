@@ -2,6 +2,9 @@
 Module for testing the sim_options parameter.
 """
 
+from __future__ import (absolute_import, division, print_function,
+                        unicode_literals)
+
 import os
 from itertools import combinations
 import numpy as np

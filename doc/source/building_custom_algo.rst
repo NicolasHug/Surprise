@@ -12,12 +12,14 @@ Want to get your hands dirty? Cool.
 
 Creating your own prediction algorithm is
 pretty simple: an algorithm is nothing but a class derived from :class:`AlgoBase
-<recsys.prediction_algorithms.bases.AlgoBase>` that has an ``estimate`` method:
+<recsys.prediction_algorithms.bases.AlgoBase>` that has an ``estimate`` method.
+This methods takes in a user id, an item id, and returns the estimated rating
+:math:`\hat{r}_{ui}`:
 
 .. literalinclude:: ../../examples/building_custom_algorithms/most_basic_algorithm.py
     :caption: From file ``examples/building_custom_algorithms/most_basic_algorithm.py``
     :name: most_basic_algorithm.py
-    :lines: 6-
+    :lines: 9-
 
 This algorithm is the dumbest we could have thought of: it just predicts a
 rating of 3, regardless of users and items.
@@ -33,7 +35,7 @@ be done by defining the ``train`` method:
 .. literalinclude:: ../../examples/building_custom_algorithms/most_basic_algorithm2.py
     :caption: From file ``examples/building_custom_algorithms/most_basic_algorithm2.py``
     :name: most_basic_algorithm2.py
-    :lines: 10-29
+    :lines: 15-32
 
 
 The ``train`` method is called by the :func:`evaluate
@@ -58,11 +60,11 @@ of the user:
 .. literalinclude:: ../../examples/building_custom_algorithms/mean_rating_user.py
     :caption: From file ``examples/building_custom_algorithms/mean_rating_user.py``
     :name: mean_rating_user.py
-    :lines: 19-21
+    :lines: 22-24
 
 Predicting the mean rating for an item would have been done in a similar
 fashion using the ``ir`` field. Note that it would have been a better idea to
-compute all the user means in the ``train`` method thus avoiding the same
+compute all the user means in the ``train`` method, thus avoiding the same
 computations multiple times.
 
 
@@ -85,7 +87,7 @@ similarities can be retrieved using the ``self.sim`` attribute:
 .. literalinclude:: ../../examples/building_custom_algorithms/with_baselines_or_sim.py
     :caption: From file ``examples/building_custom_algorithms/.with_baselines_or_sim.py``
     :name: with_baselines_or_sim.py
-    :lines: 12-40
+    :lines: 14-42
 
 
 Feel free to explore the prediction_algorithms package `source

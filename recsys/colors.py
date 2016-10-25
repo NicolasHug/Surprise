@@ -1,5 +1,7 @@
 """A module for colored terminal outputs"""
 
+from __future__ import (absolute_import, division, print_function,
+                        unicode_literals)
 
 HEADER = '\033[95m'
 OKBLUE = '\033[94m'
