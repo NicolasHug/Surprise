@@ -3,6 +3,7 @@ from codecs import open
 from os import path
 
 from Cython.Build import cythonize
+import numpy
 
 __version__ = '0.0.3'
 
@@ -40,7 +41,8 @@ setup(
     keywords='',
     packages=find_packages(exclude=['docs', 'tests*']),
     include_package_data=True,
-    ext_modules = cythonize('recsys/similarities.pyx'),
+    ext_modules = cythonize('recsys/similarities.pyx',
+                            include_path = [numpy.get_include()]),
     author='Nicolas Hug',
     install_requires=install_requires,
     dependency_links=dependency_links,
