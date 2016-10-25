@@ -172,7 +172,6 @@ class Dataset:
                 except:
                     choice = input().lower()
 
-                print(input)
                 if choice in ['yes', 'y', '', 'omg this is so nice of you!!']:
                     answered = True
                 elif choice in ['no', 'n', 'hell no why would i want that?!']:

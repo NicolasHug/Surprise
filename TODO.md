@@ -1,7 +1,6 @@
 TODO
 ====
 
-* write the custom sim tutorial
 * write tuto for using only predict() (and not test)
 * sort out this warning issue coming from cython
 * Matrix facto algo
