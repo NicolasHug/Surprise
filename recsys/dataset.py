@@ -8,8 +8,6 @@ are available:
 * The `movielens-100k <http://grouplens.org/datasets/movielens/>`_ dataset.
 * The `movielens-1m <http://grouplens.org/datasets/movielens/>`_ dataset.
 * The `Jester <http://eigentaste.berkeley.edu/dataset/>`_ dataset 2.
-* The `Book-Crossing <http://www2.informatik.uni-freiburg.de/~cziegler/BX/>`_
-  dataset.
 
 Built-in datasets can all be loaded (or downloaded if you haven't already)
 using the :meth:`Dataset.load_builtin` method. For each built-in dataset,
@@ -42,9 +40,9 @@ import itertools
 import random
 
 try:
-        from urllib.request import urlretrieve
+    from urllib import urlretrieve  # Python 2
 except ImportError:
-        from urllib2 import urlopen as urlretrieve
+    from urllib.request import urlretrieve  # Python 3
 
 # TODO: change name 'rm' ? it used to mean ratings matrix but now it's a
 # dict...
@@ -85,6 +83,9 @@ class Trainset(namedtuple('Trainset',
 # directory where builtin datasets are stored. For now it's in the home
 # directory under the .recsys_data. May be ask user to define it?
 datasets_dir = os.path.expanduser('~') + '/.recsys_data/'
+if not os.path.exists(datasets_dir):
+    os.makedirs(datasets_dir)
+
 
 # a builtin dataset has
 # - an url (where to download it)
@@ -107,15 +108,6 @@ builtin_datasets = {
             reader_params=dict(line_format='user item rating timestamp',
                                rating_scale=(1, 5),
                                sep='::')
-        ),
-    'BX' :  # Note that implicit ratings are discarded
-        BuiltinDataset(
-            url='http://www2.informatik.uni-freiburg.de/~cziegler/BX/BX-CSV-Dump.zip',
-            path=datasets_dir + 'BX/BX-Book-Ratings.csv',
-            reader_params=dict(line_format='user item rating',
-                               sep=';',
-                               rating_scale=(1, 10),
-                               skip_lines=1)
         ),
     'jester' :
         BuiltinDataset(
@@ -152,7 +144,7 @@ class Dataset:
 
         Args:
             name(:obj:`string`): The name of the built-in dataset to load.
-                Accepted values are 'ml-100k', 'ml-1m', 'jester' and 'BX'.
+                Accepted values are 'ml-100k', 'ml-1m', and 'jester'.
                 Default is 'ml-100k'.
 
         Returns:
@@ -175,7 +167,12 @@ class Dataset:
             while not answered:
                 print('Dataset ' + name + ' could not be found. Do you want to '
                       'download it? [Y/n] ', end='')
-                choice = input().lower()
+                try:
+                    choice = raw_input().lower()
+                except:
+                    choice = input().lower()
+
+                print(input)
                 if choice in ['yes', 'y', '', 'omg this is so nice of you!!']:
                     answered = True
                 elif choice in ['no', 'n', 'hell no why would i want that?!']:
@@ -184,12 +181,12 @@ class Dataset:
                     sys.exit()
 
             print('Trying to download dataset from ' + dataset.url + '...')
-            urlretrieve(dataset.url, 'tmp.zip')
+            urlretrieve(dataset.url, datasets_dir + 'tmp.zip')
 
-            with zipfile.ZipFile('tmp.zip', 'r') as tmp_zip:
+            with zipfile.ZipFile(datasets_dir + 'tmp.zip', 'r') as tmp_zip:
                 tmp_zip.extractall(datasets_dir + name)
 
-            os.remove('tmp.zip')
+            os.remove(datasets_dir + 'tmp.zip')
             print('Done! Dataset', name, 'has been saved to',  datasets_dir +
                   name)
 
@@ -420,7 +417,7 @@ class Reader():
     Args:
         name(:obj:`string`, optional): If specified, a Reader for one of the
             built-in datasets is returned and any other parameter is ignored.
-            Accepted values are 'ml-100k', 'ml-1m', 'jester' and 'BX'. Default
+            Accepted values are 'ml-100k', 'ml-1m', and 'jester'. Default
             is ``None``.
         line_format(:obj:`string`): The fields names, in the order at which
             they are encountered on a line. Example: ``'item user rating'``.
