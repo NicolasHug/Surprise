@@ -15,3 +15,4 @@ formulas.
    algobase
    basic_algorithms
    knn_inspired
+   matrix_factorization

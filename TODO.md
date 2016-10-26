@@ -1,12 +1,14 @@
 TODO
 ====
 
-* should a Prediction output the raw id or the inner id? Right now it's the
-  inner id.
+* say something quick about baseline computation (when not matrix facto) 
 * Matrix facto algo
+* remove kwargs ??
 * create option in __main__ to clean the .recsys directory. Actually, the
   __main__ module should be entirely reviewed.
 * Add a 'min_support' parameter to sim_options?
+* should a Prediction output the raw id or the inner id? Right now it's the
+  inner id. Maybe sort this out when working on the comparison tools.
 
 
 Done:

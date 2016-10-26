@@ -25,7 +25,7 @@ def test_gracefull_stop():
                                    Reader('ml-100k'))
 
     all_algorithms = (NormalPredictor, BaselineOnly, KNNBasic, KNNWithMeans,
-            KNNBaseline)
+                      KNNBaseline, SVD)
     for klass in all_algorithms:
         algo = klass()
         evaluate(algo, data)

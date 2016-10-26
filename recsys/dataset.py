@@ -44,8 +44,6 @@ try:
 except ImportError:
     from urllib.request import urlretrieve  # Python 3
 
-# TODO: change name 'rm' ? it used to mean ratings matrix but now it's a
-# dict...
 
 # Again, weird way of creating a named tuple but else the documentation would
 # be awful.
@@ -58,12 +56,15 @@ class Trainset(namedtuple('Trainset',
 
     Args:
         rm(:obj:`defaultdict` of :obj:`int`): A dictionary containing all known
-            ratings.
-            Keys are tuples (user_id, item_id), values are ratings.
+            ratings.  Keys are tuples (user_id, item_id), values are ratings.
+            ``rm`` stands for *ratings matrix*, even though it's not a proper
+            matrix object.
         ur(:obj:`defaultdict` of :obj:`list`): A dictionary containing lists of
-            tuples of the form ``(item_id, rating)``. Keys are user ids.
+            tuples of the form ``(item_id, rating)``. Keys are user ids. ``ur``
+            stands for *user ratings*.
         ir(:obj:`defaultdict` of :obj:`list`): A dictionary containing lists of
-            tuples of the form ``(user_id, rating)``. Keys are item ids.
+            tuples of the form ``(user_id, rating)``. Keys are item ids. ``ir``
+            stands for *item ratings*.
         n_users: Total number of users :math:`|U|`.
         n_items: Total number of items :math:`|I|`.
         r_min: Minimum value of the rating scale.

@@ -12,6 +12,7 @@ The available prediction algorithms are:
     knns.KNNBasic
     knns.KNNWithMeans
     knns.KNNBaseline
+    matrix_factorization.SVD
 """
 
 from .bases import AlgoBase
@@ -20,3 +21,4 @@ from .baseline_only import BaselineOnly
 from .knns import KNNBasic
 from .knns import KNNBaseline
 from .knns import KNNWithMeans
+from .matrix_factorization import SVD
