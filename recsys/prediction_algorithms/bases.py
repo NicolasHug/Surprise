@@ -26,8 +26,8 @@ class Prediction(namedtuple('Prediction',
     """A name tuple for storing the results of a prediction.
 
     Args:
-        uid: The user id.
-        iid: The item id.
+        uid: The (inner) user id.
+        iid: The (inner) item id.
         r0: The true rating :math:`r_{ui}`.
         est: The estimated rating :math:`\\hat{r}_{ui}`.
         details (dict): Stores additional details about the prediction that

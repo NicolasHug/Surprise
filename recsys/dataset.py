@@ -69,11 +69,9 @@ class Trainset(namedtuple('Trainset',
         r_min: Minimum value of the rating scale.
         r_max: Maximum value of the rating scale.
         raw2inner_id_users(dict): A mapping between raw user id and inner user
-            id. A raw id is an id as written on a dataset file, e.g. for the BX
-            dataset it might be '034545104X'. An inner id is an integer from 0
-            to n_users, which is a lot more convenient to manage.
+            id. See :ref:`this note<raw_inner_note>`.
         raw2inner_id_items(dict): A mapping between raw item id and inner item
-            id. See previous note on `raw2inner_id_users` parameter.
+            id. See :ref:`this note<raw_inner_note>`.
     """
 
 

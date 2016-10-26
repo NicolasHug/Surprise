@@ -108,4 +108,46 @@ each of the folds:
 Train on a whole trainset and specifically query for predictions
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-TODO
+We will here review how to get a prediction for specified users and items. In
+the mean time, we will also review how to train on a whole dataset, whithout
+performing cross-validation (i.e. there is no test set).
+
+The latter is pretty straightforward: all you need is to load a dataset, and
+the :meth:`build_full_trainset
+<recsys.dataset.DatasetAutoFolds.build_full_trainset>` method to build the
+:class:`trainset <recsys.dataset.Trainset>` and train you algorithm:
+
+.. literalinclude:: ../../examples/query_for_predictions.py
+    :caption: From file ``examples/query_for_predictions.py``
+    :name: query_for_predictions.py
+    :lines: 16-23
+
+Now, there's no way we could call the :meth:`test
+<recsys.prediction_algorithms.bases.AlgoBase.test>` method, because we have no
+testset. But you can still get predictions for the users and items you want.
+
+Let's say you're interested in user 196 and item 302 (make sure they're in the
+trainset!), and you know that the true rating :math:`r_{ui} = 4`. First, you
+need convert these raw ids into inner ids (see :ref:`note<raw_inner_note>`
+below). Then, you can call the :meth:`predict
+<recsys.prediction_algorithms.bases.AlgoBase.predict>`:
+
+.. literalinclude:: ../../examples/query_for_predictions.py
+    :caption: From file ``examples/query_for_predictions.py``
+    :name: query_for_predictions2.py
+    :lines: 29-37
+
+
+.. _raw_inner_note:
+.. note::
+  Raw ids are ids as defined in a rating file. They can be strings or whatever.
+  On trainset creation, each raw id is mapped to a (unique) integer called
+  inner id, which is a lot more suitable for RecSys to manipulate. The mapping
+  between raw ids and inner ids is done by the two dictionaries
+  ``raw2inner_id_users`` and ``raw2inner_id_items`` of a :class:`trainset
+  <recsys.dataset.Trainset>`.
+
+Obviously, it is perfectly fine to use the :meth:`predict
+<recsys.prediction_algorithms.bases.AlgoBase.predict>` method directly during
+a cross-validation process. You'll need to ensure that the user and item ids
+are present in the trainset though.

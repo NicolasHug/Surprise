@@ -1,5 +1,6 @@
 """
-TODO
+This module descibes how to train on a full dataset (when no testset is
+built/specified) and how to query for specific predictions.
 """
 
 from __future__ import (absolute_import, division, print_function,
@@ -7,7 +8,6 @@ from __future__ import (absolute_import, division, print_function,
 
 from recsys import KNNBasic
 from recsys import Dataset
-from recsys import Reader
 from recsys import evaluate
 
 
@@ -15,18 +15,29 @@ from recsys import evaluate
 # cross-validation.
 data = Dataset.load_builtin('ml-100k')
 
+# Retrieve the trainset.
 trainset = data.build_full_trainset()
 
+# Build an algorithm, and train it.
 algo = KNNBasic()
-
 algo.train(trainset)
 
-ruid = 196
-riid = 302
 
-uid = trainset.raw2inner_id_users[str(ruid)]
-iid = trainset.raw2inner_id_users[str(riid)]
+##########################################
+# we can now query for specific predicions
 
-algo.predict(uid, iid, r0=4, verbose=True)
+ruid = str(196) # raw user id (as in the ratings file). They are **strings**!
+riid = str(302) # raw item id (as in the ratings file). They are **strings**!
 
+# get inner ids, as used by RecSys
+uid = trainset.raw2inner_id_users[ruid]
+iid = trainset.raw2inner_id_items[riid]
+
+# get a prediction for specific users and items.
+pred = algo.predict(uid, iid, r0=4, verbose=True)
+
+
+##########################################
+# Tired? You can still call the 'split' method!
+data.split(n_folds=3)
 evaluate(algo, data)

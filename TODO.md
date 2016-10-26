@@ -1,11 +1,10 @@
 TODO
 ====
 
-* allow to train on a SINGLE file without test set, and let user query for some
-  predictions
-* write tuto for using only predict() (and not test)
 * allow the 'estimate' method to return some details about prediction (such as
   the number of neighbors for a KNN)
+* should a Prediction output the raw id or the inner id? Right now it's the
+  inner id.
 * Matrix facto algo
 * create option in __main__ to clean the .recsys directory. Actually, the
   __main__ module should be entirely reviewed.
@@ -18,6 +17,9 @@ Some random observations
 Done:
 -----
 
+* allow to train on a SINGLE file without test set, and let user query for some
+  predictions
+* write tuto for using only predict() (and not test)
 * maybe clean a little all the dataset machinery? Plus, are the
   raw2inner_id_users and raw2inner_id_items worth keeping? May be for analysing
   tools, I don't know right now. EDIT: yes, we need to keep them, simply
