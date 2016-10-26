@@ -10,11 +10,12 @@ The basics
 
 Want to get your hands dirty? Cool.
 
-Creating your own prediction algorithm is
-pretty simple: an algorithm is nothing but a class derived from :class:`AlgoBase
+Creating your own prediction algorithm is pretty simple: an algorithm is
+nothing but a class derived from :class:`AlgoBase
 <recsys.prediction_algorithms.bases.AlgoBase>` that has an ``estimate`` method.
-This methods takes in a user id, an item id, and returns the estimated rating
-:math:`\hat{r}_{ui}`:
+This is the method that is called by the :meth:`predict
+<recsys.prediction_algorithms.bases.AlgoBase.predict>` method. It takes in a
+user id, an item id, and returns the estimated rating :math:`\hat{r}_{ui}`:
 
 .. literalinclude:: ../../examples/building_custom_algorithms/most_basic_algorithm.py
     :caption: From file ``examples/building_custom_algorithms/most_basic_algorithm.py``
@@ -23,6 +24,21 @@ This methods takes in a user id, an item id, and returns the estimated rating
 
 This algorithm is the dumbest we could have thought of: it just predicts a
 rating of 3, regardless of users and items.
+
+If you want to store additional information about the prediction, you can also
+return a dictionary with given details: ::
+
+    def estimate(self, u, i):
+
+        details = {'info1' : 'That was',
+                   'info2' : 'easy stuff :)'}
+        return 3, details
+
+This dictionary will be stored in the :class:`prediction
+<recsys.prediction_algorithms.bases.Prediction>` as the ``details`` field and
+can be used for later analysis.
+
+
 
 The ``train`` method
 ~~~~~~~~~~~~~~~~~~~~

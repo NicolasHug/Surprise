@@ -130,6 +130,11 @@ class AlgoBase:
                                            'training set')
 
             est = self.estimate(x0, y0)
+
+            if isinstance(est, tuple):
+                est, details = est
+                self.pred_details = details
+
             impossible = False
         except PredictionImpossible:
             est = self.global_mean

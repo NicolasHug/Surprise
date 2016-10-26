@@ -1,8 +1,6 @@
 TODO
 ====
 
-* allow the 'estimate' method to return some details about prediction (such as
-  the number of neighbors for a KNN)
 * should a Prediction output the raw id or the inner id? Right now it's the
   inner id.
 * Matrix facto algo
@@ -10,13 +8,12 @@ TODO
   __main__ module should be entirely reviewed.
 * Add a 'min_support' parameter to sim_options?
 
-Some random observations
-------------------------
-
 
 Done:
 -----
 
+* allow the 'estimate' method to return some details about prediction (such as
+  the number of neighbors for a KNN)
 * allow to train on a SINGLE file without test set, and let user query for some
   predictions
 * write tuto for using only predict() (and not test)

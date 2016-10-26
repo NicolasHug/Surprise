@@ -59,18 +59,20 @@ class KNNBasic(AlgoBase):
         neighbors = sorted(neighbors, key=lambda x: x[1], reverse=True)
 
         # compute weighted average
-        sum_sim = sum_ratings = 0
+        sum_sim = sum_ratings = actual_k = 0
         for (_, sim, r) in neighbors[:self.k]:
             if sim > 0:
                 sum_sim += sim
                 sum_ratings += sim * r
+                actual_k += 1
 
         try:
             est = sum_ratings / sum_sim
         except ZeroDivisionError:
             raise PredictionImpossible
 
-        return est
+        details = {'actual_k' : actual_k}
+        return est, details
 
 
 class KNNWithMeans(AlgoBase):
@@ -131,18 +133,21 @@ class KNNWithMeans(AlgoBase):
         neighbors = sorted(neighbors, key=lambda x: x[1], reverse=True)
 
         # compute weighted average
-        sum_sim = sum_ratings = 0
+        sum_sim = sum_ratings = actual_k = 0
         for (nb, sim, r) in neighbors[:self.k]:
             if sim > 0:
                 sum_sim += sim
                 sum_ratings += sim * (r - self.means[nb])
+                actual_k += 1
+
 
         try:
             est += sum_ratings / sum_sim
         except ZeroDivisionError:
             pass  # return mean
 
-        return est
+        details = {'actual_k' : actual_k}
+        return est, details
 
 
 class KNNBaseline(AlgoBase):
@@ -206,15 +211,17 @@ class KNNBaseline(AlgoBase):
         neighbors = sorted(neighbors, key=lambda x: x[1], reverse=True)
 
         # compute weighted average
-        sum_sim = sum_ratings = 0
+        sum_sim = sum_ratings = actual_k = 0
         for (nb, sim, r) in neighbors[:self.k]:
             if sim > 0:
                 sum_sim += sim
                 sum_ratings += sim * (r - self.get_baseline(nb, y0))
+                actual_k += 1
 
         try:
             est += sum_ratings / sum_sim
         except ZeroDivisionError:
             pass  # just baseline again
 
-        return est
+        details = {'actual_k' : actual_k}
+        return est, details
