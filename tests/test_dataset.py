@@ -50,11 +50,16 @@ def test_split():
     testsets_b = [testset for (_, testset) in data.folds]
     assert testsets_a == testsets_b
 
-    data.split(n_folds=3, shuffle=True)
-    testsets_b = [testset for (_, testset) in data.folds]
-    assert testsets_a != testsets_b
-    # Note : there's a chance that the above test fails, just by lack of luck.
-    # This is probably not a good thing.
+    # We'll shuffle and check that folds are now different. There's a chance
+    # that they're still the same, just by lack of luck. If after 10000 tries
+    # the're still the same, there's a high probability that our code is
+    # faulty. If we're very (very very very) unlucky, it may fail though.
+    i = 0
+    while testsets_a == testsets_b:
+        data.split(n_folds=3, shuffle=True)
+        testsets_b = [testset for (_, testset) in data.folds]
+        i += 1
+    assert i < 10000
 
     # Ensure that folds are the same if split is not called again
     testsets_a = [testset for (_, testset) in data.folds]
