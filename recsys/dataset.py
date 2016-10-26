@@ -46,9 +46,6 @@ except ImportError:
 
 # TODO: change name 'rm' ? it used to mean ratings matrix but now it's a
 # dict...
-# TODO: Raw2innerId stuff ? Is it usefull to keep it in the Trainset ??
-# TODO: Plus, is it useful at all to make the mapping as we are now using
-# dictionnaries for storing ratings?
 
 # Again, weird way of creating a named tuple but else the documentation would
 # be awful.
@@ -349,7 +346,8 @@ class DatasetUserFolds(Dataset):
 
 class DatasetAutoFolds(Dataset):
     """A derived class from :class:`Dataset` for which folds (for
-    cross-validation) are not predefined."""
+    cross-validation) are not predefined. (Or for when there are no folds at
+    all)."""
 
     def __init__(self, ratings_file=None, reader=None):
 
@@ -358,6 +356,20 @@ class DatasetAutoFolds(Dataset):
         self.n_folds = 5
         self.shuffle = True
         self.raw_ratings = self.read_ratings(self.ratings_file)
+
+    def build_full_trainset(self):
+        """Do not split the dataset into folds and just return a trainset as
+        is, built from the whole dataset.
+
+        User can then query for predictions, as shown in the :ref:`User Guide
+        <train_on_whole_trainset>`.
+
+        Returns:
+            The :class:`Trainset`.
+        """
+
+        return self.construct_trainset(self.raw_ratings)
+
 
     @property
     def raw_folds(self):

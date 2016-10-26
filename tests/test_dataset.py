@@ -22,6 +22,22 @@ def test_wrong_file_name():
     with pytest.raises(ValueError):
         data = Dataset.load_from_folds(folds_files=wrong_files, reader=reader)
 
+def test_build_full_trainset():
+    """Test the build_full_trainset method."""
+
+    custom_dataset_path = (os.path.dirname(os.path.realpath(__file__)) +
+                           '/custom_dataset')
+    data = Dataset.load_from_file(file_path=custom_dataset_path, reader=reader)
+
+    trainset = data.build_full_trainset()
+
+    assert len(trainset.rm) == 5
+    assert len(trainset.ur) == 5
+    assert len(trainset.ir) == 2
+    assert trainset.n_users == 5
+    assert trainset.n_items == 2
+
+
 def test_split():
     """Test the split method."""
 

@@ -81,10 +81,14 @@ Of course, nothing prevents you from only loading a single file for training
 and a single file for testing. However, the ``folds_files`` parameter still
 needs to be a ``list`` (or any iterable).
 
+
+Advanced usage
+--------------
+
 .. _iterate_over_folds:
 
-Advanced usage: manually iterate over folds
--------------------------------------------
+Manually iterate over folds
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 We have so far used the :func:`evaluate <recsys.evaluate.evaluate>` function
 that does all the hard work for us. If you want to have better control on your
@@ -98,3 +102,10 @@ each of the folds:
     :caption: From file ``examples/iterate_over_folds.py``
     :name: iterate_over_folds.py
     :lines: 14-
+
+.. _train_on_whole_trainset:
+
+Train on a whole trainset and specifically query for predictions
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+TODO
