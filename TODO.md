@@ -1,7 +1,11 @@
 TODO
 ====
 
+* allow to train on a SINGLE file without test set, and let user query for some
+  predictions
 * write tuto for using only predict() (and not test)
+* allow the 'estimate' method to return some details about prediction (such as
+  the number of neighbors for a KNN)
 * Matrix facto algo
 * create option in __main__ to clean the .recsys directory. Actually, the
   __main__ module should be entirely reviewed.
@@ -10,13 +14,15 @@ TODO
 Some random observations
 ------------------------
 
-* maybe clean a little all the dataset machinery? Plus, are the
-    raw2inner_id_users and raw2inner_id_items worth keeping? May be for
-    analysing tools, I don't know right now.
 
 Done:
 -----
 
+* maybe clean a little all the dataset machinery? Plus, are the
+  raw2inner_id_users and raw2inner_id_items worth keeping? May be for analysing
+  tools, I don't know right now. EDIT: yes, we need to keep them, simply
+  because the similarity computation can only work with integer as indexes
+  (numpy arrays).
 * sort out this warning issue coming from cython
 * say something about the sim > 0 in knns algos
 * get less restrictive requirements.txt
