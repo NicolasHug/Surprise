@@ -1,7 +1,6 @@
 TODO
 ====
 
-* remove kwargs ??
 * create option in __main__ to clean the .recsys directory. Actually, the
   __main__ module should be entirely reviewed.
 * Add a 'min_support' parameter to sim_options?
@@ -15,6 +14,7 @@ TODO
 Done:
 -----
 
+* remove kwargs : done where useless.
 * say something quick about baseline computation (when not matrix facto) 
 * Matrix facto algo
 * allow the 'estimate' method to return some details about prediction (such as

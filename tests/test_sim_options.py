@@ -63,14 +63,6 @@ def test_user_based_field():
         rmses_item_based = evaluate(algo, data, measures=['rmse'])['rmse']
         assert rmses_user_based != rmses_item_based
 
-    algorithms = (BaselineOnly, ) # user_based should not influence prediction
-    for klass in algorithms:
-        algo = klass(sim_options={'user_based':True})
-        rmses_user_based = evaluate(algo, data, measures=['rmse'])['rmse']
-        algo = klass(sim_options={'user_based':False})
-        rmses_item_based = evaluate(algo, data, measures=['rmse'])['rmse']
-        assert np.allclose(rmses_user_based, rmses_item_based)
-
 def test_shrinkage_field():
     """Ensure the shrinkage field is taken into account."""
 

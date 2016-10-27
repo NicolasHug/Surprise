@@ -11,6 +11,11 @@ from .bases import PredictionImpossible
 from .bases import AlgoBase
 
 
+# Important note: as soon as the algorithm uses a similarity measure, it should
+# also allow the bsl_options parameter because of the pearson_baseline
+# similarity. It can be done explicitely (e.g. KNNBaseline), or implicetely
+# using kwargs (e.g. KNNBasic).
+
 class KNNBasic(AlgoBase):
     """Basic collaborative filtering algorithm.
 
@@ -183,12 +188,16 @@ class KNNBaseline(AlgoBase):
         sim_options(dict): A dictionary of options for the similarity
             measure. See :ref:`similarity_measures_configuration` for accepted
             options.
+        bsl_options(dict): A dictionary of options for the baseline estimates
+            computation. See :ref:`baseline_estimates_configuration` for
+            accepted options.
+
     """
 
-    def __init__(self, k=40, sim_options={}, bsl_options={}, **kwargs):
+    def __init__(self, k=40, sim_options={}, bsl_options={}):
 
         AlgoBase.__init__(self, sim_options=sim_options,
-                          bsl_options=bsl_options, **kwargs)
+                          bsl_options=bsl_options)
 
         self.k = k
 

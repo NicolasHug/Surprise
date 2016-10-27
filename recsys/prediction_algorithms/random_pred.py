@@ -25,9 +25,9 @@ class NormalPredictor(AlgoBase):
         \\frac{(r_{ui} - \\hat{\mu})^2}{|R_{train}|}}
     """
 
-    def __init__(self, **kwargs):
+    def __init__(self):
 
-        AlgoBase.__init__(self, **kwargs)
+        AlgoBase.__init__(self)
 
     def train(self, trainset):
 
