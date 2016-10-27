@@ -35,7 +35,7 @@ return a dictionary with given details: ::
         return 3, details
 
 This dictionary will be stored in the :class:`prediction
-<recsys.prediction_algorithms.bases.Prediction>` as the ``details`` field and
+<recsys.prediction_algorithms.predictions.Prediction>` as the ``details`` field and
 can be used for later analysis.
 
 

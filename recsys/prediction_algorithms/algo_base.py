@@ -8,31 +8,14 @@ from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 
 from collections import defaultdict
-from collections import namedtuple
 import numpy as np
 
 from .. import similarities as sims
 from .. import colors
+from .predictions import PredictionImpossible
+from .predictions import Prediction
 
 
-class PredictionImpossible(Exception):
-    """Exception raised when a prediction is impossible."""
-    pass
-
-# This is a weird way of creating a named tuple but else the documentation
-# would be awful.
-class Prediction(namedtuple('Prediction',
-                            ['uid', 'iid', 'r0', 'est', 'details'])):
-    """A name tuple for storing the results of a prediction.
-
-    Args:
-        uid: The (inner) user id.
-        iid: The (inner) item id.
-        r0: The true rating :math:`r_{ui}`.
-        est: The estimated rating :math:`\\hat{r}_{ui}`.
-        details (dict): Stores additional details about the prediction that
-            might be useful for later analysis.
-        """
 
 class AlgoBase:
     """Abstract class where is defined the basic behaviour of a prediction
@@ -115,7 +98,7 @@ class AlgoBase:
                 is False.
 
         Returns:
-            A :obj:`Prediction` object.
+            A :obj:`Prediction <recsys.prediction_algorithms.predictions.Prediction>` object.
         """
 
         x0, y0 = (u0, i0) if self.user_based else (i0, u0)
@@ -169,7 +152,8 @@ class AlgoBase:
                 Default is False.
 
         Returns:
-            A list of :obj:`Prediction` objects."""
+            A list of :class:`Prediction <recsys.prediction_algorithms.predictions.Prediction>` objects.
+        """
 
         predictions = [self.predict(uid, iid, r, verbose=verbose)
                        for (uid, iid, r) in testset]

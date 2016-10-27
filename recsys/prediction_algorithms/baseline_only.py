@@ -5,7 +5,7 @@ Algorithm predicting only the baseline.
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 
-from .bases import AlgoBase
+from .algo_base import AlgoBase
 
 
 class BaselineOnly(AlgoBase):

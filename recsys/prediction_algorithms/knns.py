@@ -7,8 +7,8 @@ from __future__ import (absolute_import, division, print_function,
 
 import numpy as np
 
-from .bases import PredictionImpossible
-from .bases import AlgoBase
+from .predictions import PredictionImpossible
+from .algo_base import AlgoBase
 
 
 # Important note: as soon as the algorithm uses a similarity measure, it should

@@ -45,14 +45,14 @@ except ImportError:
     from urllib.request import urlretrieve  # Python 3
 
 
-# Again, weird way of creating a named tuple but else the documentation would
-# be awful.
 class Trainset(namedtuple('Trainset',
                           ['rm', 'ur', 'ir', 'n_users', 'n_items', 'r_min',
                            'r_max', 'raw2inner_id_users',
                            'raw2inner_id_items'])):
     """A named tuple for containing all useful data that constitutes a training
     set.
+
+    It's wrapped in a class, but only for documentation purposes.
 
     Args:
         rm(:obj:`defaultdict` of :obj:`int`): A dictionary containing all known

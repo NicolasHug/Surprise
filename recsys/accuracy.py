@@ -26,7 +26,7 @@ def rmse(predictions, verbose=True):
         \\hat{R}}(r_{ui} - \\hat{r}_{ui})^2}.
 
     Args:
-        predictions (:obj:`list` of :obj:`Prediction <recsys.prediction_algorithms.bases.Prediction>`):
+        predictions (:obj:`list` of :obj:`Prediction <recsys.prediction_algorithms.predictions.Prediction>`):
             A list of predictions, as returned by the :meth:`test
             <recsys.prediction_algorithms.bases.AlgoBase.test>` method.
         verbose: If True, will print computed value. Default is ``True``.
@@ -60,7 +60,7 @@ def mae(predictions, verbose=True):
         - \\hat{r}_{ui}|
 
     Args:
-        predictions (:obj:`list` of :obj:`Prediction <recsys.prediction_algorithms.bases.Prediction>`):
+        predictions (:obj:`list` of :obj:`Prediction <recsys.prediction_algorithms.predictions.Prediction>`):
             A list of predictions, as returned by the :meth:`test
             <recsys.prediction_algorithms.bases.AlgoBase.test>` method.
         verbose: If True, will print computed value. Default is ``True``.
@@ -92,7 +92,7 @@ def fcp(predictions, verbose=True):
     and Sill, section 5.2.
 
     Args:
-        predictions (:obj:`list` of :obj:`Prediction <recsys.prediction_algorithms.bases.Prediction>`):
+        predictions (:obj:`list` of :obj:`Prediction <recsys.prediction_algorithms.predictions.Prediction>`):
             A list of predictions, as returned by the :meth:`test
             <recsys.prediction_algorithms.bases.AlgoBase.test>` method.
         verbose: If True, will print computed value. Default is ``True``.

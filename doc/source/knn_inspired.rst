@@ -18,7 +18,7 @@ approach.
   ratings from users (or items) that are negatively correlated. For a given
   prediction, the actual number of neighbors can be retrieved in the
   ``'actual_k'`` field of the ``details`` dictionary of the :class:`prediction
-  <recsys.prediction_algorithms.bases.Prediction>`.
+  <recsys.prediction_algorithms.predictions.Prediction>`.
 
 .. autoclass:: recsys.prediction_algorithms.knns.KNNBasic
     :show-inheritance:

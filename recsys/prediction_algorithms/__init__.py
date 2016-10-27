@@ -16,7 +16,7 @@ The available prediction algorithms are:
     matrix_factorization.SVDpp
 """
 
-from .bases import AlgoBase
+from .algo_base import AlgoBase
 from .random_pred import NormalPredictor
 from .baseline_only import BaselineOnly
 from .knns import KNNBasic

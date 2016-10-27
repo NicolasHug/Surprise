@@ -13,6 +13,7 @@ formulas.
    :includehidden:
 
    algobase
+   predictions_module
    basic_algorithms
    knn_inspired
    matrix_factorization
