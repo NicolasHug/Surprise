@@ -9,6 +9,7 @@ TODO
 * Add a 'min_support' parameter to sim_options?
 * should a Prediction output the raw id or the inner id? Right now it's the
   inner id. Maybe sort this out when working on the comparison tools.
+* when dumping, we should dump all the algorithm parameter. Use __dict__ ?
 
 
 Done:

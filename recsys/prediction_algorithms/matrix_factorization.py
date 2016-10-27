@@ -45,7 +45,7 @@ class SVD(AlgoBase):
         q_i &\\rightarrow q_i &+ \gamma (e_{ui} p_u - \lambda q_i)
 
     where :math:`e_{ui} = r_{ui} - \\hat{r}_{ui}`. These steps are performed
-    over all the ratings of the trainset and repeated ``n_epoch`` times.
+    over all the ratings of the trainset and repeated ``n_epochs`` times.
     Baselines are initialized to 0. User and item factors are initialized to
     ``0.1``, as recommended by `Funk
     <http://sifter.org/~simon/journal/20061211.html>`_.

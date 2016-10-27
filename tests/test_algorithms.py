@@ -14,22 +14,6 @@ from recsys.dataset import Reader
 from recsys.evaluate import evaluate
 
 
-def test_gracefull_stop():
-    """Just ensure that all algorithms run gracefully without errors."""
-
-    # the test and train files are from the ml-100k dataset (10% of u1.base and
-    # 10 % of u1.test)
-    train_file = os.path.join(os.path.dirname(__file__), './u1_ml100k_train')
-    test_file = os.path.join(os.path.dirname(__file__), './u1_ml100k_test')
-    data = Dataset.load_from_folds([(train_file, test_file)],
-                                   Reader('ml-100k'))
-
-    all_algorithms = (NormalPredictor, BaselineOnly, KNNBasic, KNNWithMeans,
-                      KNNBaseline, SVD)
-    for klass in all_algorithms:
-        algo = klass()
-        evaluate(algo, data)
-
 def test_unknown_user_or_item():
     """Ensure that an unknown user or item in testset will predict the mean
     rating and that was_impossible is set to True."""
