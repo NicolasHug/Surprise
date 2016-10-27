@@ -5,6 +5,7 @@ from .prediction_algorithms import KNNBasic
 from .prediction_algorithms import KNNWithMeans
 from .prediction_algorithms import KNNBaseline
 from .prediction_algorithms import SVD
+from .prediction_algorithms import SVDpp
 
 from .dataset import Dataset
 from .dataset import Reader

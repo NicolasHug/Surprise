@@ -10,6 +10,8 @@ TODO
 * should a Prediction output the raw id or the inner id? Right now it's the
   inner id. Maybe sort this out when working on the comparison tools.
 * when dumping, we should dump all the algorithm parameter. Use __dict__ ?
+* test all algorithms with a user with no ratings and an items with no ratings.
+  (linked to a todo in the predict method)
 
 
 Done:
