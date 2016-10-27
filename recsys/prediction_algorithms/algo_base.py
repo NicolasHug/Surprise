@@ -105,8 +105,6 @@ class AlgoBase:
 
         self.pred_details= {}
 
-        # TODO: maybe change this? It should be up to algorithm to chose whether
-        # it can (or can't) make a prediction even if user or item is unknown.
         try:
             if str(u0).startswith('unknown') or str(i0).startswith('unknown'):
                 raise PredictionImpossible('user or item was not part of ' +

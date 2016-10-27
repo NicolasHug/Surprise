@@ -1,15 +1,20 @@
 TODO
 ====
 
+* Do something about unknown users and unknown items, i.e. users or items that
+  have no rating in the trainset. Right now, the predict method checks if the
+  name starts with 'unknown' but this is shiiite because it's dependent on the
+  construct_trainset method, which is sometimes never called (so the raw2inner
+  stuff will come in play somehow). Plus, It should be up to the algorithms to
+  choose whether it can (or can't) make a prediction even if user or item is
+  unknown.
+
 * create option in __main__ to clean the .recsys directory. Actually, the
   __main__ module should be entirely reviewed.
 * Add a 'min_support' parameter to sim_options?
 * should a Prediction output the raw id or the inner id? Right now it's the
   inner id. Maybe sort this out when working on the comparison tools.
 * when dumping, we should dump all the algorithm parameter. Use __dict__ ?
-* test all algorithms with a user with no ratings and an items with no ratings.
-  (linked to a todo in the predict method)
-
 
 Done:
 -----
