@@ -25,12 +25,26 @@ way baselines and similarities are computed.
 Baselines estimates configuration
 ---------------------------------
 
-.. note::
-  If you do not want to configure the way baselines are computed, you don't
-  have to: the default parameteres will do just fine.
 
-Before continuing, you may want to read section 2.1 of `Factor in the
-Neighbors: Scalable and Accurate Collaborative Filtering
+.. note::
+  This section only applies to algorithms (or similarity measures) that try to
+  minimize the following regularized squared error:
+
+  .. math::
+    \sum_{r_{ui} \in R_{train}} \left(r_{ui} - (\mu + b_u + b_i)\right)^2 +
+    \lambda \left(b_u^2 + b_i^2 \right).
+
+  For algorithms using baselines in another objective function (e.g. the
+  :meth:`SVD <recsys.prediction_algorithms.matrix_factorization.SVD>`
+  algorithm), the baseline configuration is done differently and is specific to
+  each algorithm. Please refer to their own documentation.
+
+First of all, if you do not want to configure the way baselines are computed,
+you don't have to: the default parameters will do just fine. If you do want to
+well... This is for you.
+
+You may want to read section 2.1 of `Factor in the Neighbors: Scalable and
+Accurate Collaborative Filtering
 <http://courses.ischool.berkeley.edu/i290-dm/s11/SECURE/a1-koren.pdf>`_ by
 Yehuda Koren to get a good idea of what are baseline estimates.
 

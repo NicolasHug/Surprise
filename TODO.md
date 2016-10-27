@@ -1,8 +1,6 @@
 TODO
 ====
 
-* say something quick about baseline computation (when not matrix facto) 
-* Matrix facto algo
 * remove kwargs ??
 * create option in __main__ to clean the .recsys directory. Actually, the
   __main__ module should be entirely reviewed.
@@ -17,6 +15,8 @@ TODO
 Done:
 -----
 
+* say something quick about baseline computation (when not matrix facto) 
+* Matrix facto algo
 * allow the 'estimate' method to return some details about prediction (such as
   the number of neighbors for a KNN)
 * allow to train on a SINGLE file without test set, and let user query for some

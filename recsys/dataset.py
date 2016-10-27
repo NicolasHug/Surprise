@@ -400,6 +400,12 @@ class DatasetAutoFolds(Dataset):
         If you forget to call :meth:`split`, the dataset will be automatically
         shuffled and split for 5-folds cross-validation.
 
+        You can obtain repeatable splits over your all your experiments by
+        seeding the RNG: ::
+
+            import random
+            random.seed(my_seed)  # call this before you call split!
+
         Args:
             n_folds(:obj:`int`): The number of folds.
             shuffle(:obj:`bool`): Whether to shuffle ratings before splitting.

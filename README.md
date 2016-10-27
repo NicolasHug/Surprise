@@ -25,13 +25,24 @@ have tried to make as clear and precise as possible by pointing out every
 detail of the algorithms, in order for the practitioner to have perfect
 control over his experiments.
 
+Features
+--------
+
+- A great [doc](http://recsys.readthedocs.io/en/latest/index.html)! (we hope)
+- Dataset handling is made easy.
+- Various ready-to-use prediction algorithms.
+- Easy to implement new algorithm ideas.
+- Evaluate, analyse and compare the algorithms performance.
+
 Installation / Usage
 --------------------
 
-To install use pip:
+Please, use a [virtual env](
+http://docs.python-guide.org/en/latest/dev/virtualenvs/)
+
+To install from [PyPI](https://pypi.python.org/pypi/recsys/), use pip:
 
     $ pip install recsys
-
 
 Or clone the repo:
 
@@ -39,6 +50,8 @@ Or clone the repo:
     $ cd recsys
     $ pip install -r requirements.txt
     $ pip install -r requirements_dev.txt
+    $ # then either
+    $ pip install .  # or below
     $ python setup.py install
 
 
@@ -53,3 +66,9 @@ License
 
 This project is licensed under the GPLv3 license - see the LICENSE.md file for
 details.
+
+Acknowledgement:
+----------------
+
+- [Pierre-François Gimenez](https://github.com/PFgimenez), for his valuable
+  insights on software design.

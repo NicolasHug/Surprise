@@ -69,7 +69,8 @@ def test_split():
     # We'll shuffle and check that folds are now different. There's a chance
     # that they're still the same, just by lack of luck. If after 10000 tries
     # the're still the same, there's a high probability that our code is
-    # faulty. If we're very (very very very) unlucky, it may fail though.
+    # faulty. If we're very (very very very) unlucky, it may fail though (or
+    # loop for eternity).
     i = 0
     while testsets_a == testsets_b:
         data.split(n_folds=3, shuffle=True)
