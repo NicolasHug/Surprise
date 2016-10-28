@@ -67,7 +67,7 @@ License
 This project is licensed under the GPLv3 license - see the LICENSE.md file for
 details.
 
-Acknowledgement:
+Acknowledgements:
 ----------------
 
 - [Pierre-François Gimenez](https://github.com/PFgimenez), for his valuable

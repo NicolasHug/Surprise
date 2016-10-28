@@ -16,6 +16,12 @@ TODO
   inner id. Maybe sort this out when working on the comparison tools.
 * when dumping, we should dump all the algorithm parameter. Use __dict__ ?
 
+Maybe, Maybe not
+----------------
+
+* allow a back up algorithm  when prediction is impossible. Right now it's just
+  the mean rating that is predicted. Maybe user would want to choose it.
+
 Done:
 -----
 
