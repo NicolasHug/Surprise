@@ -39,6 +39,8 @@ import zipfile
 import itertools
 import random
 
+import numpy as np
+
 try:
     from urllib import urlretrieve  # Python 2
 except ImportError:
@@ -498,12 +500,10 @@ class Trainset:
             stands for *item ratings*.
         n_users: Total number of users :math:`|U|`.
         n_items: Total number of items :math:`|I|`.
+        n_ratings: Total number of ratings :math:`|R_{train}|`.
         r_min: Minimum value of the rating scale.
         r_max: Maximum value of the rating scale.
-        raw2inner_id_users(dict): A mapping between raw user id and inner user
-            id. See :ref:`this note<raw_inner_note>`.
-        raw2inner_id_items(dict): A mapping between raw item id and inner item
-            id. See :ref:`this note<raw_inner_note>`.
+        global_mean: The mean of all ratings :math:`\mu`.
     """
 
     def __init__(self, rm, ur, ir, n_users, n_items, r_min, r_max,
@@ -514,10 +514,12 @@ class Trainset:
         self.ir = ir
         self.n_users = n_users
         self.n_items = n_items
+        self.n_ratings = len(self.rm)
         self.r_min = r_min
         self.r_max = r_max
         self._raw2inner_id_users = raw2inner_id_users
         self._raw2inner_id_items = raw2inner_id_items
+        self._global_mean = None
 
     def knows_user(self, uid):
         """Indicate if the user is part of the trainset.
@@ -586,3 +588,32 @@ class Trainset:
         except KeyError:
             raise ValueError(('Item ' + str(riid) +
                               ' is not part of the trainset.'))
+    @property
+    def all_ratings(self):
+        """generator to iter over all ratings."""
+
+        # TODO: why not just use rm.values() ??
+
+        for u, u_ratings in self.ur.items():
+            for i, r in u_ratings:
+                yield u, i, r
+
+    @property
+    def all_users(self):
+        """generator to iter over all users"""
+        return range(self.n_users)
+
+    @property
+    def all_items(self):
+        """generator to iter over all items"""
+        return range(self.n_items)
+
+    @property
+    def global_mean(self):
+        """Return the mean of all ratings.
+
+        It's only computed once."""
+        if self._global_mean is None:
+            self._global_mean = np.mean([r for (_, _, r) in self.all_ratings])
+
+        return self._global_mean

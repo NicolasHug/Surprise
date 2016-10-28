@@ -117,7 +117,7 @@ class SVD(AlgoBase):
             for (u, i), r in trainset.rm.items():
 
                 err = (r -
-                      (self.global_mean + bu[u] + bi[i] +
+                      (self.trainset.global_mean + bu[u] + bi[i] +
                        np.dot(qi[i], pu[u])))
 
                 bu[u] += self.lr_bu * (err - self.reg_bu * bu[u])
@@ -139,7 +139,7 @@ class SVD(AlgoBase):
 
     def estimate(self, u, i):
 
-        est = self.global_mean
+        est = self.trainset.global_mean
 
         if self.trainset.knows_user(u):
             est += self.bu[u]
@@ -259,7 +259,7 @@ class SVDpp(AlgoBase):
                                    np.sqrt(Iu))
 
                 err = (r -
-                      (self.global_mean + bu[u] + bi[i] +
+                      (self.trainset.global_mean + bu[u] + bi[i] +
                        np.dot(qi[i], pu[u] + u_impl_feedback)))
 
                 bu[u] += self.lr_bu * (err - self.reg_bu * bu[u])
@@ -281,7 +281,7 @@ class SVDpp(AlgoBase):
 
     def estimate(self, u, i):
 
-        est = self.global_mean
+        est = self.trainset.global_mean
 
         if self.trainset.knows_user(u):
             est += self.bu[u]

@@ -32,15 +32,14 @@ class BaselineOnly(AlgoBase):
     def train(self, trainset):
 
         AlgoBase.train(self, trainset)
-        self.compute_baselines()
+        self.bu, self.bi = self.compute_baselines()
 
-    def estimate(self, x0, y0):
+    def estimate(self, u, i):
 
-        est = self.global_mean
-        #TODO: do something here (x0, user...)
-        if self.trainset.knows_user(x0):
-            est += self.x_biases[x0]
-        if self.trainset.knows_item(y0):
-            est += self.y_biases[y0]
+        est = self.trainset.global_mean
+        if self.trainset.knows_user(u):
+            est += self.bu[u]
+        if self.trainset.knows_item(i):
+            est += self.bi[i]
 
         return est

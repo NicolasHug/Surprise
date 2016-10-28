@@ -16,7 +16,34 @@ from .algo_base import AlgoBase
 # similarity. It can be done explicitely (e.g. KNNBaseline), or implicetely
 # using kwargs (e.g. KNNBasic).
 
-class KNNBasic(AlgoBase):
+class SymmetricAlgo(AlgoBase):
+
+    def __init__(self, sim_options={}, **kwargs):
+
+        AlgoBase.__init__(self, sim_options=sim_options, **kwargs)
+
+    def train(self, trainset):
+
+        AlgoBase.train(self, trainset)
+
+        self.n_x = (self.trainset.n_users if self.sim_options['user_based']
+                    else self.trainset.n_items)
+        self.n_y = (self.trainset.n_items if self.sim_options['user_based']
+                    else self.trainset.n_users)
+        self.xr = (self.trainset.ur if self.sim_options['user_based']
+                    else self.trainset.ir)
+        self.yr = (self.trainset.ir if self.sim_options['user_based']
+                    else self.trainset.ur)
+
+    def switch(self, u_stuff, i_stuff):
+
+        if self.sim_options['user_based']:
+            return u_stuff, i_stuff
+        else:
+            return i_stuff, u_stuff
+
+
+class KNNBasic(SymmetricAlgo):
     """Basic collaborative filtering algorithm.
 
     The prediction :math:`\\hat{r}_{ui}` is set as:
@@ -45,24 +72,25 @@ class KNNBasic(AlgoBase):
 
     def __init__(self, k=40, sim_options={}, **kwargs):
 
-        AlgoBase.__init__(self, sim_options=sim_options, **kwargs)
+        SymmetricAlgo.__init__(self, sim_options=sim_options, **kwargs)
         self.k = k
 
     def train(self, trainset):
 
-        AlgoBase.train(self, trainset)
+        SymmetricAlgo.train(self, trainset)
         self.compute_similarities()
 
-    def estimate(self, x0, y0):
+    def estimate(self, u, i):
 
-        #TODO: do something here (x0, user...)
-        if not (self.trainset.knows_user(x0) and self.trainset.knows_item(y0)):
+        if not (self.trainset.knows_user(u) and self.trainset.knows_item(i)):
             raise PredictionImpossible('User and/or item is unkown.')
 
-        neighbors = [(x, self.sim[x0, x], r) for (x, r) in self.yr[y0]]
+        x, y = self.switch(u, i)
+
+        neighbors = [(x2, self.sim[x, x2], r) for (x2, r) in self.yr[y]]
 
         # sort neighbors by similarity
-        neighbors = sorted(neighbors, key=lambda x: x[1], reverse=True)
+        neighbors = sorted(neighbors, key=lambda tple: tple[1], reverse=True)
 
         # compute weighted average
         sum_sim = sum_ratings = actual_k = 0
@@ -81,7 +109,7 @@ class KNNBasic(AlgoBase):
         return est, details
 
 
-class KNNWithMeans(AlgoBase):
+class KNNWithMeans(SymmetricAlgo):
     """Basic collaborative filtering algorithm, taking into account the mean
     ratings of each user.
 
@@ -112,13 +140,13 @@ class KNNWithMeans(AlgoBase):
 
     def __init__(self, k=40, sim_options={}, **kwargs):
 
-        AlgoBase.__init__(self, sim_options=sim_options, **kwargs)
+        SymmetricAlgo.__init__(self, sim_options=sim_options, **kwargs)
 
         self.k = k
 
     def train(self, trainset):
 
-        AlgoBase.train(self, trainset)
+        SymmetricAlgo.train(self, trainset)
         self.compute_similarities()
 
         self.means = np.zeros(self.n_x)
@@ -126,17 +154,19 @@ class KNNWithMeans(AlgoBase):
             self.means[x] = np.mean([r for (_, r) in ratings])
 
 
-    def estimate(self, x0, y0):
+    def estimate(self, u, i):
 
-        if not (self.trainset.knows_user(x0) and self.trainset.knows_item(y0)):
+        if not (self.trainset.knows_user(u) and self.trainset.knows_item(i)):
             raise PredictionImpossible('User and/or item is unkown.')
 
-        neighbors = [(x, self.sim[x0, x], r) for (x, r) in self.yr[y0]]
+        x, y = self.switch(u, i)
 
-        est = self.means[x0]
+        neighbors = [(x2, self.sim[x, x2], r) for (x2, r) in self.yr[y]]
 
         # sort neighbors by similarity
-        neighbors = sorted(neighbors, key=lambda x: x[1], reverse=True)
+        neighbors = sorted(neighbors, key=lambda tple: tple[1], reverse=True)
+
+        est = self.means[x]
 
         # compute weighted average
         sum_sim = sum_ratings = actual_k = 0
@@ -156,7 +186,7 @@ class KNNWithMeans(AlgoBase):
         return est, details
 
 
-class KNNBaseline(AlgoBase):
+class KNNBaseline(SymmetricAlgo):
     """Basic collaborative filtering algorithm taking into account a
     *baseline* rating.
 
@@ -197,35 +227,43 @@ class KNNBaseline(AlgoBase):
 
     def __init__(self, k=40, sim_options={}, bsl_options={}):
 
-        AlgoBase.__init__(self, sim_options=sim_options,
+        SymmetricAlgo.__init__(self, sim_options=sim_options,
                           bsl_options=bsl_options)
 
         self.k = k
 
     def train(self, trainset):
 
-        AlgoBase.train(self, trainset)
-        self.compute_baselines()
+        SymmetricAlgo.train(self, trainset)
+        self.bu, self.bi = self.compute_baselines()
+        self.bx, self.by = self.switch(self.bu, self.bi)
         self.compute_similarities()
 
-    def estimate(self, x0, y0):
+    def estimate(self, u, i):
 
-        if not (self.trainset.knows_user(x0) and self.trainset.knows_item(y0)):
-            raise PredictionImpossible('User and/or item is unkown.')
+        est = self.trainset.global_mean
+        if self.trainset.knows_user(u):
+            est += self.bu[u]
+        if self.trainset.knows_item(i):
+            est += self.bi[i]
 
-        est = self.get_baseline(x0, y0)
+        x, y = self.switch(u, i)
 
-        neighbors = [(x, self.sim[x0, x], r) for (x, r) in self.yr[y0]]
+        if not (self.trainset.knows_user(u) and self.trainset.knows_item(i)):
+            return est
+
+        neighbors = [(x2, self.sim[x, x2], r) for (x2, r) in self.yr[y]]
 
         # sort neighbors by similarity
-        neighbors = sorted(neighbors, key=lambda x: x[1], reverse=True)
+        neighbors = sorted(neighbors, key=lambda tple: tple[1], reverse=True)
 
         # compute weighted average
         sum_sim = sum_ratings = actual_k = 0
         for (nb, sim, r) in neighbors[:self.k]:
             if sim > 0:
                 sum_sim += sim
-                sum_ratings += sim * (r - self.get_baseline(nb, y0))
+                nb_bsl = self.trainset.global_mean + self.bx[nb] + self.by[y]
+                sum_ratings += sim * (r - nb_bsl)
                 actual_k += 1
 
         try:
