@@ -55,10 +55,11 @@ class KNNBasic(AlgoBase):
 
     def estimate(self, x0, y0):
 
-        neighbors = [(x, self.sim[x0, x], r) for (x, r) in self.yr[y0]]
+        #TODO: do something here (x0, user...)
+        if not (self.trainset.knows_user(x0) and self.trainset.knows_item(y0)):
+            raise PredictionImpossible('User and/or item is unkown.')
 
-        if not neighbors:
-            raise PredictionImpossible
+        neighbors = [(x, self.sim[x0, x], r) for (x, r) in self.yr[y0]]
 
         # sort neighbors by similarity
         neighbors = sorted(neighbors, key=lambda x: x[1], reverse=True)
@@ -74,7 +75,7 @@ class KNNBasic(AlgoBase):
         try:
             est = sum_ratings / sum_sim
         except ZeroDivisionError:
-            raise PredictionImpossible
+            raise PredictionImpossible('Not enough neighbors.')
 
         details = {'actual_k' : actual_k}
         return est, details
@@ -127,12 +128,12 @@ class KNNWithMeans(AlgoBase):
 
     def estimate(self, x0, y0):
 
+        if not (self.trainset.knows_user(x0) and self.trainset.knows_item(y0)):
+            raise PredictionImpossible('User and/or item is unkown.')
+
         neighbors = [(x, self.sim[x0, x], r) for (x, r) in self.yr[y0]]
 
         est = self.means[x0]
-
-        if not neighbors:
-            return est  # result will be just the mean of x0
 
         # sort neighbors by similarity
         neighbors = sorted(neighbors, key=lambda x: x[1], reverse=True)
@@ -209,12 +210,12 @@ class KNNBaseline(AlgoBase):
 
     def estimate(self, x0, y0):
 
+        if not (self.trainset.knows_user(x0) and self.trainset.knows_item(y0)):
+            raise PredictionImpossible('User and/or item is unkown.')
+
         est = self.get_baseline(x0, y0)
 
         neighbors = [(x, self.sim[x0, x], r) for (x, r) in self.yr[y0]]
-
-        if not neighbors:
-            return est  # result will be just the baseline
 
         # sort neighbors by similarity
         neighbors = sorted(neighbors, key=lambda x: x[1], reverse=True)

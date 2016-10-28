@@ -20,6 +20,10 @@ class SVD(AlgoBase):
     .. math::
         \hat{r}_{ui} = \mu + b_u + b_i + q_i^Tp_u
 
+    If user :math:`u` is unknown, then the bias :math:`b_u` and the factors
+    :math:`p_u` are assumed to be zero. The same applies for item :math:`i`
+    with :math:`b_u` and :math:`q_i`.
+
     For details, see eq. 5 from `Matrix Factorization Techniques For
     Recommender Systems
     <http://www.columbia.edu/~jwp2128/Teaching/W4721/papers/ieeecomputer.pdf>`_
@@ -135,8 +139,18 @@ class SVD(AlgoBase):
 
     def estimate(self, u, i):
 
-        return (self.global_mean + self.bu[u] + self.bi[i] +
-                np.dot(self.qi[i], self.pu[u]))
+        est = self.global_mean
+
+        if self.trainset.knows_user(u):
+            est += self.bu[u]
+
+        if self.trainset.knows_item(i):
+            est += self.bi[i]
+
+        if self.trainset.knows_user(u) and self.trainset.knows_item(i):
+            est += np.dot(self.qi[i], self.pu[u])
+
+        return est
 
 class SVDpp(AlgoBase):
     """The *SVD++* algorithm, an extension of :class:`SVD` taking into account
@@ -149,7 +163,14 @@ class SVDpp(AlgoBase):
         \sum_{j \\in I_u}y_j\\right)
 
     Where the :math:`y_j` terms are a new set of item factors that capture
-    implicite ratings. For details, see eq. 15 from `Factorization Meets The
+    implicite ratings.
+
+    If user :math:`u` is unknown, then the bias :math:`b_u` and the factors
+    :math:`p_u` are assumed to be zero. The same applies for item :math:`i`
+    with :math:`b_u`, :math:`q_i` and :math:`y_i`.
+
+
+    For details, see eq. 15 from `Factorization Meets The
     Neighborhood
     <http://www.cs.rochester.edu/twiki/pub/Main/HarpSeminar/Factorization_Meets_the_Neighborhood-_a_Multifaceted_Collaborative_Filtering_Model.pdf>`_
     by Yehuda Koren. See also *The Recommender System Handbook*, section 5.3.1.
@@ -260,8 +281,18 @@ class SVDpp(AlgoBase):
 
     def estimate(self, u, i):
 
-        Iu = len(self.trainset.ur[u])  # nb of items rated by u
-        u_impl_feedback = (sum(self.yj[j] for (j, _) in self.trainset.ur[u]) /
-                           np.sqrt(Iu))
-        return (self.global_mean + self.bu[u] + self.bi[i] +
-                np.dot(self.qi[i], self.pu[u] + u_impl_feedback))
+        est = self.global_mean
+
+        if self.trainset.knows_user(u):
+            est += self.bu[u]
+
+        if self.trainset.knows_item(i):
+            est += self.bi[i]
+
+        if self.trainset.knows_user(u) and self.trainset.knows_item(i):
+            Iu = len(self.trainset.ur[u])  # nb of items rated by u
+            u_impl_feedback = (sum(self.yj[j] for (j, _) in self.trainset.ur[u]) /
+                               np.sqrt(Iu))
+            est += np.dot(self.qi[i], self.pu[u] + u_impl_feedback)
+
+        return est

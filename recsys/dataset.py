@@ -45,35 +45,6 @@ except ImportError:
     from urllib.request import urlretrieve  # Python 3
 
 
-class Trainset(namedtuple('Trainset',
-                          ['rm', 'ur', 'ir', 'n_users', 'n_items', 'r_min',
-                           'r_max', 'raw2inner_id_users',
-                           'raw2inner_id_items'])):
-    """A named tuple for containing all useful data that constitutes a training
-    set.
-
-    It's wrapped in a class, but only for documentation purposes.
-
-    Args:
-        rm(:obj:`defaultdict` of :obj:`int`): A dictionary containing all known
-            ratings.  Keys are tuples (user_id, item_id), values are ratings.
-            ``rm`` stands for *ratings matrix*, even though it's not a proper
-            matrix object.
-        ur(:obj:`defaultdict` of :obj:`list`): A dictionary containing lists of
-            tuples of the form ``(item_id, rating)``. Keys are user ids. ``ur``
-            stands for *user ratings*.
-        ir(:obj:`defaultdict` of :obj:`list`): A dictionary containing lists of
-            tuples of the form ``(user_id, rating)``. Keys are item ids. ``ir``
-            stands for *item ratings*.
-        n_users: Total number of users :math:`|U|`.
-        n_items: Total number of items :math:`|I|`.
-        r_min: Minimum value of the rating scale.
-        r_max: Maximum value of the rating scale.
-        raw2inner_id_users(dict): A mapping between raw user id and inner user
-            id. See :ref:`this note<raw_inner_note>`.
-        raw2inner_id_items(dict): A mapping between raw item id and inner item
-            id. See :ref:`this note<raw_inner_note>`.
-    """
 
 
 # directory where builtin datasets are stored. For now it's in the home
@@ -247,7 +218,7 @@ class Dataset:
         See :ref:`User Guide <iterate_over_folds>` for usage.
 
         Yields:
-            tuple: trainset and testset of current fold.
+            tuple: :class:`Trainset` and testset of current fold.
         """
 
         for raw_trainset, raw_testset in self.raw_folds:
@@ -306,15 +277,15 @@ class Dataset:
         testset = []
         for ruid, riid, r, timestamp in raw_testset:
             # if user or item were not part of the training set, we still add
-            # them to testset but they're set to 'unknown'
+            # them to testset but we insert 'UKN__'.
             try:
-                uid = trainset.raw2inner_id_users[ruid]
-            except KeyError:
-                uid = 'unknown_' + str(ruid)
+                uid = trainset.to_inner_uid(ruid)
+            except ValueError:
+                uid = 'UKN__' + str(ruid)
             try:
-                iid = trainset.raw2inner_id_items[riid]
-            except KeyError:
-                iid = 'unknown_' + str(riid)
+                iid = trainset.to_inner_iid(riid)
+            except ValueError:
+                iid = 'UKN__' + str(riid)
             testset.append((uid, iid, r))
 
         return testset
@@ -503,3 +474,115 @@ class Reader():
                              ' Check the line_format  and sep parameters.'))
 
         return uid, iid, float(r) + self.offset, timestamp
+
+
+class Trainset:
+    """A trainset contains all useful data that constitutes a training set.
+
+    It is used by the :meth:`train()
+    <recsys.prediction_algorithms.algo_base.AlgoBase.train>` method of every
+    prediction algorithm. You should not try to built such an object on your
+    own but rather use the :meth:`Dataset.folds` method or the
+    :meth:`DatasetAutoFolds.build_full_trainset` method.
+
+    Attributes:
+        rm(:obj:`defaultdict` of :obj:`int`): A dictionary containing all known
+            ratings.  Keys are tuples (user_id, item_id), values are ratings.
+            ``rm`` stands for *ratings matrix*, even though it's not a proper
+            matrix object.
+        ur(:obj:`defaultdict` of :obj:`list`): A dictionary containing lists of
+            tuples of the form ``(item_id, rating)``. Keys are user ids. ``ur``
+            stands for *user ratings*.
+        ir(:obj:`defaultdict` of :obj:`list`): A dictionary containing lists of
+            tuples of the form ``(user_id, rating)``. Keys are item ids. ``ir``
+            stands for *item ratings*.
+        n_users: Total number of users :math:`|U|`.
+        n_items: Total number of items :math:`|I|`.
+        r_min: Minimum value of the rating scale.
+        r_max: Maximum value of the rating scale.
+        raw2inner_id_users(dict): A mapping between raw user id and inner user
+            id. See :ref:`this note<raw_inner_note>`.
+        raw2inner_id_items(dict): A mapping between raw item id and inner item
+            id. See :ref:`this note<raw_inner_note>`.
+    """
+
+    def __init__(self, rm, ur, ir, n_users, n_items, r_min, r_max,
+                 raw2inner_id_users, raw2inner_id_items):
+
+        self.rm = rm
+        self.ur = ur
+        self.ir = ir
+        self.n_users = n_users
+        self.n_items = n_items
+        self.r_min = r_min
+        self.r_max = r_max
+        self._raw2inner_id_users = raw2inner_id_users
+        self._raw2inner_id_items = raw2inner_id_items
+
+    def knows_user(self, uid):
+        """Indicate if the user is part of the trainset.
+
+        A user is part of the trainset if the user has at least one rating.
+
+        Args:
+            uid: The (inner) user id. See :ref:`this note<raw_inner_note>`.
+        Returns:
+            ``True`` if user is part of the trainset, else ``False``.
+        """
+
+        return uid in self.ur
+
+    def knows_item(self, iid):
+        """Indicate if the item is part of the trainset.
+
+        An item is part of the trainset if the item was rated at least once.
+
+        Args:
+            iid: The (inner) item id. See :ref:`this note<raw_inner_note>`.
+        Returns:
+            ``True`` if item is part of the trainset, else ``False``.
+        """
+
+        return iid in self.ir
+
+    def to_inner_uid(self, ruid):
+        """Convert a raw **user** id to an inner id.
+
+        See :ref:`this note<raw_inner_note>`.
+
+        Args:
+            ruid: The user raw id.
+
+        Returns:
+            The user inner id.
+
+        Raises:
+            ValueError: When user is not part of the trainset.
+        """
+
+        try:
+            return self._raw2inner_id_users[ruid]
+        except KeyError:
+            raise ValueError(('User ' + str(ruid) +
+                              ' is not part of the trainset.'))
+
+    def to_inner_iid(self, riid):
+        """Convert a raw **item** id to an inner id.
+
+        See :ref:`this note<raw_inner_note>`.
+
+        Args:
+            riid: The item raw id.
+
+        Returns:
+            The item inner id.
+
+        Raises:
+            ValueError: When item is not part of the trainset.
+        """
+
+        try:
+            return self._raw2inner_id_items[riid]
+        except KeyError:
+            raise ValueError(('Item ' + str(riid) +
+                              ' is not part of the trainset.'))

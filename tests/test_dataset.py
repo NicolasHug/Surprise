@@ -121,16 +121,16 @@ def test_trainset_testset():
     assert trainset.r_max == 5
 
     # test raw2inner: ensure inner ids are given in proper order
-    raw2inner_id_users = trainset.raw2inner_id_users
+    raw2inner_id_users = trainset._raw2inner_id_users
     for i in range(4):
         assert raw2inner_id_users['user' + str(i)] == i
 
-    raw2inner_id_items = trainset.raw2inner_id_items
+    raw2inner_id_items = trainset._raw2inner_id_items
     for i in range(2):
         assert raw2inner_id_items['item' + str(i)] == i
 
     # test testset:
     assert testset[0] == (3, 0, 5)  # user3 item0 5
     assert testset[1] == (0, 1, 1)  # user0 item1 1
-    assert testset[2][0].startswith('unknown')
-    assert testset[2][1].startswith('unknown')
+    assert testset[2][0].startswith('UKN__')
+    assert testset[2][1].startswith('UKN__')

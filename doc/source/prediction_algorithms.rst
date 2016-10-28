@@ -35,7 +35,7 @@ Baselines estimates configuration
     \lambda \left(b_u^2 + b_i^2 \right).
 
   For algorithms using baselines in another objective function (e.g. the
-  :meth:`SVD <recsys.prediction_algorithms.matrix_factorization.SVD>`
+  :class:`SVD <recsys.prediction_algorithms.matrix_factorization.SVD>`
   algorithm), the baseline configuration is done differently and is specific to
   each algorithm. Please refer to their own documentation.
 

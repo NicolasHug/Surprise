@@ -24,3 +24,5 @@ from .knns import KNNBaseline
 from .knns import KNNWithMeans
 from .matrix_factorization import SVD
 from .matrix_factorization import SVDpp
+
+from .predictions import PredictionImpossible

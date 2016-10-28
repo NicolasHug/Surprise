@@ -15,27 +15,26 @@ from recsys.evaluate import evaluate
 
 
 def test_unknown_user_or_item():
-    """Ensure that an unknown user or item in testset will predict the mean
-    rating and that was_impossible is set to True."""
+    """Ensure that all algorithms act gracefully when asked to predict a rating
+    of an unknown user, an unknown item, and when both are unknown.
+    """
 
     reader = Reader(line_format='user item rating', sep=' ', skip_lines=3,
                     rating_scale=(1, 5))
 
-    current_dir = os.path.dirname(os.path.realpath(__file__))
-    folds_files = [(current_dir + '/custom_train',
-                    current_dir + '/custom_test')]
+    file_path = os.path.dirname(os.path.realpath(__file__)) + '/custom_train'
 
-    data = Dataset.load_from_folds(folds_files=folds_files, reader=reader)
+    data = Dataset.load_from_file(file_path=file_path, reader=reader)
 
     for trainset, testset in data.folds:
         pass # just need trainset and testset to be set
 
-    algo = NormalPredictor()
-    algo.train(trainset)
-
-    # set verbose to true for more coverage.
-    predictions = algo.test(testset, verbose=True)
-
-    global_mean = np.mean([r for (_, _, r) in algo.all_ratings])
-    assert predictions[2].est == global_mean
-    assert predictions[2].details['was_impossible'] == True
+    klasses = (NormalPredictor, BaselineOnly, KNNBasic, KNNWithMeans,
+               KNNBaseline, SVD, SVDpp)
+    for klass in klasses:
+        print(klass)
+        algo = klass()
+        algo.train(trainset)
+        algo.predict(0, 'unknown_item')
+        algo.predict('unkown_user', 0)
+        algo.predict('unkown_user', 'unknown_item')

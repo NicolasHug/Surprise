@@ -12,9 +12,9 @@ Want to get your hands dirty? Cool.
 
 Creating your own prediction algorithm is pretty simple: an algorithm is
 nothing but a class derived from :class:`AlgoBase
-<recsys.prediction_algorithms.bases.AlgoBase>` that has an ``estimate`` method.
-This is the method that is called by the :meth:`predict
-<recsys.prediction_algorithms.bases.AlgoBase.predict>` method. It takes in a
+<recsys.prediction_algorithms.algo_base.AlgoBase>` that has an ``estimate`` method.
+This is the method that is called by the :meth:`predict()
+<recsys.prediction_algorithms.algo_base.AlgoBase.predict>` method. It takes in a
 user id, an item id, and returns the estimated rating :math:`\hat{r}_{ui}`:
 
 .. literalinclude:: ../../examples/building_custom_algorithms/most_basic_algorithm.py
@@ -57,32 +57,49 @@ be done by defining the ``train`` method:
 The ``train`` method is called by the :func:`evaluate
 <recsys.evaluate.evaluate>` function at each fold of a cross-validation
 process, (but you can also :ref:`call it yourself <iterate_over_folds>`).
-Before doing anything, you should call the base class :meth:`train
-<recsys.prediction_algorithms.bases.AlgoBase.train>` method.
+Before doing anything, you should call the base class :meth:`train()
+<recsys.prediction_algorithms.algo_base.AlgoBase.train>` method.
 
 The ``trainset`` attribute
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Once the base class :meth:`train
-<recsys.prediction_algorithms.bases.AlgoBase.train>` method has returned, all
+Once the base class :meth:`train()
+<recsys.prediction_algorithms.algo_base.AlgoBase.train>` method has returned, all
 the info you need about the current training set (rating values, etc...) is
-stored in the ``self.trainset`` attribute which is a named tuple with many
-fields of interest, for which you have all the details in the :class:`API
-Reference <recsys.dataset.Trainset>`.
+stored in the ``self.trainset`` attribute. This is a :class:`Trainset
+<recsys.dataset.Trainset>` object that has many attributes and methods of
+interest for prediction.
 
-To illustrate its usage, let's make an algorithm that predicts the mean rating
-of the user:
+To illustrate its usage, let's make an algorithm that predicts an average
+between the mean of all ratings, the mean rating of the user and the mean
+rating for the item:
 
-.. literalinclude:: ../../examples/building_custom_algorithms/mean_rating_user.py
-    :caption: From file ``examples/building_custom_algorithms/mean_rating_user.py``
-    :name: mean_rating_user.py
-    :lines: 22-24
+.. literalinclude:: ../../examples/building_custom_algorithms/mean_rating_user_item.py
+    :caption: From file ``examples/building_custom_algorithms/mean_rating_user_item.py``
+    :name: mean_rating_user_item.py
+    :lines: 22-34
 
 Predicting the mean rating for an item would have been done in a similar
 fashion using the ``ir`` field. Note that it would have been a better idea to
 compute all the user means in the ``train`` method, thus avoiding the same
 computations multiple times.
 
+
+When the prediction is impossible
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+It's up to your algorithm to decide if it can or cannot yield a prediction. If
+the prediction is impossible, then you can raise the :class:`PredictionImpossible
+<recsys.prediction_algorithms.predictions.PredictionImpossible>` exception.
+You'll need to import it first): ::
+
+  from recsys import PredictionImpossible
+
+
+This exception will be caught by the :meth:`predict()
+<recsys.prediction_algorithms.algo_base.AlgoBase.predict>` method, and the
+estimation :math:`\hat{r}_{ui}` will be set to the global mean of all ratings
+:math:`\mu`.
 
 Using similarities and baselines
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -92,13 +109,13 @@ need to accept ``bsl_options`` and ``sim_options`` as parmeters to the
 ``__init__`` method, and pass them along to the Base class. See how to use
 these parameters in the :ref:`prediction_algorithms` section.
 
-Methods :meth:`compute_baselines
-<recsys.prediction_algorithms.bases.AlgoBase.compute_baselines>`   and
-:meth:`compute_similarities
-<recsys.prediction_algorithms.bases.AlgoBase.compute_similarities>` can be
+Methods :meth:`compute_baselines()
+<recsys.prediction_algorithms.algo_base.AlgoBase.compute_baselines>`   and
+:meth:`compute_similarities()
+<recsys.prediction_algorithms.algo_base.AlgoBase.compute_similarities>` can be
 called in the ``train`` method.  Baselines estimates are then available using
-the :meth:`get_baseline
-<recsys.prediction_algorithms.bases.AlgoBase.get_baseline>` method and
+the :meth:`get_baseline()
+<recsys.prediction_algorithms.algo_base.AlgoBase.get_baseline>` method and
 similarities can be retrieved using the ``self.sim`` attribute:
 
 .. literalinclude:: ../../examples/building_custom_algorithms/with_baselines_or_sim.py

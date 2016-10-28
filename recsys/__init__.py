@@ -7,6 +7,8 @@ from .prediction_algorithms import KNNBaseline
 from .prediction_algorithms import SVD
 from .prediction_algorithms import SVDpp
 
+from .prediction_algorithms import PredictionImpossible
+
 from .dataset import Dataset
 from .dataset import Reader
 from .evaluate import evaluate

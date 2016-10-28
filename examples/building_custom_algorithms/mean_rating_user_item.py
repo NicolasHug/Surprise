@@ -21,7 +21,17 @@ class MyOwnAlgorithm(AlgoBase):
 
     def estimate(self, u, i):
 
-        return np.mean([r for (_, r) in self.trainset.ur[u]])
+        sum_means = self.global_mean
+        div = 1
+
+        if self.trainset.knows_user(u):
+            sum_means += np.mean([r for (_, r) in self.trainset.ur[u]])
+            div += 1
+        if self.trainset.knows_item(i):
+            sum_means += np.mean([r for (_, r) in self.trainset.ir[i]])
+            div += 1
+
+        return sum_means / div
 
 
 data = Dataset.load_builtin('ml-100k')

@@ -30,8 +30,8 @@ ruid = str(196) # raw user id (as in the ratings file). They are **strings**!
 riid = str(302) # raw item id (as in the ratings file). They are **strings**!
 
 # get inner ids, as used by RecSys
-uid = trainset.raw2inner_id_users[ruid]
-iid = trainset.raw2inner_id_items[riid]
+uid = trainset.to_inner_uid(ruid)
+iid = trainset.to_inner_iid(riid)
 
 # get a prediction for specific users and items.
 pred = algo.predict(uid, iid, r0=4, verbose=True)

@@ -22,8 +22,8 @@ about four lines of code to evaluate the performance of an algorithm:
 If RecSys cannot find the `movielens-100k dataset
 <http://grouplens.org/datasets/movielens/>`_, it will offer to download it and
 will store it under the ``.recsys_data`` folder in your home directory.  The
-:meth:`split<recsys.dataset.DatasetAutoFolds.split>` method automatically
-splits the dataset into 3 folds and the :func:`evaluate
+:meth:`split() <recsys.dataset.DatasetAutoFolds.split>` method automatically
+splits the dataset into 3 folds and the :func:`evaluate()
 <recsys.evaluate.evaluate>` function runs the cross-validation procedure and
 compute some :mod:`accuracy <recsys.accuracy>` measures.
 
@@ -35,7 +35,7 @@ You can of course use a custom dataset. RecSys offers two ways of loading a
 custom dataset:
 
 - you can either specify a single file with all the ratings and
-  use the :meth:`split<recsys.dataset.DatasetAutoFolds.split>` method to perform
+  use the :meth:`split ()<recsys.dataset.DatasetAutoFolds.split>` method to perform
   cross-validation ;
 - or if your dataset is already split into predefined folds, you can specify a
   list of files for training and testing.
@@ -90,12 +90,12 @@ Advanced usage
 Manually iterate over folds
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-We have so far used the :func:`evaluate <recsys.evaluate.evaluate>` function
+We have so far used the :func:`evaluate() <recsys.evaluate.evaluate>` function
 that does all the hard work for us. If you want to have better control on your
-experiments, you can use the :meth:`folds <recsys.dataset.Dataset.folds>`
-generator of your dataset, and then the :meth:`train
-<recsys.prediction_algorithms.bases.AlgoBase.train>` and :meth:`test
-<recsys.prediction_algorithms.bases.AlgoBase.test>` methods of your algorithm on
+experiments, you can use the :meth:`folds() <recsys.dataset.Dataset.folds>`
+generator of your dataset, and then the :meth:`train()
+<recsys.prediction_algorithms.algo_base.AlgoBase.train>` and :meth:`test()
+<recsys.prediction_algorithms.algo_base.AlgoBase.test>` methods of your algorithm on
 each of the folds:
 
 .. literalinclude:: ../../examples/iterate_over_folds.py
@@ -113,7 +113,7 @@ the mean time, we will also review how to train on a whole dataset, whithout
 performing cross-validation (i.e. there is no test set).
 
 The latter is pretty straightforward: all you need is to load a dataset, and
-the :meth:`build_full_trainset
+the :meth:`build_full_trainset()
 <recsys.dataset.DatasetAutoFolds.build_full_trainset>` method to build the
 :class:`trainset <recsys.dataset.Trainset>` and train you algorithm:
 
@@ -122,32 +122,39 @@ the :meth:`build_full_trainset
     :name: query_for_predictions.py
     :lines: 16-23
 
-Now, there's no way we could call the :meth:`test
-<recsys.prediction_algorithms.bases.AlgoBase.test>` method, because we have no
+Now, there's no way we could call the :meth:`test()
+<recsys.prediction_algorithms.algo_base.AlgoBase.test>` method, because we have no
 testset. But you can still get predictions for the users and items you want.
 
 Let's say you're interested in user 196 and item 302 (make sure they're in the
 trainset!), and you know that the true rating :math:`r_{ui} = 4`. First, you
 need convert these raw ids into inner ids (see :ref:`note<raw_inner_note>`
-below). Then, you can call the :meth:`predict
-<recsys.prediction_algorithms.bases.AlgoBase.predict>`:
+below). Then, you can call the :meth:`predict()
+<recsys.prediction_algorithms.algo_base.AlgoBase.predict>` method:
 
 .. literalinclude:: ../../examples/query_for_predictions.py
     :caption: From file ``examples/query_for_predictions.py``
     :name: query_for_predictions2.py
     :lines: 29-37
 
+If the :meth:`predict()
+<recsys.prediction_algorithms.algo_base.AlgoBase.predict>` method is called
+with user or item ids that were not part of the trainset, it's up to the
+algorithm to decide if he still can make a prediction or not. If it can't,
+:meth:`predict() <recsys.prediction_algorithms.algo_base.AlgoBase.predict>`
+will still predict the mean of all ratings :math:`\mu`.
 
 .. _raw_inner_note:
 .. note::
   Raw ids are ids as defined in a rating file. They can be strings or whatever.
   On trainset creation, each raw id is mapped to a (unique) integer called
-  inner id, which is a lot more suitable for RecSys to manipulate. The mapping
-  between raw ids and inner ids is done by the two dictionaries
-  ``raw2inner_id_users`` and ``raw2inner_id_items`` of a :class:`trainset
+  inner id, which is a lot more suitable for RecSys to manipulate. To convert a
+  raw id to an inner id, you can use the  :meth:`to_inner_uid()
+  <recsys.dataset.Trainset.to_inner_uid>` and :meth:`to_inner_iid()
+  <recsys.dataset.Trainset.to_inner_iid>` methods of the :class:`trainset
   <recsys.dataset.Trainset>`.
 
-Obviously, it is perfectly fine to use the :meth:`predict
-<recsys.prediction_algorithms.bases.AlgoBase.predict>` method directly during
+Obviously, it is perfectly fine to use the :meth:`predict()
+<recsys.prediction_algorithms.algo_base.AlgoBase.predict>` method directly during
 a cross-validation process. You'll need to ensure that the user and item ids
 are present in the trainset though.

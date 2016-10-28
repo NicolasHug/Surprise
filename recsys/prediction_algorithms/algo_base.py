@@ -11,7 +11,6 @@ from collections import defaultdict
 import numpy as np
 
 from .. import similarities as sims
-from .. import colors
 from .predictions import PredictionImpossible
 from .predictions import Prediction
 
@@ -91,8 +90,8 @@ class AlgoBase:
         then it is capped.
 
         Args:
-            u0: (Inner) id of user.
-            i0: (Inner) id of item.
+            u0: (Inner) id of user. See :ref:`this note<raw_inner_note>`.
+            i0: (Inner) id of item. See :ref:`this note<raw_inner_note>`.
             r0: The true rating :math:`r_{ui}`.
             verbose(bool): Whether to print details of the prediction.  Default
                 is False.
@@ -103,42 +102,32 @@ class AlgoBase:
 
         x0, y0 = (u0, i0) if self.user_based else (i0, u0)
 
-        self.pred_details= {}
+        details = {}
 
         try:
-            if str(u0).startswith('unknown') or str(i0).startswith('unknown'):
-                raise PredictionImpossible('user or item was not part of ' +
-                                           'training set')
-
             est = self.estimate(x0, y0)
 
+            # If the details dict was also returned
             if isinstance(est, tuple):
                 est, details = est
-                self.pred_details = details
 
-            impossible = False
-        except PredictionImpossible:
+            details['was_impossible'] = False
+
+        except PredictionImpossible as e:
             est = self.global_mean
-            impossible = True
+            details['was_impossible'] = True
+            details['reason'] = str(e)
 
         # clip estimate into [self.r_min, self.r_max]
         est = min(self.trainset.r_max, est)
         est = max(self.trainset.r_min, est)
 
-        self.pred_details['was_impossible'] = impossible
+        pred = Prediction(u0, i0, r0, est, details)
 
         if verbose:
-            print('user:', u0, '| item:', i0, '| r0:', r0,
-                  '| est: {0:1.2f} | '.format(est), end='')
-            err = abs(est - r0)
-            col = colors.FAIL if err > 1 else colors.OKGREEN
-            print(col + "err = {0:1.2f}".format(err) + colors.ENDC, end=' ')
-            if impossible:
-                print(colors.FAIL + 'Impossible to predict' + colors.ENDC)
-            else:
-                print()
+            print(pred)
 
-        return Prediction(u0, i0, r0, est, self.pred_details)
+        return  pred
 
     def test(self, testset, verbose=False):
         """Test the algorithm on given testset.
