@@ -11,12 +11,20 @@ from .predictions import PredictionImpossible
 from .algo_base import AlgoBase
 
 
-# Important note: as soon as the algorithm uses a similarity measure, it should
+# Important note: as soon as an algorithm uses a similarity measure, it should
 # also allow the bsl_options parameter because of the pearson_baseline
 # similarity. It can be done explicitely (e.g. KNNBaseline), or implicetely
 # using kwargs (e.g. KNNBasic).
 
 class SymmetricAlgo(AlgoBase):
+    """This is an abstract class aimed to ease the use of symmetric algorithms.
+
+    A symmetric algorithm is an algorithm that can can be based on users or on
+    items indiferently, e.g. all the algorithms in this module.
+
+    When the algo is user-based x denotes a user and y an item. Else, it's
+    reversed.
+    """
 
     def __init__(self, sim_options={}, **kwargs):
 
@@ -26,16 +34,14 @@ class SymmetricAlgo(AlgoBase):
 
         AlgoBase.train(self, trainset)
 
-        self.n_x = (self.trainset.n_users if self.sim_options['user_based']
-                    else self.trainset.n_items)
-        self.n_y = (self.trainset.n_items if self.sim_options['user_based']
-                    else self.trainset.n_users)
-        self.xr = (self.trainset.ur if self.sim_options['user_based']
-                    else self.trainset.ir)
-        self.yr = (self.trainset.ir if self.sim_options['user_based']
-                    else self.trainset.ur)
+        ub = self.sim_options['user_based']
+        self.n_x = self.trainset.n_users if ub else self.trainset.n_items
+        self.n_y = self.trainset.n_items if ub else self.trainset.n_users
+        self.xr = self.trainset.ur if ub else self.trainset.ir
+        self.yr = self.trainset.ir if ub else self.trainset.ur
 
     def switch(self, u_stuff, i_stuff):
+        """Return x_stuff and y_stuff depending on the user_based field."""
 
         if self.sim_options['user_based']:
             return u_stuff, i_stuff
@@ -44,7 +50,7 @@ class SymmetricAlgo(AlgoBase):
 
 
 class KNNBasic(SymmetricAlgo):
-    """Basic collaborative filtering algorithm.
+    """A basic collaborative filtering algorithm.
 
     The prediction :math:`\\hat{r}_{ui}` is set as:
 
@@ -110,7 +116,7 @@ class KNNBasic(SymmetricAlgo):
 
 
 class KNNWithMeans(SymmetricAlgo):
-    """Basic collaborative filtering algorithm, taking into account the mean
+    """A basic collaborative filtering algorithm, taking into account the mean
     ratings of each user.
 
     The prediction :math:`\\hat{r}_{ui}` is set as:
@@ -187,7 +193,7 @@ class KNNWithMeans(SymmetricAlgo):
 
 
 class KNNBaseline(SymmetricAlgo):
-    """Basic collaborative filtering algorithm taking into account a
+    """A basic collaborative filtering algorithm taking into account a
     *baseline* rating.
 
 

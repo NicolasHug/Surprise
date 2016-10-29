@@ -140,7 +140,7 @@ class AlgoBase:
             n_epochs = self.bsl_options.get('n_epochs', 20)
 
             for dummy in range(n_epochs):
-                for u, i, r in self.trainset.all_ratings:
+                for u, i, r in self.trainset.all_ratings():
                     err = (r - (self.trainset.global_mean + bu[u] + bi[i]))
                     bu[u] += lr * (err - reg * bu[u])
                     bi[i] += lr * (err - reg * bi[i])
@@ -162,13 +162,13 @@ class AlgoBase:
 
             for dummy in range(n_epochs):
                 bi = np.zeros(self.trainset.n_items)
-                for i in self.trainset.all_items:
+                for i in self.trainset.all_items():
                     devI = sum(r - self.trainset.global_mean -
                                bu[u] for (u, r) in self.trainset.ir[i])
                     bi[i] = devI / (reg_i + len(self.trainset.ir[i]))
 
                 bu = np.zeros(self.trainset.n_users)
-                for u in self.trainset.all_users:
+                for u in self.trainset.all_users():
                     devU = sum(r - self.trainset.global_mean -
                                bi[i] for (i, r) in self.trainset.ur[u])
                     bu[u] = devU / (reg_u + len(self.trainset.ur[u]))
@@ -199,14 +199,22 @@ class AlgoBase:
                              'pearson' : sims.pearson,
                              'pearson_baseline' : sims.pearson_baseline}
 
-        name = self.sim_options.get('name', 'msd').lower()
-        # TODO: uncool
+        if self.sim_options['user_based']:
+            n_x, yr = self.trainset.n_users, self.trainset.ir
+        else:
+            n_x, yr = self.trainset.n_items, self.trainset.ur
+
         args = [self.n_x, self.yr]
+
+        name = self.sim_options.get('name', 'msd').lower()
         if name == 'pearson_baseline':
             shrinkage = self.sim_options.get('shrinkage', 100)
             bu, bi = self.compute_baselines()
-            # TODO: uncool as well
-            bx, by = self.switch(bu, bi)
+            if self.sim_options['user_based']:
+                bx, by = bu, bi
+            else:
+                bx, by = bi, bu
+
             args += [self.trainset.global_mean, bx, by, shrinkage]
 
         try:

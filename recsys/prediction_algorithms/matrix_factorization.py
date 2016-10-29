@@ -114,7 +114,7 @@ class SVD(AlgoBase):
 
 
         for dummy in range(self.n_epochs):
-            for (u, i), r in trainset.rm.items():
+            for u, i, r in trainset.all_ratings():
 
                 err = (r -
                       (self.trainset.global_mean + bu[u] + bi[i] +
@@ -252,7 +252,7 @@ class SVDpp(AlgoBase):
 
 
         for dummy in range(self.n_epochs):
-            for (u, i), r in trainset.rm.items():
+            for u, i, r in trainset.all_ratings():
 
                 Iu = len(trainset.ur[u])  # nb of items rated by u
                 u_impl_feedback = (sum(yj[j] for (j, _) in trainset.ur[u]) /

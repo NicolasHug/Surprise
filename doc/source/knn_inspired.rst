@@ -20,6 +20,9 @@ approach.
   ``'actual_k'`` field of the ``details`` dictionary of the :class:`prediction
   <recsys.prediction_algorithms.predictions.Prediction>`.
 
+You may want to read the :ref:`User Guide <similarity_measures_configuration>`
+on how to configure the ``sim_options`` parameter.
+
 .. autoclass:: recsys.prediction_algorithms.knns.KNNBasic
     :show-inheritance:
 

@@ -21,7 +21,7 @@ class MyOwnAlgorithm(AlgoBase):
 
     def estimate(self, u, i):
 
-        sum_means = self.global_mean
+        sum_means = self.trainset.global_mean
         div = 1
 
         if self.trainset.knows_user(u):

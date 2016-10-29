@@ -51,7 +51,7 @@ be done by defining the ``train`` method:
 .. literalinclude:: ../../examples/building_custom_algorithms/most_basic_algorithm2.py
     :caption: From file ``examples/building_custom_algorithms/most_basic_algorithm2.py``
     :name: most_basic_algorithm2.py
-    :lines: 15-32
+    :lines: 15-33
 
 
 The ``train`` method is called by the :func:`evaluate

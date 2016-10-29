@@ -588,24 +588,31 @@ class Trainset:
         except KeyError:
             raise ValueError(('Item ' + str(riid) +
                               ' is not part of the trainset.'))
-    @property
     def all_ratings(self):
-        """generator to iter over all ratings."""
+        """Generator to iterate over all ratings.
 
-        # TODO: why not just use rm.values() ??
+        Yields:
+            A tuple ``(uid, iid, rating)`` where ids are inner ids.
+        """
 
         for u, u_ratings in self.ur.items():
             for i, r in u_ratings:
                 yield u, i, r
 
-    @property
     def all_users(self):
-        """generator to iter over all users"""
+        """Generator to iterate over all users.
+
+        Yields:
+            Inner id of users.
+        """
         return range(self.n_users)
 
-    @property
     def all_items(self):
-        """generator to iter over all items"""
+        """Generator to iterate over all items.
+
+        Yields:
+            Inner id of items.
+        """
         return range(self.n_items)
 
     @property
@@ -614,6 +621,6 @@ class Trainset:
 
         It's only computed once."""
         if self._global_mean is None:
-            self._global_mean = np.mean([r for (_, _, r) in self.all_ratings])
+            self._global_mean = np.mean([r for (_, _, r) in self.all_ratings()])
 
         return self._global_mean
