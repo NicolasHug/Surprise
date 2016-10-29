@@ -1,7 +1,6 @@
 TODO
 ====
 
-* Do something about the user_based stuff. It should be better. Check knns BTW.
 * remove the rm dict?
 * create option in __main__ to clean the .recsys directory. Actually, the
   __main__ module should be entirely reviewed.
@@ -19,6 +18,7 @@ Maybe, Maybe not
 Done:
 -----
 
+* Do something about the user_based stuff. It should be better. Check knns BTW.
 * Do something about unknown users and unknown items, i.e. users or items that
   have no rating in the trainset. Right now, the predict method checks if the
   name starts with 'unknown' but this is shiiite because it's dependent on the

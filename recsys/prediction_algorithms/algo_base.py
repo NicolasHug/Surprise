@@ -50,9 +50,8 @@ class AlgoBase:
 
         self.trainset = trainset
 
-        # (re) Initialise baselines and sim structure
+        # (re) Initialise baselines
         self.bu = self.bi = None
-        self.sim = None
 
     def predict(self, uid, iid, r=0, verbose=False):
         """Compute the rating prediction for given user and item.
