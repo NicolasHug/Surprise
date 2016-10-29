@@ -84,7 +84,7 @@ class KNNBasic(SymmetricAlgo):
     def train(self, trainset):
 
         SymmetricAlgo.train(self, trainset)
-        self.compute_similarities()
+        self.sim = self.compute_similarities()
 
     def estimate(self, u, i):
 
@@ -153,7 +153,7 @@ class KNNWithMeans(SymmetricAlgo):
     def train(self, trainset):
 
         SymmetricAlgo.train(self, trainset)
-        self.compute_similarities()
+        self.sim = self.compute_similarities()
 
         self.means = np.zeros(self.n_x)
         for x, ratings in self.xr.items():
@@ -243,7 +243,7 @@ class KNNBaseline(SymmetricAlgo):
         SymmetricAlgo.train(self, trainset)
         self.bu, self.bi = self.compute_baselines()
         self.bx, self.by = self.switch(self.bu, self.bi)
-        self.compute_similarities()
+        self.sim = self.compute_similarities()
 
     def estimate(self, u, i):
 

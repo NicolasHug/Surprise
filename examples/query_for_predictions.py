@@ -34,7 +34,7 @@ uid = trainset.to_inner_uid(ruid)
 iid = trainset.to_inner_iid(riid)
 
 # get a prediction for specific users and items.
-pred = algo.predict(uid, iid, r0=4, verbose=True)
+pred = algo.predict(uid, iid, r=4, verbose=True)
 
 
 ##########################################

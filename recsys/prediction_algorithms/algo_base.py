@@ -120,7 +120,14 @@ class AlgoBase:
         return predictions
 
     def compute_baselines(self):
-        """Compute users and items baselines."""
+        """Compute users and items baselines.
+
+        The way baselines are computed depends on the ``bsl_options`` parameter
+        passed at the creation of the algoritihm (see
+        :ref:`baseline_estimates_configuration`).
+
+        Returns:
+            A tuple ``(bu, bi)``, which are users and items baselines."""
 
         # Firt of, if this method has already been called before on the same
         # trainset, then just return. Indeed, compute_baselines may be called
@@ -191,7 +198,14 @@ class AlgoBase:
 
 
     def compute_similarities(self):
-        """Build the simlarity matrix."""
+        """Build the simlarity matrix.
+
+        The way the similarity matric is computed depends on the
+        ``sim_options`` parameter passed at the creation of the algorithm (see
+        :ref:`similarity_measures_configuration`).
+
+        Returns:
+            The similarity matrix."""
 
         print("computing the similarity matrix...")
         construction_func = {'cosine' : sims.cosine,
@@ -204,7 +218,7 @@ class AlgoBase:
         else:
             n_x, yr = self.trainset.n_items, self.trainset.ur
 
-        args = [self.n_x, self.yr]
+        args = [n_x, yr]
 
         name = self.sim_options.get('name', 'msd').lower()
         if name == 'pearson_baseline':
@@ -218,7 +232,7 @@ class AlgoBase:
             args += [self.trainset.global_mean, bx, by, shrinkage]
 
         try:
-            self.sim = construction_func[name](*args)
+            return construction_func[name](*args)
         except KeyError:
             raise NameError('Wrong sim name ' + name + '. Allowed values ' +
                             'are ' + ', '.join(construction_func.keys()) + '.')

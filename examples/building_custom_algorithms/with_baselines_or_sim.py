@@ -9,6 +9,7 @@ from __future__ import (absolute_import, division, print_function,
 from recsys import AlgoBase
 from recsys import Dataset
 from recsys import evaluate
+from recsys import PredictionImpossible
 
 
 class MyOwnAlgorithm(AlgoBase):
@@ -23,10 +24,13 @@ class MyOwnAlgorithm(AlgoBase):
         AlgoBase.train(self, trainset)
 
         # Compute baselines and similarities
-        self.compute_baselines()
-        self.compute_similarities()
+        self.bu, self.bi = self.compute_baselines()
+        self.sim = self.compute_similarities()
 
     def estimate(self, u, i):
+
+        if not (self.trainset.knows_user(u) and self.trainset.knows_item(i)):
+            raise PredictionImpossible('User and/or item is unkown.')
 
         # Compute similarities between u and v, where v describes all other
         # users that have also rated item i.
@@ -39,7 +43,8 @@ class MyOwnAlgorithm(AlgoBase):
             print('user {0:} with sim {1:1.2f}'.format(v, sim_uv))
 
         # ... Aaaaand return the baseline estimate anyway ;)
-        return self.get_baseline(u, i)
+        bsl = self.trainset.global_mean + self.bu[u] + self.bi[i]
+        return bsl
 
 
 data = Dataset.load_builtin('ml-100k')

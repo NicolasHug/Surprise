@@ -113,15 +113,12 @@ Methods :meth:`compute_baselines()
 <recsys.prediction_algorithms.algo_base.AlgoBase.compute_baselines>`   and
 :meth:`compute_similarities()
 <recsys.prediction_algorithms.algo_base.AlgoBase.compute_similarities>` can be
-called in the ``train`` method.  Baselines estimates are then available using
-the :meth:`get_baseline()
-<recsys.prediction_algorithms.algo_base.AlgoBase.get_baseline>` method and
-similarities can be retrieved using the ``self.sim`` attribute:
+called in the ``train`` method (or anywhere else).
 
 .. literalinclude:: ../../examples/building_custom_algorithms/with_baselines_or_sim.py
     :caption: From file ``examples/building_custom_algorithms/.with_baselines_or_sim.py``
     :name: with_baselines_or_sim.py
-    :lines: 14-42
+    :lines: 15-47
 
 
 Feel free to explore the prediction_algorithms package `source
