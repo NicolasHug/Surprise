@@ -20,4 +20,7 @@ data.split(n_folds=3)
 algo = NormalPredictor()
 
 # Evaluate performances of our algorithm on the dataset.
-evaluate(algo, data)
+perf = evaluate(algo, data, measures=['RMSE', 'MAE'])
+
+print(perf['RMSE'])
+print(perf['MAE'])
