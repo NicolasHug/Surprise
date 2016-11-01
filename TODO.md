@@ -6,8 +6,6 @@ TODO
   inner id. Maybe sort this out when working on the comparison tools.
 * when dumping, we should dump all the algorithm parameter. Use __dict__ ?
 * do something about the generators Python 2 vs 3 (range, dict.items(), etc...)
-* allow the perf dict returned by evaluate to accept keys with lower/upper
-  case for retarded users such as me.
 * create option in __main__ to clean the .recsys directory. Actually, the
   __main__ module should be entirely reviewed.
 
@@ -20,6 +18,8 @@ Maybe, Maybe not
 Done:
 -----
 
+* allow the perf dict returned by evaluate to accept keys with lower/upper
+  case for retarded users such as me.
 * Add a 'min_support' parameter to sim_options? Add a min_k to knns?
 * Do something about the user_based stuff. It should be better. Check knns BTW.
 * Do something about unknown users and unknown items, i.e. users or items that

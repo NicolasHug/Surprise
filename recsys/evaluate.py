@@ -42,7 +42,7 @@ def evaluate(algo, data, measures=['rmse', 'mae', 'fcp'], with_dump=False,
     """
 
     dump = {}
-    performances = defaultdict(list)
+    performances = CaseInsensitiveDefaultDict(list)
 
     for fold_i, (trainset, testset) in enumerate(data.folds()):
 
@@ -89,3 +89,20 @@ def dump_evaluation(dump):
 
     pickle.dump(dump, open(name, 'wb'))
     print('File has been dumped to', dump_dir)
+
+
+class CaseInsensitiveDefaultDict(defaultdict):
+    """From here:
+        http://stackoverflow.com/questions/2082152/case-insensitive-dictionary.
+
+        As pointed out in the comments, this only covers a few cases and we
+        should override a lot of other methods, but oh well...
+
+        Used for the returned dict, so that users can use perf['RMSE'] or
+        perf['rmse'] indifferently.
+    """
+    def __setitem__(self, key, value):
+        super(CaseInsensitiveDefaultDict, self).__setitem__(key.lower(), value)
+
+    def __getitem__(self, key):
+        return super(CaseInsensitiveDefaultDict, self).__getitem__(key.lower())
