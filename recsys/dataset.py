@@ -213,9 +213,8 @@ class Dataset:
                            itertools.islice(f, self.reader.skip_lines, None)]
         return raw_ratings
 
-    @property
     def folds(self):
-        """Generator over the folds of the Dataset.
+        """Generator function to iterate over the folds of the Dataset.
 
         See :ref:`User Guide <iterate_over_folds>` for usage.
 
@@ -223,7 +222,7 @@ class Dataset:
             tuple: :class:`Trainset` and testset of current fold.
         """
 
-        for raw_trainset, raw_testset in self.raw_folds:
+        for raw_trainset, raw_testset in self.raw_folds():
             trainset = self.construct_trainset(raw_trainset)
             testset = self.construct_testset(trainset, raw_testset)
             yield trainset, testset
@@ -308,7 +307,6 @@ class DatasetUserFolds(Dataset):
                 if not os.path.isfile(f):
                     raise ValueError('File', f, 'does not exist.')
 
-    @property
     def raw_folds(self):
         for train_file, test_file in self.folds_files:
             raw_train_ratings = self.read_ratings(train_file)
@@ -343,9 +341,7 @@ class DatasetAutoFolds(Dataset):
         return self.construct_trainset(self.raw_ratings)
 
 
-    @property
     def raw_folds(self):
-
 
         if self.shuffle:
             random.shuffle(self.raw_ratings)
@@ -589,7 +585,7 @@ class Trainset:
             raise ValueError(('Item ' + str(riid) +
                               ' is not part of the trainset.'))
     def all_ratings(self):
-        """Generator to iterate over all ratings.
+        """Generator funciton to iterate over all ratings.
 
         Yields:
             A tuple ``(uid, iid, rating)`` where ids are inner ids.
@@ -600,7 +596,7 @@ class Trainset:
                 yield u, i, r
 
     def all_users(self):
-        """Generator to iterate over all users.
+        """Generator function to iterate over all users.
 
         Yields:
             Inner id of users.
@@ -608,7 +604,7 @@ class Trainset:
         return range(self.n_users)
 
     def all_items(self):
-        """Generator to iterate over all items.
+        """Generator function to iterate over all items.
 
         Yields:
             Inner id of items.

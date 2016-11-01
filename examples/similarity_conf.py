@@ -16,7 +16,7 @@ data = Dataset.load_builtin('ml-100k')
 
 # Example using cosine similarity
 sim_options = {'name' : 'cosine',
-               'user_based' : False}  # compute  similarities between items
+               'user_based' : False}  # compute  similarities between items
 algo = KNNBasic(sim_options=sim_options)
 
 evaluate(algo, data)

@@ -18,7 +18,7 @@ data.split(n_folds=3)
 
 algo = BaselineOnly()
 
-for trainset, testset in data.folds:
+for trainset, testset in data.folds():
 
     # train and test algorithm.
     algo.train(trainset)

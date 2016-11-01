@@ -47,23 +47,23 @@ def test_split():
 
     # Test n_folds parameter
     data.split(5)
-    assert len(list(data.folds)) == 5
+    assert len(list(data.folds())) == 5
 
     with pytest.raises(ValueError):
         data.split(10)
-        for fold in data.folds:
+        for fold in data.folds():
             pass
 
     with pytest.raises(ValueError):
         data.split(1)
-        for fold in data.folds:
+        for fold in data.folds():
             pass
 
     # Test the shuffle parameter
     data.split(n_folds=3, shuffle=False)
-    testsets_a = [testset for (_, testset) in data.folds]
+    testsets_a = [testset for (_, testset) in data.folds()]
     data.split(n_folds=3, shuffle=False)
-    testsets_b = [testset for (_, testset) in data.folds]
+    testsets_b = [testset for (_, testset) in data.folds()]
     assert testsets_a == testsets_b
 
     # We'll shuffle and check that folds are now different. There's a chance
@@ -74,13 +74,13 @@ def test_split():
     i = 0
     while testsets_a == testsets_b:
         data.split(n_folds=3, shuffle=True)
-        testsets_b = [testset for (_, testset) in data.folds]
+        testsets_b = [testset for (_, testset) in data.folds()]
         i += 1
     assert i < 10000
 
     # Ensure that folds are the same if split is not called again
-    testsets_a = [testset for (_, testset) in data.folds]
-    testsets_b = [testset for (_, testset) in data.folds]
+    testsets_a = [testset for (_, testset) in data.folds()]
+    testsets_b = [testset for (_, testset) in data.folds()]
     assert testsets_a == testsets_b
 
 def test_trainset_testset():
@@ -92,7 +92,7 @@ def test_trainset_testset():
 
     data = Dataset.load_from_folds(folds_files=folds_files, reader=reader)
 
-    for trainset, testset in data.folds:
+    for trainset, testset in data.folds():
         pass # just need trainset and testset to be set
 
     # test rm:

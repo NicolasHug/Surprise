@@ -44,7 +44,7 @@ def evaluate(algo, data, measures=['rmse', 'mae', 'fcp'], with_dump=False,
     dump = {}
     performances = defaultdict(list)
 
-    for fold_i, (trainset, testset) in enumerate(data.folds):
+    for fold_i, (trainset, testset) in enumerate(data.folds()):
 
         if verbose:
             print('-' * 20)

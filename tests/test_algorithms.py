@@ -26,13 +26,12 @@ def test_unknown_user_or_item():
 
     data = Dataset.load_from_file(file_path=file_path, reader=reader)
 
-    for trainset, testset in data.folds:
+    for trainset, testset in data.folds():
         pass # just need trainset and testset to be set
 
     klasses = (NormalPredictor, BaselineOnly, KNNBasic, KNNWithMeans,
                KNNBaseline, SVD, SVDpp)
     for klass in klasses:
-        print(klass)
         algo = klass()
         algo.train(trainset)
         algo.predict(0, 'unknown_item')
