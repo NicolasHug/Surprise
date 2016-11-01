@@ -56,16 +56,16 @@ class AlgoBase:
     def predict(self, uid, iid, r=0, verbose=False):
         """Compute the rating prediction for given user and item.
 
-        The ``predict`` method calls the ``estimate`` method which is defined
-        in every derived class. If the prediction is impossible (for whatever
-        reason), the prediction is set to the global mean of all ratings. Also,
-        if :math:`\\hat{r}_{ui}` is outside the bounds of the rating scale,
-        (e.g. :math:`\\hat{r}_{ui} = 6` for a rating scale of :math:`[1, 5]`),
-        then it is capped.
+        The ``predict`` method converts raw ids to inner ids and then calls the
+        ``estimate`` method which is defined in every derived class. If the
+        prediction is impossible (for whatever reason), the prediction is set
+        to the global mean of all ratings. Also, if :math:`\\hat{r}_{ui}` is
+        outside the bounds of the rating scale, (e.g. :math:`\\hat{r}_{ui} = 6`
+        for a rating scale of :math:`[1, 5]`), then it is capped.
 
         Args:
-            uid: (Inner) id of user. See :ref:`this note<raw_inner_note>`.
-            iid: (Inner) id of item. See :ref:`this note<raw_inner_note>`.
+            uid: (Raw) id of the user. See :ref:`this note<raw_inner_note>`.
+            iid: (Raw) id of the item. See :ref:`this note<raw_inner_note>`.
             r: The true rating :math:`r_{ui}`.
             verbose(bool): Whether to print details of the prediction.  Default
                 is False.
@@ -74,10 +74,19 @@ class AlgoBase:
             A :obj:`Prediction <recsys.prediction_algorithms.predictions.Prediction>` object.
         """
 
-        details = {}
-
+        # Convert raw ids to inner ids
         try:
-            est = self.estimate(uid, iid)
+            iuid = self.trainset.to_inner_uid(uid)
+        except ValueError:
+            iuid = 'UKN__' + str(uid)
+        try:
+            iiid = self.trainset.to_inner_iid(iid)
+        except ValueError:
+            iiid = 'UKN__' + str(iid)
+
+        details = {}
+        try:
+            est = self.estimate(iuid, iiid)
 
             # If the details dict was also returned
             if isinstance(est, tuple):

@@ -224,7 +224,7 @@ class Dataset:
 
         for raw_trainset, raw_testset in self.raw_folds():
             trainset = self.construct_trainset(raw_trainset)
-            testset = self.construct_testset(trainset, raw_testset)
+            testset = self.construct_testset(raw_testset)
             yield trainset, testset
 
     def construct_trainset(self, raw_trainset):
@@ -273,23 +273,9 @@ class Dataset:
 
         return trainset
 
-    def construct_testset(self, trainset, raw_testset):
+    def construct_testset(self, raw_testset):
 
-        testset = []
-        for ruid, riid, r, timestamp in raw_testset:
-            # if user or item were not part of the training set, we still add
-            # them to testset but we insert 'UKN__'.
-            try:
-                uid = trainset.to_inner_uid(ruid)
-            except ValueError:
-                uid = 'UKN__' + str(ruid)
-            try:
-                iid = trainset.to_inner_iid(riid)
-            except ValueError:
-                iid = 'UKN__' + str(riid)
-            testset.append((uid, iid, r))
-
-        return testset
+        return [(ruid, riid, r) for (ruid, riid, r, _) in raw_testset]
 
 
 class DatasetUserFolds(Dataset):
@@ -485,15 +471,15 @@ class Trainset:
 
     Attributes:
         rm(:obj:`defaultdict` of :obj:`int`): A dictionary containing all known
-            ratings.  Keys are tuples (user_id, item_id), values are ratings.
-            ``rm`` stands for *ratings matrix*, even though it's not a proper
-            matrix object.
+            ratings.  Keys are tuples (user_inner__id, item_inner_id), values
+            are ratings.  ``rm`` stands for *ratings matrix*, even though it's
+            not a proper matrix object.
         ur(:obj:`defaultdict` of :obj:`list`): A dictionary containing lists of
-            tuples of the form ``(item_id, rating)``. Keys are user ids. ``ur``
-            stands for *user ratings*.
+            tuples of the form ``(item_inner_id, rating)``. Keys are user inner
+            ids.  ``ur`` stands for *user ratings*.
         ir(:obj:`defaultdict` of :obj:`list`): A dictionary containing lists of
-            tuples of the form ``(user_id, rating)``. Keys are item ids. ``ir``
-            stands for *item ratings*.
+            tuples of the form ``(user_inner_id, rating)``. Keys are item inner
+            ids.  ``ir`` stands for *item ratings*.
         n_users: Total number of users :math:`|U|`.
         n_items: Total number of items :math:`|I|`.
         n_ratings: Total number of ratings :math:`|R_{train}|`.
@@ -585,7 +571,7 @@ class Trainset:
             raise ValueError(('Item ' + str(riid) +
                               ' is not part of the trainset.'))
     def all_ratings(self):
-        """Generator funciton to iterate over all ratings.
+        """Generator function to iterate over all ratings.
 
         Yields:
             A tuple ``(uid, iid, rating)`` where ids are inner ids.

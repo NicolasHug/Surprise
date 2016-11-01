@@ -127,15 +127,14 @@ Now, there's no way we could call the :meth:`test()
 testset. But you can still get predictions for the users and items you want.
 
 Let's say you're interested in user 196 and item 302 (make sure they're in the
-trainset!), and you know that the true rating :math:`r_{ui} = 4`. First, you
-need convert these raw ids into inner ids (see :ref:`note<raw_inner_note>`
-below). Then, you can call the :meth:`predict()
+trainset!), and you know that the true rating :math:`r_{ui} = 4`. All you need
+is call the :meth:`predict()
 <recsys.prediction_algorithms.algo_base.AlgoBase.predict>` method:
 
 .. literalinclude:: ../../examples/query_for_predictions.py
     :caption: From file ``examples/query_for_predictions.py``
     :name: query_for_predictions2.py
-    :lines: 29-37
+    :lines: 29-33
 
 If the :meth:`predict()
 <recsys.prediction_algorithms.algo_base.AlgoBase.predict>` method is called
@@ -155,6 +154,6 @@ will still predict the mean of all ratings :math:`\mu`.
   <recsys.dataset.Trainset>`.
 
 Obviously, it is perfectly fine to use the :meth:`predict()
-<recsys.prediction_algorithms.algo_base.AlgoBase.predict>` method directly during
-a cross-validation process. You'll need to ensure that the user and item ids
-are present in the trainset though.
+<recsys.prediction_algorithms.algo_base.AlgoBase.predict>` method directly
+during a cross-validation process. It's then up to you to ensure that the user
+and item ids are present in the trainset though.

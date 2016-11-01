@@ -2,8 +2,6 @@ TODO
 ====
 
 * remove the rm dict?
-* should a Prediction output the raw id or the inner id? Right now it's the
-  inner id. Maybe sort this out when working on the comparison tools.
 * when dumping, we should dump all the algorithm parameter. Use __dict__ ?
 * do something about the generators Python 2 vs 3 (range, dict.items(), etc...)
 * create option in __main__ to clean the .recsys directory. Actually, the
@@ -18,6 +16,8 @@ Maybe, Maybe not
 Done:
 -----
 
+* should a Prediction output the raw id or the inner id? Right now it's the
+  inner id. Maybe sort this out when working on the comparison tools.
 * allow the perf dict returned by evaluate to accept keys with lower/upper
   case for retarded users such as me.
 * Add a 'min_support' parameter to sim_options? Add a min_k to knns?

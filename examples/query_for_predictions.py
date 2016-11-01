@@ -26,12 +26,8 @@ algo.train(trainset)
 ##########################################
 # we can now query for specific predicions
 
-ruid = str(196) # raw user id (as in the ratings file). They are **strings**!
-riid = str(302) # raw item id (as in the ratings file). They are **strings**!
-
-# get inner ids, as used by RecSys
-uid = trainset.to_inner_uid(ruid)
-iid = trainset.to_inner_iid(riid)
+uid = str(196) # raw user id (as in the ratings file). They are **strings**!
+iid = str(302) # raw item id (as in the ratings file). They are **strings**!
 
 # get a prediction for specific users and items.
 pred = algo.predict(uid, iid, r=4, verbose=True)

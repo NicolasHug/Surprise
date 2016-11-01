@@ -128,9 +128,3 @@ def test_trainset_testset():
     raw2inner_id_items = trainset._raw2inner_id_items
     for i in range(2):
         assert raw2inner_id_items['item' + str(i)] == i
-
-    # test testset:
-    assert testset[0] == (3, 0, 5)  # user3 item0 5
-    assert testset[1] == (0, 1, 1)  # user0 item1 1
-    assert testset[2][0].startswith('UKN__')
-    assert testset[2][1].startswith('UKN__')

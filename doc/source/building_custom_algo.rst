@@ -12,10 +12,11 @@ Want to get your hands dirty? Cool.
 
 Creating your own prediction algorithm is pretty simple: an algorithm is
 nothing but a class derived from :class:`AlgoBase
-<recsys.prediction_algorithms.algo_base.AlgoBase>` that has an ``estimate`` method.
-This is the method that is called by the :meth:`predict()
-<recsys.prediction_algorithms.algo_base.AlgoBase.predict>` method. It takes in a
-user id, an item id, and returns the estimated rating :math:`\hat{r}_{ui}`:
+<recsys.prediction_algorithms.algo_base.AlgoBase>` that has an ``estimate``
+method.  This is the method that is called by the :meth:`predict()
+<recsys.prediction_algorithms.algo_base.AlgoBase.predict>` method. It takes in
+an **inner** user id, an **inner** item id (see :ref:`this note
+<raw_inner_note>`), and returns the estimated rating :math:`\hat{r}_{ui}`:
 
 .. literalinclude:: ../../examples/building_custom_algorithms/most_basic_algorithm.py
     :caption: From file ``examples/building_custom_algorithms/most_basic_algorithm.py``
