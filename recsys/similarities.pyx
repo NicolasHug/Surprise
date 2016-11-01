@@ -22,7 +22,7 @@ cimport numpy as np
 import numpy as np
 
 
-def cosine(n_x, yr):
+def cosine(n_x, yr, min_support):
     """Compute the cosine similarity between all pairs of users (or items).
 
     Only **common** users (or items) are taken into account. The cosine
@@ -68,6 +68,8 @@ def cosine(n_x, yr):
     cdef int ri = 0
     cdef int rj = 0
 
+    cdef int min_sprt = min_support
+
     for y, y_ratings in yr.items():
         for xi, ri in y_ratings:
             for xj, rj in y_ratings:
@@ -79,7 +81,7 @@ def cosine(n_x, yr):
     for xi in range(n_x):
         sim[xi, xi] = 1
         for xj in range(xi + 1, n_x):
-            if freq[xi, xj] == 0:
+            if freq[xi, xj] < min_sprt:
                 sim[xi, xj] = 0
             else:
                 denum = np.sqrt(sqi[xi, xj] * sqj[xi, xj])
@@ -89,7 +91,7 @@ def cosine(n_x, yr):
 
     return sim
 
-def msd(n_x, yr):
+def msd(n_x, yr, min_support):
     """Compute the Mean Squared Difference similarity between all pairs of
     users (or items).
 
@@ -136,6 +138,8 @@ def msd(n_x, yr):
     cdef int ri = 0
     cdef int rj = 0
 
+    cdef int min_sprt = min_support
+
     for y, y_ratings in yr.items():
         for xi, ri in y_ratings:
             for xj, rj in y_ratings:
@@ -145,7 +149,7 @@ def msd(n_x, yr):
     for xi in range(n_x):
         sim[xi, xi] = 1 # completely arbitrary and useless anyway
         for xj in range(xi + 1, n_x):
-            if freq[xi, xj] == 0:
+            if freq[xi, xj] < min_sprt:
                 sim[xi, xj] == 0
             else:
                 # return inverse of (msd + 1) (+ 1 to avoid dividing by zero)
@@ -155,44 +159,8 @@ def msd(n_x, yr):
 
     return sim
 
-def compute_mean_diff(n_x, yr):
-    """Compute the mean difference between all pairs of users (or items).
-    mean_diff[x, x'] = mean(r_xy - r_x'y) for common ys
 
-    I leave it here for now but it might be deleted in the future (plus, it's
-    not a similarity but a distance...)
-    """
-
-    # sum (r_xy - r_x'y - mean_diff(r_x - r_x')) for common ys
-    cdef np.ndarray[np.double_t, ndim = 2] diff = np.zeros((n_x, n_x), np.double)
-    # number of common ys
-    cdef np.ndarray[np.int_t,    ndim = 2] freq   = np.zeros((n_x, n_x), np.int)
-    # the mean_diff matrix
-    cdef np.ndarray[np.double_t, ndim = 2] mean_diff = np.zeros((n_x, n_x))
-
-    # these variables need to be cdef'd so that array lookup can be fast
-    cdef int xi = 0
-    cdef int xj = 0
-    cdef int ri = 0
-    cdef int rj = 0
-
-    for y, y_ratings in yr.items():
-        for xi, ri in y_ratings:
-            for xj, rj in y_ratings:
-                diff[xi, xj] += (ri - rj)
-                freq[xi, xj] += 1
-
-    for xi in range(n_x):
-        mean_diff[xi, xi] = 0
-        for xj in range(xi + 1, n_x):
-            if freq[xi, xj]:
-                mean_diff[xi, xj] = diff[xi, xj] / freq[xi, xj]
-                mean_diff[xj, xi] = -mean_diff[xi, xj]
-
-    return mean_diff
-
-
-def pearson(n_x, yr):
+def pearson(n_x, yr, min_support):
     """Compute the Pearson correlation coefficient between all pairs of users
     (or items).
 
@@ -249,6 +217,8 @@ def pearson(n_x, yr):
     cdef int ri = 0
     cdef int rj = 0
 
+    cdef int min_sprt = min_support
+
     for y, y_ratings in yr.items():
         for xi, ri in y_ratings:
             for xj, rj in y_ratings:
@@ -262,20 +232,25 @@ def pearson(n_x, yr):
     for xi in range(n_x):
         sim[xi, xi] = 1
         for xj in range(xi + 1, n_x):
-            n = freq[xi, xj]
-            num = n * prods[xi, xj] - si[xi, xj] * sj[xi, xj]
-            denum = np.sqrt((n * sqi[xi, xj] - si[xi, xj]**2) *
-                            (n * sqj[xi, xj] - sj[xi, xj]**2))
-            if denum == 0:
-                sim[xi, xj] = 0
+
+            if freq[xi, xj] < min_sprt:
+                sim[xi, xj] == 0
             else:
-                sim[xi, xj] = num / denum
+                n = freq[xi, xj]
+                num = n * prods[xi, xj] - si[xi, xj] * sj[xi, xj]
+                denum = np.sqrt((n * sqi[xi, xj] - si[xi, xj]**2) *
+                                (n * sqj[xi, xj] - sj[xi, xj]**2))
+                if denum == 0:
+                    sim[xi, xj] = 0
+                else:
+                    sim[xi, xj] = num / denum
 
             sim[xj, xi] = sim[xi, xj]
 
     return sim
 
-def pearson_baseline(n_x, yr, global_mean, x_biases, y_biases, shrinkage=100):
+def pearson_baseline(n_x, yr, min_support, global_mean, x_biases, y_biases,
+                     shrinkage=100):
     """Compute the (shrunk) Pearson correlation coefficient between all pairs
     of users (or items) using baselines for centering instead of means.
 
@@ -343,6 +318,12 @@ def pearson_baseline(n_x, yr, global_mean, x_biases, y_biases, shrinkage=100):
     cdef double diff_j = 0
     cdef double partial_bias = 0
 
+    cdef min_sprt = min_support
+
+    # Need this because of shrinkage. When pearson coeff is zero when support
+    # is 1, so that's OK.
+    min_sprt = max(2, min_sprt) 
+
     for y, y_ratings in yr.items():
         partial_bias = global_mean_ + y_biases_[y]
         for xi, ri in y_ratings:
@@ -357,7 +338,7 @@ def pearson_baseline(n_x, yr, global_mean, x_biases, y_biases, shrinkage=100):
     for xi in range(n_x):
         sim[xi, xi] = 1
         for xj in range(xi + 1, n_x):
-            if freq[xi, xj] < 2:  # if freq == 1, pearson_sim is zero anyway
+            if freq[xi, xj] < min_sprt:
                 sim[xi, xj] = 0
             else:
                 sim[xi, xj] = prods[xi, xj] / (np.sqrt(sq_diff_i[xi, xj] *

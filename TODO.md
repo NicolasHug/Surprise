@@ -2,7 +2,6 @@ TODO
 ====
 
 * remove the rm dict?
-* Add a 'min_support' parameter to sim_options? Add a min_k to knns?
 * should a Prediction output the raw id or the inner id? Right now it's the
   inner id. Maybe sort this out when working on the comparison tools.
 * when dumping, we should dump all the algorithm parameter. Use __dict__ ?
@@ -21,6 +20,7 @@ Maybe, Maybe not
 Done:
 -----
 
+* Add a 'min_support' parameter to sim_options? Add a min_k to knns?
 * Do something about the user_based stuff. It should be better. Check knns BTW.
 * Do something about unknown users and unknown items, i.e. users or items that
   have no rating in the trainset. Right now, the predict method checks if the

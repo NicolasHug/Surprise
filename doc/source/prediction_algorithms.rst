@@ -130,6 +130,11 @@ argument is a dictionary with the following (all optional) keys:
 - ``'user_based'``: Whether similarities will be computed between users or
   between items. This has a **huge** impact on the performance of a prediction
   algorithm.  Default is ``True``.
+- ``'min_support'``: The minimum number of common items (when ``'user_based'``
+  is ``'True'``) or minimum number of common users (when ``'user_based'`` is
+  ``'False'``) for the similarity not to be zero. Simply put, if
+  :math:`|I_{uv}| < \text{min_support}` then :math:`\text{sim}(u, v) = 0`. The
+  same goes for items.
 - ``'shrinkage'``: Shrinkage parameter to apply (only relevent for
   :func:`pearson_baseline <recsys.similarities.pearson_baseline>` similarity).
   Default is 100.

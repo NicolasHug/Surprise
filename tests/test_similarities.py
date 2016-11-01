@@ -34,7 +34,7 @@ def test_cosine_sim():
     for _, ratings in yr.items():
         random.shuffle(ratings)
 
-    sim = sims.cosine(n_x, yr)
+    sim = sims.cosine(n_x, yr, min_support=1)
 
     # check symetry and bounds (as ratings are > 0, cosine sim must be >= 0)
     for xi in range(n_x):
@@ -59,6 +59,14 @@ def test_cosine_sim():
     # non constant and different ratings: cosine sim must be in ]0, 1[
     assert 0 < sim[5, 6] < 1
 
+    # ensure min_support is taken into account. Only users 1 and 2 have more
+    # than 4 common ratings.
+    sim = sims.cosine(n_x, yr, min_support=4)
+    for i in range(n_x):
+        for j in range(i + 1, n_x):
+            if i != 1 and j != 2:
+                assert sim[i, j] == 0
+
 def test_msd_sim():
     """Tests for the MSD similarity."""
 
@@ -70,7 +78,7 @@ def test_msd_sim():
     for _, ratings in yr.items():
         random.shuffle(ratings)
 
-    sim = sims.msd(n_x, yr)
+    sim = sims.msd(n_x, yr, min_support=1)
 
     # check symetry and bounds. MSD sim must be in [0, 1]
     for xi in range(n_x):
@@ -90,6 +98,14 @@ def test_msd_sim():
     assert sim[0, 3] == 0
     assert sim[0, 4] == 0
 
+    # ensure min_support is taken into account. Only users 1 and 2 have more
+    # than 4 common ratings.
+    sim = sims.msd(n_x, yr, min_support=4)
+    for i in range(n_x):
+        for j in range(i + 1, n_x):
+            if i != 1 and j != 2:
+                assert sim[i, j] == 0
+
 def test_pearson_sim():
     """Tests for the pearson similarity."""
 
@@ -101,7 +117,7 @@ def test_pearson_sim():
     for _, ratings in yr.items():
         random.shuffle(ratings)
 
-    sim = sims.pearson(n_x, yr)
+    sim = sims.pearson(n_x, yr, min_support=1)
     # check symetry and bounds. -1 <= pearson coeff <= 1
     for xi in range(n_x):
         assert sim[xi, xi] == 1
@@ -128,7 +144,14 @@ def test_pearson_sim():
 
     # ratings vary in the same direction
     assert sim[2, 5] > 0
-    # ratings vary in inverse direction
+
+    # ensure min_support is taken into account. Only users 1 and 2 have more
+    # than 4 common ratings.
+    sim = sims.pearson(n_x, yr, min_support=4)
+    for i in range(n_x):
+        for j in range(i + 1, n_x):
+            if i != 1 and j != 2:
+                assert sim[i, j] == 0
 
 def test_pearson_baseline_sim():
     """Tests for the pearson_baseline similarity."""
@@ -144,7 +167,7 @@ def test_pearson_baseline_sim():
     global_mean = 3 # fake
     x_biases = np.random.normal(0, 1, n_x)  # fake
     y_biases = np.random.normal(0, 1, 5)  # fake (there are 5 ys)
-    sim = sims.pearson_baseline(n_x, yr, global_mean, x_biases, y_biases)
+    sim = sims.pearson_baseline(n_x, yr, 1, global_mean, x_biases, y_biases)
     # check symetry and bounds. -1 <= pearson coeff <= 1
     for xi in range(n_x):
         assert sim[xi, xi] == 1
@@ -160,3 +183,11 @@ def test_pearson_baseline_sim():
     # pairs of users (0, 3), have no common items
     assert sim[0, 3] == 0
     assert sim[0, 4] == 0
+
+    # ensure min_support is taken into account. Only users 1 and 2 have more
+    # than 4 common ratings.
+    sim = sims.pearson_baseline(n_x, yr, 4, global_mean, x_biases, y_biases)
+    for i in range(n_x):
+        for j in range(i + 1, n_x):
+            if i != 1 and j != 2:
+                assert sim[i, j] == 0

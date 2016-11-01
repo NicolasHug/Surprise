@@ -217,7 +217,9 @@ class AlgoBase:
         else:
             n_x, yr = self.trainset.n_items, self.trainset.ur
 
-        args = [n_x, yr]
+        min_support = self.sim_options.get('min_support', 1)
+
+        args = [n_x, yr, min_support]
 
         name = self.sim_options.get('name', 'msd').lower()
         if name == 'pearson_baseline':
@@ -229,6 +231,7 @@ class AlgoBase:
                 bx, by = bi, bu
 
             args += [self.trainset.global_mean, bx, by, shrinkage]
+
 
         try:
             return construction_func[name](*args)
