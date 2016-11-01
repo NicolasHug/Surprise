@@ -37,3 +37,24 @@ def test_unknown_user_or_item():
         algo.predict(0, 'unknown_item')
         algo.predict('unkown_user', 0)
         algo.predict('unkown_user', 'unknown_item')
+
+def test_knns():
+    """Ensure the k and min_k parameters are effective for knn algorithms."""
+
+    # the test and train files are from the ml-100k dataset (10% of u1.base and
+    # 10 % of u1.test)
+    train_file = os.path.join(os.path.dirname(__file__), './u1_ml100k_train')
+    test_file = os.path.join(os.path.dirname(__file__), './u1_ml100k_test')
+    data = Dataset.load_from_folds([(train_file, test_file)], Reader('ml-100k'))
+
+    klasses = (KNNBasic, )#KNNWithMeans, KNNBaseline)
+
+    k, min_k = 20, 5
+    for klass in klasses:
+        algo = klass(k=k, min_k=min_k)
+        for trainset, testset in data.folds():
+            algo.train(trainset)
+            predictions = algo.test(testset)
+            for pred in predictions:
+                if not pred.details['was_impossible']:
+                    assert min_k <= pred.details['actual_k'] <= k

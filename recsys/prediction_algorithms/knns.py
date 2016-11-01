@@ -69,17 +69,22 @@ class KNNBasic(SymmetricAlgo):
     depending on the ``user_based`` field of the ``sim_options`` parameter.
 
     Args:
-        k(int): The number of neighbors to take into account for aggregation.
-            Pease read :ref:`this note <actual_k_note>`.
+        k(int): The (max) number of neighbors to take into account for
+            aggregation (see :ref:`this note <actual_k_note>`). Default is
+            ``40``.
+        min_k(int): The minimum number of neighbors to take into account for
+            aggregation. If there are not enough neighbors, the prediction is
+            set the the global mean of all ratings. Default is ``1``.
         sim_options(dict): A dictionary of options for the similarity
             measure. See :ref:`similarity_measures_configuration` for accepted
             options.
     """
 
-    def __init__(self, k=40, sim_options={}, **kwargs):
+    def __init__(self, k=40, min_k=1, sim_options={}, **kwargs):
 
         SymmetricAlgo.__init__(self, sim_options=sim_options, **kwargs)
         self.k = k
+        self.min_k = min_k
 
     def train(self, trainset):
 
@@ -106,10 +111,10 @@ class KNNBasic(SymmetricAlgo):
                 sum_ratings += sim * r
                 actual_k += 1
 
-        try:
-            est = sum_ratings / sum_sim
-        except ZeroDivisionError:
+        if actual_k < self.min_k:
             raise PredictionImpossible('Not enough neighbors.')
+
+        est = sum_ratings / sum_sim
 
         details = {'actual_k' : actual_k}
         return est, details
@@ -137,18 +142,25 @@ class KNNWithMeans(SymmetricAlgo):
 
 
     Args:
-        k(int): The number of neighbors to take into account for aggregation.
-            Pease read :ref:`this note <actual_k_note>`.
+        k(int): The (max) number of neighbors to take into account for
+            aggregation (see :ref:`this note <actual_k_note>`). Default is
+            ``40``.
+        min_k(int): The minimum number of neighbors to take into account for
+            aggregation. If there are not enough neighbors, the neighbor
+            aggregation is set to zero (so the prediction ends up being
+            equivalent to the mean :math:`\mu_u` or :math:`\mu_i`). Default is
+            ``1``.
         sim_options(dict): A dictionary of options for the similarity
             measure. See :ref:`similarity_measures_configuration` for accepted
             options.
     """
 
-    def __init__(self, k=40, sim_options={}, **kwargs):
+    def __init__(self, k=40, min_k=1, sim_options={}, **kwargs):
 
         SymmetricAlgo.__init__(self, sim_options=sim_options, **kwargs)
 
         self.k = k
+        self.min_k = min_k
 
     def train(self, trainset):
 
@@ -182,6 +194,8 @@ class KNNWithMeans(SymmetricAlgo):
                 sum_ratings += sim * (r - self.means[nb])
                 actual_k += 1
 
+        if actual_k < self.min_k:
+            sum_ratings = 0
 
         try:
             est += sum_ratings / sum_sim
@@ -220,8 +234,13 @@ class KNNBaseline(SymmetricAlgo):
     Yehuda Koren.
 
     Args:
-        k(int): The number of neighbors to take into account for aggregation.
-            Pease read :ref:`this note <actual_k_note>`.
+        k(int): The (max) number of neighbors to take into account for
+            aggregation (see :ref:`this note <actual_k_note>`). Default is
+            ``40``.
+        min_k(int): The minimum number of neighbors to take into account for
+            aggregation. If there are not enough neighbors, the neighbor
+            aggregation is set to zero (so the prediction ends up being
+            equivalent to the baseline). Default is ``1``.
         sim_options(dict): A dictionary of options for the similarity
             measure. See :ref:`similarity_measures_configuration` for accepted
             options.
@@ -231,12 +250,13 @@ class KNNBaseline(SymmetricAlgo):
 
     """
 
-    def __init__(self, k=40, sim_options={}, bsl_options={}):
+    def __init__(self, k=40, min_k=1, sim_options={}, bsl_options={}):
 
         SymmetricAlgo.__init__(self, sim_options=sim_options,
                           bsl_options=bsl_options)
 
         self.k = k
+        self.min_k = min_k
 
     def train(self, trainset):
 
@@ -271,6 +291,9 @@ class KNNBaseline(SymmetricAlgo):
                 nb_bsl = self.trainset.global_mean + self.bx[nb] + self.by[y]
                 sum_ratings += sim * (r - nb_bsl)
                 actual_k += 1
+
+        if actual_k < self.min_k:
+            sum_ratings = 0
 
         try:
             est += sum_ratings / sum_sim
