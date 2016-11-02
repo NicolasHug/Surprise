@@ -28,7 +28,7 @@ Baselines estimates configuration
 
 .. note::
   This section only applies to algorithms (or similarity measures) that try to
-  minimize the following regularized squared error:
+  minimize the following regularized squared error (or equivalent):
 
   .. math::
     \sum_{r_{ui} \in R_{train}} \left(r_{ui} - (\mu + b_u + b_i)\right)^2 +

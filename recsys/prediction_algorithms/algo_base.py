@@ -167,6 +167,8 @@ class AlgoBase:
 
             # This piece of code is largely inspired by that of MyMediaLite:
             # https://github.com/zenogantner/MyMediaLite/blob/master/src/MyMediaLite/RatingPrediction/UserItemBaseline.cs
+            # see also https://www.youtube.com/watch?v=gCaOa3W9kM0&t=32m55s
+            # (Alex Smola on RS, ML Class 10-701)
 
             bu = np.zeros(self.trainset.n_users)
             bi = np.zeros(self.trainset.n_items)
