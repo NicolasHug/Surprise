@@ -40,18 +40,15 @@ Installation / Usage
 Please, use a [virtual env](
 http://docs.python-guide.org/en/latest/dev/virtualenvs/)
 
-To install from [PyPI](https://pypi.python.org/pypi/recsys/), use pip:
+To install from [PyPI](https://pypi.python.org/pypi/recsys/), use pip
+(recommended):
 
     $ pip install recsys
 
-Or clone the repo:
+Or clone the repo and build from the sources (you'll need Cython and numpy
+first):
 
     $ git clone https://github.com/Niourf/recsys.git
-    $ cd recsys
-    $ pip install -r requirements.txt
-    $ pip install -r requirements_dev.txt
-    $ # then either
-    $ pip install .  # or below
     $ python setup.py install
 
 

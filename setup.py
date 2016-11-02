@@ -1,9 +1,6 @@
-from setuptools import setup, find_packages
+from setuptools import setup, find_packages, Extension
 from codecs import open
 from os import path
-
-from Cython.Build import cythonize
-import numpy
 
 __version__ = '0.0.3'
 
@@ -20,6 +17,15 @@ with open(path.join(here, 'requirements.txt'), encoding='utf-8') as f:
 install_requires = [x.strip() for x in all_reqs if 'git+' not in x]
 dependency_links = [x.strip().replace('git+', '') for x in all_reqs if x.startswith('git+')]
 
+
+### Cython stuff
+
+from Cython.Build import cythonize
+import numpy as np
+
+extensions = [Extension('recsys.similarities',  ['recsys/similarities.pyx'],
+                        include_dirs=[np.get_include()])]
+ext_modules = cythonize(extensions)
 
 setup(
     name='recsys',
@@ -43,11 +49,7 @@ setup(
     packages=find_packages(exclude=['docs', 'tests*']),
     include_package_data=True,
 
-    ext_modules = cythonize('recsys/similarities.pyx',
-                            include_path = [numpy.get_include()]),
-    # apparently, include_path does not work (yet it's from the doc).
-    # include_dirs does, but it's from distutils and not setuptools so WTF ???
-    include_dirs = [numpy.get_include()],
+    ext_modules = ext_modules,
 
     author='Nicolas Hug',
     install_requires=install_requires,

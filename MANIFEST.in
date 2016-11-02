@@ -1,2 +1,6 @@
-global-include *.pyx
-
+include README.md
+include LICENSE.md
+include requirements.txt
+recursive-include doc *
+recursive-include examples *
+recursive-include recsys *.c *.pyx
