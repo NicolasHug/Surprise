@@ -23,8 +23,13 @@ dependency_links = [x.strip().replace('git+', '') for x in all_reqs if x.startsw
 from Cython.Build import cythonize
 import numpy as np
 
-extensions = [Extension('recsys.similarities',  ['recsys/similarities.pyx'],
-                        include_dirs=[np.get_include()])]
+extensions = [Extension('recsys.similarities',
+                        ['recsys/similarities.pyx'],
+                        include_dirs=[np.get_include()]),
+              Extension('recsys.prediction_algorithms.matrix_factorization',
+                        ['recsys/prediction_algorithms/matrix_factorization.pyx'],
+                        include_dirs=[np.get_include()]),
+             ]
 ext_modules = cythonize(extensions)
 
 setup(

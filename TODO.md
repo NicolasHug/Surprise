@@ -12,6 +12,8 @@ Maybe, Maybe not
 
 * allow a back up algorithm  when prediction is impossible. Right now it's just
   the mean rating that is predicted. Maybe user would want to choose it.
+* Allow a 'biased' option in the SVD algo. If true, use baselines, if False,
+  don't. It should be pretty easy to do.
 
 Done:
 -----

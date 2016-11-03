@@ -10,4 +10,5 @@ recsys.egg-info/
 build
 dist/
 recsys/similarities.c
+recsys/prediction_algorithms/matrix_factorization.c
 *.so
