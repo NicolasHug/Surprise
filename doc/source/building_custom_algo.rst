@@ -52,7 +52,7 @@ be done by defining the ``train`` method:
 .. literalinclude:: ../../examples/building_custom_algorithms/most_basic_algorithm2.py
     :caption: From file ``examples/building_custom_algorithms/most_basic_algorithm2.py``
     :name: most_basic_algorithm2.py
-    :lines: 15-33
+    :lines: 15-35
 
 
 The ``train`` method is called by the :func:`evaluate
@@ -78,7 +78,7 @@ rating for the item:
 .. literalinclude:: ../../examples/building_custom_algorithms/mean_rating_user_item.py
     :caption: From file ``examples/building_custom_algorithms/mean_rating_user_item.py``
     :name: mean_rating_user_item.py
-    :lines: 22-34
+    :lines: 22-35
 
 Predicting the mean rating for an item would have been done in a similar
 fashion using the ``ir`` field. Note that it would have been a better idea to

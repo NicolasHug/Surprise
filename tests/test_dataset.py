@@ -4,8 +4,8 @@ Module for testing the Dataset class.
 
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
-
 import os
+
 import pytest
 
 from recsys import Dataset
@@ -15,12 +15,14 @@ from recsys import Reader
 reader = Reader(line_format='user item rating', sep=' ', skip_lines=3,
                 rating_scale=(1, 5))
 
+
 def test_wrong_file_name():
     """Ensure file names are checked when creating a (custom) Dataset."""
     wrong_files = [('does_not_exist', 'does_not_either')]
 
     with pytest.raises(ValueError):
-        data = Dataset.load_from_folds(folds_files=wrong_files, reader=reader)
+        Dataset.load_from_folds(folds_files=wrong_files, reader=reader)
+
 
 def test_build_full_trainset():
     """Test the build_full_trainset method."""
@@ -83,6 +85,7 @@ def test_split():
     testsets_b = [testset for (_, testset) in data.folds()]
     assert testsets_a == testsets_b
 
+
 def test_trainset_testset():
     """Test the construct_trainset and construct_testset methods."""
 
@@ -93,26 +96,26 @@ def test_trainset_testset():
     data = Dataset.load_from_folds(folds_files=folds_files, reader=reader)
 
     for trainset, testset in data.folds():
-        pass # just need trainset and testset to be set
+        pass  # just need trainset and testset to be set
 
     # test rm:
     rm = trainset.rm
     assert rm[0, 0] == 4
     assert rm[1, 0] == 4
     assert rm[3, 1] == 5
-    assert rm[40, 20000] == 0 # not in the trainset
+    assert rm[40, 20000] == 0  # not in the trainset
 
     # test ur
     ur = trainset.ur
     assert ur[0] == [(0, 4)]
     assert ur[1] == [(0, 4), (1, 2)]
-    assert ur[40] == [] # not in the trainset
+    assert ur[40] == []  # not in the trainset
 
     # test ir
     ir = trainset.ir
     assert ir[0] == [(0, 4), (1, 4), (2, 1)]
     assert ir[1] == [(1, 2), (2, 1), (3, 5)]
-    assert ir[20000] == [] # not in the trainset
+    assert ir[20000] == []  # not in the trainset
 
     # test n_users, n_items, r_min, r_max
     assert trainset.n_users == 4

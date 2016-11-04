@@ -14,7 +14,7 @@ from recsys import evaluate
 from recsys import Reader
 
 # path to dataset file
-file_path = '/home/nico/.recsys_data/ml-100k/ml-100k/u.data' # change this
+file_path = '/home/nico/.recsys_data/ml-100k/ml-100k/u.data'  # change this
 
 # As we're loading a custom dataset, we need to define a reader. In the
 # movielens-100k dataset, each line has the following format:

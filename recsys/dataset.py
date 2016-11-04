@@ -28,9 +28,9 @@ Summary:
     Trainset
 """
 
+
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
-
 from collections import defaultdict
 from collections import namedtuple
 import sys
@@ -38,50 +38,46 @@ import os
 import zipfile
 import itertools
 import random
-
-import numpy as np
-
 try:
     from urllib import urlretrieve  # Python 2
 except ImportError:
     from urllib.request import urlretrieve  # Python 3
 
-
+import numpy as np
 
 
 # directory where builtin datasets are stored. For now it's in the home
 # directory under the .recsys_data. May be ask user to define it?
-datasets_dir = os.path.expanduser('~') + '/.recsys_data/'
-if not os.path.exists(datasets_dir):
-    os.makedirs(datasets_dir)
-
+DATASETS_DIR = os.path.expanduser('~') + '/.recsys_data/'
+if not os.path.exists(DATASETS_DIR):
+    os.makedirs(DATASETS_DIR)
 
 # a builtin dataset has
 # - an url (where to download it)
 # - a path (where it is located on the filesystem)
 # - the parameters of the corresponding reader
 BuiltinDataset = namedtuple('BuiltinDataset', ['url', 'path', 'reader_params'])
-builtin_datasets = {
-    'ml-100k' :
+BUILTIN_DATASETS = {
+    'ml-100k':
         BuiltinDataset(
             url='http://files.grouplens.org/datasets/movielens/ml-100k.zip',
-            path=datasets_dir + 'ml-100k/ml-100k/u.data',
+            path=DATASETS_DIR + 'ml-100k/ml-100k/u.data',
             reader_params=dict(line_format='user item rating timestamp',
                                rating_scale=(1, 5),
                                sep='\t')
         ),
-    'ml-1m' :
+    'ml-1m':
         BuiltinDataset(
             url='http://files.grouplens.org/datasets/movielens/ml-1m.zip',
-            path=datasets_dir + 'ml-1m/ml-1m/ratings.dat',
+            path=DATASETS_DIR + 'ml-1m/ml-1m/ratings.dat',
             reader_params=dict(line_format='user item rating timestamp',
                                rating_scale=(1, 5),
                                sep='::')
         ),
-    'jester' :
+    'jester':
         BuiltinDataset(
             url='http://eigentaste.berkeley.edu/dataset/jester_dataset_2.zip',
-            path=datasets_dir + 'jester/jester_ratings.dat',
+            path=DATASETS_DIR + 'jester/jester_ratings.dat',
             reader_params=dict(line_format='user item rating',
                                rating_scale=(-10, 10))
         )
@@ -124,21 +120,21 @@ class Dataset:
         """
 
         try:
-            dataset = builtin_datasets[name]
+            dataset = BUILTIN_DATASETS[name]
         except KeyError:
             raise ValueError('unknown dataset ' + name +
                              '. Accepted values are ' +
-                             ', '.join(builtin_datasets.keys()) + '.')
+                             ', '.join(BUILTIN_DATASETS.keys()) + '.')
 
         # if dataset does not exist, offer to download it
         if not os.path.isfile(dataset.path):
             answered = False
             while not answered:
-                print('Dataset ' + name + ' could not be found. Do you want to '
-                      'download it? [Y/n] ', end='')
+                print('Dataset ' + name + ' could not be found. Do you want '
+                      'to download it? [Y/n] ', end='')
                 try:
                     choice = raw_input().lower()
-                except:
+                except NameError:
                     choice = input().lower()
 
                 if choice in ['yes', 'y', '', 'omg this is so nice of you!!']:
@@ -149,13 +145,13 @@ class Dataset:
                     sys.exit()
 
             print('Trying to download dataset from ' + dataset.url + '...')
-            urlretrieve(dataset.url, datasets_dir + 'tmp.zip')
+            urlretrieve(dataset.url, DATASETS_DIR + 'tmp.zip')
 
-            with zipfile.ZipFile(datasets_dir + 'tmp.zip', 'r') as tmp_zip:
-                tmp_zip.extractall(datasets_dir + name)
+            with zipfile.ZipFile(DATASETS_DIR + 'tmp.zip', 'r') as tmp_zip:
+                tmp_zip.extractall(DATASETS_DIR + name)
 
-            os.remove(datasets_dir + 'tmp.zip')
-            print('Done! Dataset', name, 'has been saved to',  datasets_dir +
+            os.remove(DATASETS_DIR + 'tmp.zip')
+            print('Done! Dataset', name, 'has been saved to', DATASETS_DIR +
                   name)
 
         reader = Reader(**dataset.reader_params)
@@ -202,7 +198,6 @@ class Dataset:
         """
 
         return DatasetUserFolds(folds_files=folds_files, reader=reader)
-
 
     def read_ratings(self, file_name):
         """Return a list of ratings (user, item, rating, timestamp) read from
@@ -326,7 +321,6 @@ class DatasetAutoFolds(Dataset):
 
         return self.construct_trainset(self.raw_ratings)
 
-
     def raw_folds(self):
 
         if self.shuffle:
@@ -400,16 +394,16 @@ class Reader():
 
     """
 
-    def __init__(self, name=None, line_format=None, sep=None, rating_scale=(1, 5),
-                 skip_lines=0):
+    def __init__(self, name=None, line_format=None, sep=None,
+                 rating_scale=(1, 5), skip_lines=0):
 
         if name:
             try:
-                self.__init__(**builtin_datasets[name].reader_params)
+                self.__init__(**BUILTIN_DATASETS[name].reader_params)
             except KeyError:
                 raise ValueError('unknown reader ' + name +
                                  '. Accepted values are ' +
-                                 ', '.join(builtin_datasets.keys()) + '.')
+                                 ', '.join(BUILTIN_DATASETS.keys()) + '.')
         else:
             self.sep = sep
             self.skip_lines = skip_lines
@@ -450,12 +444,12 @@ class Reader():
                                           for i in self.indexes)
             else:
                 uid, iid, r = (line[i].strip().strip('"')
-                                          for i in self.indexes)
+                               for i in self.indexes)
                 timestamp = None
 
         except IndexError:
             raise ValueError(('Impossible to parse line.' +
-                             ' Check the line_format  and sep parameters.'))
+                              ' Check the line_format  and sep parameters.'))
 
         return uid, iid, float(r) + self.offset, timestamp
 
@@ -485,7 +479,7 @@ class Trainset:
         n_ratings: Total number of ratings :math:`|R_{train}|`.
         r_min: Minimum value of the rating scale.
         r_max: Maximum value of the rating scale.
-        global_mean: The mean of all ratings :math:`\mu`.
+        global_mean: The mean of all ratings :math:`\\mu`.
     """
 
     def __init__(self, rm, ur, ir, n_users, n_items, r_min, r_max,
@@ -570,6 +564,7 @@ class Trainset:
         except KeyError:
             raise ValueError(('Item ' + str(riid) +
                               ' is not part of the trainset.'))
+
     def all_ratings(self):
         """Generator function to iterate over all ratings.
 
@@ -603,6 +598,7 @@ class Trainset:
 
         It's only computed once."""
         if self._global_mean is None:
-            self._global_mean = np.mean([r for (_, _, r) in self.all_ratings()])
+            self._global_mean = np.mean(
+                                [r for (_, _, r) in self.all_ratings()])
 
         return self._global_mean

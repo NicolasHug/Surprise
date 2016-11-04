@@ -17,13 +17,13 @@ class MyOwnAlgorithm(AlgoBase):
     def __init__(self, sim_options={}, bsl_options={}):
 
         AlgoBase.__init__(self, sim_options=sim_options,
-                                bsl_options=bsl_options)
+                          bsl_options=bsl_options)
 
     def train(self, trainset):
 
         AlgoBase.train(self, trainset)
 
-        # Compute baselines and similarities
+        # Compute baselines and similarities
         self.bu, self.bi = self.compute_baselines()
         self.sim = self.compute_similarities()
 
@@ -51,4 +51,3 @@ data = Dataset.load_builtin('ml-100k')
 algo = MyOwnAlgorithm()
 
 evaluate(algo, data)
-

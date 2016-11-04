@@ -10,7 +10,6 @@ from recsys import KNNBasic
 from recsys import Dataset
 from recsys import evaluate
 
-
 # Load the movielens-100k dataset and split it into 3 folds for
 # cross-validation.
 data = Dataset.load_builtin('ml-100k')
@@ -26,8 +25,8 @@ algo.train(trainset)
 ##########################################
 # we can now query for specific predicions
 
-uid = str(196) # raw user id (as in the ratings file). They are **strings**!
-iid = str(302) # raw item id (as in the ratings file). They are **strings**!
+uid = str(196)  # raw user id (as in the ratings file). They are **strings**!
+iid = str(302)  # raw item id (as in the ratings file). They are **strings**!
 
 # get a prediction for specific users and items.
 pred = algo.predict(uid, iid, r=4, verbose=True)

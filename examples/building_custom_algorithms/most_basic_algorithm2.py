@@ -6,17 +6,18 @@ to User Guide for more insight.
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 
+import numpy as np
+
 from recsys import AlgoBase
 from recsys import Dataset
 from recsys import evaluate
 
-import numpy as np
 
 class MyOwnAlgorithm(AlgoBase):
 
     def __init__(self):
 
-        # Always call base method before doing anything.
+        # Always call base method before doing anything.
         AlgoBase.__init__(self)
 
     def train(self, trainset):
@@ -26,7 +27,8 @@ class MyOwnAlgorithm(AlgoBase):
 
         # Compute the average rating. We might as well use the
         # trainset.global_mean attribute ;)
-        self.the_mean = np.mean([r for (_, _, r) in self.trainset.all_ratings()])
+        self.the_mean = np.mean(
+                        [r for (_, _, r) in self.trainset.all_ratings()])
 
     def estimate(self, u, i):
 
@@ -37,4 +39,3 @@ data = Dataset.load_builtin('ml-100k')
 algo = MyOwnAlgorithm()
 
 evaluate(algo, data)
-

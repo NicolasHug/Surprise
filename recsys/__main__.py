@@ -5,11 +5,8 @@ from __future__ import (absolute_import, division, print_function,
 
 import random as rd
 import numpy as np
-import time
 import argparse
-import os
 
-from . import accuracy
 from recsys.prediction_algorithms import NormalPredictor
 from recsys.prediction_algorithms import BaselineOnly
 from recsys.prediction_algorithms import KNNBasic
@@ -38,7 +35,8 @@ def main():
                         default='KNNBaseline',
                         choices=algo_choices,
                         help='the prediction algorithm to use. ' +
-                        'Allowed values are ' + ', '.join(algo_choices.keys()) +
+                        'Allowed values are ' +
+                        ', '.join(algo_choices.keys()) +
                         '. (default: KNNBaseline)',
                         metavar='<prediction algorithm>')
 
@@ -92,9 +90,8 @@ def main():
                         help='the seed to use for RNG ' +
                         '(default: current system time)')
 
-    parser.add_argument('--item_based', dest='item_based', action='store_const',
-                        const=True,
-                        default=False,
+    parser.add_argument('--item_based', dest='item_based',
+                        action='store_const', const=True, default=False,
                         help='compute similarities on items rather than ' +
                         'on users')
 

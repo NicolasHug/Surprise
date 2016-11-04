@@ -7,13 +7,11 @@ which every single prediction algorithm has to inherit.
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 
-from collections import defaultdict
 import numpy as np
 
 from .. import similarities as sims
 from .predictions import PredictionImpossible
 from .predictions import Prediction
-
 
 
 class AlgoBase:
@@ -28,7 +26,6 @@ class AlgoBase:
     """
 
     def __init__(self, **kwargs):
-
 
         self.bsl_options = kwargs.get('bsl_options', {})
         self.sim_options = kwargs.get('sim_options', {})
@@ -71,7 +68,8 @@ class AlgoBase:
                 is False.
 
         Returns:
-            A :obj:`Prediction <recsys.prediction_algorithms.predictions.Prediction>` object.
+            A :obj:`Prediction\
+            <recsys.prediction_algorithms.predictions.Prediction>` object.
         """
 
         # Convert raw ids to inner ids
@@ -108,7 +106,7 @@ class AlgoBase:
         if verbose:
             print(pred)
 
-        return  pred
+        return pred
 
     def test(self, testset, verbose=False):
         """Test the algorithm on given testset.
@@ -120,7 +118,8 @@ class AlgoBase:
                 Default is False.
 
         Returns:
-            A list of :class:`Prediction <recsys.prediction_algorithms.predictions.Prediction>` objects.
+            A list of :class:`Prediction\
+                <recsys.prediction_algorithms.predictions.Prediction>` objects.
         """
 
         predictions = [self.predict(uid, iid, r, verbose=verbose)
@@ -190,7 +189,6 @@ class AlgoBase:
 
             return bu, bi
 
-
         optimize = dict(als=optimize_als,
                         sgd=optimize_sgd)
 
@@ -204,7 +202,6 @@ class AlgoBase:
             raise ValueError('invalid method ' + method + ' for baseline ' +
                              'computation. Available methods are als, sgd.')
 
-
     def compute_similarities(self):
         """Build the simlarity matrix.
 
@@ -216,10 +213,10 @@ class AlgoBase:
             The similarity matrix."""
 
         print("computing the similarity matrix...")
-        construction_func = {'cosine' : sims.cosine,
-                             'msd' : sims.msd,
-                             'pearson' : sims.pearson,
-                             'pearson_baseline' : sims.pearson_baseline}
+        construction_func = {'cosine': sims.cosine,
+                             'msd': sims.msd,
+                             'pearson': sims.pearson,
+                             'pearson_baseline': sims.pearson_baseline}
 
         if self.sim_options['user_based']:
             n_x, yr = self.trainset.n_users, self.trainset.ir
@@ -240,7 +237,6 @@ class AlgoBase:
                 bx, by = bi, bu
 
             args += [self.trainset.global_mean, bx, by, shrinkage]
-
 
         try:
             return construction_func[name](*args)

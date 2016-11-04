@@ -10,11 +10,12 @@ from recsys import AlgoBase
 from recsys import Dataset
 from recsys import evaluate
 
+
 class MyOwnAlgorithm(AlgoBase):
 
     def __init__(self):
 
-        # Always call base method before doing anything.
+        # Always call base method before doing anything.
         AlgoBase.__init__(self)
 
     def estimate(self, u, i):

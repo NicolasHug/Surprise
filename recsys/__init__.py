@@ -12,3 +12,7 @@ from .prediction_algorithms import PredictionImpossible
 from .dataset import Dataset
 from .dataset import Reader
 from .evaluate import evaluate
+
+__all__ = ['AlgoBase', 'NormalPredictor', 'BaselineOnly', 'KNNBasic',
+           'KNNWithMeans', 'KNNBaseline', 'SVD', 'SVDpp',
+           'PredictionImpossible', 'Dataset', 'Reader', 'evaluate']

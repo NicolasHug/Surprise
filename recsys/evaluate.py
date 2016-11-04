@@ -4,7 +4,6 @@ The :mod:`evaluate` module defines the :func:`evaluate` function.
 
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
-
 from collections import defaultdict
 import pickle
 import time
@@ -12,6 +11,7 @@ import os
 import numpy as np
 
 from . import accuracy
+
 
 def evaluate(algo, data, measures=['rmse', 'mae', 'fcp'], with_dump=False,
              verbose=1):
@@ -21,8 +21,8 @@ def evaluate(algo, data, measures=['rmse', 'mae', 'fcp'], with_dump=False,
     perform cross validation.
 
     Args:
-        algo(:obj:`AlgoBase <recsys.prediction_algorithms.bases.AlgoBase>`): The
-            algorithm to evaluate.
+        algo(:obj:`AlgoBase <recsys.prediction_algorithms.bases.AlgoBase>`):
+            The algorithm to evaluate.
         data(:obj:`Dataset <recsys.dataset.Dataset>`): The dataset on which to
             evaluate the algorithm.
         with_dump(bool): If True, the algorithm parameters and every prediction
@@ -52,7 +52,7 @@ def evaluate(algo, data, measures=['rmse', 'mae', 'fcp'], with_dump=False,
 
         # train and test algorithm. Keep all rating predictions in a list
         algo.train(trainset)
-        predictions = algo.test(testset, verbose=(verbose==2))
+        predictions = algo.test(testset, verbose=(verbose == 2))
 
         # compute needed performance statistics
         for measure in measures:

@@ -15,15 +15,17 @@ from recsys import evaluate
 data = Dataset.load_builtin('ml-100k')
 
 # Example using cosine similarity
-sim_options = {'name' : 'cosine',
-               'user_based' : False}  # compute  similarities between items
+sim_options = {'name': 'cosine',
+               'user_based': False  # compute  similarities between items
+               }
 algo = KNNBasic(sim_options=sim_options)
 
 evaluate(algo, data)
 
 # Example using pearson_baseline similarity
-sim_options = {'name' : 'pearson_baseline',
-               'shrinkage' : 0}  # no shrinkage
+sim_options = {'name': 'pearson_baseline',
+               'shrinkage': 0  # no shrinkage
+               }
 algo = KNNBasic(sim_options=sim_options)
 
 evaluate(algo, data)

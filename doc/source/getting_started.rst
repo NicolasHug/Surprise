@@ -101,7 +101,7 @@ each of the folds:
 .. literalinclude:: ../../examples/iterate_over_folds.py
     :caption: From file ``examples/iterate_over_folds.py``
     :name: iterate_over_folds.py
-    :lines: 14-
+    :lines: 15-
 
 .. _train_on_whole_trainset:
 

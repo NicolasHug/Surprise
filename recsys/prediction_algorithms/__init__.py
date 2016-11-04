@@ -26,3 +26,7 @@ from .matrix_factorization import SVD
 from .matrix_factorization import SVDpp
 
 from .predictions import PredictionImpossible
+
+__all__ = ['AlgoBase', 'NormalPredictor', 'BaselineOnly', 'KNNBasic',
+           'KNNBaseline', 'KNNWithMeans', 'SVD', 'SVDpp',
+           'PredictionImpossible']

@@ -144,12 +144,12 @@ Usage examples:
 .. literalinclude:: ../../examples/similarity_conf.py
     :caption: From file ``examples/similarity_conf.py``
     :name: sim_conf_cos
-    :lines: 18-20
+    :lines: 18-21
 
 .. literalinclude:: ../../examples/similarity_conf.py
     :caption: From file ``examples/similarity_conf.py``
     :name: sim_conf_pearson_baseline
-    :lines: 25-27
+    :lines: 26-29
 
 .. seealso::
     The :mod:`similarities <recsys.similarities>` module.

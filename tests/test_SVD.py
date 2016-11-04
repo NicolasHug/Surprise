@@ -4,7 +4,6 @@ Module for testing the SVD and SVD++ algorithms.
 
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
-
 import os
 
 from recsys.prediction_algorithms import SVD
@@ -19,6 +18,7 @@ from recsys.evaluate import evaluate
 train_file = os.path.join(os.path.dirname(__file__), './u1_ml100k_train')
 test_file = os.path.join(os.path.dirname(__file__), './u1_ml100k_test')
 data = Dataset.load_from_folds([(train_file, test_file)], Reader('ml-100k'))
+
 
 def test_SVD_parameters():
     """Ensure that all parameters are taken into account."""
@@ -87,6 +87,7 @@ def test_SVD_parameters():
     rmse_reg_qi = evaluate(algo, data, measures=['rmse'])['rmse']
     assert rmse_default != rmse_reg_qi
 
+
 def test_SVDpp_parameters():
     """Ensure that all parameters are taken into account."""
 
@@ -94,13 +95,13 @@ def test_SVDpp_parameters():
     algo = SVDpp(n_factors=1, n_epochs=1)
     rmse_default = evaluate(algo, data, measures=['rmse'])['rmse']
 
-    # The rest is OK but just takes too long for now...
-
-    """
     # n_factors
     algo = SVDpp(n_factors=2, n_epochs=1)
     rmse_factors = evaluate(algo, data, measures=['rmse'])['rmse']
     assert rmse_default != rmse_factors
+
+    # The rest is OK but just takes too long for now...
+    """
 
     # n_epochs
     algo = SVDpp(n_factors=1, n_epochs=2)

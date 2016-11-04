@@ -14,9 +14,9 @@ Available accuracy metrics:
 
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
-
 from collections import defaultdict
 import numpy as np
+
 
 def rmse(predictions, verbose=True):
     """Compute RMSE (Root Mean Squared Error).
@@ -26,7 +26,8 @@ def rmse(predictions, verbose=True):
         \\hat{R}}(r_{ui} - \\hat{r}_{ui})^2}.
 
     Args:
-        predictions (:obj:`list` of :obj:`Prediction <recsys.prediction_algorithms.predictions.Prediction>`):
+        predictions (:obj:`list` of :obj:`Prediction\
+            <recsys.prediction_algorithms.predictions.Prediction>`):
             A list of predictions, as returned by the :meth:`test
             <recsys.prediction_algorithms.bases.AlgoBase.test>` method.
         verbose: If True, will print computed value. Default is ``True``.
@@ -56,11 +57,12 @@ def mae(predictions, verbose=True):
     """Compute MAE (Mean Absolute Error).
 
     .. math::
-        \\text{MAE} = \\frac{1}{|\\hat{R}|} \\sum_{\\hat{r}_{ui} \in \\hat{R}}|r_{ui}
-        - \\hat{r}_{ui}|
+        \\text{MAE} = \\frac{1}{|\\hat{R}|} \\sum_{\\hat{r}_{ui} \in
+        \\hat{R}}|r_{ui} - \\hat{r}_{ui}|
 
     Args:
-        predictions (:obj:`list` of :obj:`Prediction <recsys.prediction_algorithms.predictions.Prediction>`):
+        predictions (:obj:`list` of :obj:`Prediction\
+            <recsys.prediction_algorithms.predictions.Prediction>`):
             A list of predictions, as returned by the :meth:`test
             <recsys.prediction_algorithms.bases.AlgoBase.test>` method.
         verbose: If True, will print computed value. Default is ``True``.
@@ -84,6 +86,7 @@ def mae(predictions, verbose=True):
 
     return mae_
 
+
 def fcp(predictions, verbose=True):
     """Compute FCP (Fraction of Concordant Pairs).
 
@@ -92,7 +95,8 @@ def fcp(predictions, verbose=True):
     and Sill, section 5.2.
 
     Args:
-        predictions (:obj:`list` of :obj:`Prediction <recsys.prediction_algorithms.predictions.Prediction>`):
+        predictions (:obj:`list` of :obj:`Prediction\
+            <recsys.prediction_algorithms.predictions.Prediction>`):
             A list of predictions, as returned by the :meth:`test
             <recsys.prediction_algorithms.bases.AlgoBase.test>` method.
         verbose: If True, will print computed value. Default is ``True``.
@@ -136,4 +140,3 @@ def fcp(predictions, verbose=True):
         print('FCP: {0:1.4f}'.format(fcp))
 
     return fcp
-

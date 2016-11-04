@@ -8,7 +8,6 @@ from __future__ import (absolute_import, division, print_function,
 
 from recsys import BaselineOnly
 from recsys import Dataset
-from recsys import evaluate
 from recsys import accuracy
 
 # Load the movielens-100k dataset and split it into 3 folds for

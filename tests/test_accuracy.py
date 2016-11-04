@@ -2,8 +2,8 @@
 
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
-
 from math import sqrt
+
 import pytest
 
 import recsys.accuracy
@@ -29,6 +29,7 @@ def test_mae():
     with pytest.raises(ValueError):
         recsys.accuracy.mae([])
 
+
 def test_rmse():
     """Tests for the RMSE function."""
 
@@ -39,10 +40,12 @@ def test_rmse():
     assert recsys.accuracy.rmse(predictions) == sqrt((0 - 2)**2 / 2)
 
     predictions = [pred(2, 0), pred(3, 4)]
-    assert recsys.accuracy.rmse(predictions) == sqrt(((2 - 0)**2 + (3 - 4)**2) / 2)
+    assert recsys.accuracy.rmse(predictions) == sqrt(
+                                                ((2 - 0)**2 + (3 - 4)**2) / 2)
 
     with pytest.raises(ValueError):
         recsys.accuracy.rmse([])
+
 
 def test_fcp():
     """Tests for the FCP function."""

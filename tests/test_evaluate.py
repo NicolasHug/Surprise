@@ -4,13 +4,13 @@ Module for testing the evaluate function.
 
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
-
 import os
 
 from recsys import NormalPredictor
 from recsys.dataset import Dataset
 from recsys.dataset import Reader
 from recsys.evaluate import evaluate
+
 
 def test_performances():
     """Test the returned dict."""
@@ -23,8 +23,8 @@ def test_performances():
                     rating_scale=(1, 5))
     data = Dataset.load_from_folds(folds_files=folds_files, reader=reader)
 
-
     algo = NormalPredictor()
     performances = evaluate(algo, data, measures=['RmSe', 'Mae'])
+
     assert performances['RMSE'] is performances['rmse']
     assert performances['MaE'] is performances['mae']

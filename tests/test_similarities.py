@@ -4,24 +4,22 @@ Module for testing the similarity measures
 
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
-
-import sys
-import os
 import random
-import copy
+
 import numpy as np
 
 import recsys.similarities as sims
-from recsys.prediction_algorithms import BaselineOnly
+
 
 n_x = 7
 yr_global = {
-        0 : [(0, 3), (1, 3), (2, 3),                 (5, 1), (6, 2)],
-        1 : [(0, 4), (1, 4), (2, 4),                               ],
-        2 : [                (2, 5), (3, 2), (4, 3)                ],
-        3 : [        (1, 1), (2, 4), (3, 2), (4, 3), (5, 3), (6, 4)],
-        4 : [        (1, 5), (2, 1),                 (5, 2), (6, 3)],
-            }
+        0: [(0, 3), (1, 3), (2, 3),                 (5, 1), (6, 2)],
+        1: [(0, 4), (1, 4), (2, 4),                               ], # noqa
+        2: [                (2, 5), (3, 2), (4, 3)                ], # noqa
+        3: [        (1, 1), (2, 4), (3, 2), (4, 3), (5, 3), (6, 4)], # noqa
+        4: [        (1, 5), (2, 1),                 (5, 2), (6, 3)], # noqa
+        }
+
 
 def test_cosine_sim():
     """Tests for the cosine similarity."""
@@ -55,7 +53,6 @@ def test_cosine_sim():
     assert sim[0, 3] == 0
     assert sim[0, 4] == 0
 
-
     # non constant and different ratings: cosine sim must be in ]0, 1[
     assert 0 < sim[5, 6] < 1
 
@@ -66,6 +63,7 @@ def test_cosine_sim():
         for j in range(i + 1, n_x):
             if i != 1 and j != 2:
                 assert sim[i, j] == 0
+
 
 def test_msd_sim():
     """Tests for the MSD similarity."""
@@ -105,6 +103,7 @@ def test_msd_sim():
         for j in range(i + 1, n_x):
             if i != 1 and j != 2:
                 assert sim[i, j] == 0
+
 
 def test_pearson_sim():
     """Tests for the pearson similarity."""
@@ -153,6 +152,7 @@ def test_pearson_sim():
             if i != 1 and j != 2:
                 assert sim[i, j] == 0
 
+
 def test_pearson_baseline_sim():
     """Tests for the pearson_baseline similarity."""
 
@@ -164,7 +164,7 @@ def test_pearson_baseline_sim():
     for _, ratings in yr.items():
         random.shuffle(ratings)
 
-    global_mean = 3 # fake
+    global_mean = 3  # fake
     x_biases = np.random.normal(0, 1, n_x)  # fake
     y_biases = np.random.normal(0, 1, 5)  # fake (there are 5 ys)
     sim = sims.pearson_baseline(n_x, yr, 1, global_mean, x_biases, y_biases)

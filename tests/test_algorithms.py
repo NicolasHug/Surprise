@@ -4,14 +4,17 @@ Module for testing prediction algorithms.
 
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
-
 import os
-import numpy as np
 
-from recsys.prediction_algorithms import *
+from recsys.prediction_algorithms import NormalPredictor
+from recsys.prediction_algorithms import BaselineOnly
+from recsys.prediction_algorithms import KNNBasic
+from recsys.prediction_algorithms import KNNWithMeans
+from recsys.prediction_algorithms import KNNBaseline
+from recsys.prediction_algorithms import SVD
+from recsys.prediction_algorithms import SVDpp
 from recsys.dataset import Dataset
 from recsys.dataset import Reader
-from recsys.evaluate import evaluate
 
 
 def test_unknown_user_or_item():
@@ -27,7 +30,7 @@ def test_unknown_user_or_item():
     data = Dataset.load_from_file(file_path=file_path, reader=reader)
 
     for trainset, testset in data.folds():
-        pass # just need trainset and testset to be set
+        pass  # just need trainset and testset to be set
 
     klasses = (NormalPredictor, BaselineOnly, KNNBasic, KNNWithMeans,
                KNNBaseline, SVD, SVDpp)
@@ -38,6 +41,7 @@ def test_unknown_user_or_item():
         algo.predict('unkown_user', 0)
         algo.predict('unkown_user', 'unknown_item')
 
+
 def test_knns():
     """Ensure the k and min_k parameters are effective for knn algorithms."""
 
@@ -45,9 +49,12 @@ def test_knns():
     # 10 % of u1.test)
     train_file = os.path.join(os.path.dirname(__file__), './u1_ml100k_train')
     test_file = os.path.join(os.path.dirname(__file__), './u1_ml100k_test')
-    data = Dataset.load_from_folds([(train_file, test_file)], Reader('ml-100k'))
+    data = Dataset.load_from_folds([(train_file, test_file)],
+                                   Reader('ml-100k'))
 
-    klasses = (KNNBasic, )#KNNWithMeans, KNNBaseline)
+    # Actually, as KNNWithMeans and KNNBaseline have back up solutions for when
+    # there are not enough neighbors, we can't really test them...
+    klasses = (KNNBasic, )  # KNNWithMeans, KNNBaseline)
 
     k, min_k = 20, 5
     for klass in klasses:
