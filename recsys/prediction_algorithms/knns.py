@@ -8,6 +8,7 @@ import numpy as np
 
 from .predictions import PredictionImpossible
 from .algo_base import AlgoBase
+from ..six import iteritems
 
 
 # Important note: as soon as an algorithm uses a similarity measure, it should
@@ -167,7 +168,7 @@ class KNNWithMeans(SymmetricAlgo):
         self.sim = self.compute_similarities()
 
         self.means = np.zeros(self.n_x)
-        for x, ratings in self.xr.items():
+        for x, ratings in iteritems(self.xr):
             self.means[x] = np.mean([r for (_, r) in ratings])
 
     def estimate(self, u, i):

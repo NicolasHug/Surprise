@@ -21,6 +21,8 @@ from __future__ import (absolute_import, division, print_function,
 cimport numpy as np
 import numpy as np
 
+from .six.moves import range
+from .six import iteritems
 
 def cosine(n_x, yr, min_support):
     """Compute the cosine similarity between all pairs of users (or items).
@@ -70,7 +72,7 @@ def cosine(n_x, yr, min_support):
 
     cdef int min_sprt = min_support
 
-    for y, y_ratings in yr.items():
+    for y, y_ratings in iteritems(yr):
         for xi, ri in y_ratings:
             for xj, rj in y_ratings:
                 freq[xi, xj] += 1
@@ -140,7 +142,7 @@ def msd(n_x, yr, min_support):
 
     cdef int min_sprt = min_support
 
-    for y, y_ratings in yr.items():
+    for y, y_ratings in iteritems(yr):
         for xi, ri in y_ratings:
             for xj, rj in y_ratings:
                 sq_diff[xi, xj] += (ri - rj)**2
@@ -219,7 +221,7 @@ def pearson(n_x, yr, min_support):
 
     cdef int min_sprt = min_support
 
-    for y, y_ratings in yr.items():
+    for y, y_ratings in iteritems(yr):
         for xi, ri in y_ratings:
             for xj, rj in y_ratings:
                 prods[xi, xj] += ri * rj
@@ -324,7 +326,7 @@ def pearson_baseline(n_x, yr, min_support, global_mean, x_biases, y_biases,
     # is 1, so that's OK.
     min_sprt = max(2, min_sprt) 
 
-    for y, y_ratings in yr.items():
+    for y, y_ratings in iteritems(yr):
         partial_bias = global_mean_ + y_biases_[y]
         for xi, ri in y_ratings:
             for xj, rj in y_ratings:

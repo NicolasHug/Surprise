@@ -38,12 +38,13 @@ import os
 import zipfile
 import itertools
 import random
-try:
-    from urllib import urlretrieve  # Python 2
-except ImportError:
-    from urllib.request import urlretrieve  # Python 3
 
 import numpy as np
+
+from .six.moves import input
+from .six.moves.urllib.request import urlretrieve
+from .six.moves import range
+from .six import iteritems
 
 
 # directory where builtin datasets are stored. For now it's in the home
@@ -57,6 +58,7 @@ if not os.path.exists(DATASETS_DIR):
 # - a path (where it is located on the filesystem)
 # - the parameters of the corresponding reader
 BuiltinDataset = namedtuple('BuiltinDataset', ['url', 'path', 'reader_params'])
+
 BUILTIN_DATASETS = {
     'ml-100k':
         BuiltinDataset(
@@ -132,10 +134,7 @@ class Dataset:
             while not answered:
                 print('Dataset ' + name + ' could not be found. Do you want '
                       'to download it? [Y/n] ', end='')
-                try:
-                    choice = raw_input().lower()
-                except NameError:
-                    choice = input().lower()
+                choice = input().lower()
 
                 if choice in ['yes', 'y', '', 'omg this is so nice of you!!']:
                     answered = True
@@ -572,7 +571,7 @@ class Trainset:
             A tuple ``(uid, iid, rating)`` where ids are inner ids.
         """
 
-        for u, u_ratings in self.ur.items():
+        for u, u_ratings in iteritems(self.ur):
             for i, r in u_ratings:
                 yield u, i, r
 
