@@ -5,8 +5,9 @@ python:
   - "3.5"
 
 # command to install dependencies
+# - "pip install 'numpy>=1.11.2' 'cython>=0.24.1' pytest"
 install:
-  - "pip install 'numpy>=1.11.2' 'cython>=0.24.1' pytest"
+  - "pip install -r requirements_dev.txt"
   - "pip install ."
 
 # command to run tests

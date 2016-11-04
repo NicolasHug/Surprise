@@ -178,13 +178,11 @@ class AlgoBase:
             n_epochs = self.bsl_options.get('n_epochs', 10)
 
             for dummy in range(n_epochs):
-                bi = np.zeros(self.trainset.n_items)
                 for i in self.trainset.all_items():
                     devI = sum(r - self.trainset.global_mean -
                                bu[u] for (u, r) in self.trainset.ir[i])
                     bi[i] = devI / (reg_i + len(self.trainset.ir[i]))
 
-                bu = np.zeros(self.trainset.n_users)
                 for u in self.trainset.all_users():
                     devU = sum(r - self.trainset.global_mean -
                                bi[i] for (i, r) in self.trainset.ur[u])
