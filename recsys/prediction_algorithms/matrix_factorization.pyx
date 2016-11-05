@@ -252,7 +252,7 @@ class SVDpp(AlgoBase):
     ``0.005`` and regularization termes are set to ``0.02``.
 
     Args:
-        n_factors: The number of factors. Default is ``100``.
+        n_factors: The number of factors. Default is ``20``.
         n_epochs: The number of iteration of the SGD procedure. Default is
             ``20``.
         lr_all: The learning rate for all parameters. Default is ``0.007``.
@@ -280,7 +280,7 @@ class SVDpp(AlgoBase):
             over ``reg_all`` if set. Default is ``None``.
     """
 
-    def __init__(self, n_factors=10, n_epochs=30, lr_all=.007, reg_all=.02,
+    def __init__(self, n_factors=20, n_epochs=20, lr_all=.007, reg_all=.02,
                  lr_bu=None, lr_bi=None, lr_pu=None, lr_qi=None, lr_yj=None,
                  reg_bu=None, reg_bi=None, reg_pu=None, reg_qi=None,
                  reg_yj=None):
