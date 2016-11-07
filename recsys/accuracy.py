@@ -19,6 +19,7 @@ import numpy as np
 
 from .six import iteritems
 
+
 def rmse(predictions, verbose=True):
     """Compute RMSE (Root Mean Squared Error).
 

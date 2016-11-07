@@ -120,7 +120,7 @@ the :meth:`build_full_trainset()
 .. literalinclude:: ../../examples/query_for_predictions.py
     :caption: From file ``examples/query_for_predictions.py``
     :name: query_for_predictions.py
-    :lines: 16-23
+    :lines: 15-22
 
 Now, there's no way we could call the :meth:`test()
 <recsys.prediction_algorithms.algo_base.AlgoBase.test>` method, because we have no
@@ -134,7 +134,7 @@ is call the :meth:`predict()
 .. literalinclude:: ../../examples/query_for_predictions.py
     :caption: From file ``examples/query_for_predictions.py``
     :name: query_for_predictions2.py
-    :lines: 29-33
+    :lines: 28-32
 
 If the :meth:`predict()
 <recsys.prediction_algorithms.algo_base.AlgoBase.predict>` method is called
