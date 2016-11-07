@@ -354,9 +354,9 @@ class SVDpp(AlgoBase):
         cdef double _ = 0
 
 
-        for dummy in range(self.n_epochs):
+        for current_epoch in range(self.n_epochs):
             if self.verbose:
-                print(" processing epoch {}".format(dummy))
+                print(" processing epoch {}".format(current_epoch))
             for u, i, r in trainset.all_ratings():
 
                 # items rated by u. This is COSTLY
