@@ -87,7 +87,7 @@ class SVD(AlgoBase):
 
     def __init__(self, n_factors=100, n_epochs=20, lr_all=.005, reg_all=.02,
                  lr_bu=None, lr_bi=None, lr_pu=None, lr_qi=None,
-                 reg_bu=None, reg_bi=None, reg_pu=None, reg_qi=None):
+                 reg_bu=None, reg_bi=None, reg_pu=None, reg_qi=None, verbose=False):
 
         self.n_factors = n_factors
         self.n_epochs = n_epochs
@@ -99,6 +99,7 @@ class SVD(AlgoBase):
         self.reg_bi = reg_bi if reg_bi is not None else reg_all
         self.reg_pu = reg_pu if reg_pu is not None else reg_all
         self.reg_qi = reg_qi if reg_qi is not None else reg_all
+        self.verbose = verbose
 
         AlgoBase.__init__(self)
 
@@ -174,8 +175,9 @@ class SVD(AlgoBase):
         cdef double puf = 0
         cdef double qif = 0
 
-        for _ in range(self.n_epochs):
-            print(_)
+        for current_epoch in range(self.n_epochs):
+            if self.verbose:
+                print(" Processing epoch {}".format(current_epoch))
             for u, i, r in trainset.all_ratings():
 
                 # compute current error
@@ -283,7 +285,7 @@ class SVDpp(AlgoBase):
     def __init__(self, n_factors=10, n_epochs=30, lr_all=.007, reg_all=.02,
                  lr_bu=None, lr_bi=None, lr_pu=None, lr_qi=None, lr_yj=None,
                  reg_bu=None, reg_bi=None, reg_pu=None, reg_qi=None,
-                 reg_yj=None):
+                 reg_yj=None, verbose=False):
 
         self.n_factors = n_factors
         self.n_epochs = n_epochs
@@ -297,6 +299,7 @@ class SVDpp(AlgoBase):
         self.reg_pu = reg_pu if reg_pu is not None else reg_all
         self.reg_qi = reg_qi if reg_qi is not None else reg_all
         self.reg_yj = reg_yj if reg_yj is not None else reg_all
+        self.verbose = verbose
 
         AlgoBase.__init__(self)
 
@@ -351,8 +354,9 @@ class SVDpp(AlgoBase):
         cdef double _ = 0
 
 
-        for dummy in range(self.n_epochs):
-            print(dummy)
+        for current_epoch in range(self.n_epochs):
+            if self.verbose:
+                print(" processing epoch {}".format(current_epoch))
             for u, i, r in trainset.all_ratings():
 
                 # items rated by u. This is COSTLY
