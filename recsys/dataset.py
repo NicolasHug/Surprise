@@ -50,8 +50,6 @@ from .six import iteritems
 # directory where builtin datasets are stored. For now it's in the home
 # directory under the .recsys_data. May be ask user to define it?
 DATASETS_DIR = os.path.expanduser('~') + '/.recsys_data/'
-if not os.path.exists(DATASETS_DIR):
-    os.makedirs(DATASETS_DIR)
 
 # a builtin dataset has
 # - an url (where to download it)
@@ -142,6 +140,9 @@ class Dataset:
                     answered = True
                     print("Ok then, I'm out!")
                     sys.exit()
+
+            if not os.path.exists(DATASETS_DIR):
+                os.makedirs(DATASETS_DIR)
 
             print('Trying to download dataset from ' + dataset.url + '...')
             urlretrieve(dataset.url, DATASETS_DIR + 'tmp.zip')

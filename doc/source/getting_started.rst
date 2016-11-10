@@ -85,6 +85,8 @@ needs to be a ``list`` (or any iterable).
 Advanced usage
 --------------
 
+We will here get a little deeper on what can RecSys do for you.
+
 .. _iterate_over_folds:
 
 Manually iterate over folds
@@ -123,8 +125,8 @@ the :meth:`build_full_trainset()
     :lines: 15-22
 
 Now, there's no way we could call the :meth:`test()
-<recsys.prediction_algorithms.algo_base.AlgoBase.test>` method, because we have no
-testset. But you can still get predictions for the users and items you want.
+<recsys.prediction_algorithms.algo_base.AlgoBase.test>` method, because we have
+no testset. But you can still get predictions for the users and items you want.
 
 Let's say you're interested in user 196 and item 302 (make sure they're in the
 trainset!), and you know that the true rating :math:`r_{ui} = 4`. All you need
@@ -157,3 +159,22 @@ Obviously, it is perfectly fine to use the :meth:`predict()
 <recsys.prediction_algorithms.algo_base.AlgoBase.predict>` method directly
 during a cross-validation process. It's then up to you to ensure that the user
 and item ids are present in the trainset though.
+
+.. _dumping:
+
+Dump the predictions for later analysis
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+You may want to save your algorithm predictions along with all the usefull
+information about the algorithm. This way, you can run your algorithm once,
+save the results, and go back to them whenever you want to inspect in great
+details each of the predictions, and get a good insight on why your algorithm
+performs well (or bad!). RecSys provides with some tools to do that.
+
+You can dump your algorithm predictions either using the :func:`evaluate()
+<recsys.evaluate.evaluate>` function, or do it manually with the :func:`dump
+<recsys.dump.dump>` function. Either way, an example is worth a thousand words,
+so here a few `jupyter <http://jupyter.org/>`_ notebooks:
+
+  - `Dumping and analysis of the KNNBasic algorithm
+    <http://nbviewer.jupyter.org/github/Niourf/RecSys/tree/master/examples/building_custom_algorithms/KNNBasic_analysis.ipynb/>`_.
