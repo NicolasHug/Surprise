@@ -177,4 +177,4 @@ You can dump your algorithm predictions either using the :func:`evaluate()
 so here a few `jupyter <http://jupyter.org/>`_ notebooks:
 
   - `Dumping and analysis of the KNNBasic algorithm
-    <http://nbviewer.jupyter.org/github/Niourf/RecSys/tree/master/examples/building_custom_algorithms/KNNBasic_analysis.ipynb/>`_.
+    <http://nbviewer.jupyter.org/github/Niourf/RecSys/tree/master/examples/notebooks/KNNBasic_analysis.ipynb/>`_.
