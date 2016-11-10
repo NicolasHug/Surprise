@@ -13,5 +13,5 @@ from recsys import dump
 def test_dump():
 
     p = Prediction(None, None, None, None, None)  # dummy prediction
-    with pytest.raises(FileNotFoundError):
+    with pytest.raises(Exception):
         dump('wrong/file', [p])
