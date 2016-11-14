@@ -203,7 +203,7 @@ class Dataset:
         """Return a list of ratings (user, item, rating, timestamp) read from
         file_name"""
 
-        with open(file_name) as f:
+        with open(os.path.expanduser(file_name)) as f:
             raw_ratings = [self.reader.parse_line(line) for line in
                            itertools.islice(f, self.reader.skip_lines, None)]
         return raw_ratings
@@ -285,8 +285,8 @@ class DatasetUserFolds(Dataset):
         # check that all files actually exist.
         for train_test_files in self.folds_files:
             for f in train_test_files:
-                if not os.path.isfile(f):
-                    raise ValueError('File', f, 'does not exist.')
+                if not os.path.isfile(os.path.expanduser(f)):
+                    raise ValueError('File ' + str(f) + ' does not exist.')
 
     def raw_folds(self):
         for train_file, test_file in self.folds_files:
