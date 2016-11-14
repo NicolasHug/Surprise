@@ -34,6 +34,7 @@ in order for the practitioner to have perfect control over his experiments.
    accuracy
    dataset
    evaluate
+   dump
 
 
 Indices and tables

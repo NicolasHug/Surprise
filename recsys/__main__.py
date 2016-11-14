@@ -2,124 +2,177 @@
 
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
-
 import random as rd
-import numpy as np
+import sys
+import shutil
 import argparse
+
+import numpy as np
 
 from recsys.prediction_algorithms import NormalPredictor
 from recsys.prediction_algorithms import BaselineOnly
 from recsys.prediction_algorithms import KNNBasic
 from recsys.prediction_algorithms import KNNBaseline
 from recsys.prediction_algorithms import KNNWithMeans
+from recsys.prediction_algorithms import SVD
+from recsys.prediction_algorithms import SVDpp
+import recsys.dataset as dataset
 from recsys.dataset import Dataset
 from recsys.evaluate import evaluate
 
 
 def main():
 
-    parser = argparse.ArgumentParser(
-        description='run a prediction algorithm for recommendation on given '
-        'folds',
-        epilog='example: main.py -algo KNNBasic -cv 3 -k 30 -sim cos '
-        '--item_based')
+    class MyParser(argparse.ArgumentParser):
+        '''A parser which prints the help message when an error occurs. Taken from
+        http://stackoverflow.com/questions/4042452/display-help-message-with-python-argparse-when-script-is-called-without-any-argu.''' # noqa
+
+        def error(self, message):
+            sys.stderr.write('error: %s\n' % message)
+            self.print_help()
+            sys.exit(2)
+
+    parser = MyParser(
+        description='Evaluate the performance of a rating prediction ' +
+        'on a given dataset using cross validation. You can use a built-in ' +
+        'or a custom dataset, and you can choose to automatically split the ' +
+        'dataset into folds, or manually specify train and test files. ' +
+        'Please refer to the documentation page ' +
+        '(http://recsys.readthedocs.io/) for more details.',
+        epilog="""Example:\n
+        python -m recsys SVD -params "{'n_epochs': 5, 'verbose': True}"
+        -load-builtin ml-100k -n-folds 3""")
 
     algo_choices = {
-        'Normal': NormalPredictor,
+        'NormalPredictor': NormalPredictor,
         'BaselineOnly': BaselineOnly,
         'KNNBasic': KNNBasic,
         'KNNBaseline': KNNBaseline,
-        'KNNWithMeans': KNNWithMeans
+        'KNNWithMeans': KNNWithMeans,
+        'SVD': SVD,
+        'SVDpp': SVDpp,
     }
-    parser.add_argument('-algo', type=str,
-                        default='KNNBaseline',
+
+    parser.add_argument('algo', type=str,
                         choices=algo_choices,
-                        help='the prediction algorithm to use. ' +
+                        help='The prediction algorithm to use. ' +
                         'Allowed values are ' +
-                        ', '.join(algo_choices.keys()) +
-                        '. (default: KNNBaseline)',
+                        ', '.join(algo_choices.keys()) + '.',
                         metavar='<prediction algorithm>')
 
-    sim_choices = ['cos', 'pearson', 'MSD', 'pearson_baseline']
-    parser.add_argument('-sim', type=str,
-                        default='MSD',
-                        choices=sim_choices,
-                        help='for algorithms using a similarity measure. ' +
-                        'Allowed values are ' + ', '.join(sim_choices) + '.' +
-                        ' (default: MSD)', metavar=' < sim measure >')
+    parser.add_argument('-params', type=str,
+                        metavar='<algorithm parameters>',
+                        default='{}',
+                        help='A kwargs dictionary that contains all the ' +
+                        'algorithm parameters.' +
+                        'Example: "{\'n_epochs\': 10}".'
+                        )
 
-    method_choices = ['als', 'sgd']
-    parser.add_argument('-method', type=str,
-                        default='als',
-                        choices=method_choices,
-                        help='for algorithms using a baseline, the method ' +
-                        'to compute it. Allowed values are ' +
-                        ', '.join(method_choices) + '. (default: als)',
-                        metavar='<method>')
-
-    parser.add_argument('-k', type=int,
-                        metavar='<number of neighbors>',
-                        default=40,
-                        help='the number of neighbors to use for k-NN ' +
-                        'algorithms (default: 40)')
-
-    parser.add_argument('-shrinkage', type=int,
-                        metavar='<shrinkge value>',
-                        default=100,
-                        help='the shrinkage value to use for pearson ' +
-                        'similarity (default: 100)')
-
-    dataset_choices = ['ml-100k', 'ml-1m', 'BX', 'jester']
-    parser.add_argument('-dataset', metavar='<dataset>', type=str,
+    parser.add_argument('-load-builtin', type=str, dest='load_builtin',
+                        metavar='<dataset name>',
                         default='ml-100k',
-                        choices=dataset_choices,
-                        help='the dataset to use. Allowed values are ' +
-                        ', '.join(dataset_choices) +
-                        '( default: ml-100k -- MovieLens 100k)')
+                        help='The name of the built-in dataset to use.' +
+                        'Allowed values are ' +
+                        ', '.join(dataset.BUILTIN_DATASETS.keys()) +
+                        '. Default is ml-100k.'
+                        )
 
-    parser.add_argument('-cv', type=int,
+    parser.add_argument('-load-custom', type=str, dest='load_custom',
+                        metavar='<file path>',
+                        default=None,
+                        help='A file path to custom dataset to use. ' +
+                        'Ignored if ' +
+                        '-loadbuiltin is set. The -reader parameter needs ' +
+                        'to be set.'
+                        )
+
+    parser.add_argument('-folds-files', type=str, dest='folds_files',
+                        metavar='<train1 test1 train2 test2... >',
+                        default=None,
+                        help='A list of custom train and test files. ' +
+                        'Ignored if -load-builtin or -load-custom is set. '
+                        'The -reader parameter needs to be set.'
+                        )
+
+    parser.add_argument('-reader', type=str,
+                        metavar='<reader>',
+                        default=None,
+                        help='A Reader to read the custom dataset. Example: ' +
+                        '"Reader(line_format=\'user item rating timestamp\',' +
+                        ' sep=\'\\t\')"'
+                        )
+
+    parser.add_argument('-n-folds', type=int, dest='n_folds',
                         metavar="<number of folds>",
                         default=5,
-                        help='the number of folds for cross-validation. ' +
-                        'Ignored if train_file and test_file are set. ' +
-                        '(default: 5)')
+                        help='The number of folds for cross-validation. ' +
+                        'Default is 5.'
+                        )
 
     parser.add_argument('-seed', type=int,
                         metavar='<random seed>',
                         default=None,
-                        help='the seed to use for RNG ' +
-                        '(default: current system time)')
+                        help='The seed to use for RNG. ' +
+                        'Default is the current system time.'
+                        )
 
-    parser.add_argument('--item_based', dest='item_based',
-                        action='store_const', const=True, default=False,
-                        help='compute similarities on items rather than ' +
-                        'on users')
+    parser.add_argument('--with-dump', dest='with_dump', action='store_const',
+                        const=True, default=False, help='Dump the algorithm ' +
+                        'results in a file (one file per fold)' +
+                        'Default is False.'
+                        )
 
-    parser.add_argument('--with_dump', dest='with_dump', action='store_const',
-                        const=True, default=False, help='tells to dump ' +
-                        'results in a file (default: False)')
+    parser.add_argument('-dump-dir', dest='dump_dir', type=str,
+                        metavar='<dir>',
+                        default=None,
+                        help='Where to dump the files. Ignored if ' +
+                        'with-dump is not set. Default is ' +
+                        '~/.recsys_data/dumps.'
+                        )
 
-    parser.add_argument('--indiv_output', dest='indiv_output',
-                        action='store_const',
-                        const=True,
-                        default=False,
-                        help='to print individual prediction results ' +
-                        '(default: False)')
+    parser.add_argument('--clean', dest='clean', action='store_const',
+                        const=True, default=False,
+                        help='remove the '
+                        )
 
     args = parser.parse_args()
 
+    if args.clean:
+        shutil.rmtree(dataset.DATASETS_DIR)
+        print('Removed', dataset.DATASETS_DIR)
+        exit()
+
+    # setup RNG
     rd.seed(args.seed)
     np.random.seed(args.seed)
 
-    algo = algo_choices[args.algo](user_based=not args.item_based,
-                                   method=args.method,
-                                   sim_name=args.sim,
-                                   k=args.k,
-                                   shrinkage=args.shrinkage)
+    # setup algorithm
+    params = eval(args.params)
+    algo = algo_choices[args.algo](**params)
 
-    data = Dataset.load_builtin(args.dataset)
-    data.split(n_folds=args.cv)
-    evaluate(algo, data, args.with_dump)
+    # setup dataset
+    if args.load_custom is not None:  # load custom and split
+        if args.reader is None:
+            parser.error('-reader parameter is needed.')
+        reader = eval(args.reader)
+        data = Dataset.load_from_file(args.load_custom, reader=reader)
+        data.split(n_folds=args.n_folds)
+
+    elif args.folds_files is not None:  # load from files
+        if args.reader is None:
+            parser.error('-reader parameter is needed.')
+        reader = eval(args.reader)
+        folds_files = args.folds_files.split()
+        folds_files = [(folds_files[i], folds_files[i + 1])
+                       for i in range(0, len(folds_files) - 1, 2)]
+        data = Dataset.load_from_folds(folds_files=folds_files, reader=reader)
+
+    else:  # load builtin dataset and split
+        data = Dataset.load_builtin(args.load_builtin)
+        data.split(n_folds=args.n_folds)
+
+    evaluate(algo, data, with_dump=args.with_dump, dump_dir=args.dump_dir)
+
 
 if __name__ == "__main__":
     main()

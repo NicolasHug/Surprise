@@ -50,8 +50,6 @@ from .six import iteritems
 # directory where builtin datasets are stored. For now it's in the home
 # directory under the .recsys_data. May be ask user to define it?
 DATASETS_DIR = os.path.expanduser('~') + '/.recsys_data/'
-if not os.path.exists(DATASETS_DIR):
-    os.makedirs(DATASETS_DIR)
 
 # a builtin dataset has
 # - an url (where to download it)
@@ -143,6 +141,9 @@ class Dataset:
                     print("Ok then, I'm out!")
                     sys.exit()
 
+            if not os.path.exists(DATASETS_DIR):
+                os.makedirs(DATASETS_DIR)
+
             print('Trying to download dataset from ' + dataset.url + '...')
             urlretrieve(dataset.url, DATASETS_DIR + 'tmp.zip')
 
@@ -202,7 +203,7 @@ class Dataset:
         """Return a list of ratings (user, item, rating, timestamp) read from
         file_name"""
 
-        with open(file_name) as f:
+        with open(os.path.expanduser(file_name)) as f:
             raw_ratings = [self.reader.parse_line(line) for line in
                            itertools.islice(f, self.reader.skip_lines, None)]
         return raw_ratings
@@ -284,8 +285,8 @@ class DatasetUserFolds(Dataset):
         # check that all files actually exist.
         for train_test_files in self.folds_files:
             for f in train_test_files:
-                if not os.path.isfile(f):
-                    raise ValueError('File', f, 'does not exist.')
+                if not os.path.isfile(os.path.expanduser(f)):
+                    raise ValueError('File ' + str(f) + ' does not exist.')
 
     def raw_folds(self):
         for train_file, test_file in self.folds_files:

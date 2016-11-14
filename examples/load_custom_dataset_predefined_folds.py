@@ -8,6 +8,7 @@ if it were not built-in.
 
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
+import os
 
 from recsys import BaselineOnly
 from recsys import Dataset
@@ -15,7 +16,7 @@ from recsys import evaluate
 from recsys import Reader
 
 # path to dataset folder
-files_dir = '/home/nico/.recsys_data/ml-100k/ml-100k/'  # change this
+files_dir = os.path.exapanduser('~/.recsys_data/ml-100k/ml-100k/')
 
 # This time, we'll use the built-in reader.
 reader = Reader('ml-100k')
