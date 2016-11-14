@@ -28,11 +28,16 @@ control over his experiments.
 Features
 --------
 
-- A great [doc](http://recsys.readthedocs.io/en/latest/index.html)! (we hope)
-- Dataset handling is made easy.
-- Various ready-to-use prediction algorithms.
-- Easy to implement new algorithm ideas.
-- Evaluate, analyse and compare the algorithms performance.
+- [Dataset
+  handling](http://recsys.readthedocs.io/en/latest/getting_started.html) is made easy.
+- Various ready-to-use [prediction
+  algorithms](http://recsys.readthedocs.io/en/latest/prediction_algorithms.html).
+- Easy to implement [new algorithm
+  ideas](http://recsys.readthedocs.io/en/latest/building_custom_algo.html).
+- Evaluate,
+  [analyse](http://nbviewer.jupyter.org/github/Niourf/RecSys/tree/master/examples/notebooks/KNNBasic_analysis.ipynb/)
+  and
+  [compare](http://nbviewer.jupyter.org/github/Niourf/RecSys/tree/master/examples/notebooks/Compare.ipynb/) the algorithms performance.
 
 Installation / Usage
 --------------------
