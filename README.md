@@ -69,3 +69,10 @@ Acknowledgements:
 
 - [Pierre-François Gimenez](https://github.com/PFgimenez), for his valuable
   insights on software design.
+
+Contributing
+------------
+
+Any kind of feedback would be greatly appreciated (software design,
+documentation, improvement ideas, spelling, etc...). Please feel free to
+contirbute!

@@ -6,7 +6,7 @@ algorithm, (down)load a dataset and evaluate the performances of the algorithm.
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 
-from recsys import NormalPredictor
+from recsys import SVD
 from recsys import Dataset
 from recsys import evaluate
 
@@ -16,8 +16,8 @@ from recsys import evaluate
 data = Dataset.load_builtin('ml-100k')
 data.split(n_folds=3)
 
-# This algorithm predicts a random rating sampled from a normal distribution.
-algo = NormalPredictor()
+# We'll use the famous SVD algorithm.
+algo = SVD()
 
 # Evaluate performances of our algorithm on the dataset.
 perf = evaluate(algo, data, measures=['RMSE', 'MAE'])

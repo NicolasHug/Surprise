@@ -75,11 +75,11 @@ Load a dataset with predefined folds
 .. literalinclude:: ../../examples/load_custom_dataset_predefined_folds.py
     :caption: From file ``examples/load_custom_dataset_predefined_folds.py``
     :name: load_custom_dataset_predefined_folds.py
-    :lines: 17-29
+    :lines: 18-30
 
 Of course, nothing prevents you from only loading a single file for training
 and a single file for testing. However, the ``folds_files`` parameter still
-needs to be a ``list`` (or any iterable).
+needs to be a ``list``.
 
 
 Advanced usage
