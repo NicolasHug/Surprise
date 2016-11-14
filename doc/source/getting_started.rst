@@ -167,7 +167,7 @@ Dump the predictions for later analysis
 
 You may want to save your algorithm predictions along with all the usefull
 information about the algorithm. This way, you can run your algorithm once,
-save the results, and go back to them whenever you want to inspect in great
+save the results, and go back to them whenever you want to inspect in greater
 details each of the predictions, and get a good insight on why your algorithm
 performs well (or bad!). RecSys provides with some tools to do that.
 
@@ -178,3 +178,5 @@ so here a few `jupyter <http://jupyter.org/>`_ notebooks:
 
   - `Dumping and analysis of the KNNBasic algorithm
     <http://nbviewer.jupyter.org/github/Niourf/RecSys/tree/master/examples/notebooks/KNNBasic_analysis.ipynb/>`_.
+  - `Comparison of two algorithms
+    <http://nbviewer.jupyter.org/github/Niourf/RecSys/tree/master/examples/notebooks/Compare.ipynb/>`_.
