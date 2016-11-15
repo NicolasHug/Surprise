@@ -9,8 +9,6 @@
 RecSys
 ======
 
-author: Nicolas Hug
-
 Overview
 --------
 
