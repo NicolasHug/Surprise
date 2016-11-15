@@ -45,8 +45,8 @@ Installation / Usage
 Please, use a [virtual env](
 http://docs.python-guide.org/en/latest/dev/virtualenvs/)
 
-To install from [PyPI](https://pypi.python.org/pypi/recsys/), use pip
-(recommended):
+To install from [PyPI](https://pypi.python.org/pypi/recsys/), use pip (you'll
+need numpy):
 
     $ pip install recsys
 
