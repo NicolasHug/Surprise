@@ -1,3 +1,5 @@
+from pkg_resources import get_distribution
+
 from .prediction_algorithms import AlgoBase
 from .prediction_algorithms import NormalPredictor
 from .prediction_algorithms import BaselineOnly
@@ -17,3 +19,5 @@ from .dump import dump
 __all__ = ['AlgoBase', 'NormalPredictor', 'BaselineOnly', 'KNNBasic',
            'KNNWithMeans', 'KNNBaseline', 'SVD', 'SVDpp',
            'PredictionImpossible', 'Dataset', 'Reader', 'evaluate', 'dump']
+
+__version__ = get_distribution('recsys').version

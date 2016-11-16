@@ -19,6 +19,7 @@ from recsys.prediction_algorithms import SVDpp
 import recsys.dataset as dataset
 from recsys.dataset import Dataset
 from recsys.evaluate import evaluate
+from recsys import __version__
 
 
 def main():
@@ -40,7 +41,7 @@ def main():
         'Please refer to the documentation page ' +
         '(http://recsys.readthedocs.io/) for more details.',
         epilog="""Example:\n
-        python -m recsys SVD -params "{'n_epochs': 5, 'verbose': True}"
+        python -m recsys -algo SVD -params "{'n_epochs': 5, 'verbose': True}"
         -load-builtin ml-100k -n-folds 3""")
 
     algo_choices = {
@@ -53,7 +54,7 @@ def main():
         'SVDpp': SVDpp,
     }
 
-    parser.add_argument('algo', type=str,
+    parser.add_argument('-algo', required=True, type=str,
                         choices=algo_choices,
                         help='The prediction algorithm to use. ' +
                         'Allowed values are ' +
@@ -134,6 +135,8 @@ def main():
                         const=True, default=False,
                         help='remove the '
                         )
+
+    parser.add_argument('-v', '--version', action='version', version=__version__)
 
     args = parser.parse_args()
 
