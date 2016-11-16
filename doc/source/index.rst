@@ -8,12 +8,14 @@
 Welcome to RecSys' documentation!
 =================================
 
-RecSys is an open source Python package that provides with tools to build and
-evaluate the performance of many recommender system prediction algorithms. Its
-goal is to make life easy(-ier) for reseachers and students who want to play
-around with new recommender algorithm ideas.
+`RecSys <https://github.com/Niourf/RecSys>`_ is an open source Python package
+that provides with tools to build and evaluate the performance of many
+recommender system prediction algorithms. Its goal is to make life easy(-ier)
+for reseachers and students who want to play around with new recommender
+algorithm ideas.
 
-RecSys was designed with the following purposes in mind:
+`RecSys <https://github.com/Niourf/RecSys>`_ was designed with the following
+purposes in mind:
 
 - Give the user perfect control over his experiments. To this end, a strong
   emphasis is laid on :ref:`documentation <index>`, which we
@@ -28,8 +30,12 @@ RecSys was designed with the following purposes in mind:
   algorithms <prediction_algorithms_package>`.
 - Make it easy to implement :ref:`new algorithm
   ideas <building_custom_algo>`.
-- Provide with tools to :func:`evaluate <recsys.evaluate.evaluate>`,
-  `analyse <http://nbviewer.jupyter.org/github/Niourf/RecSys/tree/master/examples/notebooks/KNNBasic_analysis.ipynb/>`_ and `compare <http://nbviewer.jupyter.org/github/Niourf/RecSys/tree/master/examples/notebooks/Compare.ipynb/>`_ the algorithms performance. Cross-validation procedures can be run very easily.
+- Provide with tools to :func:`evaluate <recsys.evaluate.evaluate>`, `analyse
+  <http://nbviewer.jupyter.org/github/Niourf/RecSys/tree/master/examples/notebooks/KNNBasic_analysis.ipynb/>`_
+  and `compare
+  <http://nbviewer.jupyter.org/github/Niourf/RecSys/tree/master/examples/notebooks/Compare.ipynb/>`_
+  the algorithms performance. Cross-validation procedures can be run very
+  easily.
 
 .. toctree::
    :caption: User Guide

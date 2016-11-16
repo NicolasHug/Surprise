@@ -9,9 +9,10 @@ Getting Started
 Basic usage
 -----------
 
-RecSys has a set of built-in :ref:`algorithms<prediction_algorithms>` and
-:ref:`datasets <dataset>` for you to play with. In its simplest form, it takes
-about four lines of code to evaluate the performance of an algorithm:
+`RecSys <https://github.com/Niourf/RecSys>`_ has a set of built-in
+:ref:`algorithms<prediction_algorithms>` and :ref:`datasets <dataset>` for you
+to play with. In its simplest form, it takes about four lines of code to
+evaluate the performance of an algorithm:
 
 .. literalinclude:: ../../examples/basic_usage.py
     :caption: From file ``examples/basic_usage.py``
@@ -19,11 +20,11 @@ about four lines of code to evaluate the performance of an algorithm:
     :lines: 9-
 
 
-If RecSys cannot find the `movielens-100k dataset
-<http://grouplens.org/datasets/movielens/>`_, it will offer to download it and
-will store it under the ``.recsys_data`` folder in your home directory.  The
-:meth:`split() <recsys.dataset.DatasetAutoFolds.split>` method automatically
-splits the dataset into 3 folds and the :func:`evaluate()
+If `RecSys <https://github.com/Niourf/RecSys>`_ cannot find the `movielens-100k
+dataset <http://grouplens.org/datasets/movielens/>`_, it will offer to download
+it and will store it under the ``.recsys_data`` folder in your home directory.
+The :meth:`split() <recsys.dataset.DatasetAutoFolds.split>` method
+automatically splits the dataset into 3 folds and the :func:`evaluate()
 <recsys.evaluate.evaluate>` function runs the cross-validation procedure and
 compute some :mod:`accuracy <recsys.accuracy>` measures.
 
@@ -33,17 +34,19 @@ compute some :mod:`accuracy <recsys.accuracy>` measures.
 Load a custom dataset
 ---------------------
 
-You can of course use a custom dataset. RecSys offers two ways of loading a
-custom dataset:
+You can of course use a custom dataset. `RecSys
+<https://github.com/Niourf/RecSys>`_ offers two ways of loading a custom
+dataset:
 
 - you can either specify a single file with all the ratings and
-  use the :meth:`split ()<recsys.dataset.DatasetAutoFolds.split>` method to perform
-  cross-validation ;
+  use the :meth:`split ()<recsys.dataset.DatasetAutoFolds.split>` method to
+  perform cross-validation ;
 - or if your dataset is already split into predefined folds, you can specify a
   list of files for training and testing.
 
 Either way, you will need to define a :class:`Reader <recsys.dataset.Reader>`
-object for RecSys to be able to parse the file(s).
+object for `RecSys <https://github.com/Niourf/RecSys>`_ to be able to parse the
+file(s).
 
 We'll see how to handle both cases with the `movielens-100k dataset
 <http://grouplens.org/datasets/movielens/>`_. Of course this is a built-in
@@ -60,9 +63,9 @@ Load an entire dataset
     :lines: 16-25
 
 .. note::
-    Actually, as the Movielens-100k dataset is builtin, RecSys provides with a
-    proper reader so in this case, we could have just created the reader like
-    this: ::
+    Actually, as the Movielens-100k dataset is builtin, `RecSys
+    <https://github.com/Niourf/RecSys>`_ provides with a proper reader so in
+    this case, we could have just created the reader like this: ::
 
       reader = Reader('ml-100k')
 
@@ -87,7 +90,8 @@ needs to be a ``list``.
 Advanced usage
 --------------
 
-We will here get a little deeper on what can RecSys do for you.
+We will here get a little deeper on what can `RecSys
+<https://github.com/Niourf/RecSys>`_ do for you.
 
 .. _iterate_over_folds:
 
@@ -99,8 +103,8 @@ that does all the hard work for us. If you want to have better control on your
 experiments, you can use the :meth:`folds() <recsys.dataset.Dataset.folds>`
 generator of your dataset, and then the :meth:`train()
 <recsys.prediction_algorithms.algo_base.AlgoBase.train>` and :meth:`test()
-<recsys.prediction_algorithms.algo_base.AlgoBase.test>` methods of your algorithm on
-each of the folds:
+<recsys.prediction_algorithms.algo_base.AlgoBase.test>` methods of your
+algorithm on each of the folds:
 
 .. literalinclude:: ../../examples/iterate_over_folds.py
     :caption: From file ``examples/iterate_over_folds.py``
@@ -151,8 +155,9 @@ will still predict the mean of all ratings :math:`\mu`.
 .. note::
   Raw ids are ids as defined in a rating file. They can be strings or whatever.
   On trainset creation, each raw id is mapped to a (unique) integer called
-  inner id, which is a lot more suitable for RecSys to manipulate. To convert a
-  raw id to an inner id, you can use the  :meth:`to_inner_uid()
+  inner id, which is a lot more suitable for `RecSys
+  <https://github.com/Niourf/RecSys>`_ to manipulate. To convert a raw id to an
+  inner id, you can use the  :meth:`to_inner_uid()
   <recsys.dataset.Trainset.to_inner_uid>` and :meth:`to_inner_iid()
   <recsys.dataset.Trainset.to_inner_iid>` methods of the :class:`trainset
   <recsys.dataset.Trainset>`.
@@ -171,7 +176,8 @@ You may want to save your algorithm predictions along with all the usefull
 information about the algorithm. This way, you can run your algorithm once,
 save the results, and go back to them whenever you want to inspect in greater
 details each of the predictions, and get a good insight on why your algorithm
-performs well (or bad!). RecSys provides with some tools to do that.
+performs well (or bad!). `RecSys <https://github.com/Niourf/RecSys>`_ provides
+with some tools to do that.
 
 You can dump your algorithm predictions either using the :func:`evaluate()
 <recsys.evaluate.evaluate>` function, or do it manually with the :func:`dump
