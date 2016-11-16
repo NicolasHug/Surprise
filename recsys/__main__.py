@@ -54,7 +54,7 @@ def main():
         'SVDpp': SVDpp,
     }
 
-    parser.add_argument('-algo', required=True, type=str,
+    parser.add_argument('-algo', type=str,
                         choices=algo_choices,
                         help='The prediction algorithm to use. ' +
                         'Allowed values are ' +
@@ -117,8 +117,8 @@ def main():
                         'Default is the current system time.'
                         )
 
-    parser.add_argument('--with-dump', dest='with_dump', action='store_const',
-                        const=True, default=False, help='Dump the algorithm ' +
+    parser.add_argument('--with-dump', dest='with_dump', action='store_true',
+                        help='Dump the algorithm ' +
                         'results in a file (one file per fold)' +
                         'Default is False.'
                         )
@@ -131,9 +131,9 @@ def main():
                         '~/.recsys_data/dumps.'
                         )
 
-    parser.add_argument('--clean', dest='clean', action='store_const',
-                        const=True, default=False,
-                        help='remove the '
+    parser.add_argument('--clean', dest='clean', action='store_true',
+                        help='Remove the ' + dataset.DATASETS_DIR +
+                        ' directory and exit.'
                         )
 
     parser.add_argument('-v', '--version', action='version', version=__version__)
@@ -151,6 +151,8 @@ def main():
 
     # setup algorithm
     params = eval(args.params)
+    if args.algo is None:
+        parser.error('No algorithm was specified.')
     algo = algo_choices[args.algo](**params)
 
     # setup dataset

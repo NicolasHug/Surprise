@@ -50,7 +50,7 @@ def evaluate(algo, data, measures=['rmse', 'mae'], with_dump=False,
 
         if verbose:
             print('-' * 20)
-            print('fold ' + str(fold_i))
+            print('Fold ' + str(fold_i + 1))
 
         # train and test algorithm. Keep all rating predictions in a list
         algo.train(trainset)
@@ -71,7 +71,7 @@ def evaluate(algo, data, measures=['rmse', 'mae'], with_dump=False,
 
             date = time.strftime('%y%m%d-%Hh%Mm%S', time.localtime())
             file_name = date + '-' + algo.__class__.__name__
-            file_name += '-fold{0}'.format(fold_i)
+            file_name += '-fold{0}'.format(fold_i + 1)
             file_name = os.path.join(dump_dir, file_name)
 
             dump(file_name, predictions, trainset, algo)
