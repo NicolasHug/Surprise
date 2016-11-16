@@ -17,31 +17,33 @@ evaluate the performance of many recommender system prediction algorithms. Its
 goal is to make life easy(-ier) for reseachers and students who want to play
 around with new recommender algorithm ideas.
 
-A strong emphasis is laid on
-[documentation](http://recsys.readthedocs.io/en/latest/index.html), which we
-have tried to make as clear and precise as possible by pointing out every
-detail of the algorithms, in order for the practitioner to have perfect
-control over his experiments.
+RecSys was designed with the following purposes in mind:
 
-Features
---------
-
-- [Dataset
-  handling](http://recsys.readthedocs.io/en/latest/getting_started.html) is made easy.
-- Various ready-to-use [prediction
-  algorithms](http://recsys.readthedocs.io/en/latest/prediction_algorithms.html).
-- Easy to implement [new algorithm
+- Give the user perfect control over his experiments. To this end, a strong
+  emphasis is laid on
+  [documentation](http://recsys.readthedocs.io/en/latest/index.html), which we
+  have tried to make as clear and precise as possible by pointing out every
+  details of the algorithms.
+- Alleviate the pain of [Dataset
+  handling](http://recsys.readthedocs.io/en/latest/getting_started.html#load-a-custom-dataset).
+  Users can use both *built-in* datasets
+  ([Movielens](http://grouplens.org/datasets/movielens/),
+  [Jester](http://eigentaste.berkeley.edu/dataset/)), and their own *custom* datasets.
+- Provide with various ready-to-use [prediction
+  algorithms](http://recsys.readthedocs.io/en/latest/prediction_algorithms_package.html) (Neighborhood approaches, SVD, SVD++...)
+- Make it easy to implement [new algorithm
   ideas](http://recsys.readthedocs.io/en/latest/building_custom_algo.html).
-- Evaluate,
+- Provide with tools to [evaluate](http://recsys.readthedocs.io/en/latest/evaluate.html),
   [analyse](http://nbviewer.jupyter.org/github/Niourf/RecSys/tree/master/examples/notebooks/KNNBasic_analysis.ipynb/)
   and
-  [compare](http://nbviewer.jupyter.org/github/Niourf/RecSys/tree/master/examples/notebooks/Compare.ipynb/) the algorithms performance.
+  [compare](http://nbviewer.jupyter.org/github/Niourf/RecSys/tree/master/examples/notebooks/Compare.ipynb/)
+  the algorithms performance. Cross-validation procedures can be run very easily.
 
 Installation / Usage
 --------------------
 
 Please, use a [virtual env](
-http://docs.python-guide.org/en/latest/dev/virtualenvs/)
+http://docs.python-guide.org/en/latest/dev/virtualenvs/).
 
 To install from [PyPI](https://pypi.python.org/pypi/recsys/), use pip (you'll
 need numpy):
@@ -56,6 +58,8 @@ first):
 
 Example
 -------
+
+Here is a simple example showing how one can load a dataset, split it for 3-folds cross-validation,and compute the MAE and RMSE of the SVD algorithm.
 
 ```python
 from recsys import SVD
@@ -78,7 +82,7 @@ print(perf['RMSE'])
 print(perf['MAE'])
 ```
 
-Output:
+**Output**:
 
 ```
 --------------------
@@ -103,7 +107,7 @@ mean MAE : 0.7447
 Documentation, Getting Started
 ------------------------------
 
-The documentation with many usage examples is available
+The documentation with many other usage examples is available
 [online](http://recsys.readthedocs.io/en/latest/index.html) on ReadTheDocs.
 
 License
@@ -123,4 +127,4 @@ Contributing
 
 Any kind of feedback would be greatly appreciated (software design,
 documentation, improvement ideas, spelling, etc...). Please feel free to
-contribute!
+contribute and send pull requests!
