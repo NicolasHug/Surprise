@@ -11,8 +11,8 @@ from recsys import Dataset
 from recsys import evaluate
 
 
-# Load the movielens-100k dataset and split it into 3 folds for
-# cross-validation.
+# Load the movielens-100k dataset (it will be downloaded if needed) and split
+# it into 3 folds for cross-validation.
 data = Dataset.load_builtin('ml-100k')
 data.split(n_folds=3)
 

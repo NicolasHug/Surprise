@@ -28,6 +28,8 @@ splits the dataset into 3 folds and the :func:`evaluate()
 compute some :mod:`accuracy <recsys.accuracy>` measures.
 
 
+.. _load_custom:
+
 Load a custom dataset
 ---------------------
 
