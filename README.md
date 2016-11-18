@@ -18,8 +18,8 @@ recommender system prediction algorithms. Its goal is to make life easy(-ier)
 for reseachers and students who want to play around with new recommender
 algorithm ideas.
 
-[RecSys](https://github.com/Niourf/RecSys) was designed with the following
-purposes in mind:
+[RecSys](https://github.com/Niourf/RecSys) **was designed with the following
+purposes in mind**:
 
 - Give the user perfect control over his experiments. To this end, a strong
   emphasis is laid on
@@ -61,7 +61,7 @@ first):
 Example
 -------
 
-Here is a simple example showing how one can load a dataset, split it for 3-folds cross-validation,and compute the MAE and RMSE of the SVD algorithm.
+Here is a simple example showing how one can (down)load a dataset, split it for 3-folds cross-validation,and compute the MAE and RMSE of the SVD algorithm.
 
 ```python
 from recsys import SVD
@@ -69,8 +69,8 @@ from recsys import Dataset
 from recsys import evaluate
 
 
-# Load the movielens-100k dataset and split it into 3 folds for
-# cross-validation.
+# Load the movielens-100k dataset (it will be downloaded if needed),
+# and split it into 3 folds for cross-validation.
 data = Dataset.load_builtin('ml-100k')
 data.split(n_folds=3)
 
