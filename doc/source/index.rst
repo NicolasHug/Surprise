@@ -14,31 +14,15 @@ recommender system prediction algorithms. Its goal is to make life easy(-ier)
 for reseachers, teachers and students who want to play around with new
 recommender algorithms ideas and teach/learn more about recommender systems.
 
-`RecSys <https://nicolashug.github.io/RecSys/>`_ was designed with the
-following purposes in mind:
+If you're new to `RecSys <https://nicolashug.github.io/RecSys/>`_, we invite
+you to take a look at the :ref:`getting_started` guide, where you'll find a
+series of tutorials illustrating all you can do with  `RecSys
+<https://nicolashug.github.io/RecSys/>`_.
 
-- Give the user perfect control over his experiments. To this end, a strong
-  emphasis is laid on :ref:`documentation <index>`, which we
-  have tried to make as clear and precise as possible by pointing out every
-  details of the algorithms.
-- Alleviate the pain of :ref:`dataset handling <load_custom>`. Users can use
-  both *built-in* datasets
-  (`Movielens <http://grouplens.org/datasets/movielens/>`_,
-  `Jester <http://eigentaste.berkeley.edu/dataset/>`_), and their own *custom*
-  datasets.
-- Provide with various ready-to-use :ref:`prediction
-  algorithms <prediction_algorithms_package>`.
-- Make it easy to implement :ref:`new algorithm
-  ideas <building_custom_algo>`.
-- Provide with tools to :func:`evaluate <recsys.evaluate.evaluate>`, `analyse
-  <http://nbviewer.jupyter.org/github/NicolasHug/RecSys/tree/master/examples/notebooks/KNNBasic_analysis.ipynb/>`_
-  and `compare
-  <http://nbviewer.jupyter.org/github/NicolasHug/RecSys/tree/master/examples/notebooks/Compare.ipynb/>`_
-  the algorithms performance. Cross-validation procedures can be run very
-  easily.
 
 .. toctree::
    :caption: User Guide
+   :hidden:
 
    getting_started
    notation_standards
@@ -49,6 +33,7 @@ following purposes in mind:
 .. toctree::
    :maxdepth: 2
    :caption: API Reference
+   :hidden:
 
    prediction_algorithms_package
    similarities
@@ -56,11 +41,3 @@ following purposes in mind:
    dataset
    evaluate
    dump
-
-
-Indices and tables
-------------------
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
