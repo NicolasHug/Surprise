@@ -123,5 +123,5 @@ called in the ``train`` method (or anywhere else).
 
 
 Feel free to explore the prediction_algorithms package `source
-<https://github.com/Niourf/RecSys/tree/master/recsys/prediction_algorithms>`_
+<https://github.com/NicolasHug/RecSys/tree/master/recsys/prediction_algorithms>`_
 to get an idea of what can be done.

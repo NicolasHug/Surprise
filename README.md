@@ -1,9 +1,11 @@
-[![GitHub version](https://badge.fury.io/gh/Niourf%2Frecsys.svg)](https://badge.fury.io/gh/Niourf%2Frecsys)
+[![GitHub
+version](https://badge.fury.io/gh/nicolashug%2Frecsys.svg)](https://badge.fury.io/gh/nicolashug%2Frecsys)
 [![Documentation Status](https://readthedocs.org/projects/recsys/badge/?version=latest)](http://recsys.readthedocs.io/en/latest/?badge=latest)
-[![Build Status](https://travis-ci.org/Niourf/RecSys.svg?branch=master)](https://travis-ci.org/Niourf/RecSys)
-[![python_versions](https://img.shields.io/badge/python-2.7%2C%203.4%2C%203.5-blue.svg)]
-(https://pypi.python.org/pypi/recsys/)
-[![license](https://img.shields.io/badge/license-GPLv3-blue.svg)](https://github.com/Niourf/RecSys/blob/master/LICENSE.md)
+[![Build
+Status](https://travis-ci.org/NicolasHug/RecSys.svg?branch=master)](https://travis-ci.org/NicolasHug/RecSys)
+[![python_versions](https://img.shields.io/badge/python-2.7%2C%203.5-blue.svg)]
+(https://nicolashug.github.io/RecSys/)
+[![license](https://img.shields.io/badge/license-GPLv3-blue.svg)](https://github.com/NicolasHug/RecSys/blob/master/LICENSE.md)
 
 
 RecSys
@@ -12,13 +14,13 @@ RecSys
 Overview
 --------
 
-[RecSys](https://niourf.github.io/RecSys/) is an open source Python library
+[RecSys](https://NicolasHug.github.io/RecSys/) is an open source Python library
 that provides with tools to build and evaluate the performance of many
 recommender system prediction algorithms. Its goal is to make life easy(-ier)
 for reseachers, teachers and students who want to play around with new
 recommender algorithms ideas and teach/learn more about recommender systems.
 
-[RecSys](https://niourf.github.io/RecSys/) **was designed with the following
+[RecSys](https://NicolasHug.github.io/RecSys/) **was designed with the following
 purposes in mind**:
 
 - Give the user perfect control over his experiments. To this end, a strong
@@ -36,9 +38,9 @@ purposes in mind**:
 - Make it easy to implement [new algorithm
   ideas](http://recsys.readthedocs.io/en/latest/building_custom_algo.html).
 - Provide with tools to [evaluate](http://recsys.readthedocs.io/en/latest/evaluate.html),
-  [analyse](http://nbviewer.jupyter.org/github/Niourf/RecSys/tree/master/examples/notebooks/KNNBasic_analysis.ipynb/)
+  [analyse](http://nbviewer.jupyter.org/github/NicolasHug/RecSys/tree/master/examples/notebooks/KNNBasic_analysis.ipynb/)
   and
-  [compare](http://nbviewer.jupyter.org/github/Niourf/RecSys/tree/master/examples/notebooks/Compare.ipynb/)
+  [compare](http://nbviewer.jupyter.org/github/NicolasHug/RecSys/tree/master/examples/notebooks/Compare.ipynb/)
   the algorithms performance. Cross-validation procedures can be run very easily.
 
 Installation / Usage
@@ -52,7 +54,7 @@ need numpy):
 Or clone the repo and build from the sources (you'll need Cython and numpy
 first):
 
-    $ git clone https://github.com/Niourf/recsys.git
+    $ git clone https://github.com/NicolasHug/recsys.git
     $ python setup.py install
 
 Example
