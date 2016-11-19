@@ -15,8 +15,8 @@ Overview
 [RecSys](https://github.com/Niourf/RecSys) is an open source Python library
 that provides with tools to build and evaluate the performance of many
 recommender system prediction algorithms. Its goal is to make life easy(-ier)
-for reseachers and students who want to play around with new recommender
-algorithm ideas.
+for reseachers, teachers and students who want to play around with new
+recommender algorithms ideas and teach/learn more about recommender systems.
 
 [RecSys](https://github.com/Niourf/RecSys) **was designed with the following
 purposes in mind**:
