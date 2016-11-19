@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="chrome=1">
-    <title>RecSys by Niourf</title>
+    <title>RecSys by NicolasHug</title>
 
     <link rel="stylesheet" href="stylesheets/styles.css">
     <link rel="stylesheet" href="stylesheets/github-light.css">
@@ -18,21 +18,23 @@
         <h1>RecSys</h1>
         <p>RecSys is a Python recommender system library aimed towards researchers, teachers and students.</p>
 
-        <p class="view"><a href="https://github.com/Niourf/RecSys">View the Project on GitHub <small>Niourf/RecSys</small></a></p>
+        <p class="view"><a href="https://github.com/NicolasHug/RecSys">View the Project on GitHub <small>NicolasHug/RecSys</small></a></p>
 
 
         <ul>
-          <li><a href="https://github.com/Niourf/RecSys/zipball/master">Download <strong>ZIP File</strong></a></li>
-          <li><a href="https://github.com/Niourf/RecSys/tarball/master">Download <strong>TAR Ball</strong></a></li>
-          <li><a href="https://github.com/Niourf/RecSys">View On <strong>GitHub</strong></a></li>
+          <li><a href="https://github.com/NicolasHug/RecSys/zipball/master">Download <strong>ZIP File</strong></a></li>
+          <li><a href="https://github.com/NicolasHug/RecSys/tarball/master">Download <strong>TAR Ball</strong></a></li>
+          <li><a href="https://github.com/NicolasHug/RecSys">View On <strong>GitHub</strong></a></li>
         </ul>
       </header>
       <section>
-        <p><a href="https://badge.fury.io/gh/Niourf%2Frecsys"><img src="https://badge.fury.io/gh/Niourf%2Frecsys.svg" alt="GitHub version"></a>
+        <p><a href="https://nicolashug.github.io/RecSys/"><img src="https://badge.fury.io/gh/nicolashug%2Frecsys.svg" alt="GitHub
+version"></a>
 <a href="http://recsys.readthedocs.io/en/latest/?badge=latest"><img src="https://readthedocs.org/projects/recsys/badge/?version=latest" alt="Documentation Status"></a>
-<a href="https://travis-ci.org/Niourf/RecSys"><img src="https://travis-ci.org/Niourf/RecSys.svg?branch=master" alt="Build Status"></a>
-<a href="https://pypi.python.org/pypi/recsys/"><img src="https://img.shields.io/badge/python-2.7%2C%203.4%2C%203.5-blue.svg" alt="python_versions"></a>
-<a href="https://github.com/Niourf/RecSys/blob/master/LICENSE.md"><img src="https://img.shields.io/badge/license-GPLv3-blue.svg" alt="license"></a></p>
+<a href="https://travis-ci.org/NicolasHug/RecSys"><img src="https://travis-ci.org/NicolasHug/RecSys.svg?branch=master" alt="Build
+Status"></a>
+<a href="https://nicolashug.github.io/RecSys/"><img src="https://img.shields.io/badge/python-2.7%2C%203.5-blue.svg" alt="python_versions"></a>
+<a href="https://github.com/NicolasHug/RecSys/blob/master/LICENSE.md"><img src="https://img.shields.io/badge/license-GPLv3-blue.svg" alt="license"></a></p>
 
 <h1>
 <a id="recsys" class="anchor" href="#recsys" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>RecSys</h1>
@@ -40,13 +42,13 @@
 <h2>
 <a id="overview" class="anchor" href="#overview" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Overview</h2>
 
-<p><a href="https://niourf.github.io/RecSys/">RecSys</a> is an open source Python library
+<p><a href="https://NicolasHug.github.io/RecSys/">RecSys</a> is an open source Python library
 that provides with tools to build and evaluate the performance of many
 recommender system prediction algorithms. Its goal is to make life easy(-ier)
 for reseachers, teachers and students who want to play around with new
 recommender algorithms ideas and teach/learn more about recommender systems.</p>
 
-<p><a href="https://niourf.github.io/RecSys/">RecSys</a> <strong>was designed with the following
+<p><a href="https://NicolasHug.github.io/RecSys/">RecSys</a> <strong>was designed with the following
 purposes in mind</strong>:</p>
 
 <ul>
@@ -65,33 +67,34 @@ algorithms</a> (Neighborhood approaches, SVD, SVD++...)</li>
 <li>Make it easy to implement <a href="http://recsys.readthedocs.io/en/latest/building_custom_algo.html">new algorithm
 ideas</a>.</li>
 <li>Provide with tools to <a href="http://recsys.readthedocs.io/en/latest/evaluate.html">evaluate</a>,
-<a href="http://nbviewer.jupyter.org/github/Niourf/RecSys/tree/master/examples/notebooks/KNNBasic_analysis.ipynb/">analyse</a>
+<a href="http://nbviewer.jupyter.org/github/NicolasHug/RecSys/tree/master/examples/notebooks/KNNBasic_analysis.ipynb/">analyse</a>
 and
-<a href="http://nbviewer.jupyter.org/github/Niourf/RecSys/tree/master/examples/notebooks/Compare.ipynb/">compare</a>
+<a href="http://nbviewer.jupyter.org/github/NicolasHug/RecSys/tree/master/examples/notebooks/Compare.ipynb/">compare</a>
 the algorithms performance. Cross-validation procedures can be run very easily.</li>
 </ul>
 
 <h2>
 <a id="installation--usage" class="anchor" href="#installation--usage" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Installation / Usage</h2>
 
-<p>To install from <a href="https://pypi.python.org/pypi/recsys/">PyPI</a>, use pip (you'll
-need numpy):</p>
+<p>The easiest way is to use pip (you'll need <a href="http://www.numpy.org/">numpy</a>):</p>
 
 <pre><code>$ pip install recsys
 </code></pre>
 
-<p>Or clone the repo and build from the sources (you'll need Cython and numpy
-first):</p>
+<p>Or you can clone the repo and build the source (you'll need
+<a href="http://cython.org/">Cython</a> and <a href="http://www.numpy.org/">numpy</a>):</p>
 
-<pre><code>$ git clone https://github.com/Niourf/recsys.git
+<pre><code>$ git clone https://github.com/NicolasHug/recsys.git
 $ python setup.py install
 </code></pre>
 
 <h2>
 <a id="example" class="anchor" href="#example" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Example</h2>
 
-<p>Here is a simple example showing how one can (down)load a dataset, split it for
-3-folds cross-validation,and compute the MAE and RMSE of the SVD algorithm.</p>
+<p>Here is a simple example showing how you can (down)load a dataset, split it for
+3-folds cross-validation,and compute the MAE and RMSE of the
+<a href="http://recsys.readthedocs.io/en/latest/matrix_factorization.html#recsys.prediction_algorithms.matrix_factorization.SVD">SVD</a>
+algorithm.</p>
 
 <div class="highlight highlight-source-python"><pre><span class="pl-k">from</span> recsys <span class="pl-k">import</span> <span class="pl-c1">SVD</span>
 <span class="pl-k">from</span> recsys <span class="pl-k">import</span> Dataset
@@ -136,8 +139,8 @@ mean MAE : 0.7447
 <h2>
 <a id="documentation-getting-started" class="anchor" href="#documentation-getting-started" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Documentation, Getting Started</h2>
 
-<p>The documentation with many other usage examples is available
-<a href="http://recsys.readthedocs.io/en/latest/index.html">online</a> on ReadTheDocs.</p>
+<p>The documentation with many other usage examples is <a href="http://recsys.readthedocs.io/en/latest/index.html">available
+online</a> on ReadTheDocs.</p>
 
 <h2>
 <a id="license" class="anchor" href="#license" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>License</h2>
@@ -162,7 +165,7 @@ documentation, improvement ideas, spelling mistakes, etc...). Please feel free
 to contribute and send pull requests!</p>
       </section>
       <footer>
-        <p>This project is maintained by <a href="https://github.com/Niourf">Niourf</a></p>
+        <p>This project is maintained by <a href="https://github.com/NicolasHug">NicolasHug</a></p>
         <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
       </footer>
     </div>
