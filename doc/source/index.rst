@@ -8,13 +8,13 @@
 Welcome to RecSys' documentation!
 =================================
 
-`RecSys <https://github.com/Niourf/RecSys>`_ is an open source Python library 
+`RecSys <https://niourf.github.io/RecSys/>`_ is an open source Python library 
 that provides with tools to build and evaluate the performance of many
 recommender system prediction algorithms. Its goal is to make life easy(-ier)
 for reseachers, teachers and students who want to play around with new
 recommender algorithms ideas and teach/learn more about recommender systems.
 
-`RecSys <https://github.com/Niourf/RecSys>`_ was designed with the following
+`RecSys <https://niourf.github.io/RecSys/>`_ was designed with the following
 purposes in mind:
 
 - Give the user perfect control over his experiments. To this end, a strong
