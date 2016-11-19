@@ -1,5 +1,5 @@
 [![GitHub
-version](https://badge.fury.io/gh/nicolashug%2Frecsys.svg)](https://badge.fury.io/gh/nicolashug%2Frecsys)
+version](https://badge.fury.io/gh/nicolashug%2Frecsys.svg)](https://nicolashug.github.io/RecSys/)
 [![Documentation Status](https://readthedocs.org/projects/recsys/badge/?version=latest)](http://recsys.readthedocs.io/en/latest/?badge=latest)
 [![Build
 Status](https://travis-ci.org/NicolasHug/RecSys.svg?branch=master)](https://travis-ci.org/NicolasHug/RecSys)
@@ -46,13 +46,12 @@ purposes in mind**:
 Installation / Usage
 --------------------
 
-To install from [PyPI](https://pypi.python.org/pypi/recsys/), use pip (you'll
-need numpy):
+The easiest way is to use pip (you'll need [numpy](http://www.numpy.org/)):
 
     $ pip install recsys
 
-Or clone the repo and build from the sources (you'll need Cython and numpy
-first):
+Or you can clone the repo and build the source (you'll need
+[Cython](http://cython.org/) and [numpy](http://www.numpy.org/)):
 
     $ git clone https://github.com/NicolasHug/recsys.git
     $ python setup.py install
@@ -60,8 +59,10 @@ first):
 Example
 -------
 
-Here is a simple example showing how one can (down)load a dataset, split it for
-3-folds cross-validation,and compute the MAE and RMSE of the SVD algorithm.
+Here is a simple example showing how you can (down)load a dataset, split it for
+3-folds cross-validation,and compute the MAE and RMSE of the
+[SVD](http://recsys.readthedocs.io/en/latest/matrix_factorization.html#recsys.prediction_algorithms.matrix_factorization.SVD)
+algorithm.
 
 ```python
 from recsys import SVD
@@ -109,8 +110,8 @@ mean MAE : 0.7447
 Documentation, Getting Started
 ------------------------------
 
-The documentation with many other usage examples is available
-[online](http://recsys.readthedocs.io/en/latest/index.html) on ReadTheDocs.
+The documentation with many other usage examples is [available
+online](http://recsys.readthedocs.io/en/latest/index.html) on ReadTheDocs.
 
 License
 -------
