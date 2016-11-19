@@ -12,7 +12,7 @@ RecSys
 Overview
 --------
 
-[RecSys](https://github.com/Niourf/RecSys) is an open source Python package
+[RecSys](https://github.com/Niourf/RecSys) is an open source Python library
 that provides with tools to build and evaluate the performance of many
 recommender system prediction algorithms. Its goal is to make life easy(-ier)
 for reseachers and students who want to play around with new recommender
@@ -44,9 +44,6 @@ purposes in mind**:
 Installation / Usage
 --------------------
 
-Please, use a [virtual env](
-http://docs.python-guide.org/en/latest/dev/virtualenvs/).
-
 To install from [PyPI](https://pypi.python.org/pypi/recsys/), use pip (you'll
 need numpy):
 
@@ -61,7 +58,8 @@ first):
 Example
 -------
 
-Here is a simple example showing how one can (down)load a dataset, split it for 3-folds cross-validation,and compute the MAE and RMSE of the SVD algorithm.
+Here is a simple example showing how one can (down)load a dataset, split it for
+3-folds cross-validation,and compute the MAE and RMSE of the SVD algorithm.
 
 ```python
 from recsys import SVD
@@ -127,6 +125,6 @@ Acknowledgements:
 Contributing
 ------------
 
-Any kind of feedback would be greatly appreciated (software design,
-documentation, improvement ideas, spelling, etc...). Please feel free to
-contribute and send pull requests!
+Any kind of feedback/criticism would be greatly appreciated (software design,
+documentation, improvement ideas, spelling mistakes, etc...). Please feel free
+to contribute and send pull requests!
