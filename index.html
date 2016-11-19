@@ -101,7 +101,7 @@ algorithm.</p>
 <span class="pl-k">from</span> recsys <span class="pl-k">import</span> evaluate
 
 
-<span class="pl-c"># Load the movielens-100k dataset (it will be downloaded if needed),</span>
+<span class="pl-c"># Load the movielens-100k dataset (download it if needed),</span>
 <span class="pl-c"># and split it into 3 folds for cross-validation.</span>
 data <span class="pl-k">=</span> Dataset.load_builtin(<span class="pl-s"><span class="pl-pds">'</span>ml-100k<span class="pl-pds">'</span></span>)
 data.split(<span class="pl-v">n_folds</span><span class="pl-k">=</span><span class="pl-c1">3</span>)
