@@ -19,6 +19,11 @@ you to take a look at the :ref:`getting_started` guide, where you'll find a
 series of tutorials illustrating all you can do with  `RecSys
 <https://nicolashug.github.io/RecSys/>`_.
 
+Any kind of feedback/criticism would be greatly appreciated (software design,
+documentation, improvement ideas, spelling mistakes, etc...). Please feel free
+to contribute and send pull requests (see `GitHub page
+<https://github.com/NicolasHug/RecSys>`_)!
+
 
 .. toctree::
    :caption: User Guide
