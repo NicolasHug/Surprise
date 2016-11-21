@@ -9,7 +9,7 @@ Getting Started
 Basic usage
 -----------
 
-`RecSys <https://github.com/Niourf/RecSys>`_ has a set of built-in
+`RecSys <https://nicolashug.github.io/RecSys/>`_ has a set of built-in
 :ref:`algorithms<prediction_algorithms>` and :ref:`datasets <dataset>` for you
 to play with. In its simplest form, it takes about four lines of code to
 evaluate the performance of an algorithm:
@@ -20,13 +20,14 @@ evaluate the performance of an algorithm:
     :lines: 9-
 
 
-If `RecSys <https://github.com/Niourf/RecSys>`_ cannot find the `movielens-100k
-dataset <http://grouplens.org/datasets/movielens/>`_, it will offer to download
-it and will store it under the ``.recsys_data`` folder in your home directory.
-The :meth:`split() <recsys.dataset.DatasetAutoFolds.split>` method
-automatically splits the dataset into 3 folds and the :func:`evaluate()
-<recsys.evaluate.evaluate>` function runs the cross-validation procedure and
-compute some :mod:`accuracy <recsys.accuracy>` measures.
+If `RecSys <https://nicolashug.github.io/RecSys/>`_ cannot find the
+`movielens-100k dataset <http://grouplens.org/datasets/movielens/>`_, it will
+offer to download it and will store it under the ``.recsys_data`` folder in
+your home directory.  The :meth:`split()
+<recsys.dataset.DatasetAutoFolds.split>` method automatically splits the
+dataset into 3 folds and the :func:`evaluate() <recsys.evaluate.evaluate>`
+function runs the cross-validation procedure and compute some :mod:`accuracy
+<recsys.accuracy>` measures.
 
 
 .. _load_custom:
@@ -35,7 +36,7 @@ Load a custom dataset
 ---------------------
 
 You can of course use a custom dataset. `RecSys
-<https://github.com/Niourf/RecSys>`_ offers two ways of loading a custom
+<https://nicolashug.github.io/RecSys/>`_ offers two ways of loading a custom
 dataset:
 
 - you can either specify a single file with all the ratings and
@@ -45,8 +46,8 @@ dataset:
   list of files for training and testing.
 
 Either way, you will need to define a :class:`Reader <recsys.dataset.Reader>`
-object for `RecSys <https://github.com/Niourf/RecSys>`_ to be able to parse the
-file(s).
+object for `RecSys <https://nicolashug.github.io/RecSys/>`_ to be able to parse
+the file(s).
 
 We'll see how to handle both cases with the `movielens-100k dataset
 <http://grouplens.org/datasets/movielens/>`_. Of course this is a built-in
@@ -64,8 +65,8 @@ Load an entire dataset
 
 .. note::
     Actually, as the Movielens-100k dataset is builtin, `RecSys
-    <https://github.com/Niourf/RecSys>`_ provides with a proper reader so in
-    this case, we could have just created the reader like this: ::
+    <https://nicolashug.github.io/RecSys/>`_ provides with a proper reader so
+    in this case, we could have just created the reader like this: ::
 
       reader = Reader('ml-100k')
 
@@ -91,7 +92,7 @@ Advanced usage
 --------------
 
 We will here get a little deeper on what can `RecSys
-<https://github.com/Niourf/RecSys>`_ do for you.
+<https://nicolashug.github.io/RecSys/>`_ do for you.
 
 .. _iterate_over_folds:
 
@@ -156,8 +157,8 @@ will still predict the mean of all ratings :math:`\mu`.
   Raw ids are ids as defined in a rating file. They can be strings or whatever.
   On trainset creation, each raw id is mapped to a (unique) integer called
   inner id, which is a lot more suitable for `RecSys
-  <https://github.com/Niourf/RecSys>`_ to manipulate. To convert a raw id to an
-  inner id, you can use the  :meth:`to_inner_uid()
+  <https://nicolashug.github.io/RecSys/>`_ to manipulate. To convert a raw id
+  to an inner id, you can use the  :meth:`to_inner_uid()
   <recsys.dataset.Trainset.to_inner_uid>` and :meth:`to_inner_iid()
   <recsys.dataset.Trainset.to_inner_iid>` methods of the :class:`trainset
   <recsys.dataset.Trainset>`.
@@ -176,8 +177,8 @@ You may want to save your algorithm predictions along with all the usefull
 information about the algorithm. This way, you can run your algorithm once,
 save the results, and go back to them whenever you want to inspect in greater
 details each of the predictions, and get a good insight on why your algorithm
-performs well (or bad!). `RecSys <https://github.com/Niourf/RecSys>`_ provides
-with some tools to do that.
+performs well (or bad!). `RecSys <https://nicolashug.github.io/RecSys/>`_
+provides with some tools to do that.
 
 You can dump your algorithm predictions either using the :func:`evaluate()
 <recsys.evaluate.evaluate>` function, or do it manually with the :func:`dump
@@ -185,6 +186,6 @@ You can dump your algorithm predictions either using the :func:`evaluate()
 so here a few `jupyter <http://jupyter.org/>`_ notebooks:
 
   - `Dumping and analysis of the KNNBasic algorithm
-    <http://nbviewer.jupyter.org/github/Niourf/RecSys/tree/master/examples/notebooks/KNNBasic_analysis.ipynb/>`_.
+    <http://nbviewer.jupyter.org/github/NicolasHug/RecSys/tree/master/examples/notebooks/KNNBasic_analysis.ipynb/>`_.
   - `Comparison of two algorithms
-    <http://nbviewer.jupyter.org/github/Niourf/RecSys/tree/master/examples/notebooks/Compare.ipynb/>`_.
+    <http://nbviewer.jupyter.org/github/NicolasHug/RecSys/tree/master/examples/notebooks/Compare.ipynb/>`_.

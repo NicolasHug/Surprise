@@ -54,8 +54,8 @@ setup(
     description=('A recommender system package aimed towards researchers ' +
                  'and students.'),
     long_description=long_description,
-    url='https://github.com/Niourf/recsys',
-    download_url='https://github.com/Niourf/recsys/tarball/' + __version__,
+    url='https://github.com/NicolasHug/recsys',
+    download_url='https://github.com/NicolasHug/recsys/tarball/' + __version__,
     license='GPLv3+',
     classifiers=[
       'Development Status :: 4 - Beta',
@@ -65,6 +65,7 @@ setup(
       'Topic :: Scientific/Engineering',
       'License :: OSI Approved',
       'Programming Language :: Python :: 3',
+      'Programming Language :: Python :: 2',
     ],
     keywords='',
     packages=find_packages(exclude=['docs', 'tests*']),

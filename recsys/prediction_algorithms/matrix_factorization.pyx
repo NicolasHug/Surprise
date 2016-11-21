@@ -24,7 +24,7 @@ class SVD(AlgoBase):
 
     If user :math:`u` is unknown, then the bias :math:`b_u` and the factors
     :math:`p_u` are assumed to be zero. The same applies for item :math:`i`
-    with :math:`b_u` and :math:`q_i`.
+    with :math:`b_i` and :math:`q_i`.
 
     For details, see eq. 5 from `Matrix Factorization Techniques For
     Recommender Systems
@@ -233,7 +233,7 @@ class SVDpp(AlgoBase):
 
     If user :math:`u` is unknown, then the bias :math:`b_u` and the factors
     :math:`p_u` are assumed to be zero. The same applies for item :math:`i`
-    with :math:`b_u`, :math:`q_i` and :math:`y_i`.
+    with :math:`b_i`, :math:`q_i` and :math:`y_i`.
 
 
     For details, see eq. 15 from `Factorization Meets The
