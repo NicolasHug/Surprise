@@ -92,7 +92,6 @@ Evaluating RMSE, MAE of algorithm SVD.
         Fold 1  Fold 2  Fold 3  Mean
 MAE     0.7475  0.7447  0.7425  0.7449
 RMSE    0.9461  0.9436  0.9425  0.9441
-
 ```
 
 Documentation, Getting Started
