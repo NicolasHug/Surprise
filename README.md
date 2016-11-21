@@ -94,6 +94,21 @@ MAE     0.7475  0.7447  0.7425  0.7449
 RMSE    0.9461  0.9436  0.9425  0.9441
 ```
 
+Benchmarks
+----------
+
+The following table shows the average RMSE and MAE and total execution time of various algorithms on a 5-folds cross-validation procedure. The dataset is the [Movielens 100k](http://grouplens.org/datasets/movielens/) dataset.
+All experiments are run on a laptop with Intel Core i3 1.7 GHz, 4Go Ram.
+
+|                 |  RMSE  |   MAE  | Time (s) |
+|-----------------|:------:|:------:|:--------:|
+| [NormalPredictor](http://recsys.readthedocs.io/en/latest/basic_algorithms.html#recsys.prediction_algorithms.random_pred.NormalPredictor) | 1.5228 | 1.2242 |     4    |
+| [BaselineOnly](http://recsys.readthedocs.io/en/latest/basic_algorithms.html#recsys.prediction_algorithms.baseline_only.BaselineOnly)    |  .9445 |  .7488 |    16    |
+| [KNNBasic](http://recsys.readthedocs.io/en/latest/knn_inspired.html#recsys.prediction_algorithms.knns.KNNBasic)        |  .9789 |  .7732 |    27    |
+| [KNNWithMeans](http://recsys.readthedocs.io/en/latest/knn_inspired.html#recsys.prediction_algorithms.knns.KNNWithMeans)    |  .9514 |  .7500 |    30    |
+| [KNNBaseline](http://recsys.readthedocs.io/en/latest/knn_inspired.html#recsys.prediction_algorithms.knns.KNNBaseline)     |  .9306 |  .7334 |    44    |
+| [SVD](http://recsys.readthedocs.io/en/latest/matrix_factorization.html#recsys.prediction_algorithms.matrix_factorization.SVD)             |  .9392 |  .7409 |    46    |
+
 Documentation, Getting Started
 ------------------------------
 
