@@ -60,7 +60,7 @@ Example
 -------
 
 Here is a simple example showing how you can (down)load a dataset, split it for
-3-folds cross-validation,and compute the MAE and RMSE of the
+3-folds cross-validation, and compute the MAE and RMSE of the
 [SVD](http://recsys.readthedocs.io/en/latest/matrix_factorization.html#recsys.prediction_algorithms.matrix_factorization.SVD)
 algorithm.
 
