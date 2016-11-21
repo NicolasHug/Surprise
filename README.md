@@ -61,7 +61,8 @@ first):
 Example
 -------
 
-Here is a simple example showing how one can load a dataset, split it for 3-folds cross-validation,and compute the MAE and RMSE of the SVD algorithm.
+Here is a simple example showing how one can load a dataset, split it for
+3-folds cross-validation, and compute the MAE and RMSE of the SVD algorithm.
 
 ```python
 from recsys import SVD
@@ -78,32 +79,20 @@ data.split(n_folds=3)
 algo = SVD()
 
 # Evaluate performances of our algorithm on the dataset.
-perf = evaluate(algo, data, measures=['RMSE', 'MAE'])
+perf = evaluate(algo, data, measures=['RMSE', 'MAE'], verbose=False)
 
-print(perf['RMSE'])
-print(perf['MAE'])
+print(perf)
 ```
 
 **Output**:
 
 ```
---------------------
-fold 0
-RMSE: 0.9461
-MAE: 0.7471
---------------------
-fold 1
-RMSE: 0.9485
-MAE: 0.7481
---------------------
-fold 2
-RMSE: 0.9373
-MAE: 0.7389
---------------------
-mean RMSE : 0.9440
-mean MAE : 0.7447
-[0.94610849207651793, 0.94851906980098399, 0.93725513525972337]
-[0.74705780800352328, 0.74810449832136583, 0.73891237929484566]
+Evaluating RMSE, MAE of algorithm SVD.
+
+        Fold 1  Fold 2  Fold 3  Mean
+MAE     0.7475  0.7447  0.7425  0.7449
+RMSE    0.9461  0.9436  0.9425  0.9441
+
 ```
 
 Documentation, Getting Started

@@ -136,7 +136,8 @@ def main():
                         ' directory and exit.'
                         )
 
-    parser.add_argument('-v', '--version', action='version', version=__version__)
+    parser.add_argument('-v', '--version', action='version',
+                        version=__version__)
 
     args = parser.parse_args()
 

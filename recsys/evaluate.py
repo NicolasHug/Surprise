@@ -7,7 +7,10 @@ from __future__ import (absolute_import, division, print_function,
 from collections import defaultdict
 import time
 import os
+
 import numpy as np
+from six import iteritems
+from six import itervalues
 
 from . import accuracy
 from .dump import dump
@@ -45,11 +48,15 @@ def evaluate(algo, data, measures=['rmse', 'mae'], with_dump=False,
     """
 
     performances = CaseInsensitiveDefaultDict(list)
+    print('Evaluating {0} of algorithm {1}.'.format(
+          ', '.join((m.upper() for m in measures)),
+          algo.__class__.__name__))
+    print()
 
     for fold_i, (trainset, testset) in enumerate(data.folds()):
 
         if verbose:
-            print('-' * 20)
+            print('-' * 12)
             print('Fold ' + str(fold_i + 1))
 
         # train and test algorithm. Keep all rating predictions in a list
@@ -77,10 +84,14 @@ def evaluate(algo, data, measures=['rmse', 'mae'], with_dump=False,
             dump(file_name, predictions, trainset, algo)
 
     if verbose:
-        print('-' * 20)
+        print('-' * 12)
+        print('-' * 12)
         for measure in measures:
-            print('mean', measure.upper(),
-                  ': {0:1.4f}'.format(np.mean(performances[measure])))
+            print('Mean {0:4s}: {1:1.4f}'.format(
+                  measure.upper(), np.mean(performances[measure])))
+        print('-' * 12)
+        print('-' * 12)
+
 
     return performances
 
@@ -100,3 +111,21 @@ class CaseInsensitiveDefaultDict(defaultdict):
 
     def __getitem__(self, key):
         return super(CaseInsensitiveDefaultDict, self).__getitem__(key.lower())
+
+    def __str__(self):
+
+        # retrieve number of folds. Kind of ugly...
+        n_folds = [len(values) for values in itervalues(self)][0]
+
+        row_format ='{:<8}' * (n_folds + 2)
+        s = row_format.format(
+            '',
+            *['Fold {0}'.format(i + 1) for i in range(n_folds)] + ['Mean'])
+        s += '\n'
+        s += '\n'.join(row_format.format(
+            key.upper(),
+            *['{:1.4f}'.format(v) for v in vals] +
+            ['{:1.4f}'.format(np.mean(vals))])
+            for (key, vals) in iteritems(self))
+
+        return s

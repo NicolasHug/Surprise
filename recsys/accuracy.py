@@ -84,7 +84,7 @@ def mae(predictions, verbose=True):
                     for (_, _, true_r, est, _) in predictions])
 
     if verbose:
-        print('MAE: {0:1.4f}'.format(mae_))
+        print('MAE:  {0:1.4f}'.format(mae_))
 
     return mae_
 
@@ -139,6 +139,6 @@ def fcp(predictions, verbose=True):
                          'Does every user have at least two predictions?')
 
     if verbose:
-        print('FCP: {0:1.4f}'.format(fcp))
+        print('FCP:  {0:1.4f}'.format(fcp))
 
     return fcp
