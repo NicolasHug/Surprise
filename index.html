@@ -124,6 +124,61 @@ RMSE    0.9461  0.9436  0.9425  0.9441
 </code></pre>
 
 <h2>
+<a id="benchmarks" class="anchor" href="#benchmarks" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Benchmarks</h2>
+
+<p>The following table shows the average RMSE and MAE and total execution time of various algorithms on a 5-folds cross-validation procedure. The dataset is the <a href="http://grouplens.org/datasets/movielens/">Movielens 100k</a> dataset.
+All experiments are run on a laptop with Intel Core i3 1.7 GHz, 4Go Ram.</p>
+
+<table>
+<thead>
+<tr>
+<th></th>
+<th align="center">RMSE</th>
+<th align="center">MAE</th>
+<th align="center">Time (s)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="http://recsys.readthedocs.io/en/latest/basic_algorithms.html#recsys.prediction_algorithms.random_pred.NormalPredictor">NormalPredictor</a></td>
+<td align="center">1.5228</td>
+<td align="center">1.2242</td>
+<td align="center">4</td>
+</tr>
+<tr>
+<td><a href="http://recsys.readthedocs.io/en/latest/basic_algorithms.html#recsys.prediction_algorithms.baseline_only.BaselineOnly">BaselineOnly</a></td>
+<td align="center">.9445</td>
+<td align="center">.7488</td>
+<td align="center">16</td>
+</tr>
+<tr>
+<td><a href="http://recsys.readthedocs.io/en/latest/knn_inspired.html#recsys.prediction_algorithms.knns.KNNBasic">KNNBasic</a></td>
+<td align="center">.9789</td>
+<td align="center">.7732</td>
+<td align="center">27</td>
+</tr>
+<tr>
+<td><a href="http://recsys.readthedocs.io/en/latest/knn_inspired.html#recsys.prediction_algorithms.knns.KNNWithMeans">KNNWithMeans</a></td>
+<td align="center">.9514</td>
+<td align="center">.7500</td>
+<td align="center">30</td>
+</tr>
+<tr>
+<td><a href="http://recsys.readthedocs.io/en/latest/knn_inspired.html#recsys.prediction_algorithms.knns.KNNBaseline">KNNBaseline</a></td>
+<td align="center">.9306</td>
+<td align="center">.7334</td>
+<td align="center">44</td>
+</tr>
+<tr>
+<td><a href="http://recsys.readthedocs.io/en/latest/matrix_factorization.html#recsys.prediction_algorithms.matrix_factorization.SVD">SVD</a></td>
+<td align="center">.9392</td>
+<td align="center">.7409</td>
+<td align="center">46</td>
+</tr>
+</tbody>
+</table>
+
+<h2>
 <a id="documentation-getting-started" class="anchor" href="#documentation-getting-started" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Documentation, Getting Started</h2>
 
 <p>The documentation with many other usage examples is <a href="http://recsys.readthedocs.io/en/latest/index.html">available
