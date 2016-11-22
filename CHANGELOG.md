@@ -1,5 +1,7 @@
-CURRENT
+VERSION 1.0.0
 =======
+
+Date: 22/11/16
 
 * Changed name from recsys to surprise
 * Improved printing of accuracy measures.
