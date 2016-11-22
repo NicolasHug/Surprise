@@ -8,9 +8,9 @@ from __future__ import (absolute_import, division, print_function,
 
 import numpy as np
 
-from recsys import AlgoBase
-from recsys import Dataset
-from recsys import evaluate
+from surprise import AlgoBase
+from surprise import Dataset
+from surprise import evaluate
 
 
 class MyOwnAlgorithm(AlgoBase):

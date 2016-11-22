@@ -3,5 +3,5 @@
 The algorithm base class
 ------------------------
 
-.. automodule:: recsys.prediction_algorithms.algo_base
+.. automodule:: surprise.prediction_algorithms.algo_base
     :members:

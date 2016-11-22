@@ -3,7 +3,7 @@
 similarities module
 ===================
 
-.. automodule:: recsys.similarities
+.. automodule:: surprise.similarities
     :members:
     :exclude-members: compute_mean_diff
     :show-inheritance:

@@ -6,15 +6,15 @@ from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 import os
 
-from recsys.prediction_algorithms import NormalPredictor
-from recsys.prediction_algorithms import BaselineOnly
-from recsys.prediction_algorithms import KNNBasic
-from recsys.prediction_algorithms import KNNWithMeans
-from recsys.prediction_algorithms import KNNBaseline
-from recsys.prediction_algorithms import SVD
-from recsys.prediction_algorithms import SVDpp
-from recsys.dataset import Dataset
-from recsys.dataset import Reader
+from surprise.prediction_algorithms import NormalPredictor
+from surprise.prediction_algorithms import BaselineOnly
+from surprise.prediction_algorithms import KNNBasic
+from surprise.prediction_algorithms import KNNWithMeans
+from surprise.prediction_algorithms import KNNBaseline
+from surprise.prediction_algorithms import SVD
+from surprise.prediction_algorithms import SVDpp
+from surprise.dataset import Dataset
+from surprise.dataset import Reader
 
 
 def test_unknown_user_or_item():

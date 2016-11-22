@@ -4,7 +4,7 @@ accuracy module
 ===================
 
 
-.. automodule:: recsys.accuracy
+.. automodule:: surprise.accuracy
     :members:
     :undoc-members:
     :show-inheritance:

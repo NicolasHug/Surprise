@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 #
-# RecSys documentation build configuration file, created by
+# Surprise documentation build configuration file, created by
 # sphinx-quickstart on Tue Dec 29 20:08:18 2015.
 #
 # This file is execfile()d with the current directory set to its
@@ -56,7 +56,7 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = 'RecSys'
+project = 'Surprise'
 copyright = '2015, Nicolas Hug'
 author = 'Nicolas Hug'
 
@@ -215,7 +215,7 @@ html_theme_path = [sphinx_rtd_theme.get_html_theme_path()]
 #html_search_scorer = 'scorer.js'
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'RecSysdoc'
+htmlhelp_basename = 'Surprisedoc'
 
 # -- Options for LaTeX output ---------------------------------------------
 
@@ -237,7 +237,7 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-  (master_doc, 'RecSys.tex', 'RecSys Documentation',
+  (master_doc, 'Surprise.tex', 'Surprise Documentation',
    'Nicolas Hug', 'manual'),
 ]
 
@@ -267,7 +267,7 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    (master_doc, 'recsys', 'RecSys Documentation',
+    (master_doc, 'surprise', 'Surprise Documentation',
      [author], 1)
 ]
 
@@ -281,8 +281,8 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-  (master_doc, 'RecSys', 'RecSys Documentation',
-   author, 'RecSys', 'One line description of project.',
+  (master_doc, 'Surprise', 'Surprise Documentation',
+   author, 'Surprise', 'One line description of project.',
    'Miscellaneous'),
 ]
 

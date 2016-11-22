@@ -6,11 +6,11 @@ from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 import os
 
-from recsys.prediction_algorithms import SVD
-from recsys.prediction_algorithms import SVDpp
-from recsys.dataset import Dataset
-from recsys.dataset import Reader
-from recsys.evaluate import evaluate
+from surprise.prediction_algorithms import SVD
+from surprise.prediction_algorithms import SVDpp
+from surprise.dataset import Dataset
+from surprise.dataset import Reader
+from surprise.evaluate import evaluate
 
 
 # the test and train files are from the ml-100k dataset (10% of u1.base and

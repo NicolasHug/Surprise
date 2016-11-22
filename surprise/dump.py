@@ -7,15 +7,15 @@ import pickle
 
 def dump(file_name, predictions, trainset=None, algo=None):
     """Dump a list of :obj:`predictions
-    <recsys.prediction_algorithms.predictions.Prediction>` for future
+    <surprise.prediction_algorithms.predictions.Prediction>` for future
     analysis, using Pickle.
 
-    If needed, the :class:`trainset <recsys.dataset.Trainset>` object and the
+    If needed, the :class:`trainset <surprise.dataset.Trainset>` object and the
     algorithm can also be dumped. What is dumped is a dictionnary with keys
     ``'predictions``, ``'trainset'``, and ``'algo'``.
 
     The dumped algorithm won't be a proper :class:`algorithm
-    <recsys.prediction_algorithms.algo_base.AlgoBase>` object but simply a
+    <surprise.prediction_algorithms.algo_base.AlgoBase>` object but simply a
     dictionnary with the algorithm attributes as keys-values (technically, the
     ``algo.__dict__`` attribute).
 
@@ -26,12 +26,12 @@ def dump(file_name, predictions, trainset=None, algo=None):
             predictions.
 
         predictions(list of :obj:`Prediction\
-            <recsys.prediction_algorithms.predictions.Prediction>`): The
+            <surprise.prediction_algorithms.predictions.Prediction>`): The
             predictions to dump.
-        trainset(:class:`Trainset <recsys.dataset.Trainset>`, optional): The
+        trainset(:class:`Trainset <surprise.dataset.Trainset>`, optional): The
             trainset to dump.
         algo(:class:`Algorithm\
-            <recsys.prediction_algorithms.algo_base.AlgoBase>`, optional):
+            <surprise.prediction_algorithms.algo_base.AlgoBase>`, optional):
             algorithm to dump.
     """
 

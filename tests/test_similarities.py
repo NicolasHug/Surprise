@@ -8,7 +8,7 @@ import random
 
 import numpy as np
 
-import recsys.similarities as sims
+import surprise.similarities as sims
 
 
 n_x = 7

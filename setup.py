@@ -34,11 +34,11 @@ cmdclass = {}
 
 ext = '.pyx' if USE_CYTHON else '.c'
 
-extensions = [Extension('recsys.similarities',
-                       ['recsys/similarities' + ext],
+extensions = [Extension('surprise.similarities',
+                       ['surprise/similarities' + ext],
                         include_dirs=[np.get_include()]),
-              Extension('recsys.prediction_algorithms.matrix_factorization',
-                        ['recsys/prediction_algorithms/matrix_factorization' + ext],
+              Extension('surprise.prediction_algorithms.matrix_factorization',
+                        ['surprise/prediction_algorithms/matrix_factorization' + ext],
                         include_dirs=[np.get_include()]),
              ]
 
@@ -49,25 +49,24 @@ else:
 	ext_modules = extensions
 
 setup(
-    name='recsys',
+    name='surprise',
     version=__version__,
     description=('A recommender system package aimed towards researchers ' +
                  'and students.'),
     long_description=long_description,
-    url='https://github.com/NicolasHug/recsys',
-    download_url='https://github.com/NicolasHug/recsys/tarball/' + __version__,
+    url='https://nicolashug.github.io/Surprise/',
     license='GPLv3+',
     classifiers=[
-      'Development Status :: 4 - Beta',
+      'Development Status :: 5 - Production/Stable',
       'Intended Audience :: Developers',
       'Intended Audience :: Education',
       'Intended Audience :: Science/Research',
       'Topic :: Scientific/Engineering',
-      'License :: OSI Approved',
+      'License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)',
       'Programming Language :: Python :: 3',
-      'Programming Language :: Python :: 2',
+      'Programming Language :: Python :: 2.7',
     ],
-    keywords='',
+    keywords='recommender recommendation system',
     packages=find_packages(exclude=['docs', 'tests*']),
     include_package_data=True,
     ext_modules = ext_modules,

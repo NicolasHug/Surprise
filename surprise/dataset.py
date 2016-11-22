@@ -11,7 +11,7 @@ are available:
 
 Built-in datasets can all be loaded (or downloaded if you haven't already)
 using the :meth:`Dataset.load_builtin` method. For each built-in dataset,
-Recsys also provide predefined :class:`readers <Reader>` which are useful if
+Surprise also provide predefined :class:`readers <Reader>` which are useful if
 you want to use a custom dataset that has the same format as a built-in one.
 
 Summary:
@@ -48,8 +48,8 @@ from .six import iteritems
 
 
 # directory where builtin datasets are stored. For now it's in the home
-# directory under the .recsys_data. May be ask user to define it?
-DATASETS_DIR = os.path.expanduser('~') + '/.recsys_data/'
+# directory under the .surprise_data. May be ask user to define it?
+DATASETS_DIR = os.path.expanduser('~') + '/.surprise_data/'
 
 # a builtin dataset has
 # - an url (where to download it)
@@ -458,7 +458,7 @@ class Trainset:
     """A trainset contains all useful data that constitutes a training set.
 
     It is used by the :meth:`train()
-    <recsys.prediction_algorithms.algo_base.AlgoBase.train>` method of every
+    <surprise.prediction_algorithms.algo_base.AlgoBase.train>` method of every
     prediction algorithm. You should not try to built such an object on your
     own but rather use the :meth:`Dataset.folds` method or the
     :meth:`DatasetAutoFolds.build_full_trainset` method.

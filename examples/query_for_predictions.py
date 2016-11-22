@@ -6,9 +6,9 @@ built/specified) and how to query for specific predictions.
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 
-from recsys import KNNBasic
-from recsys import Dataset
-from recsys import evaluate
+from surprise import KNNBasic
+from surprise import Dataset
+from surprise import evaluate
 
 # Load the movielens-100k dataset and split it into 3 folds for
 # cross-validation.

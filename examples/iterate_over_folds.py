@@ -6,9 +6,9 @@ the evaluate() function.
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 
-from recsys import BaselineOnly
-from recsys import Dataset
-from recsys import accuracy
+from surprise import BaselineOnly
+from surprise import Dataset
+from surprise import accuracy
 
 # Load the movielens-100k dataset and split it into 3 folds for
 # cross-validation.

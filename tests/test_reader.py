@@ -7,7 +7,7 @@ from __future__ import (absolute_import, division, print_function,
 
 import pytest
 
-from recsys import Reader
+from surprise import Reader
 
 
 def test_params():

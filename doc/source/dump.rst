@@ -3,5 +3,5 @@
 dump module
 ===============
 
-.. automodule:: recsys.dump
+.. automodule:: surprise.dump
     :members:

@@ -1,6 +1,6 @@
 """
-The :mod:`similarities <recsys.similarities>` module includes tools to compute
-similarity metrics between users or items. You may need to refer to the
+The :mod:`similarities <surprise.similarities>` module includes tools to
+compute similarity metrics between users or items. You may need to refer to the
 :ref:`notation_standards` page. See also the
 :ref:`similarity_measures_configuration` section of the User Guide.
 

@@ -3,7 +3,7 @@
 How to build you own prediction algorithm
 =========================================
 
-This page describes how to build a custom prediction algorithm using RecSys.
+This page describes how to build a custom prediction algorithm using Surprise.
 
 The basics
 ~~~~~~~~~~
@@ -12,10 +12,10 @@ Want to get your hands dirty? Cool.
 
 Creating your own prediction algorithm is pretty simple: an algorithm is
 nothing but a class derived from :class:`AlgoBase
-<recsys.prediction_algorithms.algo_base.AlgoBase>` that has an ``estimate``
+<surprise.prediction_algorithms.algo_base.AlgoBase>` that has an ``estimate``
 method.  This is the method that is called by the :meth:`predict()
-<recsys.prediction_algorithms.algo_base.AlgoBase.predict>` method. It takes in
-an **inner** user id, an **inner** item id (see :ref:`this note
+<surprise.prediction_algorithms.algo_base.AlgoBase.predict>` method. It takes
+in an **inner** user id, an **inner** item id (see :ref:`this note
 <raw_inner_note>`), and returns the estimated rating :math:`\hat{r}_{ui}`:
 
 .. literalinclude:: ../../examples/building_custom_algorithms/most_basic_algorithm.py
@@ -36,8 +36,8 @@ return a dictionary with given details: ::
         return 3, details
 
 This dictionary will be stored in the :class:`prediction
-<recsys.prediction_algorithms.predictions.Prediction>` as the ``details`` field and
-can be used for later analysis.
+<surprise.prediction_algorithms.predictions.Prediction>` as the ``details``
+field and can be used for later analysis.
 
 
 
@@ -56,19 +56,19 @@ be done by defining the ``train`` method:
 
 
 The ``train`` method is called by the :func:`evaluate
-<recsys.evaluate.evaluate>` function at each fold of a cross-validation
+<surprise.evaluate.evaluate>` function at each fold of a cross-validation
 process, (but you can also :ref:`call it yourself <iterate_over_folds>`).
 Before doing anything, you should call the base class :meth:`train()
-<recsys.prediction_algorithms.algo_base.AlgoBase.train>` method.
+<surprise.prediction_algorithms.algo_base.AlgoBase.train>` method.
 
 The ``trainset`` attribute
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Once the base class :meth:`train()
-<recsys.prediction_algorithms.algo_base.AlgoBase.train>` method has returned, all
-the info you need about the current training set (rating values, etc...) is
+<surprise.prediction_algorithms.algo_base.AlgoBase.train>` method has returned,
+all the info you need about the current training set (rating values, etc...) is
 stored in the ``self.trainset`` attribute. This is a :class:`Trainset
-<recsys.dataset.Trainset>` object that has many attributes and methods of
+<surprise.dataset.Trainset>` object that has many attributes and methods of
 interest for prediction.
 
 To illustrate its usage, let's make an algorithm that predicts an average
@@ -90,15 +90,16 @@ When the prediction is impossible
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 It's up to your algorithm to decide if it can or cannot yield a prediction. If
-the prediction is impossible, then you can raise the :class:`PredictionImpossible
-<recsys.prediction_algorithms.predictions.PredictionImpossible>` exception.
+the prediction is impossible, then you can raise the
+:class:`PredictionImpossible
+<surprise.prediction_algorithms.predictions.PredictionImpossible>` exception.
 You'll need to import it first): ::
 
-  from recsys import PredictionImpossible
+  from surprise import PredictionImpossible
 
 
 This exception will be caught by the :meth:`predict()
-<recsys.prediction_algorithms.algo_base.AlgoBase.predict>` method, and the
+<surprise.prediction_algorithms.algo_base.AlgoBase.predict>` method, and the
 estimation :math:`\hat{r}_{ui}` will be set to the global mean of all ratings
 :math:`\mu`.
 
@@ -111,10 +112,10 @@ need to accept ``bsl_options`` and ``sim_options`` as parmeters to the
 these parameters in the :ref:`prediction_algorithms` section.
 
 Methods :meth:`compute_baselines()
-<recsys.prediction_algorithms.algo_base.AlgoBase.compute_baselines>`   and
+<surprise.prediction_algorithms.algo_base.AlgoBase.compute_baselines>`   and
 :meth:`compute_similarities()
-<recsys.prediction_algorithms.algo_base.AlgoBase.compute_similarities>` can be
-called in the ``train`` method (or anywhere else).
+<surprise.prediction_algorithms.algo_base.AlgoBase.compute_similarities>` can
+be called in the ``train`` method (or anywhere else).
 
 .. literalinclude:: ../../examples/building_custom_algorithms/with_baselines_or_sim.py
     :caption: From file ``examples/building_custom_algorithms/.with_baselines_or_sim.py``
@@ -123,5 +124,5 @@ called in the ``train`` method (or anywhere else).
 
 
 Feel free to explore the prediction_algorithms package `source
-<https://github.com/NicolasHug/RecSys/tree/master/recsys/prediction_algorithms>`_
+<https://github.com/NicolasHug/Surprise/tree/master/surprise/prediction_algorithms>`_
 to get an idea of what can be done.

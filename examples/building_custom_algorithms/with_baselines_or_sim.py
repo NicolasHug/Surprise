@@ -6,10 +6,10 @@ to User Guide for more insight.
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 
-from recsys import AlgoBase
-from recsys import Dataset
-from recsys import evaluate
-from recsys import PredictionImpossible
+from surprise import AlgoBase
+from surprise import Dataset
+from surprise import evaluate
+from surprise import PredictionImpossible
 
 
 class MyOwnAlgorithm(AlgoBase):

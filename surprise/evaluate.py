@@ -9,8 +9,8 @@ import time
 import os
 
 import numpy as np
-from six import iteritems
-from six import itervalues
+from .six import iteritems
+from .six import itervalues
 
 from . import accuracy
 from .dump import dump
@@ -24,20 +24,20 @@ def evaluate(algo, data, measures=['rmse', 'mae'], with_dump=False,
     perform cross validation.
 
     Args:
-        algo(:obj:`AlgoBase <recsys.prediction_algorithms.bases.AlgoBase>`):
+        algo(:obj:`AlgoBase <surprise.prediction_algorithms.bases.AlgoBase>`):
             The algorithm to evaluate.
-        data(:obj:`Dataset <recsys.dataset.Dataset>`): The dataset on which to
-            evaluate the algorithm.
+        data(:obj:`Dataset <surprise.dataset.Dataset>`): The dataset on which
+            to evaluate the algorithm.
         measures(list of string): The performance measures to compute. Allowed
             names are function names as defined in the :mod:`accuracy
-            <recsys.accuracy>` module. Default is ``['rmse', 'mae']``.
+            <surprise.accuracy>` module. Default is ``['rmse', 'mae']``.
         with_dump(bool): If True, the predictions, the trainsets and the
             algorithm parameters will be dumped for later further analysis at
             each fold (see :ref:`User Guide <dumping>`).  The file names will
             be set as: ``'<date>-<algorithm name>-<fold number>'``.  Default is
             ``False``.
         dump_dir(str): The directory where to dump to files. Default is
-            ``'~/.recsys/dumps/'``.
+            ``'~/.surprise_data/dumps/'``.
         verbose(int): Level of verbosity. If 0, nothing is printed. If 1
             (default), accuracy measures for each folds are printed, with a
             final summary. If 2, every prediction is printed.
@@ -71,7 +71,7 @@ def evaluate(algo, data, measures=['rmse', 'mae'], with_dump=False,
         if with_dump:
 
             if dump_dir is None:
-                dump_dir = os.path.expanduser('~') + '/.recsys_data/dumps/'
+                dump_dir = os.path.expanduser('~') + '/.surprise_data/dumps/'
 
             if not os.path.exists(dump_dir):
                 os.makedirs(dump_dir)

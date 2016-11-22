@@ -1,5 +1,5 @@
 """
-The :mod:`recsys.prediction_algorithms.predictions` module defines the
+The :mod:`surprise.prediction_algorithms.predictions` module defines the
 :class:`Prediction` named tuple and the :class:`PredictionImpossible`
 exception.
 """

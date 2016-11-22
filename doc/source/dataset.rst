@@ -3,7 +3,7 @@
 dataset module
 ===================
 
-.. automodule:: recsys.dataset
+.. automodule:: surprise.dataset
     :members:
     :exclude-members: BuiltinDataset, read_ratings, DatasetUserFolds,
         parse_line

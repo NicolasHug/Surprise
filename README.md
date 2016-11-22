@@ -1,59 +1,62 @@
 [![GitHub
-version](https://badge.fury.io/gh/nicolashug%2Frecsys.svg)](https://nicolashug.github.io/RecSys/)
-[![Documentation Status](https://readthedocs.org/projects/recsys/badge/?version=latest)](http://recsys.readthedocs.io/en/latest/?badge=latest)
+version](https://badge.fury.io/gh/nicolashug%2Fsurprise.svg)](https://nicolashug.github.io/Surprise/)
+[![Documentation Status](https://readthedocs.org/projects/surprise/badge/?version=latest)](http://surprise.readthedocs.io/en/latest/?badge=latest)
 [![Build
-Status](https://travis-ci.org/NicolasHug/RecSys.svg?branch=master)](https://travis-ci.org/NicolasHug/RecSys)
+Status](https://travis-ci.org/NicolasHug/Surprise.svg?branch=master)](https://travis-ci.org/NicolasHug/Surprise)
 [![python_versions](https://img.shields.io/badge/python-2.7%2C%203.5-blue.svg)]
-(https://nicolashug.github.io/RecSys/)
-[![license](https://img.shields.io/badge/license-GPLv3-blue.svg)](https://github.com/NicolasHug/RecSys/blob/master/LICENSE.md)
+(https://nicolashug.github.io/Surprise/)
+[![license](https://img.shields.io/badge/license-GPLv3-blue.svg)](https://github.com/NicolasHug/Surprise/blob/master/LICENSE.md)
 
 
-RecSys
-======
+Surprise
+========
 
 Overview
 --------
 
-[RecSys](https://NicolasHug.github.io/RecSys/) is an open source Python library
+[Surprise](https://NicolasHug.github.io/Surprise/) is an open source Python library
 that provides with tools to build and evaluate the performance of many
 recommender system prediction algorithms. Its goal is to make life easy(-ier)
 for reseachers, teachers and students who want to play around with new
 recommender algorithms ideas and teach/learn more about recommender systems.
 
-[RecSys](https://NicolasHug.github.io/RecSys/) **was designed with the following
+[Surprise](https://NicolasHug.github.io/Surprise/) **was designed with the following
 purposes in mind**:
 
 - Give the user perfect control over his experiments. To this end, a strong
   emphasis is laid on
-  [documentation](http://recsys.readthedocs.io/en/latest/index.html), which we
+  [documentation](http://surprise.readthedocs.io/en/latest/index.html), which we
   have tried to make as clear and precise as possible by pointing out every
   details of the algorithms.
 - Alleviate the pain of [Dataset
-  handling](http://recsys.readthedocs.io/en/latest/getting_started.html#load-a-custom-dataset).
+  handling](http://surprise.readthedocs.io/en/latest/getting_started.html#load-a-custom-dataset).
   Users can use both *built-in* datasets
   ([Movielens](http://grouplens.org/datasets/movielens/),
   [Jester](http://eigentaste.berkeley.edu/dataset/)), and their own *custom* datasets.
 - Provide with various ready-to-use [prediction
-  algorithms](http://recsys.readthedocs.io/en/latest/prediction_algorithms_package.html) (Neighborhood approaches, SVD, SVD++...)
+  algorithms](http://surprise.readthedocs.io/en/latest/prediction_algorithms_package.html) (Neighborhood approaches, SVD, SVD++...)
 - Make it easy to implement [new algorithm
-  ideas](http://recsys.readthedocs.io/en/latest/building_custom_algo.html).
-- Provide with tools to [evaluate](http://recsys.readthedocs.io/en/latest/evaluate.html),
-  [analyse](http://nbviewer.jupyter.org/github/NicolasHug/RecSys/tree/master/examples/notebooks/KNNBasic_analysis.ipynb/)
+  ideas](http://surprise.readthedocs.io/en/latest/building_custom_algo.html).
+- Provide with tools to [evaluate](http://surprise.readthedocs.io/en/latest/evaluate.html),
+  [analyse](http://nbviewer.jupyter.org/github/NicolasHug/Surprise/tree/master/examples/notebooks/KNNBasic_analysis.ipynb/)
   and
-  [compare](http://nbviewer.jupyter.org/github/NicolasHug/RecSys/tree/master/examples/notebooks/Compare.ipynb/)
+  [compare](http://nbviewer.jupyter.org/github/NicolasHug/Surprise/tree/master/examples/notebooks/Compare.ipynb/)
   the algorithms performance. Cross-validation procedures can be run very easily.
+
+The name *SurPRISE* (roughly) stands for Simple Python RecommendatIon System
+Engine.
 
 Installation / Usage
 --------------------
 
 The easiest way is to use pip (you'll need [numpy](http://www.numpy.org/)):
 
-    $ pip install recsys
+    $ pip install surprise
 
 Or you can clone the repo and build the source (you'll need
 [Cython](http://cython.org/) and [numpy](http://www.numpy.org/)):
 
-    $ git clone https://github.com/NicolasHug/recsys.git
+    $ git clone https://github.com/NicolasHug/surprise.git
     $ python setup.py install
 
 Example
@@ -61,13 +64,13 @@ Example
 
 Here is a simple example showing how you can (down)load a dataset, split it for
 3-folds cross-validation, and compute the MAE and RMSE of the
-[SVD](http://recsys.readthedocs.io/en/latest/matrix_factorization.html#recsys.prediction_algorithms.matrix_factorization.SVD)
+[SVD](http://surprise.readthedocs.io/en/latest/matrix_factorization.html#surprise.prediction_algorithms.matrix_factorization.SVD)
 algorithm.
 
 ```python
-from recsys import SVD
-from recsys import Dataset
-from recsys import evaluate
+from surprise import SVD
+from surprise import Dataset
+from surprise import evaluate
 
 
 # Load the movielens-100k dataset (download it if needed),
@@ -102,18 +105,18 @@ All experiments are run on a laptop with Intel Core i3 1.7 GHz, 4Go Ram.
 
 |                 |  RMSE  |   MAE  | Time (s) |
 |-----------------|:------:|:------:|:--------:|
-| [NormalPredictor](http://recsys.readthedocs.io/en/latest/basic_algorithms.html#recsys.prediction_algorithms.random_pred.NormalPredictor) | 1.5228 | 1.2242 |     4    |
-| [BaselineOnly](http://recsys.readthedocs.io/en/latest/basic_algorithms.html#recsys.prediction_algorithms.baseline_only.BaselineOnly)    |  .9445 |  .7488 |    16    |
-| [KNNBasic](http://recsys.readthedocs.io/en/latest/knn_inspired.html#recsys.prediction_algorithms.knns.KNNBasic)        |  .9789 |  .7732 |    27    |
-| [KNNWithMeans](http://recsys.readthedocs.io/en/latest/knn_inspired.html#recsys.prediction_algorithms.knns.KNNWithMeans)    |  .9514 |  .7500 |    30    |
-| [KNNBaseline](http://recsys.readthedocs.io/en/latest/knn_inspired.html#recsys.prediction_algorithms.knns.KNNBaseline)     |  .9306 |  .7334 |    44    |
-| [SVD](http://recsys.readthedocs.io/en/latest/matrix_factorization.html#recsys.prediction_algorithms.matrix_factorization.SVD)             |  .9392 |  .7409 |    46    |
+| [NormalPredictor](http://surprise.readthedocs.io/en/latest/basic_algorithms.html#surprise.prediction_algorithms.random_pred.NormalPredictor) | 1.5228 | 1.2242 |     4    |
+| [BaselineOnly](http://surprise.readthedocs.io/en/latest/basic_algorithms.html#surprise.prediction_algorithms.baseline_only.BaselineOnly)    |  .9445 |  .7488 |    16    |
+| [KNNBasic](http://surprise.readthedocs.io/en/latest/knn_inspired.html#surprise.prediction_algorithms.knns.KNNBasic)        |  .9789 |  .7732 |    27    |
+| [KNNWithMeans](http://surprise.readthedocs.io/en/latest/knn_inspired.html#surprise.prediction_algorithms.knns.KNNWithMeans)    |  .9514 |  .7500 |    30    |
+| [KNNBaseline](http://surprise.readthedocs.io/en/latest/knn_inspired.html#surprise.prediction_algorithms.knns.KNNBaseline)     |  .9306 |  .7334 |    44    |
+| [SVD](http://surprise.readthedocs.io/en/latest/matrix_factorization.html#surprise.prediction_algorithms.matrix_factorization.SVD)             |  .9392 |  .7409 |    46    |
 
 Documentation, Getting Started
 ------------------------------
 
 The documentation with many other usage examples is [available
-online](http://recsys.readthedocs.io/en/latest/index.html) on ReadTheDocs.
+online](http://surprise.readthedocs.io/en/latest/index.html) on ReadTheDocs.
 
 License
 -------

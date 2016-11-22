@@ -3,6 +3,6 @@
 evaluate module
 ===============
 
-.. automodule:: recsys.evaluate
+.. automodule:: surprise.evaluate
     :members:
     :exclude-members: CaseInsensitiveDefaultDict

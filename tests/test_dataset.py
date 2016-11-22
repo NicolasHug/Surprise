@@ -8,8 +8,8 @@ import os
 
 import pytest
 
-from recsys import Dataset
-from recsys import Reader
+from surprise import Dataset
+from surprise import Reader
 
 
 reader = Reader(line_format='user item rating', sep=' ', skip_lines=3,

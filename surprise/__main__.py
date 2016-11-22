@@ -9,17 +9,17 @@ import argparse
 
 import numpy as np
 
-from recsys.prediction_algorithms import NormalPredictor
-from recsys.prediction_algorithms import BaselineOnly
-from recsys.prediction_algorithms import KNNBasic
-from recsys.prediction_algorithms import KNNBaseline
-from recsys.prediction_algorithms import KNNWithMeans
-from recsys.prediction_algorithms import SVD
-from recsys.prediction_algorithms import SVDpp
-import recsys.dataset as dataset
-from recsys.dataset import Dataset
-from recsys.evaluate import evaluate
-from recsys import __version__
+from surprise.prediction_algorithms import NormalPredictor
+from surprise.prediction_algorithms import BaselineOnly
+from surprise.prediction_algorithms import KNNBasic
+from surprise.prediction_algorithms import KNNBaseline
+from surprise.prediction_algorithms import KNNWithMeans
+from surprise.prediction_algorithms import SVD
+from surprise.prediction_algorithms import SVDpp
+import surprise.dataset as dataset
+from surprise.dataset import Dataset
+from surprise.evaluate import evaluate
+from surprise import __version__
 
 
 def main():
@@ -39,9 +39,9 @@ def main():
         'or a custom dataset, and you can choose to automatically split the ' +
         'dataset into folds, or manually specify train and test files. ' +
         'Please refer to the documentation page ' +
-        '(http://recsys.readthedocs.io/) for more details.',
+        '(http://surprise.readthedocs.io/) for more details.',
         epilog="""Example:\n
-        python -m recsys -algo SVD -params "{'n_epochs': 5, 'verbose': True}"
+        python -m surprise -algo SVD -params "{'n_epochs': 5, 'verbose': True}"
         -load-builtin ml-100k -n-folds 3""")
 
     algo_choices = {
@@ -128,7 +128,7 @@ def main():
                         default=None,
                         help='Where to dump the files. Ignored if ' +
                         'with-dump is not set. Default is ' +
-                        '~/.recsys_data/dumps.'
+                        '~/.surprise_data/dumps.'
                         )
 
     parser.add_argument('--clean', dest='clean', action='store_true',

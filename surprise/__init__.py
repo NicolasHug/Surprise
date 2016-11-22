@@ -20,4 +20,4 @@ __all__ = ['AlgoBase', 'NormalPredictor', 'BaselineOnly', 'KNNBasic',
            'KNNWithMeans', 'KNNBaseline', 'SVD', 'SVDpp',
            'PredictionImpossible', 'Dataset', 'Reader', 'evaluate', 'dump']
 
-__version__ = get_distribution('recsys').version
+__version__ = get_distribution('surprise').version

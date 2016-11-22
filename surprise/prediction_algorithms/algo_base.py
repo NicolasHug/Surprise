@@ -1,5 +1,5 @@
 """
-The :mod:`recsys.prediction_algorithms.bases` module defines the base class
+The :mod:`surprise.prediction_algorithms.bases` module defines the base class
 :class:`AlgoBase` from
 which every single prediction algorithm has to inherit.
 """
@@ -41,9 +41,9 @@ class AlgoBase:
         structures and set the self.trainset attribute.
 
         Args:
-            trainset(:obj:`Trainset <recsys.dataset.Trainset>`) : A training
+            trainset(:obj:`Trainset <surprise.dataset.Trainset>`) : A training
                 set, as returned by the :meth:`folds
-                <recsys.dataset.Dataset.folds>` method.
+                <surprise.dataset.Dataset.folds>` method.
         """
 
         self.trainset = trainset
@@ -70,7 +70,7 @@ class AlgoBase:
 
         Returns:
             A :obj:`Prediction\
-            <recsys.prediction_algorithms.predictions.Prediction>` object.
+            <surprise.prediction_algorithms.predictions.Prediction>` object.
         """
 
         # Convert raw ids to inner ids
@@ -114,13 +114,14 @@ class AlgoBase:
 
         Args:
             testset: A test set, as returned by the :meth:`folds
-                <recsys.dataset.Dataset.folds>` method.
+                <surprise.dataset.Dataset.folds>` method.
             verbose(bool): Whether to print details for each predictions.
                 Default is False.
 
         Returns:
             A list of :class:`Prediction\
-                <recsys.prediction_algorithms.predictions.Prediction>` objects.
+                <surprise.prediction_algorithms.predictions.Prediction>`
+                objects.
         """
 
         predictions = [self.predict(uid, iid, r, verbose=verbose)

@@ -3,7 +3,7 @@
 The predictions module
 ------------------------
 
-.. automodule:: recsys.prediction_algorithms.predictions
+.. automodule:: surprise.prediction_algorithms.predictions
     :members:
     :exclude-members: all_ratings, all_xs, all_ys
 

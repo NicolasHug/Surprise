@@ -1,28 +1,28 @@
-.. RecSys documentation master file, created by
+.. Surprise documentation master file, created by
    sphinx-quickstart on Tue Dec 29 20:08:18 2015.
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
 .. _index:
 
-Welcome to RecSys' documentation!
-=================================
+Welcome to Surprise' documentation!
+===================================
 
-`RecSys <https://nicolashug.github.io/RecSys/>`_ is an open source Python
+`Surprise <https://nicolashug.github.io/Surprise/>`_ is an open source Python
 library that provides with tools to build and evaluate the performance of many
 recommender system prediction algorithms. Its goal is to make life easy(-ier)
 for reseachers, teachers and students who want to play around with new
 recommender algorithms ideas and teach/learn more about recommender systems.
 
-If you're new to `RecSys <https://nicolashug.github.io/RecSys/>`_, we invite
+If you're new to `Surprise <https://nicolashug.github.io/Surprise/>`_, we invite
 you to take a look at the :ref:`getting_started` guide, where you'll find a
-series of tutorials illustrating all you can do with  `RecSys
-<https://nicolashug.github.io/RecSys/>`_.
+series of tutorials illustrating all you can do with  `Surprise
+<https://nicolashug.github.io/Surprise/>`_.
 
 Any kind of feedback/criticism would be greatly appreciated (software design,
 documentation, improvement ideas, spelling mistakes, etc...). Please feel free
 to contribute and send pull requests (see `GitHub page
-<https://github.com/NicolasHug/RecSys>`_)!
+<https://github.com/NicolasHug/Surprise>`_)!
 
 
 .. toctree::

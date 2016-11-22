@@ -8,13 +8,13 @@ if it were not built-in.
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 
-from recsys import BaselineOnly
-from recsys import Dataset
-from recsys import evaluate
-from recsys import Reader
+from surprise import BaselineOnly
+from surprise import Dataset
+from surprise import evaluate
+from surprise import Reader
 
 # path to dataset file
-file_path = '/home/nico/.recsys_data/ml-100k/ml-100k/u.data'  # change this
+file_path = '/home/nico/.surprise_data/ml-100k/ml-100k/u.data'  # change this
 
 # As we're loading a custom dataset, we need to define a reader. In the
 # movielens-100k dataset, each line has the following format:

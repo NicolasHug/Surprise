@@ -6,10 +6,10 @@ from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 import os
 
-from recsys import NormalPredictor
-from recsys.dataset import Dataset
-from recsys.dataset import Reader
-from recsys.evaluate import evaluate
+from surprise import NormalPredictor
+from surprise.dataset import Dataset
+from surprise.dataset import Reader
+from surprise.evaluate import evaluate
 
 
 def test_performances():

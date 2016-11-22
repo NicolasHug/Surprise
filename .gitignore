@@ -6,9 +6,9 @@ doc/build
 .ipynb_checkpoints/
 .cache/
 
-recsys.egg-info/
+surprise.egg-info/
 build
 dist/
-recsys/similarities.c
-recsys/prediction_algorithms/matrix_factorization.c
+surprise/similarities.c
+surprise/prediction_algorithms/matrix_factorization.c
 *.so

@@ -26,7 +26,7 @@ In the documentation, you will find the following notation:
 * :math:`\mu_i` : the mean of all ratings given to item :math:`i`.
 * :math:`N_i^k(u)` : the :math:`k` nearest neighbors of user :math:`u` that
   have rated item :math:`i`. This set is computed using a :mod:`similarity
-  metric <recsys.similarities>`.
+  metric <surprise.similarities>`.
 * :math:`N_u^k(i)` : the :math:`k` nearest neighbors of item :math:`i` that
   are rated by user :math:`u`. This set is computed using a :py:mod:`similarity
-  metric <recsys.similarities>`.
+  metric <surprise.similarities>`.

@@ -1,14 +1,14 @@
 """
-This module descibes the most basic usage of RecSys: you define a prediction
+This module descibes the most basic usage of surprise: you define a prediction
 algorithm, (down)load a dataset and evaluate the performances of the algorithm.
 """
 
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 
-from recsys import SVD
-from recsys import Dataset
-from recsys import evaluate
+from surprise import SVD
+from surprise import Dataset
+from surprise import evaluate
 
 
 # Load the movielens-100k dataset (download it if needed),

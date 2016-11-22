@@ -1,6 +1,7 @@
 CURRENT
 =======
 
+* Changed name from recsys to surprise
 * Improved printing of accuracy measures.
 * Added version number.
 * Rewrote the the __main__.py

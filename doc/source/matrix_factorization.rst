@@ -3,8 +3,8 @@
 Matrix Factorization-based algortihms
 -------------------------------------
 
-.. autoclass:: recsys.prediction_algorithms.matrix_factorization.SVD
+.. autoclass:: surprise.prediction_algorithms.matrix_factorization.SVD
     :show-inheritance:
 
-.. autoclass:: recsys.prediction_algorithms.matrix_factorization.SVDpp
+.. autoclass:: surprise.prediction_algorithms.matrix_factorization.SVDpp
     :show-inheritance:
