@@ -39,7 +39,7 @@ purposes in mind**:
 - Provide with tools to [evaluate](http://surprise.readthedocs.io/en/latest/evaluate.html),
   [analyse](http://nbviewer.jupyter.org/github/NicolasHug/Surprise/tree/master/examples/notebooks/KNNBasic_analysis.ipynb/)
   and
-  [compare](http://nbviewer.jupyter.org/github/NicolasHug/Surprise/tree/master/examples/notebooks/Compare.ipynb/)
+  [compare](http://nbviewer.jupyter.org/github/NicolasHug/Surprise/blob/master/examples/notebooks/Compare.ipynb)
   the algorithms performance. Cross-validation procedures can be run very easily.
 
 The name *SurPRISE* (roughly) stands for Simple Python RecommendatIon System
