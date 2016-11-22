@@ -1,5 +1,4 @@
-[![GitHub
-version](https://badge.fury.io/gh/nicolashug%2Fsurprise.svg)](https://nicolashug.github.io/Surprise/)
+[![GitHub version](https://badge.fury.io/gh/nicolashug%2FSurprise.svg)](https://badge.fury.io/gh/nicolashug%2FSurprise)
 [![Documentation Status](https://readthedocs.org/projects/surprise/badge/?version=latest)](http://surprise.readthedocs.io/en/latest/?badge=latest)
 [![Build
 Status](https://travis-ci.org/NicolasHug/Surprise.svg?branch=master)](https://travis-ci.org/NicolasHug/Surprise)
