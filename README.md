@@ -1,9 +1,7 @@
 [![GitHub version](https://badge.fury.io/gh/nicolashug%2FSurprise.svg)](https://badge.fury.io/gh/nicolashug%2FSurprise)
 [![Documentation Status](https://readthedocs.org/projects/surprise/badge/?version=latest)](http://surprise.readthedocs.io/en/latest/?badge=latest)
-[![Build
-Status](https://travis-ci.org/NicolasHug/Surprise.svg?branch=master)](https://travis-ci.org/NicolasHug/Surprise)
-[![python_versions](https://img.shields.io/badge/python-2.7%2C%203.5-blue.svg)]
-(https://nicolashug.github.io/Surprise/)
+[![Build Status](https://travis-ci.org/NicolasHug/Surprise.svg?branch=master)](https://travis-ci.org/NicolasHug/Surprise)
+[![python versions](https://img.shields.io/badge/python-2.7%2C%203.5-blue.svg)](https://nicolashug.github.io/Surprise/)
 [![license](https://img.shields.io/badge/license-GPLv3-blue.svg)](https://github.com/NicolasHug/Surprise/blob/master/LICENSE.md)
 
 
