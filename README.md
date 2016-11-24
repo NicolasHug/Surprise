@@ -118,8 +118,8 @@ online](http://surprise.readthedocs.io/en/latest/index.html) on ReadTheDocs.
 License
 -------
 
-This project is licensed under the GPLv3 license - see the LICENSE.md file for
-details.
+This project is licensed under the [GPLv3
+license](https://www.gnu.org/licenses/gpl-3.0.en.html).
 
 Acknowledgements:
 ----------------

@@ -12,3 +12,6 @@ dist/
 surprise/similarities.c
 surprise/prediction_algorithms/matrix_factorization.c
 *.so
+
+Gemfile.lock
+_site
