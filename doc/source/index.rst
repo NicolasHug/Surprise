@@ -14,10 +14,11 @@ recommender system prediction algorithms. Its goal is to make life easy(-ier)
 for reseachers, teachers and students who want to play around with new
 recommender algorithms ideas and teach/learn more about recommender systems.
 
-If you're new to `Surprise <https://nicolashug.github.io/Surprise/>`_, we invite
-you to take a look at the :ref:`getting_started` guide, where you'll find a
-series of tutorials illustrating all you can do with  `Surprise
-<https://nicolashug.github.io/Surprise/>`_.
+If you're new to `Surprise <https://nicolashug.github.io/Surprise/>`_, we
+invite you to take a look at the :ref:`getting_started` guide, where you'll
+find a series of tutorials illustrating all you can do with  `Surprise
+<https://nicolashug.github.io/Surprise/>`_. For installation guidelines, please
+refer to the `project page <https://nicolashug.github.io/Surprise/>`_.
 
 Any kind of feedback/criticism would be greatly appreciated (software design,
 documentation, improvement ideas, spelling mistakes, etc...). Please feel free
