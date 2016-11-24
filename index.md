@@ -9,8 +9,6 @@ title: Home
 Overview
 --------
 
-** TEST **
-
 [Surprise](https://NicolasHug.github.io/Surprise/) is an open source Python library
 that provides with tools to build and evaluate the performance of many
 recommender system prediction algorithms. Its goal is to make life easy(-ier)
