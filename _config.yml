@@ -1,0 +1,26 @@
+# Setup
+title: Surpise
+tagline: 'A simple recommender system library for Python.'
+description: 'A simple recommender system library for Python.'
+url: https://nicolashug.github.io/zob/
+baseurl: /
+
+author:
+  name: Nicolas Hug
+  github: https://github.com/nicolashug
+
+# Custom vars
+version: 1.0.0
+docs_url: 'http://surprise.readthedocs.io'
+github:
+  repo: 'https://github.com/NicolasHug/Surprise'
+
+# Build settings
+markdown: kramdown
+gems:
+  - jekyll-feed
+  - jekyll-seo-tag
+  - jekyll-gist
+exclude:
+  - Gemfile
+  - Gemfile.lock
