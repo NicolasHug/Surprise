@@ -1,7 +1,7 @@
 # Setup
 title: Surprise
-tagline: 'A simple recommender system library for Python.'
-description: 'A simple recommender system library for Python.'
+tagline: 'A simple recommender system library for Python 2.7 - 3.5.'
+description: 'A simple recommender system library for Python 2.7 - 3.5.'
 url: https://nicolashug.github.io/Surprise
 baseurl: /
 
