@@ -92,7 +92,6 @@ def evaluate(algo, data, measures=['rmse', 'mae'], with_dump=False,
         print('-' * 12)
         print('-' * 12)
 
-
     return performances
 
 
@@ -117,7 +116,7 @@ class CaseInsensitiveDefaultDict(defaultdict):
         # retrieve number of folds. Kind of ugly...
         n_folds = [len(values) for values in itervalues(self)][0]
 
-        row_format ='{:<8}' * (n_folds + 2)
+        row_format = '{:<8}' * (n_folds + 2)
         s = row_format.format(
             '',
             *['Fold {0}'.format(i + 1) for i in range(n_folds)] + ['Mean'])
