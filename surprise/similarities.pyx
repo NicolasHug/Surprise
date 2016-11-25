@@ -21,8 +21,8 @@ from __future__ import (absolute_import, division, print_function,
 cimport numpy as np
 import numpy as np
 
-from .six.moves import range
-from .six import iteritems
+from six.moves import range
+from six import iteritems
 
 def cosine(n_x, yr, min_support):
     """Compute the cosine similarity between all pairs of users (or items).

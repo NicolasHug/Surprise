@@ -41,10 +41,10 @@ import random
 
 import numpy as np
 
-from .six.moves import input
-from .six.moves.urllib.request import urlretrieve
-from .six.moves import range
-from .six import iteritems
+from six.moves import input
+from six.moves.urllib.request import urlretrieve
+from six.moves import range
+from six import iteritems
 
 
 # directory where builtin datasets are stored. For now it's in the home

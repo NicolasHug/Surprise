@@ -8,7 +8,7 @@ import numpy as np
 
 from .predictions import PredictionImpossible
 from .algo_base import AlgoBase
-from ..six import iteritems
+from six import iteritems
 
 
 # Important note: as soon as an algorithm uses a similarity measure, it should

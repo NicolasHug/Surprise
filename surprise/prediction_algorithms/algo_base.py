@@ -12,7 +12,7 @@ import numpy as np
 from .. import similarities as sims
 from .predictions import PredictionImpossible
 from .predictions import Prediction
-from ..six.moves import range
+from six.moves import range
 
 
 class AlgoBase:

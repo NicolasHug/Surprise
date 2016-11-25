@@ -10,7 +10,7 @@ import numpy as np
 cimport numpy as np
 
 from .algo_base import AlgoBase
-from ..six.moves import range
+from six.moves import range
 
 class SVD(AlgoBase):
     """The famous *SVD* algorithm, as popularized by `Simon Funk

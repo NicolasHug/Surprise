@@ -5,6 +5,8 @@ Module for testing the evaluate function.
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 import os
+import tempfile
+import shutil
 
 from surprise import NormalPredictor
 from surprise.dataset import Dataset
@@ -13,7 +15,7 @@ from surprise.evaluate import evaluate
 
 
 def test_performances():
-    """Test the returned dict."""
+    """Test the returned dict. Also do dumping."""
 
     current_dir = os.path.dirname(os.path.realpath(__file__))
     folds_files = [(current_dir + '/custom_train',
@@ -24,7 +26,11 @@ def test_performances():
     data = Dataset.load_from_folds(folds_files=folds_files, reader=reader)
 
     algo = NormalPredictor()
-    performances = evaluate(algo, data, measures=['RmSe', 'Mae'])
+    tmp_dir = tempfile.mkdtemp()  # create tmp dir
+    performances = evaluate(algo, data, measures=['RmSe', 'Mae'],
+                            with_dump=True, dump_dir=tmp_dir, verbose=2)
+    shutil.rmtree(tmp_dir)  # remove tmp dir
 
+    print(performances)
     assert performances['RMSE'] is performances['rmse']
     assert performances['MaE'] is performances['mae']

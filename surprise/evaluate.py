@@ -9,8 +9,8 @@ import time
 import os
 
 import numpy as np
-from .six import iteritems
-from .six import itervalues
+from six import iteritems
+from six import itervalues
 
 from . import accuracy
 from .dump import dump

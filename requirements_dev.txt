@@ -1,6 +1,7 @@
 # Requirements file for development
 numpy>=1.11.2
 Cython>=0.24.1
+six>=1.10.0
 pytest>=3.0.3
 sphinx
 sphinx_rtd_theme
