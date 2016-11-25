@@ -21,6 +21,6 @@ branches:
   - master
 
 after_success:
-    - if [[ $ENV == python=3.4* ]]; then
+    - if [[ $ENV == python=3.5* ]]; then
           coveralls;
       fi
