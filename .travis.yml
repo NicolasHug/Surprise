@@ -3,6 +3,9 @@ python:
   - "2.7"
   - "3.5"
 
+before_install:
+  - pip install coveralls
+
 # command to install dependencies
 # - "pip install 'numpy>=1.11.2' 'cython>=0.24.1' pytest"
 install:
