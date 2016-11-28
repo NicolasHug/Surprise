@@ -2,7 +2,7 @@
 title: Surprise
 tagline: 'A simple recommender system library for Python 2.7 - 3.5.'
 description: 'A simple recommender system library for Python 2.7 - 3.5.'
-url: https://nicolashug.github.io/Surprise
+url: http://surpriselib.com
 baseurl: /
 
 author:
