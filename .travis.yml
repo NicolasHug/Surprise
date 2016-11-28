@@ -5,7 +5,7 @@ python:
 
 before_install:
   - pip install coveralls
-  - pip install coverage
+  - pip install "coverage>=4.2"   
 
 # command to install dependencies
 # - "pip install 'numpy>=1.11.2' 'cython>=0.24.1' pytest"
@@ -15,7 +15,8 @@ install:
 
 # command to run tests
 script:
-  - coverage run --source surprise -m pytest
+  - pytest
+  #- coverage run --source surprise -m pytest
 
 # safelist
 branches:
