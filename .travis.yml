@@ -15,8 +15,8 @@ install:
 
 # command to run tests
 script:
-  #- pytest
-  - coverage run --source surprise -m pytest
+  - pytest
+    #- coverage run --source surprise -m pytest
 
 # safelist
 branches:
