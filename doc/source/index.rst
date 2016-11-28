@@ -8,11 +8,10 @@
 Welcome to Surprise' documentation!
 ===================================
 
-`Surprise <https://nicolashug.github.io/Surprise/>`_ is an open source Python
-library that provides with tools to build and evaluate the performance of many
-recommender system prediction algorithms. Its goal is to make life easy(-ier)
-for reseachers, teachers and students who want to play around with new
-recommender algorithms ideas and teach/learn more about recommender systems.
+`Surprise <https://nicolashug.github.io/Surprise/>`_  is an easy-to-use open
+source Python library for recommender systems. Its goal is to make life easier
+for reseachers who want to play around with new algorithms ideas, for teachers
+who want some teaching materials, and for students.
 
 If you're new to `Surprise <https://nicolashug.github.io/Surprise/>`_, we
 invite you to take a look at the :ref:`getting_started` guide, where you'll

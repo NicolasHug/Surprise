@@ -11,14 +11,13 @@ Surprise
 Overview
 --------
 
-[Surprise](https://NicolasHug.github.io/Surprise/) is an open source Python library
-that provides with tools to build and evaluate the performance of many
-recommender system prediction algorithms. Its goal is to make life easy(-ier)
-for reseachers, teachers and students who want to play around with new
-recommender algorithms ideas and teach/learn more about recommender systems.
+[Surprise](https://NicolasHug.github.io/Surprise/) is an easy-to-use open
+source Python library for recommender systems. Its goal is to make life easier
+for reseachers who want to play around with new algorithms ideas, for teachers
+who want some teaching materials, and for students.
 
-[Surprise](https://NicolasHug.github.io/Surprise/) **was designed with the following
-purposes in mind**:
+[Surprise](https://NicolasHug.github.io/Surprise/) **was designed with the
+following purposes in mind**:
 
 - Give the user perfect control over his experiments. To this end, a strong
   emphasis is laid on
