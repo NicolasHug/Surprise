@@ -1,0 +1,2 @@
+[report]
+omit = surprise/__main__.py

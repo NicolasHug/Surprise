@@ -15,3 +15,5 @@ surprise/prediction_algorithms/matrix_factorization.c
 
 Gemfile.lock
 _site
+
+.coverage

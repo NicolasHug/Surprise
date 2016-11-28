@@ -13,7 +13,7 @@ install:
   - "pip install ."
 
 # command to run tests
-script: pytest
+script: coverage run --source surprise -m pytest
 
 # safelist
 branches:
