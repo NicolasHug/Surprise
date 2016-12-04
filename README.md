@@ -1,7 +1,7 @@
 [![GitHub version](https://badge.fury.io/gh/nicolashug%2FSurprise.svg)](https://badge.fury.io/gh/nicolashug%2FSurprise)
 [![Documentation Status](https://readthedocs.org/projects/surprise/badge/?version=latest)](http://surprise.readthedocs.io/en/latest/?badge=latest)
 [![Build Status](https://travis-ci.org/NicolasHug/Surprise.svg?branch=master)](https://travis-ci.org/NicolasHug/Surprise)
-[![python versions](https://img.shields.io/badge/python-2.7%2C%203.5-blue.svg)](https://nicolashug.github.io/Surprise/)
+[![python versions](https://img.shields.io/badge/python-2.7%2C%203.5-blue.svg)](http://surpriselib.com)
 [![license](https://img.shields.io/badge/license-GPLv3-blue.svg)](https://github.com/NicolasHug/Surprise/blob/master/LICENSE.md)
 
 
@@ -11,12 +11,12 @@ Surprise
 Overview
 --------
 
-[Surprise](https://NicolasHug.github.io/Surprise/) is an easy-to-use open
+[Surprise](http://surpriselib.com) is an easy-to-use open
 source Python library for recommender systems. Its goal is to make life easier
 for reseachers who want to play around with new algorithms ideas, for teachers
 who want some teaching materials, and for students.
 
-[Surprise](https://NicolasHug.github.io/Surprise/) **was designed with the
+[Surprise](http://surpriselib.com) **was designed with the
 following purposes in mind**:
 
 - Give the user perfect control over his experiments. To this end, a strong

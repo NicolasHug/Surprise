@@ -8,16 +8,16 @@
 Welcome to Surprise' documentation!
 ===================================
 
-`Surprise <https://nicolashug.github.io/Surprise/>`_  is an easy-to-use open
+`Surprise <http://surpriselib.com>`_  is an easy-to-use open
 source Python library for recommender systems. Its goal is to make life easier
 for reseachers who want to play around with new algorithms ideas, for teachers
 who want some teaching materials, and for students.
 
-If you're new to `Surprise <https://nicolashug.github.io/Surprise/>`_, we
+If you're new to `Surprise <http://surpriselib.com>`_, we
 invite you to take a look at the :ref:`getting_started` guide, where you'll
 find a series of tutorials illustrating all you can do with  `Surprise
-<https://nicolashug.github.io/Surprise/>`_. For installation guidelines, please
-refer to the `project page <https://nicolashug.github.io/Surprise/>`_.
+<http://surpriselib.com>`_. For installation guidelines, please
+refer to the `project page <http://surpriselib.com>`_.
 
 Any kind of feedback/criticism would be greatly appreciated (software design,
 documentation, improvement ideas, spelling mistakes, etc...). Please feel free
