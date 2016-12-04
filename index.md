@@ -9,12 +9,12 @@ title: Home
 Overview
 --------
 
-[Surprise](https://NicolasHug.github.io/Surprise/) is an easy-to-use open
+[Surprise](http://surpriselib.com) is an easy-to-use open
 source Python library for recommender systems. Its goal is to make life easier
 for reseachers who want to play around with new algorithms ideas, for teachers
 who want some teaching materials, and for students.
 
-[Surprise](https://NicolasHug.github.io/Surprise/) **was designed with the
+[Surprise](http://surpriselib.com) **was designed with the
 following purposes in mind**:
 
 - Give the user perfect control over his experiments. To this end, a strong
@@ -130,3 +130,4 @@ Contributing
 Any kind of feedback/criticism would be greatly appreciated (software design,
 documentation, improvement ideas, spelling mistakes, etc...). Please feel free
 to contribute and send pull requests!
+
