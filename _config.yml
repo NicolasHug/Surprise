@@ -3,11 +3,12 @@ title: Surprise
 tagline: 'A simple recommender system library for Python 2.7 - 3.5.'
 description: 'A simple recommender system library for Python 2.7 - 3.5.'
 url: http://surpriselib.com
-baseurl: /
+baseurl:
 
 author:
   name: Nicolas Hug
   github: https://github.com/nicolashug
+  perso: http://nicolas-hug.com
 
 # Custom vars
 version: 1.0.0
@@ -21,6 +22,7 @@ gems:
   - jekyll-feed
   - jekyll-seo-tag
   - jekyll-gist
+  - jekyll-sitemap
 exclude:
   - Gemfile
   - Gemfile.lock
