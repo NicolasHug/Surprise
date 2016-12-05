@@ -3,12 +3,7 @@ python:
   - "2.7"
   - "3.5"
 
-before_install:
-  - pip install coveralls
-  - pip install "coverage>=4.2"   
-
 # command to install dependencies
-# - "pip install 'numpy>=1.11.2' 'cython>=0.24.1' pytest"
 install:
   - "pip install -r requirements_dev.txt"
   - "pip install ."
@@ -16,12 +11,8 @@ install:
 # command to run tests
 script:
   - pytest
-    #- coverage run --source surprise -m pytest
 
 # safelist
 branches:
   only:
   - master
-
-after_success:
-  - coveralls
