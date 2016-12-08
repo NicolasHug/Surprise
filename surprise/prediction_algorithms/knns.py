@@ -20,7 +20,7 @@ class SymmetricAlgo(AlgoBase):
     """This is an abstract class aimed to ease the use of symmetric algorithms.
 
     A symmetric algorithm is an algorithm that can can be based on users or on
-    items indiferently, e.g. all the algorithms in this module.
+    items indifferently, e.g. all the algorithms in this module.
 
     When the algo is user-based x denotes a user and y an item. Else, it's
     reversed.

@@ -239,9 +239,11 @@ class AlgoBase:
 
             args += [self.trainset.global_mean, bx, by, shrinkage]
 
-        print('Computing the {0} similarity matrix...'.format(name))
         try:
-            return construction_func[name](*args)
+            print('Computing the {0} similarity matrix...'.format(name))
+            sim = construction_func[name](*args)
+            print('Done computing similarity matrix.')
+            return sim
         except KeyError:
             raise NameError('Wrong sim name ' + name + '. Allowed values ' +
                             'are ' + ', '.join(construction_func.keys()) + '.')
