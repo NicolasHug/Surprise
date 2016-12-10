@@ -130,5 +130,15 @@ Contributing
 ------------
 
 Any kind of feedback/criticism would be greatly appreciated (software design,
-documentation, improvement ideas, spelling mistakes, etc...). Please feel free
+documentation, improvement ideas, spelling mistakes, etc...).
+
+Some other algorithms we would like to see implemented in
+[Surprise](http://surpriselib.com) are:
+
+- Probabilistic Matrix Factorization
+- Non negative matrix factorization
+- AutoRec
+- RBM for CF
+
+ Please feel free
 to contribute and send pull requests!
