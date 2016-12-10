@@ -10,8 +10,7 @@
     </div>
 
     <nav class="sidebar-nav">
-      <a class="sidebar-nav-item{% if page.url == site.baseurl %} active{%
-        endif %}" href="{{ site.url }}">Home</a>
+      <a class="sidebar-nav-item active" href="{{ site.url }}">Home</a>
 
       {% comment %}
         The code below dynamically generates a sidebar nav of pages with
@@ -29,7 +28,7 @@
 
       <a class="sidebar-nav-item" href="{{ site.docs_url}}">Documentation</a>
       <a class="sidebar-nav-item" href="{{ site.github.repo }}">GitHub project</a>
-      <p class="sidebar-nac-item">Maintained by <a href="{{ site.author.github }}">{{ site.author.name }}</a></p>
+      <p class="sidebar-nac-item">Maintained by <a href="{{ site.author.perso }}">{{ site.author.name }}</a></p>
     </nav>
 
     <p>Page built with <a href="https://jekyllrb.com/">Jekyll</a>
