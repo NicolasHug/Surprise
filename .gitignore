@@ -11,6 +11,7 @@ build
 dist/
 surprise/similarities.c
 surprise/prediction_algorithms/matrix_factorization.c
+surprise/prediction_algorithms/optimize_baselines.c
 *.so
 
 Gemfile.lock

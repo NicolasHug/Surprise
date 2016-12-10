@@ -7,12 +7,11 @@ which every single prediction algorithm has to inherit.
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 
-import numpy as np
-
 from .. import similarities as sims
 from .predictions import PredictionImpossible
 from .predictions import Prediction
-from six.moves import range
+from .optimize_baselines import baseline_als
+from .optimize_baselines import baseline_sgd
 
 
 class AlgoBase:
@@ -145,64 +144,19 @@ class AlgoBase:
         if self.bu is not None:
             return self.bu, self.bi
 
-        def optimize_sgd():
-            """Optimize biases using sgd"""
+        method = dict(als=baseline_als,
+                      sgd=baseline_sgd)
 
-            bu = np.zeros(self.trainset.n_users)
-            bi = np.zeros(self.trainset.n_items)
-
-            reg = self.bsl_options.get('reg', 0.02)
-            lr = self.bsl_options.get('learning_rate', 0.005)
-            n_epochs = self.bsl_options.get('n_epochs', 20)
-
-            for dummy in range(n_epochs):
-                for u, i, r in self.trainset.all_ratings():
-                    err = (r - (self.trainset.global_mean + bu[u] + bi[i]))
-                    bu[u] += lr * (err - reg * bu[u])
-                    bi[i] += lr * (err - reg * bi[i])
-
-            return bu, bi
-
-        def optimize_als():
-            """Alternatively optimize user biases and and item biases."""
-
-            # This piece of code is largely inspired by that of MyMediaLite:
-            # https://github.com/zenogantner/MyMediaLite/blob/master/src/MyMediaLite/RatingPrediction/UserItemBaseline.cs
-            # see also https://www.youtube.com/watch?v=gCaOa3W9kM0&t=32m55s
-            # (Alex Smola on RS, ML Class 10-701)
-
-            bu = np.zeros(self.trainset.n_users)
-            bi = np.zeros(self.trainset.n_items)
-
-            reg_u = self.bsl_options.get('reg_u', 15)
-            reg_i = self.bsl_options.get('reg_i', 10)
-            n_epochs = self.bsl_options.get('n_epochs', 10)
-
-            for dummy in range(n_epochs):
-                for i in self.trainset.all_items():
-                    devI = sum(r - self.trainset.global_mean -
-                               bu[u] for (u, r) in self.trainset.ir[i])
-                    bi[i] = devI / (reg_i + len(self.trainset.ir[i]))
-
-                for u in self.trainset.all_users():
-                    devU = sum(r - self.trainset.global_mean -
-                               bi[i] for (i, r) in self.trainset.ur[u])
-                    bu[u] = devU / (reg_u + len(self.trainset.ur[u]))
-
-            return bu, bi
-
-        optimize = dict(als=optimize_als,
-                        sgd=optimize_sgd)
-
-        method = self.bsl_options.get('method', 'als')
+        method_name = self.bsl_options.get('method', 'als')
 
         try:
-            print('Estimating biases using', method + '...')
-            self.bu, self.bi = optimize[method]()
+            print('Estimating biases using', method_name + '...')
+            self.bu, self.bi = method[method_name](self)
             return self.bu, self.bi
         except KeyError:
-            raise ValueError('invalid method ' + method + ' for baseline ' +
-                             'computation. Available methods are als, sgd.')
+            raise ValueError('Invalid method ' + method_name +
+                             ' for baseline computation.' +
+                             ' Available methods are als and sgd.')
 
     def compute_similarities(self):
         """Build the simlarity matrix.
