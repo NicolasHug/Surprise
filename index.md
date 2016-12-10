@@ -131,7 +131,7 @@ Any kind of feedback/criticism would be greatly appreciated (software design,
 documentation, improvement ideas, spelling mistakes, etc...).
 
 Some other algorithms we would like to see implemented in
-[Surprise](http://supriselib.com) are:
+[Surprise](http://surpriselib.com) are:
 
 - Probabilistic Matrix Factorization
 - Non negative matrix factorization
