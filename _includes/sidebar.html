@@ -28,9 +28,27 @@
 
       <a class="sidebar-nav-item" href="{{ site.docs_url}}">Documentation</a>
       <a class="sidebar-nav-item" href="{{ site.github.repo }}">GitHub project</a>
-      <p class="sidebar-nac-item">Maintained by <a href="{{ site.author.perso }}">{{ site.author.name }}</a></p>
+
+      <!-- Github Star button -->
+      <a class="github-button" href="https://github.com/NicolasHug/Surprise"
+        data-icon="octicon-star" data-style="mega"
+        data-count-href="/NicolasHug/Surprise/stargazers"
+        data-count-api="/repos/NicolasHug/Surprise#stargazers_count"
+        data-count-aria-label="# stargazers on GitHub" aria-label="Star
+        NicolasHug/Surprise on GitHub">Star</a>
+
+      <!-- Place this tag where you want the button to render. -->
+      <a class="github-button"
+        href="https://github.com/NicolasHug/Surprise/fork"
+        data-icon="octicon-repo-forked" data-style="mega"
+        data-count-href="/NicolasHug/Surprise/network"
+        data-count-api="/repos/NicolasHug/Surprise#forks_count"
+        data-count-aria-label="# forks on GitHub" aria-label="Fork
+        NicolasHug/Surprise on GitHub">Fork</a>
+
     </nav>
 
+    Maintained by <a href="{{ site.author.perso }}">{{ site.author.name }}</a>
     <p>Page built with <a href="https://jekyllrb.com/">Jekyll</a>
     and <a href="http://hyde.getpoole.com/">Hyde</a></p>
   </div>
