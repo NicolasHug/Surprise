@@ -1,5 +1,18 @@
-VERSION 1.0.0
+Current
 =======
+
+Enhancements
+------------
+* Added Probabilistic Matrix Factorization as an option SVD
+* Cythonized Baseline Computation
+
+Other
+-----
+* Changed license to BSD
+* Six is now a dependency
+
+VERSION 1.0.0
+=============
 
 Date: 22/11/16
 

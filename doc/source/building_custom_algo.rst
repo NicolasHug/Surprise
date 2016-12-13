@@ -37,7 +37,7 @@ return a dictionary with given details: ::
 
 This dictionary will be stored in the :class:`prediction
 <surprise.prediction_algorithms.predictions.Prediction>` as the ``details``
-field and can be used for later analysis.
+field and can be used :ref:`for later analysis <dumping>`.
 
 
 
@@ -80,10 +80,8 @@ rating for the item:
     :name: mean_rating_user_item.py
     :lines: 22-35
 
-Predicting the mean rating for an item would have been done in a similar
-fashion using the ``ir`` field. Note that it would have been a better idea to
-compute all the user means in the ``train`` method, thus avoiding the same
-computations multiple times.
+Note that it would have been a better idea to compute all the user means in the
+``train`` method, thus avoiding the same computations multiple times.
 
 
 When the prediction is impossible
