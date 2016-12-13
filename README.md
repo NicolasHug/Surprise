@@ -100,7 +100,7 @@ Benchmarks
 
 Here are the average RMSE, MAE and total execution time of various algorithms
 (with their default parameters) on a 5-folds cross-validation procedure. The
-dataset are the [Movielens 100k](http://grouplens.org/datasets/movielens/) 100k
+datasets are the [Movielens](http://grouplens.org/datasets/movielens/) 100k
 and 1M datasets.  All experiments are run on a laptop with Intel Core i3 1.7
 GHz, 4Go RAM.
 
