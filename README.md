@@ -31,11 +31,11 @@ following purposes in mind**:
   Users can use both *built-in* datasets
   ([Movielens](http://grouplens.org/datasets/movielens/),
   [Jester](http://eigentaste.berkeley.edu/dataset/)), and their own *custom* datasets.
-- Provide with various ready-to-use [prediction
+- Provide various ready-to-use [prediction
   algorithms](http://surprise.readthedocs.io/en/latest/prediction_algorithms_package.html) (Neighborhood approaches, SVD, SVD++...)
 - Make it easy to implement [new algorithm
   ideas](http://surprise.readthedocs.io/en/latest/building_custom_algo.html).
-- Provide with tools to [evaluate](http://surprise.readthedocs.io/en/latest/evaluate.html),
+- Provide tools to [evaluate](http://surprise.readthedocs.io/en/latest/evaluate.html),
   [analyse](http://nbviewer.jupyter.org/github/NicolasHug/Surprise/tree/master/examples/notebooks/KNNBasic_analysis.ipynb/)
   and
   [compare](http://nbviewer.jupyter.org/github/NicolasHug/Surprise/blob/master/examples/notebooks/Compare.ipynb)
