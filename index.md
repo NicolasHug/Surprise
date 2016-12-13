@@ -94,10 +94,13 @@ RMSE    0.9461  0.9436  0.9425  0.9441
 Benchmarks
 ----------
 
-The following table shows the average RMSE and MAE and total execution time of various algorithms on a 5-folds cross-validation procedure. The dataset is the [Movielens 100k](http://grouplens.org/datasets/movielens/) dataset.
-All experiments are run on a laptop with Intel Core i3 1.7 GHz, 4Go Ram.
+Here are the average RMSE, MAE and total execution time of various algorithms
+(with their default parameters) on a 5-folds cross-validation procedure. The
+datasets are the [Movielens](http://grouplens.org/datasets/movielens/) 100k
+and 1M datasets.  All experiments are run on a laptop with Intel Core i3 1.7
+GHz, 4Go RAM.
 
-|                 |  RMSE  |   MAE  | Time (s) |
+|  [Movielens 100k](http://grouplens.org/datasets/movielens/100k) |  RMSE  |   MAE  | Time (s) |
 |-----------------|:------:|:------:|:--------:|
 | [NormalPredictor](http://surprise.readthedocs.io/en/latest/basic_algorithms.html#surprise.prediction_algorithms.random_pred.NormalPredictor) | 1.5228 | 1.2242 |     4    |
 | [BaselineOnly](http://surprise.readthedocs.io/en/latest/basic_algorithms.html#surprise.prediction_algorithms.baseline_only.BaselineOnly)    |  .9445 |  .7488 |    5    |
@@ -105,6 +108,16 @@ All experiments are run on a laptop with Intel Core i3 1.7 GHz, 4Go Ram.
 | [KNNWithMeans](http://surprise.readthedocs.io/en/latest/knn_inspired.html#surprise.prediction_algorithms.knns.KNNWithMeans)    |  .9514 |  .7500 |    30    |
 | [KNNBaseline](http://surprise.readthedocs.io/en/latest/knn_inspired.html#surprise.prediction_algorithms.knns.KNNBaseline)     |  .9306 |  .7334 |    44    |
 | [SVD](http://surprise.readthedocs.io/en/latest/matrix_factorization.html#surprise.prediction_algorithms.matrix_factorization.SVD)             |  .9392 |  .7409 |    46    |
+
+
+|  [Movielens 1M](http://grouplens.org/datasets/movielens/1m) |  RMSE  |   MAE  | Time (min) |
+|-----------------|:------:|:------:|:--------:|
+| [NormalPredictor](http://surprise.readthedocs.io/en/latest/basic_algorithms.html#surprise.prediction_algorithms.random_pred.NormalPredictor) | 1.5037 | 1.2051 |     < 1    |
+| [BaselineOnly](http://surprise.readthedocs.io/en/latest/basic_algorithms.html#surprise.prediction_algorithms.baseline_only.BaselineOnly)    |  .9086 | .7194 |    < 1    |
+| [KNNBasic](http://surprise.readthedocs.io/en/latest/knn_inspired.html#surprise.prediction_algorithms.knns.KNNBasic)        |  .9207 |  .7250 |    22    |
+| [KNNWithMeans](http://surprise.readthedocs.io/en/latest/knn_inspired.html#surprise.prediction_algorithms.knns.KNNWithMeans)    |  .9292 |  .7386 |    22    |
+| [KNNBaseline](http://surprise.readthedocs.io/en/latest/knn_inspired.html#surprise.prediction_algorithms.knns.KNNBaseline)     |  .8949 | .7063 |    44    |
+| [SVD](http://surprise.readthedocs.io/en/latest/matrix_factorization.html#surprise.prediction_algorithms.matrix_factorization.SVD)             |  .8936 |  .7057 |    7    |
 
 Documentation, Getting Started
 ------------------------------
@@ -138,5 +151,5 @@ Some other algorithms we would like to see implemented in
 - AutoRec
 - RBM for CF
 
-Please feel free to contribute and send pull requests!
-
+ Please feel free
+to contribute and send pull requests!
