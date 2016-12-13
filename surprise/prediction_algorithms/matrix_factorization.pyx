@@ -15,7 +15,10 @@ from six.moves import range
 class SVD(AlgoBase):
     """The famous *SVD* algorithm, as popularized by `Simon Funk
     <http://sifter.org/~simon/journal/20061211.html>`_ during the Netflix
-    Prize.
+    Prize. When baselines are not used, this is equivalent to `Probabilistic
+    Matrix Factorization
+    <http://papers.nips.cc/paper/3208-probabilistic-matrix-factorization.pdf>`_
+    by Salakhutdinov and Mnih (see :ref:`note <unbiased_note>` below).
 
     The prediction :math:`\\hat{r}_{ui}` is set as:
 
@@ -60,10 +63,26 @@ class SVD(AlgoBase):
     kind of parameter (see below). By default, learning rates are set to
     ``0.005`` and regularization termes are set to ``0.02``.
 
+    .. _unbiased_note:
+
+    .. note::
+        You can choose to use an unbiased version of this algorithm, simply
+        predicting:
+
+        .. math::
+            \hat{r}_{ui} = q_i^Tp_u
+
+        This is equivalent to `Probabilistic Matrix Factorization
+        <http://papers.nips.cc/paper/3208-probabilistic-matrix-factorization.pdf>`_
+        and can be achieved by setting the ``biased`` parameter to ``False``.
+
+
     Args:
         n_factors: The number of factors. Default is ``100``.
         n_epochs: The number of iteration of the SGD procedure. Default is
             ``20``.
+        biased(bool): Whether to use baselines (or biases). See :ref:`note
+            <unbiased_note>` above.  Default is ``True``.
         lr_all: The learning rate for all parameters. Default is ``0.005``.
         reg_all: The regularization term for all parameters. Default is
             ``0.02``.
@@ -85,12 +104,14 @@ class SVD(AlgoBase):
             over ``reg_all`` if set. Default is ``None``.
     """
 
-    def __init__(self, n_factors=100, n_epochs=20, lr_all=.005, reg_all=.02,
-                 lr_bu=None, lr_bi=None, lr_pu=None, lr_qi=None,
-                 reg_bu=None, reg_bi=None, reg_pu=None, reg_qi=None, verbose=False):
+    def __init__(self, n_factors=100, n_epochs=20, biased=True, lr_all=.005,
+                 reg_all=.02, lr_bu=None, lr_bi=None, lr_pu=None, lr_qi=None,
+                 reg_bu=None, reg_bi=None, reg_pu=None, reg_qi=None,
+                 verbose=False):
 
         self.n_factors = n_factors
         self.n_epochs = n_epochs
+        self.biased = biased
         self.lr_bu = lr_bu if lr_bu is not None else lr_all
         self.lr_bi = lr_bi if lr_bi is not None else lr_all
         self.lr_pu = lr_pu if lr_pu is not None else lr_all
@@ -175,6 +196,9 @@ class SVD(AlgoBase):
         cdef double puf = 0
         cdef double qif = 0
 
+        if not self.biased:
+            global_mean = 0
+
         for current_epoch in range(self.n_epochs):
             if self.verbose:
                 print(" Processing epoch {}".format(current_epoch))
@@ -187,8 +211,9 @@ class SVD(AlgoBase):
                 err = r - (global_mean + bu[u] + bi[i] + dot)
 
                 # update biases
-                bu[u] += lr_bu * (err - reg_bu * bu[u])
-                bi[i] += lr_bi * (err - reg_bi * bi[i])
+                if self.biased:
+                    bu[u] += lr_bu * (err - reg_bu * bu[u])
+                    bi[i] += lr_bi * (err - reg_bi * bi[i])
 
                 # update factors
                 for f in range(self.n_factors):
@@ -205,7 +230,7 @@ class SVD(AlgoBase):
     def estimate(self, u, i):
         # Should we cythonize this as well?
 
-        est = self.trainset.global_mean
+        est = self.trainset.global_mean if self.biased else 0
 
         if self.trainset.knows_user(u):
             est += self.bu[u]
