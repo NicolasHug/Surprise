@@ -3,6 +3,7 @@ Current
 
 Enhancements
 ------------
+* Added SlopeOne algorithm.
 * Added Probabilistic Matrix Factorization as an option SVD
 * Cythonized Baseline Computation
 
