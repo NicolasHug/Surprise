@@ -142,6 +142,7 @@ GHz, 4Go RAM.
 | [KNNBaseline](http://surprise.readthedocs.io/en/latest/knn_inspired.html#surprise.prediction_algorithms.knns.KNNBaseline)     |  .9306 |  .7334 |    44    |
 | [SVD](http://surprise.readthedocs.io/en/latest/matrix_factorization.html#surprise.prediction_algorithms.matrix_factorization.SVD)             |  .9392 |  .7409 |    46    |
 | [SVD++](http://surprise.readthedocs.io/en/latest/matrix_factorization.html#surprise.prediction_algorithms.matrix_factorization.SVDpp)             |  .9200 |  .7253 |    31min    |
+| [Slope One](http://surprise.readthedocs.io/en/latest/slope_one.html#surprise.prediction_algorithms.slope_one.SlopeOne)             |  .9454 |  .7430 |    25    |
 
 
 |  [Movielens 1M](http://grouplens.org/datasets/movielens/1m) |  RMSE  |   MAE  | Time (min) |
@@ -152,6 +153,8 @@ GHz, 4Go RAM.
 | [KNNWithMeans](http://surprise.readthedocs.io/en/latest/knn_inspired.html#surprise.prediction_algorithms.knns.KNNWithMeans)    |  .9292 |  .7386 |    22    |
 | [KNNBaseline](http://surprise.readthedocs.io/en/latest/knn_inspired.html#surprise.prediction_algorithms.knns.KNNBaseline)     |  .8949 | .7063 |    44    |
 | [SVD](http://surprise.readthedocs.io/en/latest/matrix_factorization.html#surprise.prediction_algorithms.matrix_factorization.SVD)             |  .8936 |  .7057 |    7    |
+| [Slope One](http://surprise.readthedocs.io/en/latest/slope_one.html#surprise.prediction_algorithms.slope_one.SlopeOne)             |  .9065 |  .7144 |    8    |
+
 
 Documentation, Getting Started
 ------------------------------

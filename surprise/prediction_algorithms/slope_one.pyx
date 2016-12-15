@@ -97,6 +97,7 @@ class SlopeOne(AlgoBase):
         # i and j).
         Ri = [j for (j, _) in self.trainset.ur[u] if self.freq[i, j] > 0]
         est = self.user_mean[u]
-        est += sum(self.dev[i, j] for j in Ri) / len(Ri)
+        if Ri:
+            est += sum(self.dev[i, j] for j in Ri) / len(Ri)
 
         return est
