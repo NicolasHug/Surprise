@@ -1,3 +1,7 @@
+"""
+the :mod:`slope_one` module includes the :class:`SlopeOne` algorithm.
+"""
+
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 
@@ -11,11 +15,37 @@ from .predictions import PredictionImpossible
 
 
 class SlopeOne(AlgoBase):
+    """A simple yet accurate collaborative filtering algorithm.
+
+    This is a straighforward implementation of the `SlopeOne
+    <http://lemire.me/fr/documents/publications/lemiremaclachlan_sdm05.pdf>`_
+    algorithm by Lemire and Maclachlan.
+
+    The prediction :math:`\\hat{r}_{ui}` is set as:
+
+    .. math::
+        \hat{r}_{ui} = \\mu_u + \\frac{1}{
+        |R_i(u)|}
+        \\sum\\limits_{j \in R_i(u)} \\text{dev}(i, j).
+
+    where :math:`R_i(u)` is the set of relevents items, i.e. the set of items
+    :math:`j` rated by :math:`u` that also have at least one common user with
+    :math:`i`. :math:`\\text{dev}_(i, j)` is defined as the average difference
+    between the ratings of :math:`i` and :math`j`:
+
+    .. math::
+        \\text{dev}(i, j) = \\frac{1}{
+        |U_{ij}|}\\sum\\limits_{u \in U_{ij}} r_{ui} - r_{uj}
+
+
+    For further details, please refer to the author's `paper
+    <http://lemire.me/fr/documents/publications/lemiremaclachlan_sdm05.pdf>`_.
+
+    """
 
     def __init__(self):
 
         AlgoBase.__init__(self)
-
 
     def train(self, trainset):
 
@@ -56,7 +86,6 @@ class SlopeOne(AlgoBase):
         # mean ratings of all users: mu_u
         self.user_mean = [np.mean([r for (_, r) in trainset.ur[u]])
                           for u in trainset.all_users()]
-
 
     def estimate(self, u, i):
 

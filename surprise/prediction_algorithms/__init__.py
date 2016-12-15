@@ -14,6 +14,7 @@ The available prediction algorithms are:
     knns.KNNBaseline
     matrix_factorization.SVD
     matrix_factorization.SVDpp
+    slope_one.SlopeOne
 """
 
 from .algo_base import AlgoBase
