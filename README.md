@@ -47,26 +47,27 @@ following purposes in mind**:
 At the moment, the available prediction algorithms are:
 
 - [NormalPredictor](http://surprise.readthedocs.io/en/latest/basic_algorithms.html#surprise.prediction_algorithms.random_pred.NormalPredictor):
-  An algorithm predicting a random rating based on the distribution of the
+  an algorithm predicting a random rating based on the distribution of the
   training set, which is assumed to be normal.
 - [BaselineOnly](http://surprise.readthedocs.io/en/latest/basic_algorithms.html#surprise.prediction_algorithms.baseline_only.BaselineOnly):
-  An agorithm predicting the baseline estimate for given user and item.
+  an agorithm predicting the baseline estimate for given user and item.
 - [KNNBasic](http://surprise.readthedocs.io/en/latest/knn_inspired.html#surprise.prediction_algorithms.knns.KNNBasic):
-  A basic collaborative filtering algorithm.
+  a basic collaborative filtering algorithm.
 - [KNNWithMeans](http://surprise.readthedocs.io/en/latest/knn_inspired.html#surprise.prediction_algorithms.knns.KNNWithMeans):
-  A basic collaborative filtering algorithm, taking into account the mean
+  a basic collaborative filtering algorithm, taking into account the mean
   ratings of each user.
 - [KNNBaseline](http://surprise.readthedocs.io/en/latest/knn_inspired.html#surprise.prediction_algorithms.knns.KNNBaseline):
-  A basic collaborative filtering algorithm taking into account a baseline
+  a basic collaborative filtering algorithm taking into account a baseline
   rating.
 - [SVD](http://surprise.readthedocs.io/en/latest/matrix_factorization.html#surprise.prediction_algorithms.matrix_factorization.SVD)
   and
   [PMF](http://surprise.readthedocs.io/en/latest/matrix_factorization.html#unbiased-note):
-  The famous SVD algorithm, as popularized by Simon Funk during the Netflix
+  the famous SVD algorithm, as popularized by Simon Funk during the Netflix
   Prize. The unbiased version is equivalent to Probabilistic Matrix
   Factorization.
 - [SVD++](http://surprise.readthedocs.io/en/latest/matrix_factorization.html#surprise.prediction_algorithms.matrix_factorization.SVDpp):
-  An extension of SVD taking into account implicite ratings.
+  an extension of SVD taking into account implicite ratings.
+- [Slope One](http://surprise.readthedocs.io/en/latest/slope_one.html#surprise.prediction_algorithms.slope_one.SlopeOne): a simple yet accurate collaborative filtering algorithm.
 
 
 The name *SurPRISE* (roughly :) ) stands for Simple Python RecommendatIon

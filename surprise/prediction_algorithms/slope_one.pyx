@@ -26,12 +26,12 @@ class SlopeOne(AlgoBase):
     .. math::
         \hat{r}_{ui} = \\mu_u + \\frac{1}{
         |R_i(u)|}
-        \\sum\\limits_{j \in R_i(u)} \\text{dev}(i, j).
+        \\sum\\limits_{j \in R_i(u)} \\text{dev}(i, j),
 
     where :math:`R_i(u)` is the set of relevents items, i.e. the set of items
     :math:`j` rated by :math:`u` that also have at least one common user with
     :math:`i`. :math:`\\text{dev}_(i, j)` is defined as the average difference
-    between the ratings of :math:`i` and :math`j`:
+    between the ratings of :math:`i` and those of :math:`j`:
 
     .. math::
         \\text{dev}(i, j) = \\frac{1}{
