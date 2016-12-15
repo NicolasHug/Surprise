@@ -28,7 +28,10 @@ following purposes in mind**:
   ([Movielens](http://grouplens.org/datasets/movielens/),
   [Jester](http://eigentaste.berkeley.edu/dataset/)), and their own *custom* datasets.
 - Provide various ready-to-use [prediction
-  algorithms](http://surprise.readthedocs.io/en/latest/prediction_algorithms_package.html) (Neighborhood approaches, SVD, SVD++...)
+  algorithms](http://surprise.readthedocs.io/en/latest/prediction_algorithms_package.html)
+  (see below) [similarity
+  measures](http://surprise.readthedocs.io/en/latest/similarities.html)
+  (cosine, MSD, pearson...).
 - Make it easy to implement [new algorithm
   ideas](http://surprise.readthedocs.io/en/latest/building_custom_algo.html).
 - Provide tools to [evaluate](http://surprise.readthedocs.io/en/latest/evaluate.html),
@@ -37,8 +40,33 @@ following purposes in mind**:
   [compare](http://nbviewer.jupyter.org/github/NicolasHug/Surprise/blob/master/examples/notebooks/Compare.ipynb)
   the algorithms performance. Cross-validation procedures can be run very easily.
 
-The name *SurPRISE* (roughly) stands for Simple Python RecommendatIon System
-Engine.
+At the moment, the available prediction algorithms are:
+
+- [NormalPredictor](http://surprise.readthedocs.io/en/latest/basic_algorithms.html#surprise.prediction_algorithms.random_pred.NormalPredictor):
+  An algorithm predicting a random rating based on the distribution of the
+  training set, which is assumed to be normal.
+- [BaselineOnly](http://surprise.readthedocs.io/en/latest/basic_algorithms.html#surprise.prediction_algorithms.baseline_only.BaselineOnly):
+  An agorithm predicting the baseline estimate for given user and item.
+- [KNNBasic](http://surprise.readthedocs.io/en/latest/knn_inspired.html#surprise.prediction_algorithms.knns.KNNBasic):
+  A basic collaborative filtering algorithm.
+- [KNNWithMeans](http://surprise.readthedocs.io/en/latest/knn_inspired.html#surprise.prediction_algorithms.knns.KNNWithMeans):
+  A basic collaborative filtering algorithm, taking into account the mean
+  ratings of each user.
+- [KNNBaseline](http://surprise.readthedocs.io/en/latest/knn_inspired.html#surprise.prediction_algorithms.knns.KNNBaseline):
+  A basic collaborative filtering algorithm taking into account a baseline
+  rating.
+- [SVD](http://surprise.readthedocs.io/en/latest/matrix_factorization.html#surprise.prediction_algorithms.matrix_factorization.SVD)
+  and
+  [PMF](http://surprise.readthedocs.io/en/latest/matrix_factorization.html#unbiased-note):
+  The famous SVD algorithm, as popularized by Simon Funk during the Netflix
+  Prize. The unbiased version is equivalent to Probabilistic Matrix
+  Factorization.
+- [SVD++](http://surprise.readthedocs.io/en/latest/matrix_factorization.html#surprise.prediction_algorithms.matrix_factorization.SVDpp):
+  An extension of SVD taking into account implicite ratings.
+
+
+The name *SurPRISE* (roughly :) ) stands for Simple Python RecommendatIon
+System Engine.
 
 Installation / Usage
 --------------------
@@ -138,19 +166,17 @@ Acknowledgements:
 - [Pierre-François Gimenez](https://github.com/PFgimenez), for his valuable
   insights on software design.
 
-Contributing
-------------
+Contributing, feedback
+----------------------
 
 Any kind of feedback/criticism would be greatly appreciated (software design,
 documentation, improvement ideas, spelling mistakes, etc...).
 
-Some other algorithms we would like to see implemented in
-[Surprise](http://surpriselib.com) are:
+If you'd like to see some features or algorithms implemented in
+[Surprise](http://surpriselib.com), please let us know! Some of the current
+ideas are:
 
-- Probabilistic Matrix Factorization
 - Non negative matrix factorization
-- AutoRec
 - RBM for CF
 
- Please feel free
-to contribute and send pull requests!
+Please feel free to contribute and send pull requests!
