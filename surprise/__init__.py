@@ -8,6 +8,7 @@ from .prediction_algorithms import KNNWithMeans
 from .prediction_algorithms import KNNBaseline
 from .prediction_algorithms import SVD
 from .prediction_algorithms import SVDpp
+from .prediction_algorithms import SlopeOne
 
 from .prediction_algorithms import PredictionImpossible
 
@@ -17,7 +18,7 @@ from .evaluate import evaluate
 from .dump import dump
 
 __all__ = ['AlgoBase', 'NormalPredictor', 'BaselineOnly', 'KNNBasic',
-           'KNNWithMeans', 'KNNBaseline', 'SVD', 'SVDpp',
+           'KNNWithMeans', 'KNNBaseline', 'SVD', 'SVDpp', 'SlopeOne',
            'PredictionImpossible', 'Dataset', 'Reader', 'evaluate', 'dump']
 
 __version__ = get_distribution('surprise').version

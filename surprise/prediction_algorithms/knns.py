@@ -5,10 +5,10 @@ the :mod:`knns` module includes some k-NN inspired algorithms.
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 import numpy as np
+from six import iteritems
 
 from .predictions import PredictionImpossible
 from .algo_base import AlgoBase
-from six import iteritems
 
 
 # Important note: as soon as an algorithm uses a similarity measure, it should

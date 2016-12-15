@@ -8,9 +8,9 @@ from __future__ import (absolute_import, division, print_function,
 
 import numpy as np
 cimport numpy as np
+from six.moves import range
 
 from .algo_base import AlgoBase
-from six.moves import range
 
 class SVD(AlgoBase):
     """The famous *SVD* algorithm, as popularized by `Simon Funk

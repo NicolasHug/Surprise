@@ -40,7 +40,6 @@ import itertools
 import random
 
 import numpy as np
-
 from six.moves import input
 from six.moves.urllib.request import urlretrieve
 from six.moves import range

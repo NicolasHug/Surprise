@@ -16,6 +16,7 @@ from surprise.prediction_algorithms import KNNBaseline
 from surprise.prediction_algorithms import KNNWithMeans
 from surprise.prediction_algorithms import SVD
 from surprise.prediction_algorithms import SVDpp
+from surprise.prediction_algorithms import SlopeOne
 import surprise.dataset as dataset
 from surprise.dataset import Dataset
 from surprise.evaluate import evaluate
@@ -52,6 +53,7 @@ def main():
         'KNNWithMeans': KNNWithMeans,
         'SVD': SVD,
         'SVDpp': SVDpp,
+        'SlopeOne': SlopeOne,
     }
 
     parser.add_argument('-algo', type=str,

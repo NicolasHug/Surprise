@@ -24,9 +24,10 @@ from .knns import KNNBaseline
 from .knns import KNNWithMeans
 from .matrix_factorization import SVD
 from .matrix_factorization import SVDpp
+from .slope_one import SlopeOne
 
 from .predictions import PredictionImpossible
 
 __all__ = ['AlgoBase', 'NormalPredictor', 'BaselineOnly', 'KNNBasic',
-           'KNNBaseline', 'KNNWithMeans', 'SVD', 'SVDpp',
+           'KNNBaseline', 'KNNWithMeans', 'SVD', 'SVDpp', 'SlopeOne',
            'PredictionImpossible']
