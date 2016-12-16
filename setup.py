@@ -46,6 +46,9 @@ extensions = [Extension('surprise.similarities',
               Extension('surprise.prediction_algorithms.slope_one',
                         ['surprise/prediction_algorithms/slope_one' + ext],
                         include_dirs=[np.get_include()]),
+              Extension('surprise.prediction_algorithms.co_clustering',
+                        ['surprise/prediction_algorithms/co_clustering' + ext],
+                        include_dirs=[np.get_include()]),
              ]
 
 if USE_CYTHON:
