@@ -26,6 +26,7 @@ from .knns import KNNWithMeans
 from .matrix_factorization import SVD
 from .matrix_factorization import SVDpp
 from .slope_one import SlopeOne
+from .co_clustering import CoClustering
 
 from .predictions import PredictionImpossible
 

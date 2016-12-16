@@ -17,6 +17,7 @@ from surprise.prediction_algorithms import KNNWithMeans
 from surprise.prediction_algorithms import SVD
 from surprise.prediction_algorithms import SVDpp
 from surprise.prediction_algorithms import SlopeOne
+from surprise.prediction_algorithms import CoClustering
 import surprise.dataset as dataset
 from surprise.dataset import Dataset
 from surprise.evaluate import evaluate
@@ -54,6 +55,7 @@ def main():
         'SVD': SVD,
         'SVDpp': SVDpp,
         'SlopeOne': SlopeOne,
+        'CoClustering': CoClustering,
     }
 
     parser.add_argument('-algo', type=str,

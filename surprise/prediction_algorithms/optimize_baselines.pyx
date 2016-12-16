@@ -28,14 +28,9 @@ def baseline_als(self):
     cdef np.ndarray[np.double_t] bu = np.zeros(self.trainset.n_users)
     cdef np.ndarray[np.double_t] bi = np.zeros(self.trainset.n_items)
 
-    cdef int u
-    cdef int i
-    cdef double r
-    cdef double err
+    cdef int u, i
+    cdef double r, err, dev_i, dev_u
     cdef double global_mean = self.trainset.global_mean
-    cdef double dev_i
-    cdef double dev_u
-
 
     cdef int n_epochs = self.bsl_options.get('n_epochs', 10)
     cdef double reg_u = self.bsl_options.get('reg_u', 15)
@@ -71,12 +66,9 @@ def baseline_sgd(self):
     cdef np.ndarray[np.double_t] bu = np.zeros(self.trainset.n_users)
     cdef np.ndarray[np.double_t] bi = np.zeros(self.trainset.n_items)
 
-    cdef int u
-    cdef int i
-    cdef double r
-    cdef double err
+    cdef int u, i
+    cdef double r, err
     cdef double global_mean = self.trainset.global_mean
-
 
     cdef int n_epochs = self.bsl_options.get('n_epochs', 20)
     cdef double reg = self.bsl_options.get('reg', 0.02)
