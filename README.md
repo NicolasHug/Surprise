@@ -68,6 +68,7 @@ At the moment, the available prediction algorithms are:
 - [SVD++](http://surprise.readthedocs.io/en/latest/matrix_factorization.html#surprise.prediction_algorithms.matrix_factorization.SVDpp):
   an extension of SVD taking into account implicite ratings.
 - [Slope One](http://surprise.readthedocs.io/en/latest/slope_one.html#surprise.prediction_algorithms.slope_one.SlopeOne): a simple yet accurate collaborative filtering algorithm.
+- [Co-clustering](http://surprise.readthedocs.io/en/latest/co_clustering.html#surprise.prediction_algorithms.co_clustering.CoClustering): a collaborative filtering algorithm based on co-clustering.
 
 
 The name *SurPRISE* (roughly :) ) stands for Simple Python RecommendatIon
@@ -129,9 +130,11 @@ Benchmarks
 
 Here are the average RMSE, MAE and total execution time of various algorithms
 (with their default parameters) on a 5-folds cross-validation procedure. The
-datasets are the [Movielens](http://grouplens.org/datasets/movielens/) 100k
-and 1M datasets.  All experiments are run on a laptop with Intel Core i3 1.7
-GHz, 4Go RAM.
+datasets are the [Movielens](http://grouplens.org/datasets/movielens/) 100k and
+1M datasets. The folds are the same for all the algorithms (the random seed is
+set to 0). All experiments are run on a small laptop with Intel Core i3 1.7
+GHz, 4Go RAM. The execution time is the *real* execution time, as returned by
+the GNU `time <http://man7.org/linux/man-pages/man1/time.1.html>`_ command.
 
 |  [Movielens 100k](http://grouplens.org/datasets/movielens/100k) |  RMSE  |   MAE  | Time (s) |
 |-----------------|:------:|:------:|:--------:|
@@ -143,6 +146,7 @@ GHz, 4Go RAM.
 | [SVD](http://surprise.readthedocs.io/en/latest/matrix_factorization.html#surprise.prediction_algorithms.matrix_factorization.SVD)             |  .9392 |  .7409 |    46    |
 | [SVD++](http://surprise.readthedocs.io/en/latest/matrix_factorization.html#surprise.prediction_algorithms.matrix_factorization.SVDpp)             |  .9200 |  .7253 |    31min    |
 | [Slope One](http://surprise.readthedocs.io/en/latest/slope_one.html#surprise.prediction_algorithms.slope_one.SlopeOne)             |  .9454 |  .7430 |    25    |
+| [Co clustering](http://surprise.readthedocs.io/en/latest/co_clustering.html#surprise.prediction_algorithms.co_clustering.CoClustering)             |  .9678 |  .7579 |    15    |
 
 
 |  [Movielens 1M](http://grouplens.org/datasets/movielens/1m) |  RMSE  |   MAE  | Time (min) |
@@ -154,6 +158,7 @@ GHz, 4Go RAM.
 | [KNNBaseline](http://surprise.readthedocs.io/en/latest/knn_inspired.html#surprise.prediction_algorithms.knns.KNNBaseline)     |  .8949 | .7063 |    44    |
 | [SVD](http://surprise.readthedocs.io/en/latest/matrix_factorization.html#surprise.prediction_algorithms.matrix_factorization.SVD)             |  .8936 |  .7057 |    7    |
 | [Slope One](http://surprise.readthedocs.io/en/latest/slope_one.html#surprise.prediction_algorithms.slope_one.SlopeOne)             |  .9065 |  .7144 |    8    |
+| [Co clustering](http://surprise.readthedocs.io/en/latest/co_clustering.html#surprise.prediction_algorithms.co_clustering.CoClustering)             |  .9155 |  .7174 |    2    |
 
 
 Documentation, Getting Started
