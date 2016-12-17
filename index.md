@@ -130,7 +130,7 @@ datasets are the [Movielens](http://grouplens.org/datasets/movielens/) 100k and
 1M datasets. The folds are the same for all the algorithms (the random seed is
 set to 0). All experiments are run on a small laptop with Intel Core i3 1.7
 GHz, 4Go RAM. The execution time is the *real* execution time, as returned by
-the GNU `time <http://man7.org/linux/man-pages/man1/time.1.html>`_ command.
+the GNU [time](http://man7.org/linux/man-pages/man1/time.1.html) command.
 
 |  [Movielens 100k](http://grouplens.org/datasets/movielens/100k) |  RMSE  |   MAE  | Time (s) |
 |-----------------|:------:|:------:|:--------:|
