@@ -29,8 +29,8 @@ def rmse(predictions, verbose=True):
     Args:
         predictions (:obj:`list` of :obj:`Prediction\
             <surprise.prediction_algorithms.predictions.Prediction>`):
-            A list of predictions, as returned by the :meth:`test
-            <surprise.prediction_algorithms.bases.AlgoBase.test>` method.
+            A list of predictions, as returned by the :meth:`test()
+            <surprise.prediction_algorithms.algo_base.AlgoBase.test>` method.
         verbose: If True, will print computed value. Default is ``True``.
 
 
@@ -64,8 +64,8 @@ def mae(predictions, verbose=True):
     Args:
         predictions (:obj:`list` of :obj:`Prediction\
             <surprise.prediction_algorithms.predictions.Prediction>`):
-            A list of predictions, as returned by the :meth:`test
-            <surprise.prediction_algorithms.bases.AlgoBase.test>` method.
+            A list of predictions, as returned by the :meth:`test()
+            <surprise.prediction_algorithms.algo_base.AlgoBase.test>` method.
         verbose: If True, will print computed value. Default is ``True``.
 
 
@@ -98,8 +98,8 @@ def fcp(predictions, verbose=True):
     Args:
         predictions (:obj:`list` of :obj:`Prediction\
             <surprise.prediction_algorithms.predictions.Prediction>`):
-            A list of predictions, as returned by the :meth:`test
-            <surprise.prediction_algorithms.bases.AlgoBase.test>` method.
+            A list of predictions, as returned by the :meth:`test()
+            <surprise.prediction_algorithms.algo_base.AlgoBase.test>` method.
         verbose: If True, will print computed value. Default is ``True``.
 
 

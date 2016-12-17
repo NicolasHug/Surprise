@@ -1,5 +1,5 @@
 """
-The :mod:`surprise.prediction_algorithms.bases` module defines the base class
+The :mod:`surprise.prediction_algorithms.algo_base` module defines the base class
 :class:`AlgoBase` from
 which every single prediction algorithm has to inherit.
 """
