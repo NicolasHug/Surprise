@@ -121,6 +121,12 @@ MAE     0.7475  0.7447  0.7425  0.7449
 RMSE    0.9461  0.9436  0.9425  0.9441
 ```
 
+Surprise can also be used from the command line, e.g.:
+
+```
+python -m surprise -algo SVD -params "{'n_factors': 10}"  -load-builtin ml-100k -n-folds 3
+```
+
 Benchmarks
 ----------
 
