@@ -18,3 +18,4 @@ formulas.
    knn_inspired
    matrix_factorization
    slope_one
+   co_clustering

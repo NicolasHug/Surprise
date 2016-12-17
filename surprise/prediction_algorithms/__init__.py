@@ -15,6 +15,7 @@ The available prediction algorithms are:
     matrix_factorization.SVD
     matrix_factorization.SVDpp
     slope_one.SlopeOne
+    co_clustering.CoClustering
 """
 
 from .algo_base import AlgoBase

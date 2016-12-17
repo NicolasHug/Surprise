@@ -201,7 +201,7 @@ class SVD(AlgoBase):
 
         for current_epoch in range(self.n_epochs):
             if self.verbose:
-                print(" Processing epoch {}".format(current_epoch))
+                print("Processing epoch {}".format(current_epoch))
             for u, i, r in trainset.all_ratings():
 
                 # compute current error

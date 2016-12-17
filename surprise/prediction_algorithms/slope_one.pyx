@@ -37,7 +37,6 @@ class SlopeOne(AlgoBase):
         \\text{dev}(i, j) = \\frac{1}{
         |U_{ij}|}\\sum\\limits_{u \in U_{ij}} r_{ui} - r_{uj}
 
-
     For further details, please refer to the author's `paper
     <http://lemire.me/fr/documents/publications/lemiremaclachlan_sdm05.pdf>`_.
 
