@@ -5,8 +5,8 @@ the :mod:`co_clustering` module includes the :class:`CoClustering` algorithm.
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 
+cimport numpy as np  # noqa
 import numpy as np
-cimport numpy as np
 
 from .algo_base import AlgoBase
 from .predictions import PredictionImpossible
@@ -144,7 +144,7 @@ class CoClustering(AlgoBase):
         self.avg_cocltr = avg_cocltr
 
     def compute_averages(self, np.ndarray[np.int_t] cltr_u,
-                               np.ndarray[np.int_t] cltr_i):
+                         np.ndarray[np.int_t] cltr_i):
         """Compute cluster averages.
 
         Args:
@@ -206,7 +206,6 @@ class CoClustering(AlgoBase):
                 avg_cltr_u[uc] = sum_cltr_u[uc] / count_cltr_u[uc]
             else:
                 avg_cltr_u[uc] = global_mean
-
 
         # ... for items
         for ic in range(self.n_cltr_i):

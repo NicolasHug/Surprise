@@ -24,7 +24,8 @@ def evaluate(algo, data, measures=['rmse', 'mae'], with_dump=False,
     perform cross validation.
 
     Args:
-        algo(:obj:`AlgoBase <surprise.prediction_algorithms.algo_base.AlgoBase>`):
+        algo(:obj:`AlgoBase \
+            <surprise.prediction_algorithms.algo_base.AlgoBase>`):
             The algorithm to evaluate.
         data(:obj:`Dataset <surprise.dataset.Dataset>`): The dataset on which
             to evaluate the algorithm.

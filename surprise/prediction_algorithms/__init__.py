@@ -33,4 +33,4 @@ from .predictions import PredictionImpossible
 
 __all__ = ['AlgoBase', 'NormalPredictor', 'BaselineOnly', 'KNNBasic',
            'KNNBaseline', 'KNNWithMeans', 'SVD', 'SVDpp', 'SlopeOne',
-           'PredictionImpossible']
+           'CoClustering', 'PredictionImpossible']

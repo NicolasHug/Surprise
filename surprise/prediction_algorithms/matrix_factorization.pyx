@@ -6,11 +6,12 @@ factorization.
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 
+cimport numpy as np  # noqa
 import numpy as np
-cimport numpy as np
 from six.moves import range
 
 from .algo_base import AlgoBase
+
 
 class SVD(AlgoBase):
     """The famous *SVD* algorithm, as popularized by `Simon Funk
@@ -164,22 +165,17 @@ class SVD(AlgoBase):
         # user and items factors by iterating over all factors...
 
         # user biases
-        cdef np.ndarray[np.double_t] bu = np.zeros(trainset.n_users, np.double)
+        cdef np.ndarray[np.double_t] bu
         # item biases
-        cdef np.ndarray[np.double_t] bi = np.zeros(trainset.n_items, np.double)
+        cdef np.ndarray[np.double_t] bi
         # user factors
-        cdef np.ndarray[np.double_t, ndim=2] pu = (
-            np.zeros((trainset.n_users, self.n_factors), np.double) + .1)
+        cdef np.ndarray[np.double_t, ndim=2] pu
         # item factors
-        cdef np.ndarray[np.double_t, ndim=2] qi = (
-            np.zeros((trainset.n_items, self.n_factors), np.double) + .1)
+        cdef np.ndarray[np.double_t, ndim=2] qi
 
-
-        cdef int u = 0
-        cdef int i = 0
-        cdef double r = 0
+        cdef int u, i, f
+        cdef double r, err, dot, puf, qif
         cdef double global_mean = self.trainset.global_mean
-        cdef double err = 0
 
         cdef double lr_bu = self.lr_bu
         cdef double lr_bi = self.lr_bi
@@ -191,10 +187,10 @@ class SVD(AlgoBase):
         cdef double reg_pu = self.reg_pu
         cdef double reg_qi = self.reg_qi
 
-        cdef int f = 0
-        cdef double dot = 0
-        cdef double puf = 0
-        cdef double qif = 0
+        bu = np.zeros(trainset.n_users, np.double)
+        bi = np.zeros(trainset.n_items, np.double)
+        pu = np.zeros((trainset.n_users, self.n_factors), np.double) + .1
+        qi = np.zeros((trainset.n_items, self.n_factors), np.double) + .1
 
         if not self.biased:
             global_mean = 0
@@ -205,7 +201,7 @@ class SVD(AlgoBase):
             for u, i, r in trainset.all_ratings():
 
                 # compute current error
-                dot = 0  # <q_i, p_u>
+                dot = 0  # <q_i, p_u>
                 for f in range(self.n_factors):
                     dot += qi[i, f] * pu[u, f]
                 err = r - (global_mean + bu[u] + bi[i] + dot)
@@ -243,6 +239,7 @@ class SVD(AlgoBase):
 
         return est
 
+
 class SVDpp(AlgoBase):
     """The *SVD++* algorithm, an extension of :class:`SVD` taking into account
     implicite ratings.
@@ -250,8 +247,8 @@ class SVDpp(AlgoBase):
     The prediction :math:`\\hat{r}_{ui}` is set as:
 
     .. math::
-        \hat{r}_{ui} = \mu + b_u + b_i + q_i^T\\left(p_u + |I_u|^{-\\frac{1}{2}}
-        \sum_{j \\in I_u}y_j\\right)
+        \hat{r}_{ui} = \mu + b_u + b_i + q_i^T\\left(p_u +
+        |I_u|^{-\\frac{1}{2}} \sum_{j \\in I_u}y_j\\right)
 
     Where the :math:`y_j` terms are a new set of item factors that capture
     implicite ratings.
@@ -336,28 +333,20 @@ class SVDpp(AlgoBase):
     def sgd(self, trainset):
 
         # user biases
-        cdef np.ndarray[np.double_t] bu = np.zeros(trainset.n_users, np.double)
+        cdef np.ndarray[np.double_t] bu
         # item biases
-        cdef np.ndarray[np.double_t] bi = np.zeros(trainset.n_items, np.double)
+        cdef np.ndarray[np.double_t] bi
         # user factors
-        cdef np.ndarray[np.double_t, ndim=2] pu = (
-            np.zeros((trainset.n_users, self.n_factors), np.double) + .1)
+        cdef np.ndarray[np.double_t, ndim=2] pu
         # item factors
-        cdef np.ndarray[np.double_t, ndim=2] qi = (
-            np.zeros((trainset.n_items, self.n_factors), np.double) + .1)
+        cdef np.ndarray[np.double_t, ndim=2] qi
         # item implicite factors
-        cdef np.ndarray[np.double_t, ndim=2] yj = (
-            np.zeros((trainset.n_items, self.n_factors), np.double) + .1)
+        cdef np.ndarray[np.double_t, ndim=2] yj
 
-
-        cdef int u = 0
-        cdef int i = 0
-        cdef int j = 0
-        cdef double r = 0
+        cdef int u, i, j, f
+        cdef double r, err, dot, puf, qif, sqrt_Iu, _
         cdef double global_mean = self.trainset.global_mean
-        cdef double err = 0
-        cdef np.ndarray[np.double_t] u_impl_fdb = (
-            np.zeros(self.n_factors, np.double))
+        cdef np.ndarray[np.double_t] u_impl_fdb
 
         cdef double lr_bu = self.lr_bu
         cdef double lr_bi = self.lr_bi
@@ -371,13 +360,12 @@ class SVDpp(AlgoBase):
         cdef double reg_qi = self.reg_qi
         cdef double reg_yj = self.reg_yj
 
-        cdef int f = 0
-        cdef double dot = 0
-        cdef double puf = 0
-        cdef double qif = 0
-        cdef double sqrt_Iu = 0
-        cdef double _ = 0
-
+        bu = np.zeros(trainset.n_users, np.double)
+        bi = np.zeros(trainset.n_items, np.double)
+        pu = np.zeros((trainset.n_users, self.n_factors), np.double) + .1
+        qi = np.zeros((trainset.n_items, self.n_factors), np.double) + .1
+        yj = np.zeros((trainset.n_items, self.n_factors), np.double) + .1
+        u_impl_fdb = np.zeros(self.n_factors, np.double)
 
         for current_epoch in range(self.n_epochs):
             if self.verbose:
@@ -395,7 +383,7 @@ class SVDpp(AlgoBase):
                         u_impl_fdb[f] += yj[j, f] / sqrt_Iu
 
                 # compute current error
-                dot = 0  # <q_i, (p_u + sum_{j in Iu} y_j / sqrt{Iu}>
+                dot = 0  # <q_i, (p_u + sum_{j in Iu} y_j / sqrt{Iu}>
                 for f in range(self.n_factors):
                     dot += qi[i, f] * (pu[u, f] + u_impl_fdb[f])
 
@@ -434,8 +422,8 @@ class SVDpp(AlgoBase):
 
         if self.trainset.knows_user(u) and self.trainset.knows_item(i):
             Iu = len(self.trainset.ur[u])  # nb of items rated by u
-            u_impl_feedback = (sum(self.yj[j] for (j, _) in self.trainset.ur[u]) /
-                               np.sqrt(Iu))
+            u_impl_feedback = (sum(self.yj[j] for (j, _)
+                               in self.trainset.ur[u]) / np.sqrt(Iu))
             est += np.dot(self.qi[i], self.pu[u] + u_impl_feedback)
 
         return est

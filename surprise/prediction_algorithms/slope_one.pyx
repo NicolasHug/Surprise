@@ -5,8 +5,8 @@ the :mod:`slope_one` module includes the :class:`SlopeOne` algorithm.
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 
+cimport numpy as np  # noqa
 import numpy as np
-cimport numpy as np
 from six.moves import range
 from six import iteritems
 
@@ -51,20 +51,16 @@ class SlopeOne(AlgoBase):
         n_items = trainset.n_items
 
         # Number of users having rated items i and j: |U_ij|
-        cdef np.ndarray[np.int_t, ndim=2] freq = (
-             np.zeros((trainset.n_items, trainset.n_items), np.int))
-
+        cdef np.ndarray[np.int_t, ndim=2] freq
         # Deviation from item i to item j: mean(r_ui - r_uj for u in U_ij)
-        cdef np.ndarray[np.double_t, ndim=2] dev = (
-             np.zeros((trainset.n_items, trainset.n_items), np.double))
+        cdef np.ndarray[np.double_t, ndim=2] dev
 
-        cdef int u = 0
-        cdef int i = 0
-        cdef int j = 0
-        cdef int r_ui = 0
-        cdef int r_uj = 0
+        cdef int u, i, j, r_ui, r_uj
 
         AlgoBase.train(self, trainset)
+
+        freq = np.zeros((trainset.n_items, trainset.n_items), np.int)
+        dev = np.zeros((trainset.n_items, trainset.n_items), np.double)
 
         # Computation of freq and dev arrays.
         for u, u_ratings in iteritems(trainset.ur):

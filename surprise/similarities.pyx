@@ -18,11 +18,12 @@ Available similarity measures:
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 
-cimport numpy as np
+cimport numpy as np  # noqa
 import numpy as np
 
 from six.moves import range
 from six import iteritems
+
 
 def cosine(n_x, yr, min_support):
     """Compute the cosine similarity between all pairs of users (or items).
@@ -54,23 +55,24 @@ def cosine(n_x, yr, min_support):
     """
 
     # sum (r_xy * r_x'y) for common ys
-    cdef np.ndarray[np.int_t, ndim = 2] prods     = np.zeros((n_x, n_x), np.int)
+    cdef np.ndarray[np.int_t, ndim=2] prods
     # number of common ys
-    cdef np.ndarray[np.int_t, ndim = 2] freq      = np.zeros((n_x, n_x), np.int)
+    cdef np.ndarray[np.int_t, ndim=2] freq
     # sum (r_xy ^ 2) for common ys
-    cdef np.ndarray[np.int_t, ndim = 2] sqi       = np.zeros((n_x, n_x), np.int)
+    cdef np.ndarray[np.int_t, ndim=2] sqi
     # sum (r_x'y ^ 2) for common ys
-    cdef np.ndarray[np.int_t, ndim = 2] sqj       = np.zeros((n_x, n_x), np.int)
+    cdef np.ndarray[np.int_t, ndim=2] sqj
     # the similarity matrix
-    cdef np.ndarray[np.double_t, ndim = 2] sim = np.zeros((n_x, n_x))
+    cdef np.ndarray[np.double_t, ndim=2] sim
 
-    # these variables need to be cdef'd so that array lookup can be fast
-    cdef int xi = 0
-    cdef int xj = 0
-    cdef int ri = 0
-    cdef int rj = 0
-
+    cdef int xi, xj, ri, rj
     cdef int min_sprt = min_support
+
+    prods = np.zeros((n_x, n_x), np.int)
+    freq = np.zeros((n_x, n_x), np.int)
+    sqi = np.zeros((n_x, n_x), np.int)
+    sqj = np.zeros((n_x, n_x), np.int)
+    sim = np.zeros((n_x, n_x), np.double)
 
     for y, y_ratings in iteritems(yr):
         for xi, ri in y_ratings:
@@ -92,6 +94,7 @@ def cosine(n_x, yr, min_support):
             sim[xj, xi] = sim[xi, xj]
 
     return sim
+
 
 def msd(n_x, yr, min_support):
     """Compute the Mean Squared Difference similarity between all pairs of
@@ -128,19 +131,18 @@ def msd(n_x, yr, min_support):
     """
 
     # sum (r_xy - r_x'y)**2 for common ys
-    cdef np.ndarray[np.double_t, ndim = 2] sq_diff = np.zeros((n_x, n_x), np.double)
+    cdef np.ndarray[np.double_t, ndim=2] sq_diff
     # number of common ys
-    cdef np.ndarray[np.int_t,    ndim = 2] freq   = np.zeros((n_x, n_x), np.int)
+    cdef np.ndarray[np.int_t, ndim=2] freq
     # the similarity matrix
-    cdef np.ndarray[np.double_t, ndim = 2] sim = np.zeros((n_x, n_x))
+    cdef np.ndarray[np.double_t, ndim=2] sim
 
-    # these variables need to be cdef'd so that array lookup can be fast
-    cdef int xi = 0
-    cdef int xj = 0
-    cdef int ri = 0
-    cdef int rj = 0
-
+    cdef int xi, xj, ri, rj
     cdef int min_sprt = min_support
+
+    sq_diff = np.zeros((n_x, n_x), np.double)
+    freq = np.zeros((n_x, n_x), np.int)
+    sim = np.zeros((n_x, n_x), np.double)
 
     for y, y_ratings in iteritems(yr):
         for xi, ri in y_ratings:
@@ -149,7 +151,7 @@ def msd(n_x, yr, min_support):
                 freq[xi, xj] += 1
 
     for xi in range(n_x):
-        sim[xi, xi] = 1 # completely arbitrary and useless anyway
+        sim[xi, xi] = 1  # completely arbitrary and useless anyway
         for xj in range(xi + 1, n_x):
             if freq[xi, xj] < min_sprt:
                 sim[xi, xj] == 0
@@ -171,20 +173,18 @@ def pearson(n_x, yr, min_support):
     and is defined as:
 
     .. math ::
-        \\text{pearson_sim}(u, v) = \\frac{
-        \\sum\\limits_{i \in I_{uv}} (r_{ui} -  \mu_u) \cdot (r_{vi} - \mu_{v})}
-        {\\sqrt{\\sum\\limits_{i \in I_{uv}} (r_{ui} -  \mu_u)^2} \cdot
-        \\sqrt{\\sum\\limits_{i \in I_{uv}} (r_{vi} -  \mu_{v})^2}
-        }
+        \\text{pearson_sim}(u, v) = \\frac{ \\sum\\limits_{i \in I_{uv}}
+        (r_{ui} -  \mu_u) \cdot (r_{vi} - \mu_{v})} {\\sqrt{\\sum\\limits_{i
+        \in I_{uv}} (r_{ui} -  \mu_u)^2} \cdot \\sqrt{\\sum\\limits_{i \in
+        I_{uv}} (r_{vi} -  \mu_{v})^2} }
 
     or
 
     .. math ::
-        \\text{pearson_sim}(i, j) = \\frac{
-        \\sum\\limits_{u \in U_{ij}} (r_{ui} -  \mu_i) \cdot (r_{uj} - \mu_{j})}
-        {\\sqrt{\\sum\\limits_{u \in U_{ij}} (r_{ui} -  \mu_i)^2} \cdot
-        \\sqrt{\\sum\\limits_{u \in U_{ij}} (r_{uj} -  \mu_{j})^2}
-        }
+        \\text{pearson_sim}(i, j) = \\frac{ \\sum\\limits_{u \in U_{ij}}
+        (r_{ui} -  \mu_i) \cdot (r_{uj} - \mu_{j})} {\\sqrt{\\sum\\limits_{u
+        \in U_{ij}} (r_{ui} -  \mu_i)^2} \cdot \\sqrt{\\sum\\limits_{u \in
+        U_{ij}} (r_{uj} -  \mu_{j})^2} }
 
     depending on the ``user_based`` field of ``sim_options`` (see
     :ref:`similarity_measures_configuration`).
@@ -199,27 +199,30 @@ def pearson(n_x, yr, min_support):
     """
 
     # number of common ys
-    cdef np.ndarray[np.int_t,    ndim = 2] freq   = np.zeros((n_x, n_x), np.int)
+    cdef np.ndarray[np.int_t, ndim=2] freq
     # sum (r_xy * r_x'y) for common ys
-    cdef np.ndarray[np.int_t,    ndim = 2] prods = np.zeros((n_x, n_x), np.int)
+    cdef np.ndarray[np.int_t, ndim=2] prods
     # sum (rxy ^ 2) for common ys
-    cdef np.ndarray[np.int_t,    ndim = 2] sqi = np.zeros((n_x, n_x), np.int)
+    cdef np.ndarray[np.int_t, ndim=2] sqi
     # sum (rx'y ^ 2) for common ys
-    cdef np.ndarray[np.int_t,    ndim = 2] sqj = np.zeros((n_x, n_x), np.int)
+    cdef np.ndarray[np.int_t, ndim=2] sqj
     # sum (rxy) for common ys
-    cdef np.ndarray[np.int_t,    ndim = 2] si = np.zeros((n_x, n_x), np.int)
+    cdef np.ndarray[np.int_t, ndim=2] si
     # sum (rx'y) for common ys
-    cdef np.ndarray[np.int_t,    ndim = 2] sj = np.zeros((n_x, n_x), np.int)
+    cdef np.ndarray[np.int_t, ndim=2] sj
     # the similarity matrix
-    cdef np.ndarray[np.double_t, ndim = 2] sim = np.zeros((n_x, n_x))
+    cdef np.ndarray[np.double_t, ndim=2] sim
 
-    # these variables need to be cdef'd so that array lookup can be fast
-    cdef int xi = 0
-    cdef int xj = 0
-    cdef int ri = 0
-    cdef int rj = 0
-
+    cdef int xi, xj, ri, rj
     cdef int min_sprt = min_support
+
+    freq = np.zeros((n_x, n_x), np.int)
+    prods = np.zeros((n_x, n_x), np.int)
+    sqi = np.zeros((n_x, n_x), np.int)
+    sqj = np.zeros((n_x, n_x), np.int)
+    si = np.zeros((n_x, n_x), np.int)
+    sj = np.zeros((n_x, n_x), np.int)
+    sim = np.zeros((n_x, n_x), np.double)
 
     for y, y_ratings in iteritems(yr):
         for xi, ri in y_ratings:
@@ -251,6 +254,7 @@ def pearson(n_x, yr, min_support):
 
     return sim
 
+
 def pearson_baseline(n_x, yr, min_support, global_mean, x_biases, y_biases,
                      shrinkage=100):
     """Compute the (shrunk) Pearson correlation coefficient between all pairs
@@ -263,17 +267,17 @@ def pearson_baseline(n_x, yr, min_support, global_mean, x_biases, y_biases,
 
     .. math::
         \\text{pearson_baseline_sim}(u, v) = \hat{\\rho}_{uv} = \\frac{
-        \\sum\\limits_{i \in I_{uv}} (r_{ui} -  b_{ui}) \cdot (r_{vi} - b_{vi})}
-        {\\sqrt{\\sum\\limits_{i \in I_{uv}} (r_{ui} -  b_{ui})^2} \cdot
-        \\sqrt{\\sum\\limits_{i \in I_{uv}} (r_{vi} -  b_{vi})^2}}
+            \\sum\\limits_{i \in I_{uv}} (r_{ui} -  b_{ui}) \cdot (r_{vi} -
+            b_{vi})} {\\sqrt{\\sum\\limits_{i \in I_{uv}} (r_{ui} -  b_{ui})^2}
+            \cdot \\sqrt{\\sum\\limits_{i \in I_{uv}} (r_{vi} -  b_{vi})^2}}
 
     or
 
     .. math::
         \\text{pearson_baseline_sim}(i, j) = \hat{\\rho}_{ij} = \\frac{
-        \\sum\\limits_{u \in U_{ij}} (r_{ui} -  b_{ui}) \cdot (r_{uj} - b_{uj})}
-        {\\sqrt{\\sum\\limits_{u \in U_{ij}} (r_{ui} -  b_{ui})^2} \cdot
-        \\sqrt{\\sum\\limits_{u \in U_{ij}} (r_{uj} -  b_{uj})^2}}
+            \\sum\\limits_{u \in U_{ij}} (r_{ui} -  b_{ui}) \cdot (r_{uj} -
+            b_{uj})} {\\sqrt{\\sum\\limits_{u \in U_{ij}} (r_{ui} -  b_{ui})^2}
+            \cdot \\sqrt{\\sum\\limits_{u \in U_{ij}} (r_{uj} -  b_{uj})^2}}
 
     The shrunk Pearson-baseline correlation coefficient is then defined as:
 
@@ -295,36 +299,36 @@ def pearson_baseline(n_x, yr, min_support, global_mean, x_biases, y_biases,
     """
 
     # number of common ys
-    cdef np.ndarray[np.int_t,    ndim = 2] freq   = np.zeros((n_x, n_x), np.int)
+    cdef np.ndarray[np.int_t, ndim=2] freq
     # sum (r_xy - b_xy) * (r_x'y - b_x'y) for common ys
-    cdef np.ndarray[np.double_t,    ndim = 2] prods = np.zeros((n_x, n_x))
+    cdef np.ndarray[np.double_t, ndim=2] prods
     # sum (r_xy - b_xy)**2 for common ys
-    cdef np.ndarray[np.double_t,    ndim = 2] sq_diff_i = np.zeros((n_x, n_x))
+    cdef np.ndarray[np.double_t, ndim=2] sq_diff_i
     # sum (r_x'y - b_x'y)**2 for common ys
-    cdef np.ndarray[np.double_t,    ndim = 2] sq_diff_j = np.zeros((n_x, n_x))
+    cdef np.ndarray[np.double_t, ndim=2] sq_diff_j
     # the similarity matrix
-    cdef np.ndarray[np.double_t, ndim = 2] sim = np.zeros((n_x, n_x))
+    cdef np.ndarray[np.double_t, ndim=2] sim
 
-    # copy arguments so that they can be cdef'd
-    cdef np.ndarray[np.double_t,    ndim = 1] x_biases_ = x_biases
-    cdef np.ndarray[np.double_t,    ndim = 1] y_biases_ = y_biases
+    cdef np.ndarray[np.double_t, ndim=1] x_biases_
+    cdef np.ndarray[np.double_t, ndim=1] y_biases_
+
+    cdef int xi, xj
+    cdef double ri, rj, diff_i, diff_j, partial_bias
+    cdef int min_sprt = min_support
     cdef double global_mean_ = global_mean
 
+    freq = np.zeros((n_x, n_x), np.int)
+    prods = np.zeros((n_x, n_x), np.double)
+    sq_diff_i = np.zeros((n_x, n_x), np.double)
+    sq_diff_j = np.zeros((n_x, n_x), np.double)
+    sim = np.zeros((n_x, n_x), np.double)
 
-    # these variables need to be cdef'd so that array lookup can be fast
-    cdef int xi = 0
-    cdef int xj = 0
-    cdef double ri = 0
-    cdef double rj = 0
-    cdef double diff_i = 0
-    cdef double diff_j = 0
-    cdef double partial_bias = 0
-
-    cdef min_sprt = min_support
+    x_biases_ = x_biases
+    y_biases_ = y_biases
 
     # Need this because of shrinkage. When pearson coeff is zero when support
     # is 1, so that's OK.
-    min_sprt = max(2, min_sprt) 
+    min_sprt = max(2, min_sprt)
 
     for y, y_ratings in iteritems(yr):
         partial_bias = global_mean_ + y_biases_[y]

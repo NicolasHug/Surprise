@@ -20,6 +20,7 @@ from surprise.prediction_algorithms import SlopeOne
 from surprise.prediction_algorithms import CoClustering
 import surprise.dataset as dataset
 from surprise.dataset import Dataset
+from surprise.dataset import Reader  # noqa
 from surprise.evaluate import evaluate
 from surprise import __version__
 
