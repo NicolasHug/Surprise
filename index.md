@@ -63,8 +63,8 @@ At the moment, the available prediction algorithms are:
   Factorization.
 - [SVD++](http://surprise.readthedocs.io/en/latest/matrix_factorization.html#surprise.prediction_algorithms.matrix_factorization.SVDpp):
   an extension of SVD taking into account implicite ratings.
-- [Slope One](http://surprise.readthedocs.io/en/latest/slope_one.html#surprise.prediction_algorithms.slope_one.SlopeOne): a simple yet accurate collaborative filtering algorithm.
-- [Co-clustering](http://surprise.readthedocs.io/en/latest/co_clustering.html#surprise.prediction_algorithms.co_clustering.CoClustering): a collaborative filtering algorithm based on co-clustering.
+- [Slope One](http://surprise.readthedocs.io/en/latest/slope_one.html#surprise.prediction_algorithms.slope_one.SlopeOne): a simple yet accurate collaborative filtering algorithm. (Available in latest version).
+- [Co-clustering](http://surprise.readthedocs.io/en/latest/co_clustering.html#surprise.prediction_algorithms.co_clustering.CoClustering): a collaborative filtering algorithm based on co-clustering. (Available in latest version).
 
 
 The name *SurPRISE* (roughly :) ) stands for Simple Python RecommendatIon
