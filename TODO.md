@@ -1,17 +1,25 @@
 TODO
 ====
 
+* Better document SlopeOne and CoClustering algorithms.
+* Make coclustering fully complient with paper's prediction
+* Make cleaner paper citations
+* Check out the yelp dataset
+* See if we could compute similarity on the fly (see issue #3)
+* use `expanduser` in all examples
+* correct note on raw/inner ids (strings or whaterver)
+
 Maybe, Maybe not
 ----------------
 
 * allow a back up algorithm  when prediction is impossible. Right now it's just
   the mean rating that is predicted. Maybe user would want to choose it.
-* Allow a 'biased' option in the SVD algo. If true, use baselines, if False,
-  don't. It should be pretty easy to do.
 
 Done:
 -----
 
+* Allow a 'biased' option in the SVD algo. If true, use baselines, if False,
+  don't. It should be pretty easy to do.
 * create option in __main__ to clean the .recsys directory. Actually, the
   __main__ module should be entirely reviewed.
 * when dumping, we should dump all the algorithm parameter. Use __dict__ ?

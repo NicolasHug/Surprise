@@ -196,6 +196,7 @@ If you'd like to see some features or algorithms implemented in
 ideas are:
 
 - Non negative matrix factorization
+- Bayesian PMF
 - RBM for CF
 
 Please feel free to contribute and send pull requests!
