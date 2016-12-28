@@ -195,4 +195,6 @@ ideas are:
 - Bayesian PMF
 - RBM for CF
 
-Please feel free to contribute and send pull requests!
+Please feel free to contribute (see
+[guidelines](https://github.com/NicolasHug/Surprise/blob/master/CONTRIBUTING.md))
+and send pull requests!
