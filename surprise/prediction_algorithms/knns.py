@@ -227,10 +227,8 @@ class KNNBaseline(SymmetricAlgo):
 
     depending on the ``user_based`` field of the ``sim_options`` parameter.
 
-    For details, see paper `Factor in the Neighbors: Scalable and Accurate
-    Collaborative Filtering
-    <http://courses.ischool.berkeley.edu/i290-dm/s11/SECURE/a1-koren.pdf>`_  by
-    Yehuda Koren.
+    This algorithm corresponds to formula (3), section 2.2 of
+    :cite:`Koren:2010`.
 
     Args:
         k(int): The (max) number of neighbors to take into account for

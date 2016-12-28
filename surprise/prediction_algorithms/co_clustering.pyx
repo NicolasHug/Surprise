@@ -15,10 +15,7 @@ from .predictions import PredictionImpossible
 class CoClustering(AlgoBase):
     """A collaborative filtering algorithm based on co-clustering.
 
-    This is a straighforward implementation of paper `A Scalable Collaborative
-    Filtering Framework based on Co-clustering
-    <http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.113.6458&rep=rep1&type=pdf>`_
-    by George and Merugu.
+    This is a straighforward implementation of :cite:`George:2005`.
 
     Basically, users and items are assigned some clusters :math:`C_u`,
     :math:`C_i`, and some co-clusters :math:`C_{ui}`.
@@ -35,8 +32,7 @@ class CoClustering(AlgoBase):
     :math:`i`'s cluster.
 
     Clusters are assigned using a straightforward optimization method, much
-    like k-means. More details can be found at the authors' `paper
-    <http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.113.6458&rep=rep1&type=pdf>`_
+    like k-means.
 
     Args:
        n_cltr_u(int): Number of user clusters. Default is ``3``.

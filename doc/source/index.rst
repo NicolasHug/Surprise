@@ -30,9 +30,9 @@ to contribute and send pull requests (see `GitHub page
    :hidden:
 
    getting_started
-   notation_standards
    prediction_algorithms
    building_custom_algo
+   notation_standards
 
 
 .. toctree::

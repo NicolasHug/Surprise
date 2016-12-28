@@ -17,9 +17,8 @@ from .predictions import PredictionImpossible
 class SlopeOne(AlgoBase):
     """A simple yet accurate collaborative filtering algorithm.
 
-    This is a straighforward implementation of the `SlopeOne
-    <http://lemire.me/fr/documents/publications/lemiremaclachlan_sdm05.pdf>`_
-    algorithm by Lemire and Maclachlan.
+    This is a straighforward implementation of the SlopeOne algorithm
+    :cite:`lemire2007a`.
 
     The prediction :math:`\\hat{r}_{ui}` is set as:
 
@@ -36,10 +35,6 @@ class SlopeOne(AlgoBase):
     .. math::
         \\text{dev}(i, j) = \\frac{1}{
         |U_{ij}|}\\sum\\limits_{u \in U_{ij}} r_{ui} - r_{uj}
-
-    For further details, please refer to the author's `paper
-    <http://lemire.me/fr/documents/publications/lemiremaclachlan_sdm05.pdf>`_.
-
     """
 
     def __init__(self):

@@ -16,10 +16,9 @@ from .algo_base import AlgoBase
 class SVD(AlgoBase):
     """The famous *SVD* algorithm, as popularized by `Simon Funk
     <http://sifter.org/~simon/journal/20061211.html>`_ during the Netflix
-    Prize. When baselines are not used, this is equivalent to `Probabilistic
-    Matrix Factorization
-    <http://papers.nips.cc/paper/3208-probabilistic-matrix-factorization.pdf>`_
-    by Salakhutdinov and Mnih (see :ref:`note <unbiased_note>` below).
+    Prize. When baselines are not used, this is equivalent to Probabilistic
+    Matrix Factorization :cite:`salakhutdinov2008a` (see :ref:`note
+    <unbiased_note>` below).
 
     The prediction :math:`\\hat{r}_{ui}` is set as:
 
@@ -30,11 +29,8 @@ class SVD(AlgoBase):
     :math:`p_u` are assumed to be zero. The same applies for item :math:`i`
     with :math:`b_i` and :math:`q_i`.
 
-    For details, see eq. 5 from `Matrix Factorization Techniques For
-    Recommender Systems
-    <http://www.columbia.edu/~jwp2128/Teaching/W4721/papers/ieeecomputer.pdf>`_
-    by Koren, Bell and Volinsky. See also *The Recommender System Handbook*,
-    section 5.3.1.
+    For details, see eq. (5) from :cite:`Koren:2009`. See also
+    :cite:`Ricci:2010`, section 5.3.1.
 
     To estimate all the unkown, we minimize the following regularized squared
     error:
@@ -73,9 +69,9 @@ class SVD(AlgoBase):
         .. math::
             \hat{r}_{ui} = q_i^Tp_u
 
-        This is equivalent to `Probabilistic Matrix Factorization
-        <http://papers.nips.cc/paper/3208-probabilistic-matrix-factorization.pdf>`_
-        and can be achieved by setting the ``biased`` parameter to ``False``.
+        This is equivalent to Probabilistic Matrix Factorization
+        (:cite:`salakhutdinov2008a`, section 2) and can be achieved by setting
+        the ``biased`` parameter to ``False``.
 
 
     Args:
@@ -251,17 +247,16 @@ class SVDpp(AlgoBase):
         |I_u|^{-\\frac{1}{2}} \sum_{j \\in I_u}y_j\\right)
 
     Where the :math:`y_j` terms are a new set of item factors that capture
-    implicite ratings.
+    implicite ratings. Here, an implicite rating describes the fact that a user
+    :math:`u` rated an item :math:`j`, regardless of the rating value.
 
     If user :math:`u` is unknown, then the bias :math:`b_u` and the factors
     :math:`p_u` are assumed to be zero. The same applies for item :math:`i`
     with :math:`b_i`, :math:`q_i` and :math:`y_i`.
 
 
-    For details, see eq. 15 from `Factorization Meets The
-    Neighborhood
-    <http://www.cs.rochester.edu/twiki/pub/Main/HarpSeminar/Factorization_Meets_the_Neighborhood-_a_Multifaceted_Collaborative_Filtering_Model.pdf>`_
-    by Yehuda Koren. See also *The Recommender System Handbook*, section 5.3.1.
+    For details, see section 4 of :cite:`Koren:2008:FMN`. See also
+    :cite:`Ricci:2010`, section 5.3.1.
 
     Just as for :class:`SVD`, the parameters are learnt using a SGD on the
     regularized squared error objective.

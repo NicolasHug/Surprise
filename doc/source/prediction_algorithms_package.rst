@@ -5,8 +5,8 @@ prediction_algorithms package
 
 .. automodule:: surprise.prediction_algorithms
 
-You may want to check the :ref:`notation_standards` before diving into the
-formulas.
+You may want to check the :ref:`notation standards <notation_standards>`
+before diving into the formulas.
 
 
 .. toctree::

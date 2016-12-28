@@ -1,7 +1,7 @@
 .. _notation_standards:
 
-Notation standards
-==================
+Notation standards, References
+==============================
 
 In the documentation, you will find the following notation:
 
@@ -30,3 +30,12 @@ In the documentation, you will find the following notation:
 * :math:`N_u^k(i)` : the :math:`k` nearest neighbors of item :math:`i` that
   are rated by user :math:`u`. This set is computed using a :py:mod:`similarity
   metric <surprise.similarities>`.
+
+.. rubric:: References
+
+Here are the papers used as references in the documentation. Links to pdf files
+where added when possible. A simple Google search should lead you easily to the
+missing ones :)
+
+.. bibliography:: refs.bib
+  :all:

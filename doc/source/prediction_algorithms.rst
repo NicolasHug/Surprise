@@ -1,7 +1,7 @@
 .. _prediction_algorithms:
 
-Prediction algorithms
-=====================
+Using prediction algorithms
+===========================
 
 Surprise provides with a bunch of built-in algorithms. You can find the details
 of each of these in the :mod:`surprise.prediction_algorithms` package
@@ -43,10 +43,8 @@ First of all, if you do not want to configure the way baselines are computed,
 you don't have to: the default parameters will do just fine. If you do want to
 well... This is for you.
 
-You may want to read section 2.1 of `Factor in the Neighbors: Scalable and
-Accurate Collaborative Filtering
-<http://courses.ischool.berkeley.edu/i290-dm/s11/SECURE/a1-koren.pdf>`_ by
-Yehuda Koren to get a good idea of what are baseline estimates.
+You may want to read section 2.1 of :cite:`Koren:2010` to get a good idea of
+what are baseline estimates.
 
 Baselines can be estimated in two different ways:
 
@@ -60,29 +58,20 @@ values are ``'als'`` (default) and ``'sgd'``. Depending on its value, other
 options may be set. For ALS:
 
 - ``'reg_i'``: The regularization parameter for items. Corresponding to
-  :math:`\lambda_2` in the `paper
-  <http://courses.ischool.berkeley.edu/i290-dm/s11/SECURE/a1-koren.pdf>`_.
-  Default is 10.
+  :math:`\lambda_2` in :cite:`Koren:2010`.  Default is ``10``.
 - ``'reg_u'``: The regularization parameter for users, orresponding to
-  :math:`\lambda_3` in the `paper
-  <http://courses.ischool.berkeley.edu/i290-dm/s11/SECURE/a1-koren.pdf>`_.
-  Default is 15.
-- ``'n_epochs'``: The number of iteration of the ALS procedure. Default is 10.
-  Note that in the `paper
-  <http://courses.ischool.berkeley.edu/i290-dm/s11/SECURE/a1-koren.pdf>`_, what
-  is described is a **single** iteration ALS process.
+  :math:`\lambda_3` in :cite:`Koren:2010`.  Default is ``15``.
+- ``'n_epochs'``: The number of iteration of the ALS procedure. Default is
+  ``10``.  Note that in :cite:`Koren:2010`, what is described is a **single**
+  iteration ALS process.
 
 And for SGD:
 
 - ``'reg'``: The regularization parameter of the cost function that is
   optimized, corresponding to :math:`\lambda_1` and then :math:`\lambda_5` in
-  the `paper
-  <http://courses.ischool.berkeley.edu/i290-dm/s11/SECURE/a1-koren.pdf>`_.
-  Default is 0.02.
+  :cite:`Koren:2010` Default is ``0.02``.
 - ``'learning_rate'``: The learning rate of SGD, corresponding to
-  :math:`\gamma` in the `paper
-  <http://courses.ischool.berkeley.edu/i290-dm/s11/SECURE/a1-koren.pdf>`_.
-  Default is 0.005.
+  :math:`\gamma` in :cite:`Koren:2010`.  Default is ``0.005``.
 - ``'n_epochs'``: The number of iteration of the SGD procedure. Default is 20. 
 
 .. note::

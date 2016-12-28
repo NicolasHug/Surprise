@@ -5,3 +5,4 @@ six>=1.10.0
 pytest>=3.0.3
 sphinx
 sphinx_rtd_theme
+sphinxcontrib-bibtex

@@ -14,7 +14,7 @@ The available prediction algorithms are:
     knns.KNNBaseline
     matrix_factorization.SVD
     matrix_factorization.SVDpp
-    slope_one.SlopeOne
+    slope_one.SlopeOne 
     co_clustering.CoClustering
 """
 

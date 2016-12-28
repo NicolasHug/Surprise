@@ -16,13 +16,13 @@ class BaselineOnly(AlgoBase):
     If user :math:`u` is unknown, then the bias :math:`b_u` is assumed to be
     zero. The same applies for item :math:`i` with :math:`b_u`.
 
-    See paper *Factor in the Neighbors: Scalable and Accurate Collaborative
-    Filtering* by Yehuda Koren for details.
+    See section 2.1 of :cite:`Koren:2010` for details.
 
     Args:
         bsl_options(dict): A dictionary of options for the baseline estimates
             computation. See :ref:`baseline_estimates_configuration` for
             accepted options.
+
     """
 
     def __init__(self, bsl_options={}):
