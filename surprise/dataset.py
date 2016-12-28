@@ -502,7 +502,8 @@ class Trainset:
         A user is part of the trainset if the user has at least one rating.
 
         Args:
-            uid(int): The (inner) user id. See :ref:`this note<raw_inner_note>`.
+            uid(int): The (inner) user id. See :ref:`this
+                note<raw_inner_note>`.
         Returns:
             ``True`` if user is part of the trainset, else ``False``.
         """
@@ -515,7 +516,8 @@ class Trainset:
         An item is part of the trainset if the item was rated at least once.
 
         Args:
-            iid(int): The (inner) item id. See :ref:`this note<raw_inner_note>`.
+            iid(int): The (inner) item id. See :ref:`this
+                note<raw_inner_note>`.
         Returns:
             ``True`` if item is part of the trainset, else ``False``.
         """
