@@ -4,7 +4,6 @@ TODO
 * Check out the yelp dataset
 * See if we could compute similarity on the fly (see issue #3)
 * configure entrypoints to use surprise directly from command line
-* make a 'contribute' file
 
 Maybe, Maybe not
 ----------------
