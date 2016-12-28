@@ -16,7 +16,7 @@ from surprise import evaluate
 from surprise import Reader
 
 # path to dataset folder
-files_dir = os.path.exapanduser('~/.surprise_data/ml-100k/ml-100k/')
+files_dir = os.path.expanduser('~/.surprise_data/ml-100k/ml-100k/')
 
 # This time, we'll use the built-in reader.
 reader = Reader('ml-100k')

@@ -61,7 +61,7 @@ Load an entire dataset
 .. literalinclude:: ../../examples/load_custom_dataset.py
     :caption: From file ``examples/load_custom_dataset.py``
     :name: load_custom_dataset.py
-    :lines: 16-25
+    :lines: 17-26
 
 .. note::
     Actually, as the Movielens-100k dataset is builtin, `Surprise
@@ -149,20 +149,20 @@ is call the :meth:`predict()
 If the :meth:`predict()
 <surprise.prediction_algorithms.algo_base.AlgoBase.predict>` method is called
 with user or item ids that were not part of the trainset, it's up to the
-algorithm to decide if he still can make a prediction or not. If it can't,
+algorithm to decide if it still can make a prediction or not. If it can't,
 :meth:`predict() <surprise.prediction_algorithms.algo_base.AlgoBase.predict>`
 will still predict the mean of all ratings :math:`\mu`.
 
 .. _raw_inner_note:
 .. note::
-  Raw ids are ids as defined in a rating file. They can be strings or whatever.
-  On trainset creation, each raw id is mapped to a (unique) integer called
-  inner id, which is a lot more suitable for `Surprise
-  <https://nicolashug.github.io/Surprise/>`_ to manipulate. To convert a raw id
-  to an inner id, you can use the  :meth:`to_inner_uid()
-  <surprise.dataset.Trainset.to_inner_uid>` and :meth:`to_inner_iid()
-  <surprise.dataset.Trainset.to_inner_iid>` methods of the :class:`trainset
-  <surprise.dataset.Trainset>`.
+  Raw ids are ids as defined in a rating file. They can be strings, numbers, or
+  whatever (but are still represented as strings).  On trainset creation, each
+  raw id is mapped to a unique integer called inner id, which is a lot more
+  suitable for `Surprise <https://nicolashug.github.io/Surprise/>`_ to
+  manipulate. To convert a raw id to an inner id, you can use the
+  :meth:`to_inner_uid() <surprise.dataset.Trainset.to_inner_uid>` and
+  :meth:`to_inner_iid() <surprise.dataset.Trainset.to_inner_iid>` methods of
+  the :class:`trainset <surprise.dataset.Trainset>`.
 
 Obviously, it is perfectly fine to use the :meth:`predict()
 <surprise.prediction_algorithms.algo_base.AlgoBase.predict>` method directly

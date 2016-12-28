@@ -6,8 +6,6 @@ TODO
 * Make cleaner paper citations
 * Check out the yelp dataset
 * See if we could compute similarity on the fly (see issue #3)
-* use `expanduser` in all examples
-* correct note on raw/inner ids (strings or whaterver)
 
 Maybe, Maybe not
 ----------------
