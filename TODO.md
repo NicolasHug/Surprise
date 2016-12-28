@@ -1,11 +1,10 @@
 TODO
 ====
 
-* Better document SlopeOne and CoClustering algorithms.
-* Make coclustering fully complient with paper's prediction
-* Make cleaner paper citations
 * Check out the yelp dataset
 * See if we could compute similarity on the fly (see issue #3)
+* configure entrypoints to use surprise directly from command line
+* make a 'contribute' file
 
 Maybe, Maybe not
 ----------------

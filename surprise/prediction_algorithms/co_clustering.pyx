@@ -29,7 +29,10 @@ class CoClustering(AlgoBase):
     where :math:`\\overline{C_{ui}}` is the average rating of co-cluster
     :math:`C_{ui}`, :math:`\\overline{C_u}` is the average rating of
     :math:`u`'s cluster, and :math:`\\overline{C_i}` is the averate rating of
-    :math:`i`'s cluster.
+    :math:`i`'s cluster. If the user is unknown, the prediction is
+    :math:`\hat{r}_{ui} = \\mu_i`. If the item is unkown, the prediction is
+    :math:`\hat{r}_{ui} = \\mu_u`. If both the user and the item are unknown,
+    the prediction is :math:`\hat{r}_{ui} = \\mu`.
 
     Clusters are assigned using a straightforward optimization method, much
     like k-means.
@@ -223,10 +226,14 @@ class CoClustering(AlgoBase):
 
     def estimate(self, u, i):
 
-        # Note: This is not exactly what the author's paper recommend but oh
-        # well...
         if not (self.trainset.knows_user(u) and self.trainset.knows_item(i)):
-            raise PredictionImpossible('User and/or item is unkown.')
+            return self.trainset.global_mean
+
+        if not self.trainset.knows_user(u):
+            return self.cltr_i[i]
+
+        if not self.trainset.knows_item(i):
+            return self.cltr_u[u]
 
         # I doubt cdefing makes any difference here as cython has no clue about
         # arrays self.stuff... But maybe?
