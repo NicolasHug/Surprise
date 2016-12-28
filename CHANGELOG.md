@@ -3,6 +3,8 @@ Current
 
 Enhancements
 ------------
+
+* Added entry point for better command line usage.
 * Added CoClustering algorithm.
 * Added SlopeOne algorithm.
 * Added Probabilistic Matrix Factorization as an option SVD
@@ -10,6 +12,7 @@ Enhancements
 
 Other
 -----
+
 * Changed license to BSD
 * Six is now a dependency
 

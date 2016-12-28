@@ -59,11 +59,16 @@ else:
 
 setup(
     name='surprise',
-    version=__version__,
+    author='Nicolas Hug',
+    author_email='contact@nicolas-hug.com',
+
     description=('A recommender system package aimed towards researchers ' +
                  'and students.'),
     long_description=long_description,
+
+    version=__version__,
     url='https://nicolashug.github.io/Surprise/',
+
     license='GPLv3+',
     classifiers=[
       'Development Status :: 5 - Production/Stable',
@@ -76,12 +81,14 @@ setup(
       'Programming Language :: Python :: 2.7',
     ],
     keywords='recommender recommendation system',
+
     packages=find_packages(exclude=['docs', 'tests*']),
     include_package_data=True,
     ext_modules = ext_modules,
     cmdclass=cmdclass,
-    author='Nicolas Hug',
     install_requires=install_requires,
     dependency_links=dependency_links,
-    author_email='nh.nicolas.hug@gmail.com'
+
+    entry_points={'console_scripts':
+                 ['surprise = surprise.__main__:main']},
 )

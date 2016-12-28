@@ -3,7 +3,6 @@ TODO
 
 * Check out the yelp dataset
 * See if we could compute similarity on the fly (see issue #3)
-* configure entrypoints to use surprise directly from command line
 
 Maybe, Maybe not
 ----------------
@@ -14,6 +13,7 @@ Maybe, Maybe not
 Done:
 -----
 
+* configure entrypoints to use surprise directly from command line
 * Allow a 'biased' option in the SVD algo. If true, use baselines, if False,
   don't. It should be pretty easy to do.
 * create option in __main__ to clean the .recsys directory. Actually, the
