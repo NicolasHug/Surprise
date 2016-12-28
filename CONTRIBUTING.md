@@ -8,6 +8,6 @@ make sure that:
   it's also well documented.
 * your code passes the tests (use [pytest](http://doc.pytest.org/en/latest/)),
   plus the ones that you wrote ;)
-* your code is [PEP 8](https://www.python.org/dev/peps/pep-0008/) complient.
+* your code is [PEP 8](https://www.python.org/dev/peps/pep-0008/) compliant.
   You can use [flake8](http://flake8.pycqa.org/en/latest/index.html) for
   checking.
