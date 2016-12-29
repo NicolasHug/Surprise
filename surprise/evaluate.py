@@ -148,7 +148,7 @@ class GridSearch:
             algo_instance = self.algo(**combination)
             for trainset, testset in data.folds():
                 algo_instance.train(trainset)
-                predictions = self.algo.test(testset)
+                predictions = algo_instance.test(testset)
                 fold_measure.append(f(predictions, verbose=False))
             combination_score = {'params': combination, 'score':np.mean(fold_measure)}
             self.combination_score_list.append(combination_score)
