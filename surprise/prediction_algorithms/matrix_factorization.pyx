@@ -422,3 +422,87 @@ class SVDpp(AlgoBase):
             est += np.dot(self.qi[i], self.pu[u] + u_impl_feedback)
 
         return est
+
+
+class NMF(AlgoBase):
+
+    def __init__(self, n_factors=15, n_epochs=50, verbose=False):
+
+        self.n_factors = n_factors
+        self.n_epochs = n_epochs
+        self.verbose = verbose
+        self.reg = .06
+
+        AlgoBase.__init__(self)
+
+    def train(self, trainset):
+
+        AlgoBase.train(self, trainset)
+        self.sgd(trainset)
+
+    def sgd(self, trainset):
+
+        # user factors
+        cdef np.ndarray[np.double_t, ndim=2] pu
+        # item factors
+        cdef np.ndarray[np.double_t, ndim=2] qi
+
+        cdef np.ndarray[np.double_t, ndim=2] user_num
+        cdef np.ndarray[np.double_t, ndim=2] user_denum
+        cdef np.ndarray[np.double_t, ndim=2] item_num
+        cdef np.ndarray[np.double_t, ndim=2] item_denum
+
+        cdef int u, i, f
+        cdef double r, est, num, denum, l
+        cdef double reg = self.reg
+        cdef double global_mean = self.trainset.global_mean
+
+        pu = np.random.uniform(0, 1, size=(trainset.n_users, self.n_factors))
+        qi = np.random.uniform(0, 1, size=(trainset.n_items, self.n_factors))
+
+        for current_epoch in range(self.n_epochs):
+
+            if self.verbose:
+                print("Processing epoch {}".format(current_epoch))
+
+            user_num = np.zeros((trainset.n_users, self.n_factors))
+            user_denum = np.zeros((trainset.n_users, self.n_factors))
+
+            item_num = np.zeros((trainset.n_items, self.n_factors))
+            item_denum = np.zeros((trainset.n_items, self.n_factors))
+
+            for u, i, r in trainset.all_ratings():
+
+                est = 0  # <q_i, p_u>
+                for f in range(self.n_factors):
+                    est += qi[i, f] * pu[u, f]
+
+                for f in range(self.n_factors):
+                    user_num[u, f] += qi[i, f] * r
+                    user_denum[u, f] += qi[i, f] * est
+                    item_num[i, f] += pu[u, f] * r
+                    item_denum[i, f] += pu[u, f] * est
+
+            for u in trainset.all_users():
+                l = len(trainset.ur[u])
+                for f in range(self.n_factors):
+                    user_denum[u, f] += l * reg * pu[u, f]
+                    pu[u, f] *= user_num[u, f] / user_denum[u, f]
+
+            for i in trainset.all_items():
+                l = len(trainset.ir[i])
+                for f in range(self.n_factors):
+                    item_denum[i, f] += l * reg * qi[i, f]
+                    qi[i, f] *= item_num[i, f] / item_denum[i, f]
+
+        self.pu = pu
+        self.qi = qi
+
+    def estimate(self, u, i):
+
+        if self.trainset.knows_user(u) and self.trainset.knows_item(i):
+            est = np.dot(self.qi[i], self.pu[u])
+        else:
+            est = self.trainset.global_mean  # CHANGE THIS
+
+        return est
