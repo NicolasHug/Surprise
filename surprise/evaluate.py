@@ -11,6 +11,7 @@ import os
 import numpy as np
 from six import iteritems
 from six import itervalues
+from itertools import product
 
 from . import accuracy
 from .dump import dump
@@ -129,3 +130,27 @@ class CaseInsensitiveDefaultDict(defaultdict):
             for (key, vals) in iteritems(self))
 
         return s
+
+
+class GridSearch:
+
+    def __init__(self, algo, param_grid, measure='RMSE'):
+        self.algo = algo
+        self.param_grid = param_grid
+        self.measure = measure
+        self.param_combinations = [dict(zip(param_grid, v)) for v in product(*param_grid.values())]
+        self.combination_score_list = []
+
+    def evaluate(self, data):
+        f = getattr(accuracy, self.measure.lower())
+        for combination in self.param_combinations:
+            fold_measure = []
+            algo_instance = self.algo(**combination)
+            for trainset, testset in data.folds():
+                algo_instance.train(trainset)
+                predictions = self.algo.test(testset)
+                fold_measure.append(f(predictions, verbose=False))
+            combination_score = {'params': combination, 'score':np.mean(fold_measure)}
+            self.combination_score_list.append(combination_score)
+
+
