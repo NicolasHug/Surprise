@@ -8,6 +8,7 @@ from .prediction_algorithms import KNNWithMeans
 from .prediction_algorithms import KNNBaseline
 from .prediction_algorithms import SVD
 from .prediction_algorithms import SVDpp
+from .prediction_algorithms import NMF
 from .prediction_algorithms import SlopeOne
 from .prediction_algorithms import CoClustering
 
@@ -19,7 +20,7 @@ from .evaluate import evaluate
 from .dump import dump
 
 __all__ = ['AlgoBase', 'NormalPredictor', 'BaselineOnly', 'KNNBasic',
-           'KNNWithMeans', 'KNNBaseline', 'SVD', 'SVDpp', 'SlopeOne',
+           'KNNWithMeans', 'KNNBaseline', 'SVD', 'SVDpp', 'NMF', 'SlopeOne',
            'CoClustering', 'PredictionImpossible', 'Dataset', 'Reader',
            'evaluate', 'dump']
 
