@@ -4,6 +4,7 @@ Current
 Enhancements
 ------------
 
+* Added NMF algorithm
 * Added entry point for better command line usage.
 * Added CoClustering algorithm.
 * Added SlopeOne algorithm.

@@ -36,15 +36,40 @@ def test_NMF_parameters():
     rmse_n_epochs = evaluate(algo, data, measures=['rmse'])['rmse']
     assert rmse_default != rmse_n_epochs
 
-    # reg_u
-    algo = NMF(n_factors=1, n_epochs=1, reg_u=1)
-    rmse_reg_u = evaluate(algo, data, measures=['rmse'])['rmse']
-    assert rmse_default != rmse_reg_u
+    # biased
+    algo = NMF(n_factors=1, n_epochs=1, biased=True)
+    rmse_biased = evaluate(algo, data, measures=['rmse'])['rmse']
+    assert rmse_default != rmse_biased
 
-    # reg_i
-    algo = NMF(n_factors=1, n_epochs=1, reg_i=1)
-    rmse_reg_i = evaluate(algo, data, measures=['rmse'])['rmse']
-    assert rmse_default != rmse_reg_i
+    # reg_pu
+    algo = NMF(n_factors=1, n_epochs=1, reg_pu=1)
+    rmse_reg_pu = evaluate(algo, data, measures=['rmse'])['rmse']
+    assert rmse_default != rmse_reg_pu
+
+    # reg_qi
+    algo = NMF(n_factors=1, n_epochs=1, reg_qi=1)
+    rmse_reg_qi = evaluate(algo, data, measures=['rmse'])['rmse']
+    assert rmse_default != rmse_reg_qi
+
+    # reg_bu
+    algo = NMF(n_factors=1, n_epochs=1, reg_bu=1)
+    rmse_reg_bu = evaluate(algo, data, measures=['rmse'])['rmse']
+    assert rmse_default != rmse_reg_bu
+
+    # reg_bi
+    algo = NMF(n_factors=1, n_epochs=1, reg_bi=1)
+    rmse_reg_bi = evaluate(algo, data, measures=['rmse'])['rmse']
+    assert rmse_default != rmse_reg_bi
+
+    # lr_bu
+    algo = NMF(n_factors=1, n_epochs=1, lr_bu=1)
+    rmse_lr_bu = evaluate(algo, data, measures=['rmse'])['rmse']
+    assert rmse_default != rmse_lr_bu
+
+    # lr_bi
+    algo = NMF(n_factors=1, n_epochs=1, lr_bi=1)
+    rmse_lr_bi = evaluate(algo, data, measures=['rmse'])['rmse']
+    assert rmse_default != rmse_lr_bi
 
     # init_low
     algo = NMF(n_factors=1, n_epochs=1, init_low=.5)

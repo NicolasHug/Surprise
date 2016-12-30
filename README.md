@@ -200,7 +200,6 @@ If you'd like to see some features or algorithms implemented in
 [Surprise](http://surpriselib.com), please let us know! Some of the current
 ideas are:
 
-- Non negative matrix factorization
 - Bayesian PMF
 - RBM for CF
 
