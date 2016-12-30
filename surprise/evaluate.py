@@ -139,10 +139,11 @@ class GridSearch:
         self.param_grid = param_grid
         self.measure = measure
         self.param_combinations = [dict(zip(param_grid, v)) for v in product(*param_grid.values())]
-        self.combination_score_list = []
 
     def evaluate(self, data):
         f = getattr(accuracy, self.measure.lower())
+        params = []
+        scores = []
         for combination in self.param_combinations:
             fold_measure = []
             algo_instance = self.algo(**combination)
@@ -150,7 +151,19 @@ class GridSearch:
                 algo_instance.train(trainset)
                 predictions = algo_instance.test(testset)
                 fold_measure.append(f(predictions, verbose=False))
-            combination_score = {'params': combination, 'score':np.mean(fold_measure)}
-            self.combination_score_list.append(combination_score)
+            params.append(combination)
+            scores.append(np.mean(fold_measure))
+            self.cv_results_ = {'params': params, 'scores': scores}
 
+        #best attributes
+        #TODO: Check if it is okay to have hardcoded measures
+        if self.measure.upper() == ('RMSE' or 'MAE'):
+            best_score = min(self.cv_results_['scores'])
+        if self.measure.upper() == 'FCP':
+            best_score = max(self.cv_results_['scores'])
+
+        best_index = self.cv_results_['scores'].index(best_score)
+        self.best_index_ = best_index
+        self.best_score_ = best_score
+        self.best_params_ = self.cv_results_['params'][best_index]
 
