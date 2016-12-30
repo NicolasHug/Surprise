@@ -37,6 +37,11 @@ def test_SVD_parameters():
     rmse_n_epochs = evaluate(algo, data, measures=['rmse'])['rmse']
     assert rmse_default != rmse_n_epochs
 
+    # biased
+    algo = SVD(n_factors=1, n_epochs=1, biased=False)
+    rmse_biased = evaluate(algo, data, measures=['rmse'])['rmse']
+    assert rmse_default != rmse_biased
+
     # lr_all
     algo = SVD(n_factors=1, n_epochs=1, lr_all=5)
     rmse_lr_all = evaluate(algo, data, measures=['rmse'])['rmse']

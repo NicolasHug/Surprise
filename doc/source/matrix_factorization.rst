@@ -8,3 +8,6 @@ Matrix Factorization-based algortihms
 
 .. autoclass:: surprise.prediction_algorithms.matrix_factorization.SVDpp
     :show-inheritance:
+
+.. autoclass:: surprise.prediction_algorithms.matrix_factorization.NMF
+    :show-inheritance:
