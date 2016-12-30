@@ -63,7 +63,7 @@ class AlgoBase:
         Args:
             uid: (Raw) id of the user. See :ref:`this note<raw_inner_note>`.
             iid: (Raw) id of the item. See :ref:`this note<raw_inner_note>`.
-            r: The true rating :math:`r_{ui}`.
+            r(float): The true rating :math:`r_{ui}`.
             verbose(bool): Whether to print details of the prediction.  Default
                 is False.
 

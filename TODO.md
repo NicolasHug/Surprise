@@ -1,8 +1,7 @@
 TODO
 ====
 
-* Check out the yelp dataset
-* See if we could compute similarity on the fly (see issue #3)
+* Profile code (mostly cython) to see what could be optimized
 
 Maybe, Maybe not
 ----------------

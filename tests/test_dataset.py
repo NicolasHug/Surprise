@@ -33,7 +33,6 @@ def test_build_full_trainset():
 
     trainset = data.build_full_trainset()
 
-    assert len(trainset.rm) == 5
     assert len(trainset.ur) == 5
     assert len(trainset.ir) == 2
     assert trainset.n_users == 5
@@ -98,13 +97,6 @@ def test_trainset_testset():
     for trainset, testset in data.folds():
         pass  # just need trainset and testset to be set
 
-    # test rm:
-    rm = trainset.rm
-    assert rm[0, 0] == 4
-    assert rm[1, 0] == 4
-    assert rm[3, 1] == 5
-    assert rm[40, 20000] == 0  # not in the trainset
-
     # test ur
     ur = trainset.ur
     assert ur[0] == [(0, 4)]
@@ -117,9 +109,10 @@ def test_trainset_testset():
     assert ir[1] == [(1, 2), (2, 1), (3, 5)]
     assert ir[20000] == []  # not in the trainset
 
-    # test n_users, n_items, r_min, r_max
+    # test n_users, n_items, n_ratings, r_min, r_max
     assert trainset.n_users == 4
     assert trainset.n_items == 2
+    assert trainset.n_ratings == 6
     assert trainset.r_min == 1
     assert trainset.r_max == 5
 

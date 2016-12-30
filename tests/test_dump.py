@@ -15,7 +15,7 @@ def test_dump():
 
     predictions = [Prediction(None, None, None, None, None)]
     algo = AlgoBase()
-    trainset = Trainset(dict(), *[None] * 8)
+    trainset = Trainset(*[None] * 9)
 
     with tempfile.NamedTemporaryFile() as tmp_file:
         dump(tmp_file.name, predictions, trainset, algo)

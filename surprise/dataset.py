@@ -229,7 +229,6 @@ class Dataset:
         current_u_index = 0
         current_i_index = 0
 
-        rm = defaultdict(int)
         ur = defaultdict(list)
         ir = defaultdict(list)
 
@@ -248,18 +247,18 @@ class Dataset:
                 raw2inner_id_items[irid] = current_i_index
                 current_i_index += 1
 
-            rm[uid, iid] = r
             ur[uid].append((iid, r))
             ir[iid].append((uid, r))
 
         n_users = len(ur)  # number of users
         n_items = len(ir)  # number of items
+        n_ratings = len(raw_trainset)
 
-        trainset = Trainset(rm,
-                            ur,
+        trainset = Trainset(ur,
                             ir,
                             n_users,
                             n_items,
+                            n_ratings,
                             self.r_min,
                             self.r_max,
                             raw2inner_id_users,
@@ -439,10 +438,10 @@ class Reader():
         line = line.split(self.sep)
         try:
             if self.with_timestamp:
-                uid, iid, r, timestamp = (line[i].strip().strip('"')
+                uid, iid, r, timestamp = (line[i].strip()
                                           for i in self.indexes)
             else:
-                uid, iid, r = (line[i].strip().strip('"')
+                uid, iid, r = (line[i].strip()
                                for i in self.indexes)
                 timestamp = None
 
@@ -463,16 +462,12 @@ class Trainset:
     :meth:`DatasetAutoFolds.build_full_trainset` method.
 
     Attributes:
-        rm(:obj:`defaultdict` of :obj:`int`): A dictionary containing all known
-            ratings.  Keys are tuples (user_inner__id, item_inner_id), values
-            are ratings.  ``rm`` stands for *ratings matrix*, even though it's
-            not a proper matrix object.
-        ur(:obj:`defaultdict` of :obj:`list`): A dictionary containing lists of
-            tuples of the form ``(item_inner_id, rating)``. Keys are user inner
-            ids.  ``ur`` stands for *user ratings*.
-        ir(:obj:`defaultdict` of :obj:`list`): A dictionary containing lists of
-            tuples of the form ``(user_inner_id, rating)``. Keys are item inner
-            ids.  ``ir`` stands for *item ratings*.
+        ur(:obj:`defaultdict` of :obj:`list`): The users ratings. This is a
+            dictionary containing lists of tuples of the form ``(item_inner_id,
+            rating)``. The keys are user inner ids.
+        ir(:obj:`defaultdict` of :obj:`list`): The items ratings. This is a
+            dictionary containing lists of tuples of the form ``(user_inner_id,
+            rating)``. The keys are item inner ids.
         n_users: Total number of users :math:`|U|`.
         n_items: Total number of items :math:`|I|`.
         n_ratings: Total number of ratings :math:`|R_{train}|`.
@@ -481,15 +476,14 @@ class Trainset:
         global_mean: The mean of all ratings :math:`\\mu`.
     """
 
-    def __init__(self, rm, ur, ir, n_users, n_items, r_min, r_max,
+    def __init__(self, ur, ir, n_users, n_items, n_ratings, r_min, r_max,
                  raw2inner_id_users, raw2inner_id_items):
 
-        self.rm = rm
         self.ur = ur
         self.ir = ir
         self.n_users = n_users
         self.n_items = n_items
-        self.n_ratings = len(self.rm)
+        self.n_ratings = n_ratings
         self.r_min = r_min
         self.r_max = r_max
         self._raw2inner_id_users = raw2inner_id_users
