@@ -134,25 +134,47 @@ class CaseInsensitiveDefaultDict(defaultdict):
 
 class GridSearch:
 
-    def __init__(self, algo, param_grid, measure='RMSE'):
+    def __init__(self, algo, param_grid, measure='RMSE', verbose=True):
         self.algo = algo
         self.param_grid = param_grid
         self.measure = measure
+        self.verbose = verbose
         self.param_combinations = [dict(zip(param_grid, v)) for v in product(*param_grid.values())]
 
     def evaluate(self, data):
         f = getattr(accuracy, self.measure.lower())
         params = []
         scores = []
+        combination_counter = 0
         for combination in self.param_combinations:
+            if self.verbose:
+                combination_counter += 1
+                num_of_combinations = len(self.param_combinations)
+                print ('start combination {} from {}: '.format(combination_counter,num_of_combinations))
+                print ('params: ', combination)
             fold_measure = []
             algo_instance = self.algo(**combination)
-            for trainset, testset in data.folds():
+            for fold_i, (trainset, testset) in enumerate(data.folds()):
+                if self.verbose:
+                    print('-' * 12)
+                    print('Fold ' + str(fold_i + 1))
                 algo_instance.train(trainset)
                 predictions = algo_instance.test(testset)
-                fold_measure.append(f(predictions, verbose=False))
+                fold_score = f(predictions, verbose=False)
+                fold_measure.append(fold_score)
+                if self.verbose:
+                    print(fold_score)
             params.append(combination)
-            scores.append(np.mean(fold_measure))
+            mean_score = np.mean(fold_measure)
+            if self.verbose:
+                print('-' * 12)
+                print('-' * 12)
+                print('Mean {0:4s}: {1:1.4f}'.format(
+                    self.measure.upper(), mean_score))
+                print('-' * 12)
+                print('-' * 12)
+
+            scores.append(mean_score)
             self.cv_results_ = {'params': params, 'scores': scores}
 
         #best attributes
