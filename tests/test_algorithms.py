@@ -40,9 +40,9 @@ def test_unknown_user_or_item():
     for klass in klasses:
         algo = klass()
         algo.train(trainset)
-        algo.predict(0, 'unknown_item')
-        algo.predict('unkown_user', 0)
-        algo.predict('unkown_user', 'unknown_item')
+        algo.predict(0, 'unknown_item', None)
+        algo.predict('unkown_user', 0, None)
+        algo.predict('unkown_user', 'unknown_item', None)
 
 
 def test_knns():

@@ -50,20 +50,23 @@ class AlgoBase:
         # (re) Initialise baselines
         self.bu = self.bi = None
 
-    def predict(self, uid, iid, r=0, verbose=False):
+    def predict(self, uid, iid, r_ui, clip=True, verbose=False):
         """Compute the rating prediction for given user and item.
 
         The ``predict`` method converts raw ids to inner ids and then calls the
         ``estimate`` method which is defined in every derived class. If the
         prediction is impossible (for whatever reason), the prediction is set
-        to the global mean of all ratings. Also, if :math:`\\hat{r}_{ui}` is
-        outside the bounds of the rating scale, (e.g. :math:`\\hat{r}_{ui} = 6`
-        for a rating scale of :math:`[1, 5]`), then it is capped.
+        to the global mean of all ratings.
 
         Args:
             uid: (Raw) id of the user. See :ref:`this note<raw_inner_note>`.
             iid: (Raw) id of the item. See :ref:`this note<raw_inner_note>`.
-            r(float): The true rating :math:`r_{ui}`.
+            r_ui(float): The true rating :math:`r_{ui}`.
+            clip(bool): Whether to clip the estimation into the rating scale.
+                For example, if :math:`\\hat{r}_{ui}` is :math:`5.5` while the
+                rating scale is :math:`[1, 5]`, then :math:`\\hat{r}_{ui}` is
+                set to :math:`5`. Same goes if :math:`\\hat{r}_{ui} < 1`.
+                Default is ``True``.
             verbose(bool): Whether to print details of the prediction.  Default
                 is False.
 
@@ -97,11 +100,17 @@ class AlgoBase:
             details['was_impossible'] = True
             details['reason'] = str(e)
 
-        # clip estimate into [self.r_min, self.r_max]
-        est = min(self.trainset.r_max, est)
-        est = max(self.trainset.r_min, est)
+        # Remap the rating into its initial rating scale (because the rating
+        # scale was translated so that ratings are all >= 1)
+        est -= self.trainset.offset
 
-        pred = Prediction(uid, iid, r, est, details)
+        # clip estimate into [lower_bound, higher_bound]
+        if clip:
+            lower_bound, higher_bound = self.trainset.rating_scale
+            est = min(higher_bound, est)
+            est = max(lower_bound, est)
+
+        pred = Prediction(uid, iid, r_ui, est, details)
 
         if verbose:
             print(pred)
@@ -123,8 +132,12 @@ class AlgoBase:
                 objects.
         """
 
-        predictions = [self.predict(uid, iid, r, verbose=verbose)
-                       for (uid, iid, r) in testset]
+        # The ratings are translated back to their original scale.
+        predictions = [self.predict(uid,
+                                    iid,
+                                    r_ui_trans - self.trainset.offset,
+                                    verbose=verbose)
+                       for (uid, iid, r_ui_trans) in testset]
         return predictions
 
     def compute_baselines(self):

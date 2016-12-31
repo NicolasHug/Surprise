@@ -109,12 +109,11 @@ def test_trainset_testset():
     assert ir[1] == [(1, 2), (2, 1), (3, 5)]
     assert ir[20000] == []  # not in the trainset
 
-    # test n_users, n_items, n_ratings, r_min, r_max
+    # test n_users, n_items, n_ratings, rating_scale
     assert trainset.n_users == 4
     assert trainset.n_items == 2
     assert trainset.n_ratings == 6
-    assert trainset.r_min == 1
-    assert trainset.r_max == 5
+    assert trainset.rating_scale == (1, 5)
 
     # test raw2inner: ensure inner ids are given in proper order
     raw2inner_id_users = trainset._raw2inner_id_users
