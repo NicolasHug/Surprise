@@ -39,3 +39,11 @@ def test_best_fcp():
     assert gridSearch.best_index_['FCP'] == 7
     assert gridSearch.best_params_['FCP'] == {u'lr_all': 0.005, u'reg_all': 0.6, u'n_epochs': 10}
     assert (abs(gridSearch.best_score_['FCP'] - 0.591655912113)) < 0.000001 # scores are equal
+
+def test_measure_is_not_case_sensitive():
+    param_grid = {'n_epochs': [5, 10], 'lr_all': [0.002, 0.005], 'reg_all': [0.4, 0.6]}
+    gridSearch = GridSearch(SVD, param_grid, measures=['FCP','mae','rMSE'])
+    gridSearch.evaluate(data)
+    gridSearch.best_index_['fcp']
+    gridSearch.best_params_['MAE']
+    gridSearch.best_score_['RmSe']
