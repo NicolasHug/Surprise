@@ -11,6 +11,7 @@ from surprise.evaluate import GridSearch
 from surprise.dataset import Dataset
 from surprise.dataset import Reader
 from surprise.prediction_algorithms import SVD
+from surprise.evaluate import evaluate
 
 # the test and train files are from the ml-100k dataset (10% of u1.base and
 # 10 % of u1.test)
@@ -47,3 +48,10 @@ def test_measure_is_not_case_sensitive():
     gridSearch.best_index_['fcp']
     gridSearch.best_params_['MAE']
     gridSearch.best_score_['RmSe']
+
+def test_best_estimator():
+    param_grid = {'n_epochs': [5, 10], 'lr_all': [0.002, 0.005], 'reg_all': [0.4, 0.6]}
+    gridSearch = GridSearch(SVD, param_grid, measures=['FCP','mae','rMSE'])
+    gridSearch.evaluate(data)
+    best_estimator = gridSearch.best_estimator_['MAE']
+    assert (evaluate(best_estimator, data)['MAE'] == gridSearch.best_score_['MAE'])
