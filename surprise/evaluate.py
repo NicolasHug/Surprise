@@ -155,9 +155,9 @@ class GridSearch:
                 Default is `True`
         """
     def __init__(self, algo_class, param_grid, measures=['rmse', 'mae'], verbose=True):
-        self.best_params_ = {}
-        self.best_index_ = {}
-        self.best_score_ = {}
+        self.best_params_ = CaseInsensitiveDefaultDict(list)
+        self.best_index_ = CaseInsensitiveDefaultDict(list)
+        self.best_score_ = CaseInsensitiveDefaultDict(list)
         self.cv_results_ = {}
         self.algo_class = algo_class
         self.param_grid = param_grid
@@ -206,17 +206,12 @@ class GridSearch:
 
         self.cv_results_ = {'params': params, 'scores': scores}
 
-        #best attributes
-        self.best_score_ = {}
-        self.best_index_ = {}
-        self.best_params_ = {}
         for measure in self.measures:
             #TODO: Check if it is okay to have hardcoded measures
             if measure.upper() == ('RMSE' or 'MAE'):
                 best_dict = min(self.cv_results_['scores'], key=lambda x: x[measure.upper()])
             if measure.upper() == 'FCP':
                 best_dict = max(self.cv_results_['scores'], key=lambda x: x[measure.upper()])
-
-            self.best_score_[measure.upper()] = best_dict[measure.upper()]
-            self.best_index_[measure.upper()] = self.cv_results_['scores'].index(best_dict)
-            self.best_params_[measure.upper()] = self.cv_results_['params'][self.best_index_[measure.upper()]]
+            self.best_score_[measure] = best_dict[measure.upper()]
+            self.best_index_[measure] = self.cv_results_['scores'].index(best_dict)
+            self.best_params_[measure] = self.cv_results_['params'][self.best_index_[measure]]
