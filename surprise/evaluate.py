@@ -154,7 +154,7 @@ class GridSearch:
             verbose(boolean): Whether to print results when executing predictions.
                 Default is `True`
         """
-    def __init__(self, algo_class, param_grid, measures=['rmse', 'mae'], verbose=True):
+    def __init__(self, algo_class, param_grid, measures=['rmse', 'mae'], verbose=1):
         self.best_params_ = CaseInsensitiveDefaultDict(list)
         self.best_index_ = CaseInsensitiveDefaultDict(list)
         self.best_score_ = CaseInsensitiveDefaultDict(list)
@@ -172,7 +172,7 @@ class GridSearch:
         for combination in self.param_combinations:
             params.append(combination)
             performances = CaseInsensitiveDefaultDict(list)
-            if self.verbose:
+            if self.verbose >= 1:
                 combination_counter += 1
                 num_of_combinations = len(self.param_combinations)
                 print ('start combination {} from {}: '.format(combination_counter,num_of_combinations))
@@ -180,14 +180,14 @@ class GridSearch:
 
             algo_instance = self.algo_class(**combination)
             for fold_i, (trainset, testset) in enumerate(data.folds()):
-                if self.verbose:
+                if self.verbose >=2:
                     print('-' * 12)
                     print('Fold ' + str(fold_i + 1))
                 algo_instance.train(trainset)
                 predictions = algo_instance.test(testset)
                 for measure in self.measures:
                     f = getattr(accuracy, measure.lower())
-                    performances[measure].append(f(predictions, verbose=self.verbose))
+                    performances[measure].append(f(predictions,verbose = (self.verbose == 2)))
 
             mean_score = {}
             for measure in self.measures:
@@ -228,4 +228,3 @@ class GridSearch:
             self.best_score_[measure] = best_dict[measure.upper()]
             self.best_index_[measure] = self.cv_results_['scores'].index(best_dict)
             self.best_params_[measure] = self.cv_results_['params'][self.best_index_[measure]]
-            print (self.cv_results_)
