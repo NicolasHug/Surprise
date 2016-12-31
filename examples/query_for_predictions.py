@@ -29,7 +29,7 @@ uid = str(196)  # raw user id (as in the ratings file). They are **strings**!
 iid = str(302)  # raw item id (as in the ratings file). They are **strings**!
 
 # get a prediction for specific users and items.
-pred = algo.predict(uid, iid, r=4, verbose=True)
+pred = algo.predict(uid, iid, r_ui=4, verbose=True)
 
 
 ##########################################

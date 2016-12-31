@@ -2,7 +2,7 @@
 the :mod:`dataset` module defines some tools for managing datasets.
 
 Users may use both *built-in* and user-defined datasets (see the
-:ref:`getting_started` page for examples). Right now, four built-in datasets
+:ref:`getting_started` page for examples). Right now, three built-in datasets
 are available:
 
 * The `movielens-100k <http://grouplens.org/datasets/movielens/>`_ dataset.
@@ -93,8 +93,6 @@ class Dataset:
     def __init__(self, reader):
 
         self.reader = reader
-        self.r_min = reader.inf + reader.offset
-        self.r_max = reader.sup + reader.offset
 
     @classmethod
     def load_builtin(cls, name='ml-100k'):
@@ -232,7 +230,7 @@ class Dataset:
         ur = defaultdict(list)
         ir = defaultdict(list)
 
-        # user raw id, item raw id, rating, time stamp
+        # user raw id, item raw id, translated rating, time stamp
         for urid, irid, r, timestamp in raw_trainset:
             try:
                 uid = raw2inner_id_users[urid]
@@ -259,8 +257,8 @@ class Dataset:
                             n_users,
                             n_items,
                             n_ratings,
-                            self.r_min,
-                            self.r_max,
+                            self.reader.rating_scale,
+                            self.reader.offset,
                             raw2inner_id_users,
                             raw2inner_id_items)
 
@@ -268,7 +266,8 @@ class Dataset:
 
     def construct_testset(self, raw_testset):
 
-        return [(ruid, riid, r) for (ruid, riid, r, _) in raw_testset]
+        return [(ruid, riid, r_ui_trans)
+                for (ruid, riid, r_ui_trans, _) in raw_testset]
 
 
 class DatasetUserFolds(Dataset):
@@ -405,8 +404,10 @@ class Reader():
         else:
             self.sep = sep
             self.skip_lines = skip_lines
-            self.inf, self.sup = rating_scale
-            self.offset = -self.inf + 1 if self.inf <= 0 else 0
+            self.rating_scale = rating_scale
+
+            lower_bound, higher_bound = rating_scale
+            self.offset = -lower_bound + 1 if lower_bound <= 0 else 0
 
             splitted_format = line_format.split()
 
@@ -426,6 +427,8 @@ class Reader():
 
     def parse_line(self, line):
         '''Parse a line.
+
+        Ratings are translated so that they are all strictly positive.
 
         Args:
             line(str): The line to parse
@@ -471,21 +474,21 @@ class Trainset:
         n_users: Total number of users :math:`|U|`.
         n_items: Total number of items :math:`|I|`.
         n_ratings: Total number of ratings :math:`|R_{train}|`.
-        r_min: Minimum value of the rating scale.
-        r_max: Maximum value of the rating scale.
+        rating_scale(tuple): The minimum and maximal rating of the rating
+            scale.
         global_mean: The mean of all ratings :math:`\\mu`.
     """
 
-    def __init__(self, ur, ir, n_users, n_items, n_ratings, r_min, r_max,
-                 raw2inner_id_users, raw2inner_id_items):
+    def __init__(self, ur, ir, n_users, n_items, n_ratings, rating_scale,
+                 offset, raw2inner_id_users, raw2inner_id_items):
 
         self.ur = ur
         self.ir = ir
         self.n_users = n_users
         self.n_items = n_items
         self.n_ratings = n_ratings
-        self.r_min = r_min
-        self.r_max = r_max
+        self.rating_scale = rating_scale
+        self.offset = offset
         self._raw2inner_id_users = raw2inner_id_users
         self._raw2inner_id_items = raw2inner_id_items
         self._global_mean = None

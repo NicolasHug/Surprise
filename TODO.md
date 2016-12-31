@@ -3,6 +3,7 @@ TODO
 
 * Profile code (mostly cython) to see what could be optimized
 * allow a 'clip' option to the predict method? Also, describe r_min and r_max
+* update SVD benchmark
 
 Maybe, Maybe not
 ----------------
