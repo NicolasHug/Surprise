@@ -133,7 +133,6 @@ class CaseInsensitiveDefaultDict(defaultdict):
 
 
 class GridSearch:
-    # TODO: keep documentation up-to-date with code
     """Evaluate the performance of the algorithm on all the combinations of parameters given to it.
 
         Used to get study the effect of parameters on algorithms and extract best parameters.
@@ -151,8 +150,26 @@ class GridSearch:
             measures(list of string): The performance measures to compute. Allowed
                 names are function names as defined in the :mod:`accuracy
                 <surprise.accuracy>` module. Default is ``['rmse', 'mae']``.
-            verbose(boolean): Whether to print results when executing predictions.
-                Default is `True`
+            verbose(int): Level of verbosity. If 0, nothing is printed. If 1
+                (default), accuracy measures for each parameters combination
+                are printed, with acombination values. If 2, folds accuray
+                values are also printed.
+        Attributes:
+            cv_results_ (dict of arrays): a dict that contains all parameters
+                and accuracy information for each combination. Can  be
+                imported into pandas `DataFrame`
+            best_estimator_ (dict of AlgoBase): Using accuracy measure as a key,
+                get the estimator that gave the best accuracy results for the
+                chosen measure
+            best_score_ (dict of floats): Using accuracy measure as a key,
+                get the best score achieved for that measure
+            best_params_ (dict of dicts): Using accuracy measure as a key,
+                get the parameters combination that gave the best accuracy
+                results for the chosen measure
+            best_index_  (dict of ints): Using accuracy measure as a key,
+                get the index that can be used with `cv_results_` that
+                achieved the highest accuracy for that measure
+
         """
     def __init__(self, algo_class, param_grid, measures=['rmse', 'mae'], verbose=1):
         self.best_params_ = CaseInsensitiveDefaultDict(list)
@@ -166,7 +183,16 @@ class GridSearch:
         self.verbose = verbose
         self.param_combinations = [dict(zip(param_grid, v)) for v in product(*param_grid.values())]
 
+    @classmethod
     def evaluate(self, data):
+        """Runs the grid search on dataset.
+
+        Class instance attributes can be accessed after the evaluate is done.
+
+        Args:
+            data (:obj:`Dataset <surprise.dataset.Dataset>`): The dataset on
+                which to evaluate the algorithm.
+        """
         params = []
         scores = []
         combination_counter = 0
@@ -221,7 +247,6 @@ class GridSearch:
                     self.cv_results_[key] = [score[key]]
 
         for measure in self.measures:
-            #TODO: Check if it is okay to have hardcoded measures
             if measure.upper() == 'FCP':
                 best_dict = max(self.cv_results_['scores'], key=lambda x: x[measure.upper()])
             else:
