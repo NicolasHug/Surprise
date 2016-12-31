@@ -208,10 +208,10 @@ class GridSearch:
 
         for measure in self.measures:
             #TODO: Check if it is okay to have hardcoded measures
-            if measure.upper() == ('RMSE' or 'MAE'):
-                best_dict = min(self.cv_results_['scores'], key=lambda x: x[measure.upper()])
             if measure.upper() == 'FCP':
                 best_dict = max(self.cv_results_['scores'], key=lambda x: x[measure.upper()])
+            else:
+                best_dict = min(self.cv_results_['scores'], key=lambda x: x[measure.upper()])
             self.best_score_[measure] = best_dict[measure.upper()]
             self.best_index_[measure] = self.cv_results_['scores'].index(best_dict)
             self.best_params_[measure] = self.cv_results_['params'][self.best_index_[measure]]
