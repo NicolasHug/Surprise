@@ -134,25 +134,26 @@ class CaseInsensitiveDefaultDict(defaultdict):
 
 class GridSearch:
 
-    def __init__(self, algo, param_grid, measure='RMSE', verbose=True):
+    def __init__(self, algo, param_grid, measures=['RMSE'], verbose=True):
         self.algo = algo
         self.param_grid = param_grid
-        self.measure = measure
+        self.measures = measures
         self.verbose = verbose
         self.param_combinations = [dict(zip(param_grid, v)) for v in product(*param_grid.values())]
 
     def evaluate(self, data):
-        f = getattr(accuracy, self.measure.lower())
         params = []
         scores = []
         combination_counter = 0
         for combination in self.param_combinations:
+            params.append(combination)
+            performances = CaseInsensitiveDefaultDict(list)
             if self.verbose:
                 combination_counter += 1
                 num_of_combinations = len(self.param_combinations)
                 print ('start combination {} from {}: '.format(combination_counter,num_of_combinations))
                 print ('params: ', combination)
-            fold_measure = []
+
             algo_instance = self.algo(**combination)
             for fold_i, (trainset, testset) in enumerate(data.folds()):
                 if self.verbose:
@@ -160,32 +161,38 @@ class GridSearch:
                     print('Fold ' + str(fold_i + 1))
                 algo_instance.train(trainset)
                 predictions = algo_instance.test(testset)
-                fold_score = f(predictions, verbose=False)
-                fold_measure.append(fold_score)
-                if self.verbose:
-                    print(fold_score)
-            params.append(combination)
-            mean_score = np.mean(fold_measure)
+                for measure in self.measures:
+                    f = getattr(accuracy, measure.lower())
+                    performances[measure].append(f(predictions, verbose=self.verbose))
+
+            mean_score = {}
+            for measure in self.measures:
+                mean_score[measure.upper()] = np.mean(performances[measure])
+
             if self.verbose:
                 print('-' * 12)
                 print('-' * 12)
-                print('Mean {0:4s}: {1:1.4f}'.format(
-                    self.measure.upper(), mean_score))
+                for measure in self.measures:
+                    print('Mean {0:4s}: {1:1.4f}'.format(
+                        measure.upper(), np.mean(performances[measure])))
                 print('-' * 12)
                 print('-' * 12)
 
             scores.append(mean_score)
-            self.cv_results_ = {'params': params, 'scores': scores}
+
+        self.cv_results_ = {'params': params, 'scores': scores}
 
         #best attributes
-        #TODO: Check if it is okay to have hardcoded measures
-        if self.measure.upper() == ('RMSE' or 'MAE'):
-            best_score = min(self.cv_results_['scores'])
-        if self.measure.upper() == 'FCP':
-            best_score = max(self.cv_results_['scores'])
+        self.best_score_ = {}
+        self.best_index_ = {}
+        self.best_params_ = {}
+        for measure in self.measures:
+            #TODO: Check if it is okay to have hardcoded measures
+            if measure.upper() == ('RMSE' or 'MAE'):
+                best_dict = min(self.cv_results_['scores'], key=lambda x: x[measure.upper()])
+            if measure.upper() == 'FCP':
+                best_dict = max(self.cv_results_['scores'], key=lambda x: x[measure.upper()])
 
-        best_index = self.cv_results_['scores'].index(best_score)
-        self.best_index_ = best_index
-        self.best_score_ = best_score
-        self.best_params_ = self.cv_results_['params'][best_index]
-
+            self.best_score_[measure.upper()] = best_dict[measure.upper()]
+            self.best_index_[measure.upper()] = self.cv_results_['scores'].index(best_dict)
+            self.best_params_[measure.upper()] = self.cv_results_['params'][self.best_index_[measure.upper()]]
