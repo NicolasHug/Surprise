@@ -158,6 +158,7 @@ class GridSearch:
         self.best_params_ = CaseInsensitiveDefaultDict(list)
         self.best_index_ = CaseInsensitiveDefaultDict(list)
         self.best_score_ = CaseInsensitiveDefaultDict(list)
+        self.best_estimator_ = CaseInsensitiveDefaultDict(list)
         self.cv_results_ = {}
         self.algo_class = algo_class
         self.param_grid = param_grid
@@ -228,3 +229,4 @@ class GridSearch:
             self.best_score_[measure] = best_dict[measure.upper()]
             self.best_index_[measure] = self.cv_results_['scores'].index(best_dict)
             self.best_params_[measure] = self.cv_results_['params'][self.best_index_[measure]]
+            self.best_estimator_[measure] = self.algo_class(**self.best_params_[measure])
