@@ -1,5 +1,5 @@
 """
-The :mod:`evaluate` module defines the :func:`evaluate` function.
+The :mod:`evaluate` module defines the :func:`evaluate` function and :class:`GridSearch` class
 """
 
 from __future__ import (absolute_import, division, print_function,
@@ -133,9 +133,33 @@ class CaseInsensitiveDefaultDict(defaultdict):
 
 
 class GridSearch:
+    # TODO: keep documentation up-to-date with code
+    """Evaluate the performance of the algorithm on all the combinations of parameters given to it.
 
-    def __init__(self, algo, param_grid, measures=['RMSE'], verbose=True):
-        self.algo = algo
+        Used to get study the effect of parameters on algorithms and extract best parameters.
+
+        Depending on the nature of the ``data`` parameter, it may or may not
+        perform cross validation.
+
+        Parameters:
+            algo_class(:obj:`AlgoBase \
+                <surprise.prediction_algorithms.algo_base.AlgoBase>`):
+                The algorithm to evaluate.
+            param_grid (dict): The dictionary has algo_class parameters as keys \
+                (string) and list of parameters as the desired values to try. \
+                All combinations will be evaluated with desired algorithm
+            measures(list of string): The performance measures to compute. Allowed
+                names are function names as defined in the :mod:`accuracy
+                <surprise.accuracy>` module. Default is ``['rmse', 'mae']``.
+            verbose(boolean): Whether to print results when executing predictions.
+                Default is `True`
+        """
+    def __init__(self, algo_class, param_grid, measures=['rmse', 'mae'], verbose=True):
+        self.best_params_ = {}
+        self.best_index_ = {}
+        self.best_score_ = {}
+        self.cv_results_ = {}
+        self.algo_class = algo_class
         self.param_grid = param_grid
         self.measures = measures
         self.verbose = verbose
@@ -154,7 +178,7 @@ class GridSearch:
                 print ('start combination {} from {}: '.format(combination_counter,num_of_combinations))
                 print ('params: ', combination)
 
-            algo_instance = self.algo(**combination)
+            algo_instance = self.algo_class(**combination)
             for fold_i, (trainset, testset) in enumerate(data.folds()):
                 if self.verbose:
                     print('-' * 12)
