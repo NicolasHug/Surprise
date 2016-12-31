@@ -183,7 +183,6 @@ class GridSearch:
         self.verbose = verbose
         self.param_combinations = [dict(zip(param_grid, v)) for v in product(*param_grid.values())]
 
-    @classmethod
     def evaluate(self, data):
         """Runs the grid search on dataset.
 

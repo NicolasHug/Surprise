@@ -31,7 +31,7 @@ def test_best_rmse():
     gridSearch.evaluate(data)
     assert gridSearch.best_index_['RMSE'] == 7
     assert gridSearch.best_params_['RMSE'] == {u'lr_all': 0.005, u'reg_all': 0.6, u'n_epochs': 10}
-    assert (abs(gridSearch.best_score_['RMSE'] - 1.06880357239)) < 0.000001 # scores are equal
+    assert (abs(gridSearch.best_score_['RMSE'] - 1.0751)) < 0.0001 # scores are equal
 
 def test_best_fcp():
     param_grid = {'n_epochs': [5, 10], 'lr_all': [0.002, 0.005], 'reg_all': [0.4, 0.6]}
@@ -39,7 +39,7 @@ def test_best_fcp():
     gridSearch.evaluate(data)
     assert gridSearch.best_index_['FCP'] == 7
     assert gridSearch.best_params_['FCP'] == {u'lr_all': 0.005, u'reg_all': 0.6, u'n_epochs': 10}
-    assert (abs(gridSearch.best_score_['FCP'] - 0.591655912113)) < 0.000001 # scores are equal
+    assert (abs(gridSearch.best_score_['FCP'] - 0.5922)) < 0.0001 # scores are equal
 
 def test_measure_is_not_case_sensitive():
     param_grid = {'n_epochs': [5, 10], 'lr_all': [0.002, 0.005], 'reg_all': [0.4, 0.6]}
