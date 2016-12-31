@@ -206,6 +206,19 @@ class GridSearch:
 
         self.cv_results_ = {'params': params, 'scores': scores}
 
+        for param in params:
+            for key in param.keys():
+                if key in self.cv_results_.keys():
+                    self.cv_results_[key].append(param[key])
+                else:
+                    self.cv_results_[key] = [param[key]]
+        for score in scores:
+            for key in score.keys():
+                if key in self.cv_results_.keys():
+                    self.cv_results_[key].append(score[key])
+                else:
+                    self.cv_results_[key] = [score[key]]
+
         for measure in self.measures:
             #TODO: Check if it is okay to have hardcoded measures
             if measure.upper() == 'FCP':
@@ -215,3 +228,4 @@ class GridSearch:
             self.best_score_[measure] = best_dict[measure.upper()]
             self.best_index_[measure] = self.cv_results_['scores'].index(best_dict)
             self.best_params_[measure] = self.cv_results_['params'][self.best_index_[measure]]
+            print (self.cv_results_)
