@@ -35,7 +35,7 @@ def test_best_rmse():
     grid_search.evaluate(data)
     assert grid_search.best_index['RMSE'] == 7
     assert grid_search.best_params['RMSE'] == {
-        u'lr_all': 0.005, u'reg_all': 0.6, u'n_epochs': 10}
+        'lr_all': 0.005, 'reg_all': 0.6, 'n_epochs': 10}
     assert (abs(grid_search.best_score['RMSE'] - 1.0751)) < 0.0001
 
 
@@ -46,7 +46,7 @@ def test_best_fcp():
     grid_search.evaluate(data)
     assert grid_search.best_index['FCP'] == 7
     assert grid_search.best_params['FCP'] == {
-        u'lr_all': 0.005, u'reg_all': 0.6, u'n_epochs': 10}
+        'lr_all': 0.005, 'reg_all': 0.6, 'n_epochs': 10}
     assert (abs(grid_search.best_score['FCP'] - 0.5922)) < 0.0001
 
 
