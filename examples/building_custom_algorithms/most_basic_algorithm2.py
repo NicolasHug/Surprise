@@ -27,8 +27,8 @@ class MyOwnAlgorithm(AlgoBase):
 
         # Compute the average rating. We might as well use the
         # trainset.global_mean attribute ;)
-        self.the_mean = np.mean(
-                        [r for (_, _, r) in self.trainset.all_ratings()])
+        self.the_mean = np.mean([r for (_, _, r) in
+                                 self.trainset.all_ratings()])
 
     def estimate(self, u, i):
 

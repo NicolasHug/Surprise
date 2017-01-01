@@ -1,0 +1,4 @@
+[flake8]
+filename = *.py
+exclude = doc, .eggs, *.egg, build, setup.py
+ignore = E901, E225, E226, E227

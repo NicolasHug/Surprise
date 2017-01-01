@@ -40,8 +40,8 @@ def test_rmse():
     assert surprise.accuracy.rmse(predictions) == sqrt((0 - 2)**2 / 2)
 
     predictions = [pred(2, 0), pred(3, 4)]
-    assert surprise.accuracy.rmse(predictions) == sqrt(
-                                                ((2 - 0)**2 + (3 - 4)**2) / 2)
+    assert surprise.accuracy.rmse(predictions) == sqrt(((2 - 0)**2 +
+                                                        (3 - 4)**2) / 2)
 
     with pytest.raises(ValueError):
         surprise.accuracy.rmse([])

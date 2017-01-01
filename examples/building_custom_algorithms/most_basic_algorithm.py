@@ -22,6 +22,7 @@ class MyOwnAlgorithm(AlgoBase):
 
         return 3
 
+
 data = Dataset.load_builtin('ml-100k')
 algo = MyOwnAlgorithm()
 

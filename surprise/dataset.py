@@ -596,7 +596,7 @@ class Trainset:
 
         It's only computed once."""
         if self._global_mean is None:
-            self._global_mean = np.mean(
-                                [r for (_, _, r) in self.all_ratings()])
+            self._global_mean = np.mean([r for (_, _, r) in
+                                         self.all_ratings()])
 
         return self._global_mean
