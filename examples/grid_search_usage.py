@@ -22,16 +22,16 @@ data.split(n_folds=3)
 gridSearch.evaluate(data)
 
 # best RMSE score
-print(gridSearch.best_score_['RMSE'])
+print(gridSearch.best_score['RMSE'])
 # combination of parameters that gave the best RMSE score
-print(gridSearch.best_params_['RMSE'])
+print(gridSearch.best_params['RMSE'])
 
 # best FCP score
-print(gridSearch.best_score_['FCP'])
+print(gridSearch.best_score['FCP'])
 # combination of parameters that gave the best FCP score
-print(gridSearch.best_params_['FCP'])
+print(gridSearch.best_params['FCP'])
 
 import pandas as pd
 
-results_df = pd.DataFrame.from_dict(gridSearch.cv_results_)
+results_df = pd.DataFrame.from_dict(gridSearch.cv_results)
 print(results_df)

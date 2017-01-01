@@ -161,22 +161,22 @@ class GridSearch:
                 are printed, with acombination values. If 2, folds accuray
                 values are also printed.
         Attributes:
-            cv_results_ (dict of arrays):
+            cv_results (dict of arrays):
                 a dict that contains all parameters
                 and accuracy information for each combination. Can  be
                 imported into pandas `DataFrame`
-            best_estimator_ (dict of AlgoBase):
+            best_estimator (dict of AlgoBase):
                 Using accuracy measure as a key,
                 get the estimator that gave the best accuracy results for the
                 chosen measure
-            best_score_ (dict of floats):
+            best_score (dict of floats):
                 Using accuracy measure as a key,
                 get the best score achieved for that measure
-            best_params_ (dict of dicts):
+            best_params (dict of dicts):
                 Using accuracy measure as a key,
                 get the parameters combination that gave the best accuracy
                 results for the chosen measure
-            best_index_  (dict of ints):
+            best_index  (dict of ints):
                 Using accuracy measure as a key,
                 get the index that can be used with `cv_results_` that
                 achieved the highest accuracy for that measure
@@ -184,11 +184,11 @@ class GridSearch:
 
     def __init__(self, algo_class, param_grid, measures=['rmse', 'mae'],
                  verbose=1):
-        self.best_params_ = CaseInsensitiveDefaultDictForBestResults(list)
-        self.best_index_ = CaseInsensitiveDefaultDictForBestResults(list)
-        self.best_score_ = CaseInsensitiveDefaultDictForBestResults(list)
-        self.best_estimator_ = CaseInsensitiveDefaultDictForBestResults(list)
-        self.cv_results_ = defaultdict(list)
+        self.best_params = CaseInsensitiveDefaultDictForBestResults(list)
+        self.best_index = CaseInsensitiveDefaultDictForBestResults(list)
+        self.best_score = CaseInsensitiveDefaultDictForBestResults(list)
+        self.best_estimator = CaseInsensitiveDefaultDictForBestResults(list)
+        self.cv_results = defaultdict(list)
         self.algo_class = algo_class
         self.param_grid = param_grid
         self.measures = [measure.upper() for measure in measures]
@@ -242,30 +242,30 @@ class GridSearch:
                 print('-' * 12)
 
         # Add all scores and parameters lists to dict
-        self.cv_results_['params'] = params
-        self.cv_results_['scores'] = scores
+        self.cv_results['params'] = params
+        self.cv_results['scores'] = scores
 
         # Add accuracy measures and algorithm parameters as keys to dict
         for param, score in zip(params, scores):
             for param_key, score_key in zip(param.keys(), score.keys()):
-                self.cv_results_[param_key].append(param[param_key])
-                self.cv_results_[score_key].append(score[score_key])
+                self.cv_results[param_key].append(param[param_key])
+                self.cv_results[score_key].append(score[score_key])
 
         # Get the best results
         for measure in self.measures:
             if measure == 'FCP':
-                best_dict = max(self.cv_results_['scores'],
+                best_dict = max(self.cv_results['scores'],
                                 key=lambda x: x[measure])
             else:
-                best_dict = min(self.cv_results_['scores'],
+                best_dict = min(self.cv_results['scores'],
                                 key=lambda x: x[measure])
-            self.best_score_[measure] = best_dict[measure]
-            self.best_index_[measure] = self.cv_results_['scores'].index(
+            self.best_score[measure] = best_dict[measure]
+            self.best_index[measure] = self.cv_results['scores'].index(
                 best_dict)
-            self.best_params_[measure] = self.cv_results_['params'][
-                self.best_index_[measure]]
-            self.best_estimator_[measure] = self.algo_class(
-                **self.best_params_[measure])
+            self.best_params[measure] = self.cv_results['params'][
+                self.best_index[measure]]
+            self.best_estimator[measure] = self.algo_class(
+                **self.best_params[measure])
 
 
 class CaseInsensitiveDefaultDictForBestResults(defaultdict):

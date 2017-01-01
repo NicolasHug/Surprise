@@ -126,7 +126,7 @@ RMSE and FCP values for all the combination. Thus the following definition:
 
 .. literalinclude:: ../../examples/grid_search_usage.py
     :caption: From file ``examples/grid_search_usage.py``
-    :name: grid_search_usage.py
+    :name: grid_search_usage2.py
     :lines: 16
 
 Now that :class:`GridSearch <surprise.evaluate.GridSearch>` instance is ready,
@@ -136,7 +136,7 @@ then we call the evaluate method of
 
 .. literalinclude:: ../../examples/grid_search_usage.py
     :caption: From file ``examples/grid_search_usage.py``
-    :name: grid_search_usage.py
+    :name: grid_search_usage3.py
     :lines: 19-22
 
 Everything is ready now to read the results. For example, we get the best RMSE
@@ -144,7 +144,7 @@ and FCP scores and the parameters combinations that created them as follows:
 
 .. literalinclude:: ../../examples/grid_search_usage.py
     :caption: From file ``examples/grid_search_usage.py``
-    :name: grid_search_usage.py
+    :name: grid_search_usage4.py
     :lines: 24-32
 
 For further analysis, we can easily read all the results in a pandas
@@ -152,7 +152,7 @@ For further analysis, we can easily read all the results in a pandas
 
 .. literalinclude:: ../../examples/grid_search_usage.py
     :caption: From file ``examples/grid_search_usage.py``
-    :name: grid_search_usage.py
+    :name: grid_search_usage5.py
     :lines: 34-36
 
 .. _iterate_over_folds:

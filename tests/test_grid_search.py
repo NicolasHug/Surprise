@@ -25,7 +25,7 @@ def test_grid_search_cv_results():
                   'reg_all': [0.4, 0.6]}
     grid_search = GridSearch(SVD, param_grid)
     grid_search.evaluate(data)
-    assert len(grid_search.cv_results_['params']) == 8
+    assert len(grid_search.cv_results['params']) == 8
 
 
 def test_best_rmse():
@@ -33,10 +33,10 @@ def test_best_rmse():
                   'reg_all': [0.4, 0.6]}
     grid_search = GridSearch(SVD, param_grid)
     grid_search.evaluate(data)
-    assert grid_search.best_index_['RMSE'] == 7
-    assert grid_search.best_params_['RMSE'] == {
+    assert grid_search.best_index['RMSE'] == 7
+    assert grid_search.best_params['RMSE'] == {
         u'lr_all': 0.005, u'reg_all': 0.6, u'n_epochs': 10}
-    assert (abs(grid_search.best_score_['RMSE'] - 1.0751)) < 0.0001
+    assert (abs(grid_search.best_score['RMSE'] - 1.0751)) < 0.0001
 
 
 def test_best_fcp():
@@ -44,10 +44,10 @@ def test_best_fcp():
                   'reg_all': [0.4, 0.6]}
     grid_search = GridSearch(SVD, param_grid, measures=['FCP'])
     grid_search.evaluate(data)
-    assert grid_search.best_index_['FCP'] == 7
-    assert grid_search.best_params_['FCP'] == {
+    assert grid_search.best_index['FCP'] == 7
+    assert grid_search.best_params['FCP'] == {
         u'lr_all': 0.005, u'reg_all': 0.6, u'n_epochs': 10}
-    assert (abs(grid_search.best_score_['FCP'] - 0.5922)) < 0.0001
+    assert (abs(grid_search.best_score['FCP'] - 0.5922)) < 0.0001
 
 
 def test_measure_is_not_case_sensitive():
@@ -55,9 +55,9 @@ def test_measure_is_not_case_sensitive():
                   'reg_all': [0.4, 0.6]}
     grid_search = GridSearch(SVD, param_grid, measures=['FCP', 'mae', 'rMSE'])
     grid_search.evaluate(data)
-    assert isinstance(grid_search.best_index_['fcp'], int)
-    assert isinstance(grid_search.best_params_['MAE'], dict)
-    assert isinstance(grid_search.best_score_['RmSe'], float)
+    assert isinstance(grid_search.best_index['fcp'], int)
+    assert isinstance(grid_search.best_params['MAE'], dict)
+    assert isinstance(grid_search.best_score['RmSe'], float)
 
 
 def test_best_estimator():
@@ -65,6 +65,6 @@ def test_best_estimator():
                   'reg_all': [0.4, 0.6]}
     grid_search = GridSearch(SVD, param_grid, measures=['FCP', 'mae', 'rMSE'])
     grid_search.evaluate(data)
-    best_estimator = grid_search.best_estimator_['MAE']
+    best_estimator = grid_search.best_estimator['MAE']
     assert evaluate(
-        best_estimator, data)['MAE'] == grid_search.best_score_['MAE']
+        best_estimator, data)['MAE'] == grid_search.best_score['MAE']
