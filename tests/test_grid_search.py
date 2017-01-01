@@ -19,39 +19,52 @@ train_file = os.path.join(os.path.dirname(__file__), './u1_ml100k_train')
 test_file = os.path.join(os.path.dirname(__file__), './u1_ml100k_test')
 data = Dataset.load_from_folds([(train_file, test_file)], Reader('ml-100k'))
 
+
 def test_grid_search_cv_results():
-    param_grid = {'n_epochs':[5,10], 'lr_all': [0.002, 0.005], 'reg_all': [0.4,0.6]}
-    gridSearch = GridSearch(SVD,param_grid)
-    gridSearch.evaluate(data)
-    assert len(gridSearch.cv_results_['params']) == 8
+    param_grid = {'n_epochs': [2, 4], 'lr_all': [0.002, 0.005],
+                  'reg_all': [0.4, 0.6]}
+    grid_search = GridSearch(SVD, param_grid)
+    grid_search.evaluate(data)
+    assert len(grid_search.cv_results_['params']) == 8
+
 
 def test_best_rmse():
-    param_grid = {'n_epochs': [5, 10], 'lr_all': [0.002, 0.005], 'reg_all': [0.4, 0.6]}
-    gridSearch = GridSearch(SVD,param_grid)
-    gridSearch.evaluate(data)
-    assert gridSearch.best_index_['RMSE'] == 7
-    assert gridSearch.best_params_['RMSE'] == {u'lr_all': 0.005, u'reg_all': 0.6, u'n_epochs': 10}
-    assert (abs(gridSearch.best_score_['RMSE'] - 1.0751)) < 0.0001 # scores are equal
+    param_grid = {'n_epochs': [5, 10], 'lr_all': [0.002, 0.005],
+                  'reg_all': [0.4, 0.6]}
+    grid_search = GridSearch(SVD, param_grid)
+    grid_search.evaluate(data)
+    assert grid_search.best_index_['RMSE'] == 7
+    assert grid_search.best_params_['RMSE'] == \
+           {u'lr_all': 0.005, u'reg_all': 0.6, u'n_epochs': 10}
+    assert (abs(grid_search.best_score_['RMSE'] - 1.0751)) < 0.0001
+
 
 def test_best_fcp():
-    param_grid = {'n_epochs': [5, 10], 'lr_all': [0.002, 0.005], 'reg_all': [0.4, 0.6]}
-    gridSearch = GridSearch(SVD, param_grid, measures=['FCP'])
-    gridSearch.evaluate(data)
-    assert gridSearch.best_index_['FCP'] == 7
-    assert gridSearch.best_params_['FCP'] == {u'lr_all': 0.005, u'reg_all': 0.6, u'n_epochs': 10}
-    assert (abs(gridSearch.best_score_['FCP'] - 0.5922)) < 0.0001 # scores are equal
+    param_grid = {'n_epochs': [5, 10], 'lr_all': [0.002, 0.005],
+                  'reg_all': [0.4, 0.6]}
+    grid_search = GridSearch(SVD, param_grid, measures=['FCP'])
+    grid_search.evaluate(data)
+    assert grid_search.best_index_['FCP'] == 7
+    assert grid_search.best_params_['FCP'] \
+           == {u'lr_all': 0.005, u'reg_all': 0.6, u'n_epochs': 10}
+    assert (abs(grid_search.best_score_['FCP'] - 0.5922)) < 0.0001
+
 
 def test_measure_is_not_case_sensitive():
-    param_grid = {'n_epochs': [5, 10], 'lr_all': [0.002, 0.005], 'reg_all': [0.4, 0.6]}
-    gridSearch = GridSearch(SVD, param_grid, measures=['FCP','mae','rMSE'])
-    gridSearch.evaluate(data)
-    gridSearch.best_index_['fcp']
-    gridSearch.best_params_['MAE']
-    gridSearch.best_score_['RmSe']
+    param_grid = {'n_epochs': [2], 'lr_all': [0.002, 0.005],
+                  'reg_all': [0.4, 0.6]}
+    grid_search = GridSearch(SVD, param_grid, measures=['FCP', 'mae', 'rMSE'])
+    grid_search.evaluate(data)
+    assert isinstance(grid_search.best_index_['fcp'], int)
+    assert isinstance(grid_search.best_params_['MAE'], dict)
+    assert isinstance(grid_search.best_score_['RmSe'], float)
+
 
 def test_best_estimator():
-    param_grid = {'n_epochs': [5, 10], 'lr_all': [0.002, 0.005], 'reg_all': [0.4, 0.6]}
-    gridSearch = GridSearch(SVD, param_grid, measures=['FCP','mae','rMSE'])
-    gridSearch.evaluate(data)
-    best_estimator = gridSearch.best_estimator_['MAE']
-    assert (evaluate(best_estimator, data)['MAE'] == gridSearch.best_score_['MAE'])
+    param_grid = {'n_epochs': [5], 'lr_all': [0.002, 0.005],
+                  'reg_all': [0.4, 0.6]}
+    grid_search = GridSearch(SVD, param_grid, measures=['FCP', 'mae', 'rMSE'])
+    grid_search.evaluate(data)
+    best_estimator = grid_search.best_estimator_['MAE']
+    assert evaluate(best_estimator, data)['MAE'] == \
+           grid_search.best_score_['MAE']

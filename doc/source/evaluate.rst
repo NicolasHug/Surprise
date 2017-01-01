@@ -5,4 +5,4 @@ evaluate module
 
 .. automodule:: surprise.evaluate
     :members:
-    :exclude-members: CaseInsensitiveDefaultDict
+    :exclude-members: CaseInsensitiveDefaultDict, CaseInsensitiveDefaultDictForBestResults
