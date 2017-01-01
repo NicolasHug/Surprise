@@ -197,33 +197,25 @@ class GridSearch:
         scores = []
         for combination_index, combination in enumerate(self.param_combinations):
             params.append(combination)
-            performances = CaseInsensitiveDefaultDictForBestResults(list)
+
             if self.verbose >= 1:
                 num_of_combinations = len(self.param_combinations)
                 print ('start combination {} from {}: '.format(combination_index + 1,num_of_combinations))
                 print ('params: ', combination)
 
             algo_instance = self.algo_class(**combination)
-            for fold_i, (trainset, testset) in enumerate(data.folds()):
-                if self.verbose >=2:
-                    print('-' * 12)
-                    print('Fold ' + str(fold_i + 1))
-                algo_instance.train(trainset)
-                predictions = algo_instance.test(testset)
-                for measure in self.measures:
-                    f = getattr(accuracy, measure.lower())
-                    performances[measure].append(f(predictions,verbose = (self.verbose == 2)))
+            evaluate_results = evaluate(algo_instance,data,measures=self.measures, verbose=(self.verbose == 2))
 
             mean_score = {}
             for measure in self.measures:
-                mean_score[measure.upper()] = np.mean(performances[measure])
+                mean_score[measure.upper()] = np.mean(evaluate_results[measure])
 
-            if self.verbose:
+            if self.verbose == 1:
                 print('-' * 12)
                 print('-' * 12)
                 for measure in self.measures:
                     print('Mean {0:4s}: {1:1.4f}'.format(
-                        measure.upper(), np.mean(performances[measure])))
+                        measure.upper(), mean_score[measure.upper()]))
                 print('-' * 12)
                 print('-' * 12)
 
