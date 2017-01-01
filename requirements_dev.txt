@@ -6,4 +6,5 @@ pytest>=3.0.3
 sphinx
 sphinx_rtd_theme
 sphinxcontrib-bibtex
-flake8
+flake8>=3.2.1
+
