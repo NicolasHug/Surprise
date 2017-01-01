@@ -94,6 +94,67 @@ Advanced usage
 We will here get a little deeper on what can `Surprise
 <https://nicolashug.github.io/Surprise/>`_ do for you.
 
+.. _tuning_algorithm_parameters:
+
+Tune algorithm parameters
+~~~~~~~~~~~~~~~~~~~~~~~~~
+The :func:`evaluate() <surprise.evaluate.evaluate>` function gives us the
+results on one set of parameters given to the algorithm. If the user wants
+to try the algorithm on a different set of parameters
+:class:`GridSearch <surprise.evaluate.GridSearch>` class comes to the rescue.
+Given a ``dict`` of parameters as keys and and values ``list`` as values, this
+class exhaustively tries all the combination of parameters and help get the
+best combination for an accuracy measurement. It is analogous to
+`GridSearchCV <http://scikit-learn.org/stable/modules/generated/sklearn.model
+_selection.GridSearchCV.html>`_ from sklearn.
+
+For instance, suppose that we want to tune the parameters of the
+:class:`SVD <surprise.prediction_algorithms.matrix_factorization.SVD>`. Some of
+the parameters of this algorithm are `n_epochs`, `lr_all` and `reg_all`. Thus
+we define a parameters grid as follows
+
+.. literalinclude:: ../../examples/grid_search_usage.py
+    :caption: From file ``examples/grid_search_usage.py``
+    :name: grid_search_usage.py
+    :lines: 13
+
+Next we define a :class:`GridSearch <surprise.evaluate.GridSearch>` instance
+and give it
+:class:`SVD <surprise.prediction_algorithms.matrix_factorization.SVD>` as an
+algorithm, `param_grid` as the parameters to tune. We will compute both the
+RMSE and FCP values for all the combination. Thus the following definition:
+
+.. literalinclude:: ../../examples/grid_search_usage.py
+    :caption: From file ``examples/grid_search_usage.py``
+    :name: grid_search_usage.py
+    :lines: 15
+
+Now that :class:`GridSearch <surprise.evaluate.GridSearch>` instance is ready,
+we want to evaluate it on the the data, so first we prepare our data as and
+then we call the evaluate method of
+:class:`GridSearch <surprise.evaluate.GridSearch>`:
+
+.. literalinclude:: ../../examples/grid_search_usage.py
+    :caption: From file ``examples/grid_search_usage.py``
+    :name: grid_search_usage.py
+    :lines: 18-21
+
+Everything is ready now to read the results. For example, we get the best RMSE
+and FCP scores and the parameters combinations that created them as follows:
+
+.. literalinclude:: ../../examples/grid_search_usage.py
+    :caption: From file ``examples/grid_search_usage.py``
+    :name: grid_search_usage.py
+    :lines: 23-27
+
+For further analysis, we can easily read all the results in a pandas
+``DataFrame`` as follows:
+
+.. literalinclude:: ../../examples/grid_search_usage.py
+    :caption: From file ``examples/grid_search_usage.py``
+    :name: grid_search_usage.py
+    :lines: 29-31
+
 .. _iterate_over_folds:
 
 Manually iterate over folds
