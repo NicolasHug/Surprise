@@ -1,6 +1,5 @@
-"""
-The :mod:`evaluate` module defines the :func:`evaluate` function and :class:`GridSearch` class
-"""
+"""The :mod:`evaluate` module defines the :func:`evaluate` function and
+:class:`GridSearch` class """
 
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
@@ -133,9 +132,11 @@ class CaseInsensitiveDefaultDict(defaultdict):
 
 
 class GridSearch:
-    """Evaluate the performance of the algorithm on all the combinations of parameters given to it.
+    """Evaluate the performance of the algorithm on all the combinations of
+    parameters given to it.
 
-        Used to get study the effect of parameters on algorithms and extract best parameters.
+        Used to get study the effect of parameters on algorithms and extract
+        best parameters.
 
         Depending on the nature of the ``data`` parameter, it may or may not
         perform cross validation.
@@ -176,7 +177,7 @@ class GridSearch:
         self.best_index_ = CaseInsensitiveDefaultDictForBestResults(list)
         self.best_score_ = CaseInsensitiveDefaultDictForBestResults(list)
         self.best_estimator_ = CaseInsensitiveDefaultDictForBestResults(list)
-        self.cv_results_ = {}
+        self.cv_results_ = defaultdict(list)
         self.algo_class = algo_class
         self.param_grid = param_grid
         self.measures = measures
@@ -194,14 +195,12 @@ class GridSearch:
         """
         params = []
         scores = []
-        combination_counter = 0
-        for combination in self.param_combinations:
+        for combination_index, combination in enumerate(self.param_combinations):
             params.append(combination)
             performances = CaseInsensitiveDefaultDictForBestResults(list)
             if self.verbose >= 1:
-                combination_counter += 1
                 num_of_combinations = len(self.param_combinations)
-                print ('start combination {} from {}: '.format(combination_counter,num_of_combinations))
+                print ('start combination {} from {}: '.format(combination_index + 1,num_of_combinations))
                 print ('params: ', combination)
 
             algo_instance = self.algo_class(**combination)
@@ -230,20 +229,13 @@ class GridSearch:
 
             scores.append(mean_score)
 
-        self.cv_results_ = {'params': params, 'scores': scores}
+        self.cv_results_['params'] = params
+        self.cv_results_['scores'] = scores
 
-        for param in params:
-            for key in param.keys():
-                if key in self.cv_results_.keys():
-                    self.cv_results_[key].append(param[key])
-                else:
-                    self.cv_results_[key] = [param[key]]
-        for score in scores:
-            for key in score.keys():
-                if key in self.cv_results_.keys():
-                    self.cv_results_[key].append(score[key])
-                else:
-                    self.cv_results_[key] = [score[key]]
+        for param, score in zip(params,scores):
+            for param_key, score_key in zip(param.keys(),score.keys()):
+                self.cv_results_[param_key].append(param[param_key])
+                self.cv_results_[score_key].append(score[score_key])
 
         for measure in self.measures:
             if measure.upper() == 'FCP':
