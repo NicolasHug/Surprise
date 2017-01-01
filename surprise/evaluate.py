@@ -191,7 +191,7 @@ class GridSearch:
         self.cv_results_ = defaultdict(list)
         self.algo_class = algo_class
         self.param_grid = param_grid
-        self.measures = measures
+        self.measures = [measure.upper() for measure in measures]
         self.verbose = verbose
         self.param_combinations = [dict(zip(param_grid, v)) for v in
                                    product(*param_grid.values())]
@@ -229,7 +229,7 @@ class GridSearch:
             # measures as keys and folds average as values
             mean_score = {}
             for measure in self.measures:
-                mean_score[measure.upper()] = np.mean(evaluate_results[measure])
+                mean_score[measure] = np.mean(evaluate_results[measure])
             scores.append(mean_score)
 
             if self.verbose == 1:
@@ -237,7 +237,7 @@ class GridSearch:
                 print('-' * 12)
                 for measure in self.measures:
                     print('Mean {0:4s}: {1:1.4f}'.format(
-                        measure.upper(), mean_score[measure.upper()]))
+                        measure, mean_score[measure]))
                 print('-' * 12)
                 print('-' * 12)
 
@@ -253,13 +253,13 @@ class GridSearch:
 
         # Get the best results
         for measure in self.measures:
-            if measure.upper() == 'FCP':
+            if measure == 'FCP':
                 best_dict = max(self.cv_results_['scores'],
-                                key=lambda x: x[measure.upper()])
+                                key=lambda x: x[measure])
             else:
                 best_dict = min(self.cv_results_['scores'],
-                                key=lambda x: x[measure.upper()])
-            self.best_score_[measure] = best_dict[measure.upper()]
+                                key=lambda x: x[measure])
+            self.best_score_[measure] = best_dict[measure]
             self.best_index_[measure] = self.cv_results_['scores'].index(
                 best_dict)
             self.best_params_[measure] = self.cv_results_['params'][
