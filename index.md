@@ -9,10 +9,8 @@ title: Home
 Overview
 --------
 
-[Surprise](http://surpriselib.com) is an easy-to-use open
-source Python library for recommender systems. Its goal is to make life easier
-for reseachers who want to play around with new algorithms ideas, for teachers
-who want some teaching materials, and for students.
+[Surprise](http://surpriselib.com) is an easy-to-use open source Python library
+for recommender systems.
 
 [Surprise](http://surpriselib.com) **was designed with the
 following purposes in mind**:
@@ -26,65 +24,38 @@ following purposes in mind**:
   handling](http://surprise.readthedocs.io/en/latest/getting_started.html#load-a-custom-dataset).
   Users can use both *built-in* datasets
   ([Movielens](http://grouplens.org/datasets/movielens/),
-  [Jester](http://eigentaste.berkeley.edu/dataset/)), and their own *custom* datasets.
+  [Jester](http://eigentaste.berkeley.edu/dataset/)), and their own *custom*
+  datasets.
 - Provide various ready-to-use [prediction
   algorithms](http://surprise.readthedocs.io/en/latest/prediction_algorithms_package.html)
-  (see below) [similarity
+  such as [baseline
+  algorithms](http://surprise.readthedocs.io/en/latest/basic_algorithms.html),
+  [neighborhood
+  methods](http://surprise.readthedocs.io/en/latest/knn_inspired.html), matrix
+  factorization-based (
+  [SVD](http://surprise.readthedocs.io/en/latest/matrix_factorization.html#surprise.prediction_algorithms.matrix_factorization.SVD),
+  [PMF](http://surprise.readthedocs.io/en/latest/matrix_factorization.html#unbiased-note),
+  [SVD++](http://surprise.readthedocs.io/en/latest/matrix_factorization.html#surprise.prediction_algorithms.matrix_factorization.SVDpp),
+  [NMF](http://surprise.readthedocs.io/en/latest/matrix_factorization.html#surprise.prediction_algorithms.matrix_factorization.NMF)),
+  and [many
+  others](http://surprise.readthedocs.io/en/latest/prediction_algorithms_package.html).
+  Also, various [similarity
   measures](http://surprise.readthedocs.io/en/latest/similarities.html)
-  (cosine, MSD, pearson...).
+  (cosine, MSD, pearson...) are built-in.
 - Make it easy to implement [new algorithm
   ideas](http://surprise.readthedocs.io/en/latest/building_custom_algo.html).
 - Provide tools to [evaluate](http://surprise.readthedocs.io/en/latest/evaluate.html),
   [analyse](http://nbviewer.jupyter.org/github/NicolasHug/Surprise/tree/master/examples/notebooks/KNNBasic_analysis.ipynb/)
   and
   [compare](http://nbviewer.jupyter.org/github/NicolasHug/Surprise/blob/master/examples/notebooks/Compare.ipynb)
-  the algorithms performance. Cross-validation procedures can be run very easily.
-
-At the moment, the available prediction algorithms are:
-
-- [NormalPredictor](http://surprise.readthedocs.io/en/latest/basic_algorithms.html#surprise.prediction_algorithms.random_pred.NormalPredictor):
-  an algorithm predicting a random rating based on the distribution of the
-  training set, which is assumed to be normal.
-- [BaselineOnly](http://surprise.readthedocs.io/en/latest/basic_algorithms.html#surprise.prediction_algorithms.baseline_only.BaselineOnly):
-  an agorithm predicting the baseline estimate for given user and item.
-- [KNNBasic](http://surprise.readthedocs.io/en/latest/knn_inspired.html#surprise.prediction_algorithms.knns.KNNBasic):
-  a basic collaborative filtering algorithm.
-- [KNNWithMeans](http://surprise.readthedocs.io/en/latest/knn_inspired.html#surprise.prediction_algorithms.knns.KNNWithMeans):
-  a basic collaborative filtering algorithm, taking into account the mean
-  ratings of each user.
-- [KNNBaseline](http://surprise.readthedocs.io/en/latest/knn_inspired.html#surprise.prediction_algorithms.knns.KNNBaseline):
-  a basic collaborative filtering algorithm taking into account a baseline
-  rating.
-- [SVD](http://surprise.readthedocs.io/en/latest/matrix_factorization.html#surprise.prediction_algorithms.matrix_factorization.SVD)
-  and
-  [PMF](http://surprise.readthedocs.io/en/latest/matrix_factorization.html#unbiased-note):
-  the famous SVD algorithm, as popularized by Simon Funk during the Netflix
-  Prize. The unbiased version is equivalent to Probabilistic Matrix
-  Factorization.
-- [SVD++](http://surprise.readthedocs.io/en/latest/matrix_factorization.html#surprise.prediction_algorithms.matrix_factorization.SVDpp):
-  an extension of SVD taking into account implicite ratings.
-- [NMF](http://surprise.readthedocs.io/en/latest/matrix_factorization.html#surprise.prediction_algorithms.matrix_factorization.NMF):
-  a collaborative filtering algorithm based on Non-negative Matrix
-  Factorization. (Available in latest version).
-- [Slope One](http://surprise.readthedocs.io/en/latest/slope_one.html#surprise.prediction_algorithms.slope_one.SlopeOne): a simple yet accurate collaborative filtering algorithm. (Available in latest version).
-- [Co-clustering](http://surprise.readthedocs.io/en/latest/co_clustering.html#surprise.prediction_algorithms.co_clustering.CoClustering): a collaborative filtering algorithm based on co-clustering. (Available in latest version).
+  the algorithms performance. Cross-validation procedures can be run very
+  easily, as well as [exhaustive search over a set of
+  parameters](http://surprise.readthedocs.io/en/latest/getting_started.html#tune-algorithm-parameters-with-gridsearch).
 
 
 The name *SurPRISE* (roughly :) ) stands for Simple Python RecommendatIon
 System Engine.
 
-Installation / Usage
---------------------
-
-The easiest way is to use pip (you'll need [numpy](http://www.numpy.org/)):
-
-    $ pip install surprise
-
-Or you can clone the repo and build the source (you'll need
-[Cython](http://cython.org/) and [numpy](http://www.numpy.org/)):
-
-    $ git clone https://github.com/NicolasHug/surprise.git
-    $ python setup.py install
 
 Example
 -------
@@ -124,11 +95,11 @@ MAE     0.7475  0.7447  0.7425  0.7449
 RMSE    0.9461  0.9436  0.9425  0.9441
 ```
 
-Surprise can also be used from the command line, e.g.:
+[Surprise](http://surpriselib.com) can do **much** more (e.g,
+[GridSearch](http://surprise.readthedocs.io/en/latest/getting_started.html#tune-algorithm-parameters-with-gridsearch)).
+Check the [User
+Guide](http://surprise.readthedocs.io/en/latest/getting_started.html)!
 
-```
-python -m surprise -algo SVD -params "{'n_factors': 10}"  -load-builtin ml-100k -n-folds 3
-```
 
 Benchmarks
 ----------
@@ -167,6 +138,18 @@ the GNU [time](http://man7.org/linux/man-pages/man1/time.1.html) command.
 | [Slope One](http://surprise.readthedocs.io/en/latest/slope_one.html#surprise.prediction_algorithms.slope_one.SlopeOne)             |  .9065 |  .7144 |    8    |
 | [Co clustering](http://surprise.readthedocs.io/en/latest/co_clustering.html#surprise.prediction_algorithms.co_clustering.CoClustering)             |  .9155 |  .7174 |    2    |
 
+Installation / Usage
+--------------------
+
+The easiest way is to use pip (you'll need [numpy](http://www.numpy.org/)):
+
+    $ pip install surprise
+
+Or you can clone the repo and build the source (you'll need
+[Cython](http://cython.org/) and [numpy](http://www.numpy.org/)):
+
+    $ git clone https://github.com/NicolasHug/surprise.git
+    $ python setup.py install
 
 Documentation, Getting Started
 ------------------------------
@@ -185,6 +168,9 @@ Acknowledgements:
 
 - [Pierre-François Gimenez](https://github.com/PFgimenez), for his valuable
   insights on software design.
+- [Maher Malaeb](https://github.com/mahermalaeb), for the
+  [GridSearch](http://surprise.readthedocs.io/en/latest/evaluate.html#surprise.evaluate.GridSearch)
+  implementation.
 
 Contributing, feedback
 ----------------------
@@ -196,7 +182,6 @@ If you'd like to see some features or algorithms implemented in
 [Surprise](http://surpriselib.com), please let us know! Some of the current
 ideas are:
 
-- Non negative matrix factorization
 - Bayesian PMF
 - RBM for CF
 
