@@ -98,20 +98,21 @@ We will here get a little deeper on what can `Surprise
 
 Tune algorithm parameters
 ~~~~~~~~~~~~~~~~~~~~~~~~~
+
 The :func:`evaluate() <surprise.evaluate.evaluate>` function gives us the
 results on one set of parameters given to the algorithm. If the user wants
-to try the algorithm on a different set of parameters
+to try the algorithm on a different set of parameters, the
 :class:`GridSearch <surprise.evaluate.GridSearch>` class comes to the rescue.
-Given a ``dict`` of parameters as keys and and values ``list`` as values, this
-class exhaustively tries all the combination of parameters and help get the
+Given a ``dict`` of parameters, this
+class exhaustively tries all the combination of parameters and helps get the
 best combination for an accuracy measurement. It is analogous to
 `GridSearchCV <http://scikit-learn.org/stable/modules/generated/sklearn.model
-_selection.GridSearchCV.html>`_ from sklearn.
+_selection.GridSearchCV.html>`_ from scikit-learn.
 
 For instance, suppose that we want to tune the parameters of the
 :class:`SVD <surprise.prediction_algorithms.matrix_factorization.SVD>`. Some of
-the parameters of this algorithm are `n_epochs`, `lr_all` and `reg_all`. Thus
-we define a parameters grid as follows
+the parameters of this algorithm are ``n_epochs``, ``lr_all`` and ``reg_all``.
+Thus we define a parameters grid as follows
 
 .. literalinclude:: ../../examples/grid_search_usage.py
     :caption: From file ``examples/grid_search_usage.py``
@@ -119,9 +120,9 @@ we define a parameters grid as follows
     :lines: 13-14
 
 Next we define a :class:`GridSearch <surprise.evaluate.GridSearch>` instance
-and give it
+and give it the class
 :class:`SVD <surprise.prediction_algorithms.matrix_factorization.SVD>` as an
-algorithm, `param_grid` as the parameters to tune. We will compute both the
+algorithm, and ``param_grid``. We will compute both the
 RMSE and FCP values for all the combination. Thus the following definition:
 
 .. literalinclude:: ../../examples/grid_search_usage.py
@@ -130,9 +131,10 @@ RMSE and FCP values for all the combination. Thus the following definition:
     :lines: 16
 
 Now that :class:`GridSearch <surprise.evaluate.GridSearch>` instance is ready,
-we want to evaluate it on the the data, so first we prepare our data as and
-then we call the evaluate method of
-:class:`GridSearch <surprise.evaluate.GridSearch>`:
+we can evaluate the algorithm on any data with the
+:meth:`GridSearch.evaluate()<surprise.evaluate.GridSearch.evaluate>` method,
+exactly like with the regular
+:func:`evaluate() <surprise.evaluate.evaluate>` function:
 
 .. literalinclude:: ../../examples/grid_search_usage.py
     :caption: From file ``examples/grid_search_usage.py``
@@ -140,12 +142,12 @@ then we call the evaluate method of
     :lines: 19-22
 
 Everything is ready now to read the results. For example, we get the best RMSE
-and FCP scores and the parameters combinations that created them as follows:
+and FCP scores and parameters as follows:
 
 .. literalinclude:: ../../examples/grid_search_usage.py
     :caption: From file ``examples/grid_search_usage.py``
     :name: grid_search_usage4.py
-    :lines: 24-32
+    :lines: 24-38
 
 For further analysis, we can easily read all the results in a pandas
 ``DataFrame`` as follows:
@@ -153,7 +155,7 @@ For further analysis, we can easily read all the results in a pandas
 .. literalinclude:: ../../examples/grid_search_usage.py
     :caption: From file ``examples/grid_search_usage.py``
     :name: grid_search_usage5.py
-    :lines: 34-36
+    :lines: 40-
 
 .. _iterate_over_folds:
 

@@ -132,54 +132,49 @@ class CaseInsensitiveDefaultDict(defaultdict):
 
 
 class GridSearch:
-    """Evaluate the performance of the algorithm on all the combinations of
-    parameters given to it. It is analogous to
-    `GridSearchCV <http://scikit-learn.org/stable/modules/generated/sklearn.
-    model_selection.GridSearchCV.html>`_ from sklearn.
+    """The :class:`GridSearch` class, used to evaluate the performance of an
+    algorithm on various combinations of parameters, and extract the best
+    combination. It is analogous to `GridSearchCV
+    <http://scikit-learn.org/stable/modules/generated/sklearn.
+    model_selection.GridSearchCV.html>`_ from scikit-learn.
 
-    Used to get study the effect of parameters on algorithms and extract
-    best parameters.
+    See :ref:`User Guide <tuning_algorithm_parameters>` for usage.
 
-    Depending on the nature of the ``data`` parameter, it may or may not
-    perform cross validation.
+    Args:
+        algo_class(:obj:`AlgoBase \
+            <surprise.prediction_algorithms.algo_base.AlgoBase>`):
+            A class object of of the algorithm to evaluate.
+        param_grid (dict):
+            The dictionary has algo_class parameters as keys (string) and list
+            of parameters as the desired values to try.  All combinations will
+            be evaluated with desired algorithm.
+        measures(list of string):
+            The performance measures to compute. Allowed names are function
+            names as defined in the :mod:`accuracy <surprise.accuracy>` module.
+            Default is ``['rmse', 'mae']``.
+        verbose(int):
+            Level of verbosity. If ``0``, nothing is printed. If ``1``,
+            accuracy measures for each parameters combination are printed, with
+            combination values. If ``2``, folds accuracy values are also
+            printed.  Default is ``1``.
 
-        Parameters:
-            algo_class(:obj:`AlgoBase \
-                <surprise.prediction_algorithms.algo_base.AlgoBase>`):
-                The algorithm to evaluate.
-            param_grid (dict):
-                The dictionary has algo_class parameters as keys
-                (string) and list of parameters as the desired values to try.
-                All combinations will be evaluated with desired algorithm
-            measures(list of string):
-                The performance measures to compute. Allowed
-                names are function names as defined in the :mod:`accuracy
-                <surprise.accuracy>` module. Default is ``['rmse', 'mae']``.
-            verbose(int):
-                Level of verbosity. If 0, nothing is printed. If 1
-                (default), accuracy measures for each parameters combination
-                are printed, with acombination values. If 2, folds accuray
-                values are also printed.
-        Attributes:
-            cv_results (dict of arrays):
-                a dict that contains all parameters
-                and accuracy information for each combination. Can  be
-                imported into pandas `DataFrame`
-            best_estimator (dict of AlgoBase):
-                Using accuracy measure as a key,
-                get the estimator that gave the best accuracy results for the
-                chosen measure
-            best_score (dict of floats):
-                Using accuracy measure as a key,
-                get the best score achieved for that measure
-            best_params (dict of dicts):
-                Using accuracy measure as a key,
-                get the parameters combination that gave the best accuracy
-                results for the chosen measure
-            best_index  (dict of ints):
-                Using accuracy measure as a key,
-                get the index that can be used with `cv_results_` that
-                achieved the highest accuracy for that measure
+    Attributes:
+        cv_results (dict of arrays):
+            A dict that contains all parameters and accuracy information for
+            each combination. Can  be imported into a pandas `DataFrame`.
+        best_estimator (dict of AlgoBase):
+            Using an accuracy measure as key, get the estimator that gave the
+            best accuracy results for the chosen measure.
+        best_score (dict of floats):
+            Using an accuracy measure as key, get the best score achieved for
+            that measure.
+        best_params (dict of dicts):
+            Using an accuracy measure as key, get the parameters combination
+            that gave the best accuracy results for the chosen measure.
+        best_index  (dict of ints):
+            Using an accuracy measure as key, get the index that can be used
+            with `cv_results_` that achieved the highest accuracy for that
+            measure.
         """
 
     def __init__(self, algo_class, param_grid, measures=['rmse', 'mae'],
@@ -206,6 +201,7 @@ class GridSearch:
                 which to evaluate the algorithm.
         """
 
+        num_of_combinations = len(self.param_combinations)
         params = []
         scores = []
 
@@ -215,8 +211,8 @@ class GridSearch:
             params.append(combination)
 
             if self.verbose >= 1:
-                num_of_combinations = len(self.param_combinations)
-                print('Parameters combination {} from {}'.
+                print('-' * 12)
+                print('Parameters combination {} of {}'.
                       format(combination_index + 1, num_of_combinations))
                 print('params: ', combination)
 
@@ -234,11 +230,9 @@ class GridSearch:
 
             if self.verbose == 1:
                 print('-' * 12)
-                print('-' * 12)
                 for measure in self.measures:
                     print('Mean {0:4s}: {1:1.4f}'.format(
                         measure, mean_score[measure]))
-                print('-' * 12)
                 print('-' * 12)
 
         # Add all scores and parameters lists to dict

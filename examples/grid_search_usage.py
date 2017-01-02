@@ -13,25 +13,31 @@ from surprise.dataset import Dataset
 param_grid = {'n_epochs': [5, 10], 'lr_all': [0.002, 0.005],
               'reg_all': [0.4, 0.6]}
 
-gridSearch = GridSearch(SVD, param_grid, measures=['RMSE', 'FCP'])
+grid_search = GridSearch(SVD, param_grid, measures=['RMSE', 'FCP'])
 
 # Prepare Data
 data = Dataset.load_builtin('ml-100k')
 data.split(n_folds=3)
 
-gridSearch.evaluate(data)
+grid_search.evaluate(data)
 
 # best RMSE score
-print(gridSearch.best_score['RMSE'])
+print(grid_search.best_score['RMSE'])
+# >>> 0.96117566386
+
 # combination of parameters that gave the best RMSE score
-print(gridSearch.best_params['RMSE'])
+print(grid_search.best_params['RMSE'])
+# >>> {'reg_all': 0.4, 'lr_all': 0.005, 'n_epochs': 10}
 
 # best FCP score
-print(gridSearch.best_score['FCP'])
+print(grid_search.best_score['FCP'])
+# >>> 0.702279736531
+
 # combination of parameters that gave the best FCP score
-print(gridSearch.best_params['FCP'])
+print(grid_search.best_params['FCP'])
+# >>> {'reg_all': 0.6, 'lr_all': 0.005, 'n_epochs': 10}
 
 import pandas as pd  # noqa
 
-results_df = pd.DataFrame.from_dict(gridSearch.cv_results)
+results_df = pd.DataFrame.from_dict(grid_search.cv_results)
 print(results_df)
