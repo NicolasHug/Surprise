@@ -29,16 +29,12 @@ We use [pytest](http://doc.pytest.org/en/latest/) so simply running
 
 in the root directory should do the job.
 
-Check coding style with flake8
-------------------------------
+Check coding style
+------------------
 
-Please make sure that your code is PEP8 compliant by running
+You can check that your code is PEP8 compliant by running
 
-    flake8
-
-If you wrote any Cython code, also use
-
-    flake8 --config .flake8.cython
+    pytest tests/test_pep8.py
 
 Building the docs locally
 -------------------------

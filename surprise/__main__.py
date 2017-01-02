@@ -30,7 +30,7 @@ def main():
 
     class MyParser(argparse.ArgumentParser):
         '''A parser which prints the help message when an error occurs. Taken from
-        http://stackoverflow.com/questions/4042452/display-help-message-with-python-argparse-when-script-is-called-without-any-argu.''' # noqa
+        http://stackoverflow.com/questions/4042452/display-help-message-with-python-argparse-when-script-is-called-without-any-argu.'''  # noqa
 
         def error(self, message):
             sys.stderr.write('error: %s\n' % message)
