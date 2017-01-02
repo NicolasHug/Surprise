@@ -1,6 +1,11 @@
 Current
 =======
 
+VERSION 1.0.1
+=============
+
+Date: 02/01/17
+
 Enhancements
 ------------
 
@@ -16,6 +21,7 @@ Enhancements
 Other
 -----
 
+* Surprise is now a scikit!
 * Changed license to BSD
 * Six is now a dependency
 

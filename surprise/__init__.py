@@ -24,4 +24,4 @@ __all__ = ['AlgoBase', 'NormalPredictor', 'BaselineOnly', 'KNNBasic',
            'CoClustering', 'PredictionImpossible', 'Dataset', 'Reader',
            'evaluate', 'dump']
 
-__version__ = get_distribution('surprise').version
+__version__ = get_distribution('scikit-surprise').version

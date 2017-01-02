@@ -6,7 +6,8 @@ doc/build
 .ipynb_checkpoints/
 .cache/
 
-surprise.egg-info/
+scikit_surprise.egg-info/
+
 build
 dist/
 surprise/similarities.c

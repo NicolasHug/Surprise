@@ -13,8 +13,8 @@ Surprise
 Overview
 --------
 
-[Surprise](http://surpriselib.com) is an easy-to-use open source Python library
-for recommender systems.
+[Surprise](http://surpriselib.com) is an easy-to-use Python
+[scikit](https://www.scipy.org/scikits.html) for recommender systems.
 
 [Surprise](http://surpriselib.com) **was designed with the
 following purposes in mind**:
@@ -147,7 +147,8 @@ Installation / Usage
 
 The easiest way is to use pip (you'll need [numpy](http://www.numpy.org/)):
 
-    $ pip install surprise
+    $ pip install numpy
+    $ pip install scikit-surprise
 
 Or you can clone the repo and build the source (you'll need
 [Cython](http://cython.org/) and [numpy](http://www.numpy.org/)):

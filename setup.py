@@ -15,7 +15,7 @@ except ImportError:
 else:
     USE_CYTHON = True
 
-__version__ = '1.0.0'
+__version__ = '1.0.1'
 
 here = path.abspath(path.dirname(__file__))
 
@@ -58,16 +58,15 @@ else:
 	ext_modules = extensions
 
 setup(
-    name='surprise',
+    name='scikit-surprise',
     author='Nicolas Hug',
     author_email='contact@nicolas-hug.com',
 
-    description=('A recommender system package aimed towards researchers ' +
-                 'and students.'),
+    description=('An easy-to-use library for recommender systems.'),
     long_description=long_description,
 
     version=__version__,
-    url='https://nicolashug.github.io/Surprise/',
+    url='http://surpriselib.com',
 
     license='GPLv3+',
     classifiers=[
@@ -82,7 +81,7 @@ setup(
     ],
     keywords='recommender recommendation system',
 
-    packages=find_packages(exclude=['docs', 'tests*']),
+    packages=find_packages(exclude=['tests*']),
     include_package_data=True,
     ext_modules = ext_modules,
     cmdclass=cmdclass,
