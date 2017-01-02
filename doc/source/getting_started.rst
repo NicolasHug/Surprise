@@ -253,3 +253,18 @@ words, so here a few `jupyter <http://jupyter.org/>`_ notebooks:
     <http://nbviewer.jupyter.org/github/NicolasHug/Surprise/tree/master/examples/notebooks/KNNBasic_analysis.ipynb/>`_.
   - `Comparison of two algorithms
     <http://nbviewer.jupyter.org/github/NicolasHug/Surprise/tree/master/examples/notebooks/Compare.ipynb/>`_.
+
+Command line usage
+~~~~~~~~~~~~~~~~~~
+
+Surprise can also be used from the command line, for example:
+
+.. code::
+
+    surprise -algo SVD -params "{'n_epochs': 5, 'verbose': True}" -load-builtin ml-100k -n-folds 3
+
+See detailed usage by running:
+
+.. code::
+
+    surprise -h

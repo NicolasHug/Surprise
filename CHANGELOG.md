@@ -4,6 +4,7 @@ Current
 Enhancements
 ------------
 
+* Added the GridSearch feature, by Maher
 * Added a 'clip' option to the predict() method
 * Added NMF algorithm
 * Added entry point for better command line usage.

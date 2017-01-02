@@ -45,7 +45,7 @@ def main():
         'Please refer to the documentation page ' +
         '(http://surprise.readthedocs.io/) for more details.',
         epilog="""Example:\n
-        python -m surprise -algo SVD -params "{'n_epochs': 5, 'verbose': True}"
+        surprise -algo SVD -params "{'n_epochs': 5, 'verbose': True}"
         -load-builtin ml-100k -n-folds 3""")
 
     algo_choices = {

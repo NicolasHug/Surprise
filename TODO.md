@@ -2,8 +2,6 @@ TODO
 ====
 
 * Profile code (mostly cython) to see what could be optimized
-* allow a 'clip' option to the predict method? Also, describe r_min and r_max
-* update SVD benchmark
 
 Maybe, Maybe not
 ----------------
@@ -14,6 +12,7 @@ Maybe, Maybe not
 Done:
 -----
 
+* allow a 'clip' option to the predict method? Also, describe r_min and r_max
 * configure entrypoints to use surprise directly from command line
 * Allow a 'biased' option in the SVD algo. If true, use baselines, if False,
   don't. It should be pretty easy to do.
