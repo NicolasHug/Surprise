@@ -96,8 +96,8 @@ We will here get a little deeper on what can `Surprise
 
 .. _tuning_algorithm_parameters:
 
-Tune algorithm parameters
-~~~~~~~~~~~~~~~~~~~~~~~~~
+Tune algorithm parameters with GridSearch
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The :func:`evaluate() <surprise.evaluate.evaluate>` function gives us the
 results on one set of parameters given to the algorithm. If the user wants

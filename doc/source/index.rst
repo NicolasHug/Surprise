@@ -8,10 +8,8 @@
 Welcome to Surprise' documentation!
 ===================================
 
-`Surprise <http://surpriselib.com>`_  is an easy-to-use open
-source Python library for recommender systems. Its goal is to make life easier
-for reseachers who want to play around with new algorithms ideas, for teachers
-who want some teaching materials, and for students.
+`Surprise <http://surpriselib.com>`_  is an easy-to-use open source Python
+library for recommender systems.
 
 If you're new to `Surprise <http://surpriselib.com>`_, we
 invite you to take a look at the :ref:`getting_started` guide, where you'll
