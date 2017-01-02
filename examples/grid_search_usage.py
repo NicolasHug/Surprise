@@ -31,7 +31,7 @@ print(gridSearch.best_score['FCP'])
 # combination of parameters that gave the best FCP score
 print(gridSearch.best_params['FCP'])
 
-import pandas as pd
+import pandas as pd  # noqa
 
 results_df = pd.DataFrame.from_dict(gridSearch.cv_results)
 print(results_df)
