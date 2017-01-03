@@ -13,8 +13,9 @@ Surprise
 Overview
 --------
 
-[Surprise](http://surpriselib.com) is an easy-to-use Python
-[scikit](https://www.scipy.org/scikits.html) for recommender systems.
+[Surprise](http://surpriselib.com) is a Python
+[scikit](https://www.scipy.org/scikits.html) building and analysing recommender
+systems.
 
 [Surprise](http://surpriselib.com) **was designed with the
 following purposes in mind**:
