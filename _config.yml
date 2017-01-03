@@ -1,7 +1,7 @@
 # Setup
 title: Surprise
-tagline: 'A simple recommender system library for Python 2.7 - 3.5.'
-description: 'A simple recommender system library for Python 2.7 - 3.5.'
+tagline: 'A Python scikit for recommender systems.'
+description: 'A Python scikit for recommender systems.'
 url: http://surpriselib.com
 baseurl:
 
