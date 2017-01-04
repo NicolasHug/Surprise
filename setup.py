@@ -15,13 +15,17 @@ except ImportError:
 else:
     USE_CYTHON = True
 
-__version__ = '1.0.1'
+__version__ = '1.0.2'
 
 here = path.abspath(path.dirname(__file__))
 
-# Get the long description from the README file
-with open(path.join(here, 'README.md'), encoding='utf-8') as f:
-    long_description = f.read()
+# Get the long description from the README file and convert it to rst
+try:
+    import pypandoc
+    long_description = pypandoc.convert(path.join(here, 'README.md'), 'rst')
+except(IOError, ImportError):
+    with open(path.join(here, 'README.md'), encoding='utf-8') as f:
+        long_description = f.read()
 
 # get the dependencies and installs
 with open(path.join(here, 'requirements.txt'), encoding='utf-8') as f:
