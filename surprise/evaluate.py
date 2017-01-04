@@ -96,41 +96,6 @@ def evaluate(algo, data, measures=['rmse', 'mae'], with_dump=False,
     return performances
 
 
-class CaseInsensitiveDefaultDict(defaultdict):
-    """From here:
-        http://stackoverflow.com/questions/2082152/case-insensitive-dictionary.
-
-        As pointed out in the comments, this only covers a few cases and we
-        should override a lot of other methods, but oh well...
-
-        Used for the returned dict, so that users can use perf['RMSE'] or
-        perf['rmse'] indifferently.
-    """
-    def __setitem__(self, key, value):
-        super(CaseInsensitiveDefaultDict, self).__setitem__(key.lower(), value)
-
-    def __getitem__(self, key):
-        return super(CaseInsensitiveDefaultDict, self).__getitem__(key.lower())
-
-    def __str__(self):
-
-        # retrieve number of folds. Kind of ugly...
-        n_folds = [len(values) for values in itervalues(self)][0]
-
-        row_format = '{:<8}' * (n_folds + 2)
-        s = row_format.format(
-            '',
-            *['Fold {0}'.format(i + 1) for i in range(n_folds)] + ['Mean'])
-        s += '\n'
-        s += '\n'.join(row_format.format(
-            key.upper(),
-            *['{:1.4f}'.format(v) for v in vals] +
-            ['{:1.4f}'.format(np.mean(vals))])
-            for (key, vals) in iteritems(self))
-
-        return s
-
-
 class GridSearch:
     """The :class:`GridSearch` class, used to evaluate the performance of an
     algorithm on various combinations of parameters, and extract the best
@@ -179,10 +144,10 @@ class GridSearch:
 
     def __init__(self, algo_class, param_grid, measures=['rmse', 'mae'],
                  verbose=1):
-        self.best_params = CaseInsensitiveDefaultDictForBestResults(list)
-        self.best_index = CaseInsensitiveDefaultDictForBestResults(list)
-        self.best_score = CaseInsensitiveDefaultDictForBestResults(list)
-        self.best_estimator = CaseInsensitiveDefaultDictForBestResults(list)
+        self.best_params = CaseInsensitiveDefaultDict(list)
+        self.best_index = CaseInsensitiveDefaultDict(list)
+        self.best_score = CaseInsensitiveDefaultDict(list)
+        self.best_estimator = CaseInsensitiveDefaultDict(list)
         self.cv_results = defaultdict(list)
         self.algo_class = algo_class
         self.param_grid = param_grid
@@ -262,13 +227,37 @@ class GridSearch:
                 **self.best_params[measure])
 
 
-class CaseInsensitiveDefaultDictForBestResults(defaultdict):
-    """ Same as CaseInsensitiveDefaultDict but without overriding __str__
-        because it is not relevant to "best" attributes"""
+class CaseInsensitiveDefaultDict(defaultdict):
+    """From here:
+        http://stackoverflow.com/questions/2082152/case-insensitive-dictionary.
+
+        As pointed out in the comments, this only covers a few cases and we
+        should override a lot of other methods, but oh well...
+
+        Used for the returned dict, so that users can use perf['RMSE'] or
+        perf['rmse'] indifferently.
+    """
     def __setitem__(self, key, value):
-        super(CaseInsensitiveDefaultDictForBestResults, self).__setitem__(
-            key.lower(), value)
+        super(CaseInsensitiveDefaultDict, self).__setitem__(key.lower(), value)
 
     def __getitem__(self, key):
-        return super(CaseInsensitiveDefaultDictForBestResults,
-                     self).__getitem__(key.lower())
+        return super(CaseInsensitiveDefaultDict, self).__getitem__(key.lower())
+
+
+def print_perf(performances):
+
+    # retrieve number of folds. Kind of ugly...
+    n_folds = [len(values) for values in itervalues(performances)][0]
+
+    row_format = '{:<8}' * (n_folds + 2)
+    s = row_format.format(
+        '',
+        *['Fold {0}'.format(i + 1) for i in range(n_folds)] + ['Mean'])
+    s += '\n'
+    s += '\n'.join(row_format.format(
+        key.upper(),
+        *['{:1.4f}'.format(v) for v in vals] +
+        ['{:1.4f}'.format(np.mean(vals))])
+        for (key, vals) in iteritems(performances))
+
+    print(s)

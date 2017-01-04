@@ -8,7 +8,7 @@ from __future__ import (absolute_import, division, print_function,
 
 from surprise import SVD
 from surprise import Dataset
-from surprise import evaluate
+from surprise import evaluate, print_perf
 
 
 # Load the movielens-100k dataset (download it if needed),
@@ -22,4 +22,4 @@ algo = SVD()
 # Evaluate performances of our algorithm on the dataset.
 perf = evaluate(algo, data, measures=['RMSE', 'MAE'])
 
-print(perf)
+print_perf(perf)

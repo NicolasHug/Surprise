@@ -31,6 +31,5 @@ def test_performances():
                             with_dump=True, dump_dir=tmp_dir, verbose=2)
     shutil.rmtree(tmp_dir)  # remove tmp dir
 
-    print(performances)
     assert performances['RMSE'] is performances['rmse']
     assert performances['MaE'] is performances['mae']

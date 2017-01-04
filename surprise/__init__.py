@@ -17,11 +17,13 @@ from .prediction_algorithms import PredictionImpossible
 from .dataset import Dataset
 from .dataset import Reader
 from .evaluate import evaluate
+from .evaluate import print_perf
+from .evaluate import GridSearch
 from .dump import dump
 
 __all__ = ['AlgoBase', 'NormalPredictor', 'BaselineOnly', 'KNNBasic',
            'KNNWithMeans', 'KNNBaseline', 'SVD', 'SVDpp', 'NMF', 'SlopeOne',
            'CoClustering', 'PredictionImpossible', 'Dataset', 'Reader',
-           'evaluate', 'dump']
+           'evaluate', 'print_perf', 'GridSearch', 'dump']
 
 __version__ = get_distribution('scikit-surprise').version

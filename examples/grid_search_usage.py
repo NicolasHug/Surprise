@@ -6,9 +6,9 @@ the evaluate() function.
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 
-from surprise.evaluate import GridSearch
-from surprise.prediction_algorithms import SVD
-from surprise.dataset import Dataset
+from surprise import GridSearch
+from surprise import SVD
+from surprise import Dataset
 
 param_grid = {'n_epochs': [5, 10], 'lr_all': [0.002, 0.005],
               'reg_all': [0.4, 0.6]}

@@ -7,11 +7,11 @@ from __future__ import (absolute_import, division, print_function,
 
 import os
 
-from surprise.evaluate import GridSearch
-from surprise.dataset import Dataset
-from surprise.dataset import Reader
-from surprise.prediction_algorithms import SVD
-from surprise.evaluate import evaluate
+from surprise import Dataset
+from surprise import Reader
+from surprise import SVD
+from surprise import evaluate
+from surprise import GridSearch
 
 # the test and train files are from the ml-100k dataset (10% of u1.base and
 # 10 % of u1.test)
