@@ -7,4 +7,3 @@ sphinx>=1.4.9
 sphinx_rtd_theme
 sphinxcontrib-bibtex
 flake8>=3.2.1
-pypandoc>=1.3.3
