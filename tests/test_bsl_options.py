@@ -6,10 +6,10 @@ import os
 
 import pytest
 
-from surprise.prediction_algorithms import BaselineOnly
-from surprise.dataset import Dataset
-from surprise.dataset import Reader
-from surprise.evaluate import evaluate
+from surprise import BaselineOnly
+from surprise import Dataset
+from surprise import Reader
+from surprise import evaluate
 
 
 # the test and train files are from the ml-100k dataset (10% of u1.base and

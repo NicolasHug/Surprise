@@ -5,9 +5,9 @@ from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 import tempfile
 
-from surprise.prediction_algorithms.predictions import Prediction
-from surprise.prediction_algorithms.algo_base import AlgoBase
-from surprise.dataset import Trainset
+from surprise import Prediction
+from surprise import AlgoBase
+from surprise import Trainset
 from surprise import dump
 
 

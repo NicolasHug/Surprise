@@ -6,18 +6,18 @@ from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 import os
 
-from surprise.prediction_algorithms import NormalPredictor
-from surprise.prediction_algorithms import BaselineOnly
-from surprise.prediction_algorithms import KNNBasic
-from surprise.prediction_algorithms import KNNWithMeans
-from surprise.prediction_algorithms import KNNBaseline
-from surprise.prediction_algorithms import SVD
-from surprise.prediction_algorithms import SVDpp
-from surprise.prediction_algorithms import NMF
-from surprise.prediction_algorithms import SlopeOne
-from surprise.prediction_algorithms import CoClustering
-from surprise.dataset import Dataset
-from surprise.dataset import Reader
+from surprise import NormalPredictor
+from surprise import BaselineOnly
+from surprise import KNNBasic
+from surprise import KNNWithMeans
+from surprise import KNNBaseline
+from surprise import SVD
+from surprise import SVDpp
+from surprise import NMF
+from surprise import SlopeOne
+from surprise import CoClustering
+from surprise import Dataset
+from surprise import Reader
 
 
 def test_unknown_user_or_item():

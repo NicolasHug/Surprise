@@ -9,9 +9,9 @@ import tempfile
 import shutil
 
 from surprise import NormalPredictor
-from surprise.dataset import Dataset
-from surprise.dataset import Reader
-from surprise.evaluate import evaluate
+from surprise import Dataset
+from surprise import Reader
+from surprise import evaluate
 
 
 def test_performances():

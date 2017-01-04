@@ -9,12 +9,12 @@ from itertools import combinations
 
 import pytest
 
-from surprise.prediction_algorithms import KNNBasic
-from surprise.prediction_algorithms import KNNWithMeans
-from surprise.prediction_algorithms import KNNBaseline
-from surprise.dataset import Dataset
-from surprise.dataset import Reader
-from surprise.evaluate import evaluate
+from surprise import KNNBasic
+from surprise import KNNWithMeans
+from surprise import KNNBaseline
+from surprise import Dataset
+from surprise import Reader
+from surprise import evaluate
 
 
 # the test and train files are from the ml-100k dataset (10% of u1.base and
