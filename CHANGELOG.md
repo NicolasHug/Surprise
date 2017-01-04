@@ -1,6 +1,14 @@
 Current
 =======
 
+VERSION 1.0.2
+=============
+
+Date: 04/01/17
+
+Just a minor change so that README.md is converted to rst for better rendering
+on PyPI.
+
 VERSION 1.0.1
 =============
 
