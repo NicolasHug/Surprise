@@ -134,7 +134,7 @@ class SVD(AlgoBase):
         # algorithm that I just not sure anymore of what it should do. I've
         # implemented the version as described in the BellKor papers (RS
         # Handbook, etc.). Mymedialite also does it this way. In his post
-        # however, Funk seems to implicitely say that the algo looks like this
+        # however, Funk seems to implicitly say that the algo looks like this
         # (see reg below):
         # for f in range(n_factors):
         #       for _ in range(n_iter):
@@ -242,7 +242,7 @@ class SVD(AlgoBase):
 
 class SVDpp(AlgoBase):
     """The *SVD++* algorithm, an extension of :class:`SVD` taking into account
-    implicite ratings.
+    implicit ratings.
 
     The prediction :math:`\\hat{r}_{ui}` is set as:
 
@@ -251,7 +251,7 @@ class SVDpp(AlgoBase):
         |I_u|^{-\\frac{1}{2}} \sum_{j \\in I_u}y_j\\right)
 
     Where the :math:`y_j` terms are a new set of item factors that capture
-    implicite ratings. Here, an implicite rating describes the fact that a user
+    implicit ratings. Here, an implicit rating describes the fact that a user
     :math:`u` rated an item :math:`j`, regardless of the rating value.
 
     If user :math:`u` is unknown, then the bias :math:`b_u` and the factors
@@ -340,7 +340,7 @@ class SVDpp(AlgoBase):
         cdef np.ndarray[np.double_t, ndim=2] pu
         # item factors
         cdef np.ndarray[np.double_t, ndim=2] qi
-        # item implicite factors
+        # item implicit factors
         cdef np.ndarray[np.double_t, ndim=2] yj
 
         cdef int u, i, j, f
@@ -376,7 +376,7 @@ class SVDpp(AlgoBase):
                 Iu = [j for (j, _) in trainset.ur[u]]
                 sqrt_Iu = np.sqrt(len(Iu))
 
-                # compute user implicite feedback
+                # compute user implicit feedback
                 u_impl_fdb = np.zeros(self.n_factors, np.double)
                 for j in Iu:
                     for f in range(self.n_factors):
