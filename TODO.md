@@ -1,6 +1,7 @@
 TODO
 ====
 
+* Put some PredictionImpossible messages in every algo
 * Profile code (mostly cython) to see what could be optimized
 
 Maybe, Maybe not
