@@ -172,7 +172,7 @@ class AlgoBase:
                              ' Available methods are als and sgd.')
 
     def compute_similarities(self):
-        """Build the simlarity matrix.
+        """Build the similarity matrix.
 
         The way the similarity matric is computed depends on the
         ``sim_options`` parameter passed at the creation of the algorithm (see
