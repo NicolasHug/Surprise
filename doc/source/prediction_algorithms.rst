@@ -59,7 +59,7 @@ options may be set. For ALS:
 
 - ``'reg_i'``: The regularization parameter for items. Corresponding to
   :math:`\lambda_2` in :cite:`Koren:2010`.  Default is ``10``.
-- ``'reg_u'``: The regularization parameter for users, orresponding to
+- ``'reg_u'``: The regularization parameter for users. Corresponding to
   :math:`\lambda_3` in :cite:`Koren:2010`.  Default is ``15``.
 - ``'n_epochs'``: The number of iteration of the ALS procedure. Default is
   ``10``.  Note that in :cite:`Koren:2010`, what is described is a **single**
