@@ -144,7 +144,7 @@ class AlgoBase:
         """Compute users and items baselines.
 
         The way baselines are computed depends on the ``bsl_options`` parameter
-        passed at the creation of the algoritihm (see
+        passed at the creation of the algorithm (see
         :ref:`baseline_estimates_configuration`).
 
         Returns:
