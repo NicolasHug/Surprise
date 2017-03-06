@@ -58,8 +58,8 @@ The name *SurPRISE* (roughly :) ) stands for Simple Python RecommendatIon
 System Engine.
 
 
-Example
--------
+Getting started, example
+------------------------
 
 Here is a simple example showing how you can (down)load a dataset, split it for
 3-folds cross-validation, and compute the MAE and RMSE of the
@@ -97,9 +97,10 @@ RMSE    0.9461  0.9436  0.9425  0.9441
 ```
 
 [Surprise](http://surpriselib.com) can do **much** more (e.g,
-[GridSearch](http://surprise.readthedocs.io/en/latest/getting_started.html#tune-algorithm-parameters-with-gridsearch)).
-Check the [User
-Guide](http://surprise.readthedocs.io/en/latest/getting_started.html)!
+[GridSearch](http://surprise.readthedocs.io/en/latest/getting_started.html#tune-algorithm-parameters-with-gridsearch))!
+You'll find [more usage
+examples](http://surprise.readthedocs.io/en/latest/getting_started.html) in the
+[documentation ](http://surprise.readthedocs.io/en/latest/index.html).
 
 
 Benchmarks
@@ -153,17 +154,14 @@ Or you can clone the repo and build the source (you'll need
     $ git clone https://github.com/NicolasHug/surprise.git
     $ python setup.py install
 
-Documentation, Getting Started
-------------------------------
-
-The documentation with many other usage examples is [available
-online](http://surprise.readthedocs.io/en/latest/index.html) on ReadTheDocs.
 
 License
 -------
 
 This project is licensed under the [BSD
-3-Clause](https://opensource.org/licenses/BSD-3-Clause) license.
+3-Clause](https://opensource.org/licenses/BSD-3-Clause) license, so it can be
+used for pretty much everything, including commercial applications. Please let
+us know how [Surprise](http://surpriselib.com) is useful to you!
 
 Acknowledgements:
 ----------------
@@ -174,8 +172,8 @@ Acknowledgements:
   [GridSearch](http://surprise.readthedocs.io/en/latest/evaluate.html#surprise.evaluate.GridSearch)
   implementation.
 
-Contributing, feedback
-----------------------
+Contributing, feedback, contact
+-------------------------------
 
 Any kind of feedback/criticism would be greatly appreciated (software design,
 documentation, improvement ideas, spelling mistakes, etc...).
@@ -190,3 +188,7 @@ ideas are:
 Please feel free to contribute (see
 [guidelines](https://github.com/NicolasHug/Surprise/blob/master/CONTRIBUTING.md))
 and send pull requests!
+
+To contact us, send us a [tweet](https://twitter.com/Surpriselib) or mail us at
+contact at nicolas-hug dot com. For any bug or issue, please use
+the GitHub [project page](https://github.com/NicolasHug/Surprise).
