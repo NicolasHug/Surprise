@@ -1,6 +1,6 @@
 .. _building_custom_algo:
 
-How to build you own prediction algorithm
+How to build your own prediction algorithm
 =========================================
 
 This page describes how to build a custom prediction algorithm using Surprise.
