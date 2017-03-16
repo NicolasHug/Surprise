@@ -2,6 +2,9 @@ TODO
 ====
 
 * Put some PredictionImpossible messages in every algo
+* Implement some recommendation strategy (like recommend the items with the 10
+  highest estimation)
+* Make the r_ui param of predict optional
 * Profile code (mostly cython) to see what could be optimized
 
 Maybe, Maybe not
