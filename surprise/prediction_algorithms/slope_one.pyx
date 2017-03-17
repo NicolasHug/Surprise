@@ -17,7 +17,7 @@ from .predictions import PredictionImpossible
 class SlopeOne(AlgoBase):
     """A simple yet accurate collaborative filtering algorithm.
 
-    This is a straighforward implementation of the SlopeOne algorithm
+    This is a straightforward implementation of the SlopeOne algorithm
     :cite:`lemire2007a`.
 
     The prediction :math:`\\hat{r}_{ui}` is set as:
@@ -27,7 +27,7 @@ class SlopeOne(AlgoBase):
         |R_i(u)|}
         \\sum\\limits_{j \in R_i(u)} \\text{dev}(i, j),
 
-    where :math:`R_i(u)` is the set of relevents items, i.e. the set of items
+    where :math:`R_i(u)` is the set of relevant items, i.e. the set of items
     :math:`j` rated by :math:`u` that also have at least one common user with
     :math:`i`. :math:`\\text{dev}_(i, j)` is defined as the average difference
     between the ratings of :math:`i` and those of :math:`j`:
@@ -82,7 +82,7 @@ class SlopeOne(AlgoBase):
         if not (self.trainset.knows_user(u) and self.trainset.knows_item(i)):
             raise PredictionImpossible('User and/or item is unkown.')
 
-        # Ri: relevent items for i. This is the set of items j rated by u that
+        # Ri: relevant items for i. This is the set of items j rated by u that
         # also have common users with i (i.e. at least one user has rated both
         # i and j).
         Ri = [j for (j, _) in self.trainset.ur[u] if self.freq[i, j] > 0]

@@ -1,7 +1,7 @@
 .. _building_custom_algo:
 
 How to build your own prediction algorithm
-=========================================
+==========================================
 
 This page describes how to build a custom prediction algorithm using Surprise.
 
@@ -105,7 +105,7 @@ Using similarities and baselines
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Should your algorithm use a similarity measure or baseline estimates, you'll
-need to accept ``bsl_options`` and ``sim_options`` as parmeters to the
+need to accept ``bsl_options`` and ``sim_options`` as parameters to the
 ``__init__`` method, and pass them along to the Base class. See how to use
 these parameters in the :ref:`prediction_algorithms` section.
 

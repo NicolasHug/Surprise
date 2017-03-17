@@ -15,7 +15,7 @@ from .predictions import PredictionImpossible
 class CoClustering(AlgoBase):
     """A collaborative filtering algorithm based on co-clustering.
 
-    This is a straighforward implementation of :cite:`George:2005`.
+    This is a straightforward implementation of :cite:`George:2005`.
 
     Basically, users and items are assigned some clusters :math:`C_u`,
     :math:`C_i`, and some co-clusters :math:`C_{ui}`.
@@ -28,9 +28,9 @@ class CoClustering(AlgoBase):
 
     where :math:`\\overline{C_{ui}}` is the average rating of co-cluster
     :math:`C_{ui}`, :math:`\\overline{C_u}` is the average rating of
-    :math:`u`'s cluster, and :math:`\\overline{C_i}` is the averate rating of
+    :math:`u`'s cluster, and :math:`\\overline{C_i}` is the average rating of
     :math:`i`'s cluster. If the user is unknown, the prediction is
-    :math:`\hat{r}_{ui} = \\mu_i`. If the item is unkown, the prediction is
+    :math:`\hat{r}_{ui} = \\mu_i`. If the item is unknown, the prediction is
     :math:`\hat{r}_{ui} = \\mu_u`. If both the user and the item are unknown,
     the prediction is :math:`\hat{r}_{ui} = \\mu`.
 

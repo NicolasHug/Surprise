@@ -46,4 +46,9 @@ The docs can be compiled with
 
 You can check the results in `doc/build/html`. Please make sure that the docs
 compile without errors. Run `make clean` from time to time in order to avoid
-hidden warnings.
+hidden warnings. You can check spelling mistakes by running
+
+    make spelling
+
+Legit words that are not recognized can be added in the
+`source/spelling_wordlist.txt` file.

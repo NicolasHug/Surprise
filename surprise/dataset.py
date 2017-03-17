@@ -174,7 +174,7 @@ class Dataset:
 
     @classmethod
     def load_from_folds(cls, folds_files, reader):
-        """Load a dataset where folds (for cross-validation) are predifined by
+        """Load a dataset where folds (for cross-validation) are predefined by
         some files.
 
         The purpose of this method is to cover a common use case where a
@@ -341,7 +341,7 @@ class DatasetAutoFolds(Dataset):
         return k_folds(self.raw_ratings, self.n_folds)
 
     def split(self, n_folds=5, shuffle=True):
-        """Split the dataset into folds for futur cross-validation.
+        """Split the dataset into folds for future cross-validation.
 
         If you forget to call :meth:`split`, the dataset will be automatically
         shuffled and split for 5-folds cross-validation.
@@ -371,7 +371,7 @@ class Reader():
 
         user ; item ; rating ; [timestamp]
 
-    where the order of the fields and the seperator (here ';') may be
+    where the order of the fields and the separator (here ';') may be
     arbitrarily defined (see below).  brackets indicate that the timestamp
     field is optional.
 
