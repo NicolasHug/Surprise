@@ -27,8 +27,8 @@ class Prediction(namedtuple('Prediction',
     It's wrapped in a class, but only for documentation and printing purposes.
 
     Args:
-        uid: The (inner) user id. See :ref:`this note<raw_inner_note>`.
-        iid: The (inner) item id. See :ref:`this note<raw_inner_note>`.
+        uid: The (raw) user id. See :ref:`this note<raw_inner_note>`.
+        iid: The (raw) item id. See :ref:`this note<raw_inner_note>`.
         r_ui(float): The true rating :math:`r_{ui}`.
         est(float): The estimated rating :math:`\\hat{r}_{ui}`.
         details (dict): Stores additional details about the prediction that
