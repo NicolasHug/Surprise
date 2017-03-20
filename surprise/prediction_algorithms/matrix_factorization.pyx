@@ -30,10 +30,10 @@ class SVD(AlgoBase):
     :math:`p_u` are assumed to be zero. The same applies for item :math:`i`
     with :math:`b_i` and :math:`q_i`.
 
-    For details, see eq. (5) from :cite:`Koren:2009`. See also
+    For details, see equation (5) from :cite:`Koren:2009`. See also
     :cite:`Ricci:2010`, section 5.3.1.
 
-    To estimate all the unkown, we minimize the following regularized squared
+    To estimate all the unknown, we minimize the following regularized squared
     error:
 
     .. math::
@@ -59,7 +59,7 @@ class SVD(AlgoBase):
     You have control over the learning rate :math:`\gamma` and the
     regularization term :math:`\lambda`. Both can be different for each
     kind of parameter (see below). By default, learning rates are set to
-    ``0.005`` and regularization termes are set to ``0.02``.
+    ``0.005`` and regularization terms are set to ``0.02``.
 
     .. _unbiased_note:
 
@@ -262,7 +262,7 @@ class SVDpp(AlgoBase):
     For details, see section 4 of :cite:`Koren:2008:FMN`. See also
     :cite:`Ricci:2010`, section 5.3.1.
 
-    Just as for :class:`SVD`, the parameters are learnt using a SGD on the
+    Just as for :class:`SVD`, the parameters are learned using a SGD on the
     regularized squared error objective.
 
     Baselines are initialized to ``0``. User and item factors are initialized
@@ -272,7 +272,7 @@ class SVDpp(AlgoBase):
     You have control over the learning rate :math:`\gamma` and the
     regularization term :math:`\lambda`. Both can be different for each
     kind of parameter (see below). By default, learning rates are set to
-    ``0.005`` and regularization termes are set to ``0.02``.
+    ``0.005`` and regularization terms are set to ``0.02``.
 
     Args:
         n_factors: The number of factors. Default is ``20``.
@@ -441,11 +441,11 @@ class NMF(AlgoBase):
 
     where user and item factors are kept **positive**. Our implementation
     follows that suggested in :cite:`NMF:2014`, which is equivalent to
-    :cite:`Zhang96` in its unregularized form. Both are direct applications of
-    NMF for dense matrices :cite:`NMF_algo`.
+    :cite:`Zhang96` in its non-regularized form. Both are direct applications
+    of NMF for dense matrices :cite:`NMF_algo`.
 
     The optimization procedure is a (regularized) stochastic gradient descent
-    with a specific choice of stepsize that ensures non-negativity of factors,
+    with a specific choice of step size that ensures non-negativity of factors,
     provided that their initial values are also positive.
 
     At each step of the SGD procedure, the factors :math:`f` or user :math:`u`
@@ -487,13 +487,13 @@ class NMF(AlgoBase):
             ``0.06``.
         reg_qi: The regularization term for items :math:`\lambda_i`. Default is
             ``0.06``.
-        reg_bu: The regularization term for :math:`b_u`. Only relevent for
+        reg_bu: The regularization term for :math:`b_u`. Only relevant for
             biased version. Default is ``0.02``.
-        reg_bi: The regularization term for :math:`b_i`. Only relevent for
+        reg_bi: The regularization term for :math:`b_i`. Only relevant for
             biased version. Default is ``0.02``.
-        lr_bu: The learning rate for :math:`b_u`. Only relevent for biased
+        lr_bu: The learning rate for :math:`b_u`. Only relevant for biased
             version. Default is ``0.005``.
-        lr_bi: The learning rate for :math:`b_i`. Only relevent for biased
+        lr_bi: The learning rate for :math:`b_i`. Only relevant for biased
             version. Default is ``0.005``.
         init_low: Lower bound for random initialization of factors. Must be
             greater than ``0`` to ensure non-negative factors. Default is

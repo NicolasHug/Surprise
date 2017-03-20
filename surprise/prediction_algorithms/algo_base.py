@@ -15,7 +15,7 @@ from .optimize_baselines import baseline_sgd
 
 
 class AlgoBase:
-    """Abstract class where is defined the basic behaviour of a prediction
+    """Abstract class where is defined the basic behavior of a prediction
     algorithm.
 
     Keyword Args:
@@ -174,7 +174,7 @@ class AlgoBase:
     def compute_similarities(self):
         """Build the similarity matrix.
 
-        The way the similarity matric is computed depends on the
+        The way the similarity matrix is computed depends on the
         ``sim_options`` parameter passed at the creation of the algorithm (see
         :ref:`similarity_measures_configuration`).
 

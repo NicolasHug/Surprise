@@ -11,12 +11,12 @@ def dump(file_name, predictions, trainset=None, algo=None):
     analysis, using Pickle.
 
     If needed, the :class:`trainset <surprise.dataset.Trainset>` object and the
-    algorithm can also be dumped. What is dumped is a dictionnary with keys
+    algorithm can also be dumped. What is dumped is a dictionary with keys
     ``'predictions``, ``'trainset'``, and ``'algo'``.
 
     The dumped algorithm won't be a proper :class:`algorithm
     <surprise.prediction_algorithms.algo_base.AlgoBase>` object but simply a
-    dictionnary with the algorithm attributes as keys-values (technically, the
+    dictionary with the algorithm attributes as keys-values (technically, the
     ``algo.__dict__`` attribute).
 
     See :ref:`User Guide <dumping>` for usage.

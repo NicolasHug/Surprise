@@ -181,7 +181,7 @@ Train on a whole trainset and specifically query for predictions
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 We will here review how to get a prediction for specified users and items. In
-the mean time, we will also review how to train on a whole dataset, whithout
+the mean time, we will also review how to train on a whole dataset, without
 performing cross-validation (i.e. there is no test set).
 
 The latter is pretty straightforward: all you need is to load a dataset, and
@@ -237,7 +237,7 @@ and item ids are present in the trainset though.
 Dump the predictions for later analysis
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-You may want to save your algorithm predictions along with all the usefull
+You may want to save your algorithm predictions along with all the useful
 information about the algorithm. This way, you can run your algorithm once,
 save the results, and go back to them whenever you want to inspect in greater
 details each of the predictions, and get a good insight on why your algorithm

@@ -1,6 +1,6 @@
 .. _pred_package_matrix_factorization:
 
-Matrix Factorization-based algortihms
+Matrix Factorization-based algorithms
 -------------------------------------
 
 .. autoclass:: surprise.prediction_algorithms.matrix_factorization.SVD

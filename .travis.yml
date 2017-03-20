@@ -5,7 +5,7 @@ python:
 
 # command to install dependencies
 install:
-  - "pip install -r requirements_dev.txt"
+  - "pip install -r requirements_travis.txt"
   - "pip install ."
 
 # command to run tests

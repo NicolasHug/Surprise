@@ -124,7 +124,7 @@ argument is a dictionary with the following (all optional) keys:
   ``'False'``) for the similarity not to be zero. Simply put, if
   :math:`|I_{uv}| < \text{min_support}` then :math:`\text{sim}(u, v) = 0`. The
   same goes for items.
-- ``'shrinkage'``: Shrinkage parameter to apply (only relevent for
+- ``'shrinkage'``: Shrinkage parameter to apply (only relevant for
   :func:`pearson_baseline <surprise.similarities.pearson_baseline>` similarity).
   Default is 100.
 
