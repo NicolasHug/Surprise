@@ -7,6 +7,7 @@ TODO
 * Make the r_ui param of predict optional
 * set default sim to pearson_baseline for KNNBaseline
 * Allow shrinkage for all metrics?
+* Support conda?
 * Profile code (mostly cython) to see what could be optimized
 
 Maybe, Maybe not
