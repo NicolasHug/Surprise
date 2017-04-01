@@ -3,6 +3,7 @@ The :mod:`dump` module defines the :func:`dump` function.
 """
 
 import pickle
+import importlib
 
 
 def dump(file_name, predictions, trainset=None, algo=None):
@@ -48,3 +49,18 @@ def dump(file_name, predictions, trainset=None, algo=None):
 
     pickle.dump(dump_obj, open(file_name, 'wb'))
     print('The dump has been saved as file', file_name)
+
+    
+def load_algo(file_name):
+    """Load a prediction algorithm from a file, using Pickle.
+
+    Args:
+        file_name(str): The path of the file from which the algorithm is
+            to be loaded
+    """
+    dump_obj = pickle.load(open(file_name, 'rb'))
+    algo_module = importlib.import_module('surprise.prediction_algorithms')
+    algo = getattr(algo_module, dump_obj['algo']['name'])()
+    algo.__dict__ = dump_obj['algo']
+    return algo
+
