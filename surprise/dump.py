@@ -50,7 +50,7 @@ def dump(file_name, predictions, trainset=None, algo=None):
     pickle.dump(dump_obj, open(file_name, 'wb'))
     print('The dump has been saved as file', file_name)
 
-    
+
 def load_algo(file_name):
     """Load a prediction algorithm from a file, using Pickle.
 
@@ -63,4 +63,3 @@ def load_algo(file_name):
     algo = getattr(algo_module, dump_obj['algo']['name'])()
     algo.__dict__ = dump_obj['algo']
     return algo
-
