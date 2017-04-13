@@ -7,6 +7,7 @@ TODO
 * Make the r_ui param of predict optional
 * set default sim to pearson_baseline for KNNBaseline
 * Profile code (mostly cython) to see what could be optimized
+* Verbosity of gridsearch still prints stuff because of evaluate. Fix that.
 
 Maybe, Maybe not
 ----------------
