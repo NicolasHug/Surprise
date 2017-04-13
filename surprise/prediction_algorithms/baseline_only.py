@@ -14,7 +14,7 @@ class BaselineOnly(AlgoBase):
     :math:`\hat{r}_{ui} = b_{ui} = \mu + b_u + b_i`
 
     If user :math:`u` is unknown, then the bias :math:`b_u` is assumed to be
-    zero. The same applies for item :math:`i` with :math:`b_u`.
+    zero. The same applies for item :math:`i` with :math:`b_i`.
 
     See section 2.1 of :cite:`Koren:2010` for details.
 
