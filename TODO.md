@@ -6,13 +6,13 @@ TODO
   highest estimation)
 * Make the r_ui param of predict optional
 * Set default sim to pearson_baseline for KNNBaseline
-* Allow shrinkage for all metrics?
+* Allow to discount similarities (see aggarwal)
 * Support conda?
 * Allow to test on the trainset
 * Change the dumping machinery to be more consistent 
 * Allow incremental updates for some algorithms
-* Profile code (mostly cython) to see what could be optimized
 * Verbosity of gridsearch still prints stuff because of evaluate. Fix that.
+* Profile code (mostly cython) to see what could be optimized
 
 Maybe, Maybe not
 ----------------
