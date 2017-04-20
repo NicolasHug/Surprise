@@ -1,6 +1,8 @@
 Current
 =======
 
+* Corrected factor vectors initialization of SVD algorithms
+
 VERSION 1.0.2
 =============
 

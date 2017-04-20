@@ -47,16 +47,16 @@ class SVD(AlgoBase):
     .. math::
         b_u &\\leftarrow b_u &+ \gamma (e_{ui} - \lambda b_u)\\\\
         b_i &\\leftarrow b_i &+ \gamma (e_{ui} - \lambda b_i)\\\\
-        p_u &\\leftarrow p_u &+ \gamma (e_{ui} q_i - \lambda p_u)\\\\
-        q_i &\\leftarrow q_i &+ \gamma (e_{ui} p_u - \lambda q_i)
+        p_u &\\leftarrow p_u &+ \gamma (e_{ui} \\cdot q_i - \lambda p_u)\\\\
+        q_i &\\leftarrow q_i &+ \gamma (e_{ui} \\cdot p_u - \lambda q_i)
 
     where :math:`e_{ui} = r_{ui} - \\hat{r}_{ui}`. These steps are performed
     over all the ratings of the trainset and repeated ``n_epochs`` times.
-    Baselines are initialized to ``0``. User and item factors are initialized
-    to ``0.1``, as recommended by `Funk
-    <http://sifter.org/~simon/journal/20061211.html>`_.
+    Baselines are initialized to ``0``. User and item factors are randomly
+    initialized according to a normal distribution, which can be tuned using
+    the ``init_mean`` and ``init_std_dev`` parameters.
 
-    You have control over the learning rate :math:`\gamma` and the
+    You also have control over the learning rate :math:`\gamma` and the
     regularization term :math:`\lambda`. Both can be different for each
     kind of parameter (see below). By default, learning rates are set to
     ``0.005`` and regularization terms are set to ``0.02``.
@@ -81,6 +81,10 @@ class SVD(AlgoBase):
             ``20``.
         biased(bool): Whether to use baselines (or biases). See :ref:`note
             <unbiased_note>` above.  Default is ``True``.
+        init_mean: The mean of the normal distribution for factor vectors
+            initialization. Default is ``0``.
+        init_std_dev: The standard deviation of the normal distribution for
+            factor vectors initialization. Default is ``0.1``.
         lr_all: The learning rate for all parameters. Default is ``0.005``.
         reg_all: The regularization term for all parameters. Default is
             ``0.02``.
@@ -103,7 +107,8 @@ class SVD(AlgoBase):
         verbose: If ``True``, prints the current epoch. Default is ``False``.
     """
 
-    def __init__(self, n_factors=100, n_epochs=20, biased=True, lr_all=.005,
+    def __init__(self, n_factors=100, n_epochs=20, biased=True, init_mean=0,
+                 init_std_dev=.1, lr_all=.005,
                  reg_all=.02, lr_bu=None, lr_bi=None, lr_pu=None, lr_qi=None,
                  reg_bu=None, reg_bi=None, reg_pu=None, reg_qi=None,
                  verbose=False):
@@ -111,6 +116,8 @@ class SVD(AlgoBase):
         self.n_factors = n_factors
         self.n_epochs = n_epochs
         self.biased = biased
+        self.init_mean = init_mean
+        self.init_std_dev = init_std_dev
         self.lr_bu = lr_bu if lr_bu is not None else lr_all
         self.lr_bi = lr_bi if lr_bi is not None else lr_all
         self.lr_pu = lr_pu if lr_pu is not None else lr_all
@@ -187,8 +194,10 @@ class SVD(AlgoBase):
 
         bu = np.zeros(trainset.n_users, np.double)
         bi = np.zeros(trainset.n_items, np.double)
-        pu = np.zeros((trainset.n_users, self.n_factors), np.double) + .1
-        qi = np.zeros((trainset.n_items, self.n_factors), np.double) + .1
+        pu = np.random.normal(self.init_mean, self.init_std_dev,
+                              (trainset.n_users, self.n_factors))
+        qi = np.random.normal(self.init_mean, self.init_std_dev,
+                              (trainset.n_items, self.n_factors))
 
         if not self.biased:
             global_mean = 0
@@ -265,9 +274,9 @@ class SVDpp(AlgoBase):
     Just as for :class:`SVD`, the parameters are learned using a SGD on the
     regularized squared error objective.
 
-    Baselines are initialized to ``0``. User and item factors are initialized
-    to ``0.1``, as recommended by `Funk
-    <http://sifter.org/~simon/journal/20061211.html>`_.
+    Baselines are initialized to ``0``. User and item factors are randomly
+    initialized according to a normal distribution, which can be tuned using
+    the ``init_mean`` and ``init_std_dev`` parameters.
 
     You have control over the learning rate :math:`\gamma` and the
     regularization term :math:`\lambda`. Both can be different for each
@@ -278,6 +287,10 @@ class SVDpp(AlgoBase):
         n_factors: The number of factors. Default is ``20``.
         n_epochs: The number of iteration of the SGD procedure. Default is
             ``20``.
+        init_mean: The mean of the normal distribution for factor vectors
+            initialization. Default is ``0``.
+        init_std_dev: The standard deviation of the normal distribution for
+            factor vectors initialization. Default is ``0.1``.
         lr_all: The learning rate for all parameters. Default is ``0.007``.
         reg_all: The regularization term for all parameters. Default is
             ``0.02``.
@@ -304,13 +317,15 @@ class SVDpp(AlgoBase):
         verbose: If ``True``, prints the current epoch. Default is ``False``.
     """
 
-    def __init__(self, n_factors=20, n_epochs=20, lr_all=.007, reg_all=.02,
-                 lr_bu=None, lr_bi=None, lr_pu=None, lr_qi=None, lr_yj=None,
-                 reg_bu=None, reg_bi=None, reg_pu=None, reg_qi=None,
-                 reg_yj=None, verbose=False):
+    def __init__(self, n_factors=20, n_epochs=20, init_mean=0, init_std_dev=.1,
+                 lr_all=.007, reg_all=.02, lr_bu=None, lr_bi=None, lr_pu=None,
+                 lr_qi=None, lr_yj=None, reg_bu=None, reg_bi=None, reg_pu=None,
+                 reg_qi=None, reg_yj=None, verbose=False):
 
         self.n_factors = n_factors
         self.n_epochs = n_epochs
+        self.init_mean = init_mean
+        self.init_std_dev = init_std_dev
         self.lr_bu = lr_bu if lr_bu is not None else lr_all
         self.lr_bi = lr_bi if lr_bi is not None else lr_all
         self.lr_pu = lr_pu if lr_pu is not None else lr_all
@@ -362,9 +377,13 @@ class SVDpp(AlgoBase):
 
         bu = np.zeros(trainset.n_users, np.double)
         bi = np.zeros(trainset.n_items, np.double)
-        pu = np.zeros((trainset.n_users, self.n_factors), np.double) + .1
-        qi = np.zeros((trainset.n_items, self.n_factors), np.double) + .1
-        yj = np.zeros((trainset.n_items, self.n_factors), np.double) + .1
+
+        pu = np.random.normal(self.init_mean, self.init_std_dev,
+                              (trainset.n_users, self.n_factors))
+        qi = np.random.normal(self.init_mean, self.init_std_dev,
+                              (trainset.n_items, self.n_factors))
+        yj = np.random.normal(self.init_mean, self.init_std_dev,
+                              (trainset.n_items, self.n_factors))
         u_impl_fdb = np.zeros(self.n_factors, np.double)
 
         for current_epoch in range(self.n_epochs):

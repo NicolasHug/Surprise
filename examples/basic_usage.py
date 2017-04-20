@@ -22,4 +22,6 @@ algo = SVD()
 # Evaluate performances of our algorithm on the dataset.
 perf = evaluate(algo, data, measures=['RMSE', 'MAE'])
 
+print(algo.qi)
+
 print_perf(perf)
