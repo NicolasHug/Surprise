@@ -14,6 +14,7 @@ TODO
 * Verbosity of gridsearch still prints stuff because of evaluate. Fix that.
 * Profile code (mostly cython) to see what could be optimized
 * Change SVD RMSE on readme
+* make bibtex entry
 
 Maybe, Maybe not
 ----------------
