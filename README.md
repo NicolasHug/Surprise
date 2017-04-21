@@ -20,11 +20,11 @@ systems.
 [Surprise](http://surpriselib.com) **was designed with the
 following purposes in mind**:
 
-- Give the user perfect control over his experiments. To this end, a strong
+- Give users perfect control over their experiments. To this end, a strong
   emphasis is laid on
   [documentation](http://surprise.readthedocs.io/en/latest/index.html), which we
   have tried to make as clear and precise as possible by pointing out every
-  details of the algorithms.
+  detail of the algorithms.
 - Alleviate the pain of [Dataset
   handling](http://surprise.readthedocs.io/en/latest/getting_started.html#load-a-custom-dataset).
   Users can use both *built-in* datasets
