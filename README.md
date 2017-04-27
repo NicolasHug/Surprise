@@ -1,5 +1,5 @@
 [![GitHub version](https://badge.fury.io/gh/nicolashug%2FSurprise.svg)](https://badge.fury.io/gh/nicolashug%2FSurprise)
-[![Documentation Status](https://readthedocs.org/projects/surprise/badge/?version=latest)](http://surprise.readthedocs.io/en/latest/?badge=latest)
+[![Documentation Status](https://readthedocs.org/projects/surprise/badge/?version=stable)](http://surprise.readthedocs.io/en/stable/?badge=stable)
 [![Build Status](https://travis-ci.org/NicolasHug/Surprise.svg?branch=master)](https://travis-ci.org/NicolasHug/Surprise)
 [![python versions](https://img.shields.io/badge/python-2.7%2C%203.5-blue.svg)](http://surpriselib.com)
 [![License](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)
@@ -22,40 +22,40 @@ following purposes in mind**:
 
 - Give users perfect control over their experiments. To this end, a strong
   emphasis is laid on
-  [documentation](http://surprise.readthedocs.io/en/latest/index.html), which we
+  [documentation](http://surprise.readthedocs.io/en/stable/index.html), which we
   have tried to make as clear and precise as possible by pointing out every
   detail of the algorithms.
 - Alleviate the pain of [Dataset
-  handling](http://surprise.readthedocs.io/en/latest/getting_started.html#load-a-custom-dataset).
+  handling](http://surprise.readthedocs.io/en/stable/getting_started.html#load-a-custom-dataset).
   Users can use both *built-in* datasets
   ([Movielens](http://grouplens.org/datasets/movielens/),
   [Jester](http://eigentaste.berkeley.edu/dataset/)), and their own *custom*
   datasets.
 - Provide various ready-to-use [prediction
-  algorithms](http://surprise.readthedocs.io/en/latest/prediction_algorithms_package.html)
+  algorithms](http://surprise.readthedocs.io/en/stable/prediction_algorithms_package.html)
   such as [baseline
-  algorithms](http://surprise.readthedocs.io/en/latest/basic_algorithms.html),
+  algorithms](http://surprise.readthedocs.io/en/stable/basic_algorithms.html),
   [neighborhood
-  methods](http://surprise.readthedocs.io/en/latest/knn_inspired.html), matrix
+  methods](http://surprise.readthedocs.io/en/stable/knn_inspired.html), matrix
   factorization-based (
-  [SVD](http://surprise.readthedocs.io/en/latest/matrix_factorization.html#surprise.prediction_algorithms.matrix_factorization.SVD),
-  [PMF](http://surprise.readthedocs.io/en/latest/matrix_factorization.html#unbiased-note),
-  [SVD++](http://surprise.readthedocs.io/en/latest/matrix_factorization.html#surprise.prediction_algorithms.matrix_factorization.SVDpp),
-  [NMF](http://surprise.readthedocs.io/en/latest/matrix_factorization.html#surprise.prediction_algorithms.matrix_factorization.NMF)),
+  [SVD](http://surprise.readthedocs.io/en/stable/matrix_factorization.html#surprise.prediction_algorithms.matrix_factorization.SVD),
+  [PMF](http://surprise.readthedocs.io/en/stable/matrix_factorization.html#unbiased-note),
+  [SVD++](http://surprise.readthedocs.io/en/stable/matrix_factorization.html#surprise.prediction_algorithms.matrix_factorization.SVDpp),
+  [NMF](http://surprise.readthedocs.io/en/stable/matrix_factorization.html#surprise.prediction_algorithms.matrix_factorization.NMF)),
   and [many
-  others](http://surprise.readthedocs.io/en/latest/prediction_algorithms_package.html).
+  others](http://surprise.readthedocs.io/en/stable/prediction_algorithms_package.html).
   Also, various [similarity
-  measures](http://surprise.readthedocs.io/en/latest/similarities.html)
+  measures](http://surprise.readthedocs.io/en/stable/similarities.html)
   (cosine, MSD, pearson...) are built-in.
 - Make it easy to implement [new algorithm
-  ideas](http://surprise.readthedocs.io/en/latest/building_custom_algo.html).
-- Provide tools to [evaluate](http://surprise.readthedocs.io/en/latest/evaluate.html),
+  ideas](http://surprise.readthedocs.io/en/stable/building_custom_algo.html).
+- Provide tools to [evaluate](http://surprise.readthedocs.io/en/stable/evaluate.html),
   [analyse](http://nbviewer.jupyter.org/github/NicolasHug/Surprise/tree/master/examples/notebooks/KNNBasic_analysis.ipynb/)
   and
   [compare](http://nbviewer.jupyter.org/github/NicolasHug/Surprise/blob/master/examples/notebooks/Compare.ipynb)
   the algorithms performance. Cross-validation procedures can be run very
   easily, as well as [exhaustive search over a set of
-  parameters](http://surprise.readthedocs.io/en/latest/getting_started.html#tune-algorithm-parameters-with-gridsearch).
+  parameters](http://surprise.readthedocs.io/en/stable/getting_started.html#tune-algorithm-parameters-with-gridsearch).
 
 
 The name *SurPRISE* (roughly :) ) stands for Simple Python RecommendatIon
@@ -67,7 +67,7 @@ Getting started, example
 
 Here is a simple example showing how you can (down)load a dataset, split it for
 3-folds cross-validation, and compute the MAE and RMSE of the
-[SVD](http://surprise.readthedocs.io/en/latest/matrix_factorization.html#surprise.prediction_algorithms.matrix_factorization.SVD)
+[SVD](http://surprise.readthedocs.io/en/stable/matrix_factorization.html#surprise.prediction_algorithms.matrix_factorization.SVD)
 algorithm.
 
 ```python
@@ -101,10 +101,10 @@ RMSE    0.9461  0.9436  0.9425  0.9441
 ```
 
 [Surprise](http://surpriselib.com) can do **much** more (e.g,
-[GridSearch](http://surprise.readthedocs.io/en/latest/getting_started.html#tune-algorithm-parameters-with-gridsearch))!
+[GridSearch](http://surprise.readthedocs.io/en/stable/getting_started.html#tune-algorithm-parameters-with-gridsearch))!
 You'll find [more usage
-examples](http://surprise.readthedocs.io/en/latest/getting_started.html) in the
-[documentation ](http://surprise.readthedocs.io/en/latest/index.html).
+examples](http://surprise.readthedocs.io/en/stable/getting_started.html) in the
+[documentation ](http://surprise.readthedocs.io/en/stable/index.html).
 
 
 Benchmarks
@@ -120,29 +120,29 @@ the GNU [time](http://man7.org/linux/man-pages/man1/time.1.html) command.
 
 |  [Movielens 100k](http://grouplens.org/datasets/movielens/100k) |  RMSE  |   MAE  | Time (s) |
 |-----------------|:------:|:------:|:--------:|
-| [NormalPredictor](http://surprise.readthedocs.io/en/latest/basic_algorithms.html#surprise.prediction_algorithms.random_pred.NormalPredictor) | 1.5228 | 1.2242 |     4    |
-| [BaselineOnly](http://surprise.readthedocs.io/en/latest/basic_algorithms.html#surprise.prediction_algorithms.baseline_only.BaselineOnly)    |  .9445 |  .7488 |    5    |
-| [KNNBasic](http://surprise.readthedocs.io/en/latest/knn_inspired.html#surprise.prediction_algorithms.knns.KNNBasic)        |  .9789 |  .7732 |    27    |
-| [KNNWithMeans](http://surprise.readthedocs.io/en/latest/knn_inspired.html#surprise.prediction_algorithms.knns.KNNWithMeans)    |  .9514 |  .7500 |    30    |
-| [KNNBaseline](http://surprise.readthedocs.io/en/latest/knn_inspired.html#surprise.prediction_algorithms.knns.KNNBaseline)     |  .9306 |  .7334 |    44    |
-| [SVD](http://surprise.readthedocs.io/en/latest/matrix_factorization.html#surprise.prediction_algorithms.matrix_factorization.SVD)             |  .9396 |  .7412 |    46    |
-| [SVD++](http://surprise.readthedocs.io/en/latest/matrix_factorization.html#surprise.prediction_algorithms.matrix_factorization.SVDpp)             |  .9200 |  .7253 |    31min    |
-| [NMF](http://surprise.readthedocs.io/en/latest/matrix_factorization.html#surprise.prediction_algorithms.matrix_factorization.NMF)             |  .9634 |  .7572 |    55    |
-| [Slope One](http://surprise.readthedocs.io/en/latest/slope_one.html#surprise.prediction_algorithms.slope_one.SlopeOne)             |  .9454 |  .7430 |    25    |
-| [Co clustering](http://surprise.readthedocs.io/en/latest/co_clustering.html#surprise.prediction_algorithms.co_clustering.CoClustering)             |  .9678 |  .7579 |    15    |
+| [NormalPredictor](http://surprise.readthedocs.io/en/stable/basic_algorithms.html#surprise.prediction_algorithms.random_pred.NormalPredictor) | 1.5228 | 1.2242 |     4    |
+| [BaselineOnly](http://surprise.readthedocs.io/en/stable/basic_algorithms.html#surprise.prediction_algorithms.baseline_only.BaselineOnly)    |  .9445 |  .7488 |    5    |
+| [KNNBasic](http://surprise.readthedocs.io/en/stable/knn_inspired.html#surprise.prediction_algorithms.knns.KNNBasic)        |  .9789 |  .7732 |    27    |
+| [KNNWithMeans](http://surprise.readthedocs.io/en/stable/knn_inspired.html#surprise.prediction_algorithms.knns.KNNWithMeans)    |  .9514 |  .7500 |    30    |
+| [KNNBaseline](http://surprise.readthedocs.io/en/stable/knn_inspired.html#surprise.prediction_algorithms.knns.KNNBaseline)     |  .9306 |  .7334 |    44    |
+| [SVD](http://surprise.readthedocs.io/en/stable/matrix_factorization.html#surprise.prediction_algorithms.matrix_factorization.SVD)             |  .9396 |  .7412 |    46    |
+| [SVD++](http://surprise.readthedocs.io/en/stable/matrix_factorization.html#surprise.prediction_algorithms.matrix_factorization.SVDpp)             |  .9200 |  .7253 |    31min    |
+| [NMF](http://surprise.readthedocs.io/en/stable/matrix_factorization.html#surprise.prediction_algorithms.matrix_factorization.NMF)             |  .9634 |  .7572 |    55    |
+| [Slope One](http://surprise.readthedocs.io/en/stable/slope_one.html#surprise.prediction_algorithms.slope_one.SlopeOne)             |  .9454 |  .7430 |    25    |
+| [Co clustering](http://surprise.readthedocs.io/en/stable/co_clustering.html#surprise.prediction_algorithms.co_clustering.CoClustering)             |  .9678 |  .7579 |    15    |
 
 
 |  [Movielens 1M](http://grouplens.org/datasets/movielens/1m) |  RMSE  |   MAE  | Time (min) |
 |-----------------|:------:|:------:|:--------:|
-| [NormalPredictor](http://surprise.readthedocs.io/en/latest/basic_algorithms.html#surprise.prediction_algorithms.random_pred.NormalPredictor) | 1.5037 | 1.2051 |     < 1    |
-| [BaselineOnly](http://surprise.readthedocs.io/en/latest/basic_algorithms.html#surprise.prediction_algorithms.baseline_only.BaselineOnly)    |  .9086 | .7194 |    < 1    |
-| [KNNBasic](http://surprise.readthedocs.io/en/latest/knn_inspired.html#surprise.prediction_algorithms.knns.KNNBasic)        |  .9207 |  .7250 |    22    |
-| [KNNWithMeans](http://surprise.readthedocs.io/en/latest/knn_inspired.html#surprise.prediction_algorithms.knns.KNNWithMeans)    |  .9292 |  .7386 |    22    |
-| [KNNBaseline](http://surprise.readthedocs.io/en/latest/knn_inspired.html#surprise.prediction_algorithms.knns.KNNBaseline)     |  .8949 | .7063 |    44    |
-| [SVD](http://surprise.readthedocs.io/en/latest/matrix_factorization.html#surprise.prediction_algorithms.matrix_factorization.SVD)             |  .8936 |  .7057 |    7    |
-| [NMF](http://surprise.readthedocs.io/en/latest/matrix_factorization.html#surprise.prediction_algorithms.matrix_factorization.NMF)             |  .9155 |  .7232 |    9    |
-| [Slope One](http://surprise.readthedocs.io/en/latest/slope_one.html#surprise.prediction_algorithms.slope_one.SlopeOne)             |  .9065 |  .7144 |    8    |
-| [Co clustering](http://surprise.readthedocs.io/en/latest/co_clustering.html#surprise.prediction_algorithms.co_clustering.CoClustering)             |  .9155 |  .7174 |    2    |
+| [NormalPredictor](http://surprise.readthedocs.io/en/stable/basic_algorithms.html#surprise.prediction_algorithms.random_pred.NormalPredictor) | 1.5037 | 1.2051 |     < 1    |
+| [BaselineOnly](http://surprise.readthedocs.io/en/stable/basic_algorithms.html#surprise.prediction_algorithms.baseline_only.BaselineOnly)    |  .9086 | .7194 |    < 1    |
+| [KNNBasic](http://surprise.readthedocs.io/en/stable/knn_inspired.html#surprise.prediction_algorithms.knns.KNNBasic)        |  .9207 |  .7250 |    22    |
+| [KNNWithMeans](http://surprise.readthedocs.io/en/stable/knn_inspired.html#surprise.prediction_algorithms.knns.KNNWithMeans)    |  .9292 |  .7386 |    22    |
+| [KNNBaseline](http://surprise.readthedocs.io/en/stable/knn_inspired.html#surprise.prediction_algorithms.knns.KNNBaseline)     |  .8949 | .7063 |    44    |
+| [SVD](http://surprise.readthedocs.io/en/stable/matrix_factorization.html#surprise.prediction_algorithms.matrix_factorization.SVD)             |  .8936 |  .7057 |    7    |
+| [NMF](http://surprise.readthedocs.io/en/stable/matrix_factorization.html#surprise.prediction_algorithms.matrix_factorization.NMF)             |  .9155 |  .7232 |    9    |
+| [Slope One](http://surprise.readthedocs.io/en/stable/slope_one.html#surprise.prediction_algorithms.slope_one.SlopeOne)             |  .9065 |  .7144 |    8    |
+| [Co clustering](http://surprise.readthedocs.io/en/stable/co_clustering.html#surprise.prediction_algorithms.co_clustering.CoClustering)             |  .9155 |  .7174 |    2    |
 
 Installation / Usage
 --------------------
@@ -173,7 +173,7 @@ Acknowledgements:
 - [Pierre-François Gimenez](https://github.com/PFgimenez), for his valuable
   insights on software design.
 - [Maher Malaeb](https://github.com/mahermalaeb), for the
-  [GridSearch](http://surprise.readthedocs.io/en/latest/evaluate.html#surprise.evaluate.GridSearch)
+  [GridSearch](http://surprise.readthedocs.io/en/stable/evaluate.html#surprise.evaluate.GridSearch)
   implementation.
 
 Contributing, feedback, contact
