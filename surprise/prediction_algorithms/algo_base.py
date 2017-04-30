@@ -50,7 +50,7 @@ class AlgoBase:
         # (re) Initialise baselines
         self.bu = self.bi = None
 
-    def predict(self, uid, iid, r_ui, clip=True, verbose=False):
+    def predict(self, uid, iid, r_ui=None, clip=True, verbose=False):
         """Compute the rating prediction for given user and item.
 
         The ``predict`` method converts raw ids to inner ids and then calls the
@@ -61,7 +61,8 @@ class AlgoBase:
         Args:
             uid: (Raw) id of the user. See :ref:`this note<raw_inner_note>`.
             iid: (Raw) id of the item. See :ref:`this note<raw_inner_note>`.
-            r_ui(float): The true rating :math:`r_{ui}`.
+            r_ui(float): The true rating :math:`r_{ui}`. Optional, default is
+                ``None``.
             clip(bool): Whether to clip the estimation into the rating scale.
                 For example, if :math:`\\hat{r}_{ui}` is :math:`5.5` while the
                 rating scale is :math:`[1, 5]`, then :math:`\\hat{r}_{ui}` is
@@ -72,7 +73,15 @@ class AlgoBase:
 
         Returns:
             A :obj:`Prediction\
-            <surprise.prediction_algorithms.predictions.Prediction>` object.
+            <surprise.prediction_algorithms.predictions.Prediction>` object
+            containing:
+
+            - The (raw) user id ``uid``.
+            - The (raw) item id ``iid``.
+            - The true rating ``r_ui`` (:math:`\\hat{r}_{ui}`).
+            - The estimated rating (:math:`\\hat{r}_{ui}`).
+            - Some additional details about the prediction that might be useful
+              for later analysis.
         """
 
         # Convert raw ids to inner ids

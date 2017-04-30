@@ -1,6 +1,8 @@
 Current
 =======
 
+* The r_ui parameter of the predict() method is now optional
+* Fixed verbosity of the evaluate function
 * Corrected prediction when only user (or only item) is unknown in SVD and NMF
   algorithms. Thanks to kenoung.
 * Corrected factor vectors initialization of SVD algorithms. Thanks to

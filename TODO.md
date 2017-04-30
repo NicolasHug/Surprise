@@ -3,17 +3,13 @@ TODO
 
 * Implement some recommendation strategy (like recommend the items with the 10
   highest estimation)
-* Make the r_ui param of predict optional
-* Set default sim to pearson_baseline for KNNBaseline
 * Allow to discount similarities (see aggarwal)
 * Support conda?
 * Allow to test on the trainset
 * Change the dumping machinery to be more consistent 
 * Allow incremental updates for some algorithms
-* Verbosity of gridsearch still prints stuff because of evaluate. Fix that.
 * Profile code (mostly cython) to see what could be optimized
 * Change SVD RMSE on readme
-* make bibtex entry
 
 Maybe, Maybe not
 ----------------
@@ -24,6 +20,9 @@ Maybe, Maybe not
 Done:
 -----
 
+* make bibtex entry
+* Verbosity of gridsearch still prints stuff because of evaluate. Fix that.
+* Make the r_ui param of predict optional
 * Put some PredictionImpossible messages in every algo
 * allow a 'clip' option to the predict method? Also, describe r_min and r_max
 * configure entrypoints to use surprise directly from command line

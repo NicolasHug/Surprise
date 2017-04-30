@@ -49,10 +49,12 @@ def evaluate(algo, data, measures=['rmse', 'mae'], with_dump=False,
     """
 
     performances = CaseInsensitiveDefaultDict(list)
-    print('Evaluating {0} of algorithm {1}.'.format(
-          ', '.join((m.upper() for m in measures)),
-          algo.__class__.__name__))
-    print()
+
+    if verbose:
+        print('Evaluating {0} of algorithm {1}.'.format(
+              ', '.join((m.upper() for m in measures)),
+              algo.__class__.__name__))
+        print()
 
     for fold_i, (trainset, testset) in enumerate(data.folds()):
 
