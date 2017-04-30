@@ -9,7 +9,6 @@ cimport numpy as np  # noqa
 import numpy as np
 
 from .algo_base import AlgoBase
-from .predictions import PredictionImpossible
 
 
 class CoClustering(AlgoBase):

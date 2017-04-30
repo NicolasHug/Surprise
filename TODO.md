@@ -1,7 +1,6 @@
 TODO
 ====
 
-* Put some PredictionImpossible messages in every algo
 * Implement some recommendation strategy (like recommend the items with the 10
   highest estimation)
 * Make the r_ui param of predict optional
@@ -25,6 +24,7 @@ Maybe, Maybe not
 Done:
 -----
 
+* Put some PredictionImpossible messages in every algo
 * allow a 'clip' option to the predict method? Also, describe r_min and r_max
 * configure entrypoints to use surprise directly from command line
 * Allow a 'biased' option in the SVD algo. If true, use baselines, if False,

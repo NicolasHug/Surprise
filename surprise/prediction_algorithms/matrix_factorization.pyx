@@ -244,7 +244,7 @@ class SVD(AlgoBase):
         if self.trainset.knows_user(u) and self.trainset.knows_item(i):
             est += np.dot(self.qi[i], self.pu[u])
         else:
-            raise PredictionImpossible
+            raise PredictionImpossible('User and item are unkown.')
 
         return est
 
@@ -652,6 +652,6 @@ class NMF(AlgoBase):
         if self.trainset.knows_user(u) and self.trainset.knows_item(i):
             est += np.dot(self.qi[i], self.pu[u])
         else:
-            raise PredictionImpossible
+            raise PredictionImpossible('User and item are unkown.')
 
         return est
