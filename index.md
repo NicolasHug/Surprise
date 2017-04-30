@@ -168,7 +168,7 @@ Here is a Bibtex entry if you ever need to cite Surprise in a research paper
 
     @Misc{Surprise,
     author =   {Hug, Nicolas},
-    title =    {{S}urprise, a {P}ython library for recommender systems},
+    title =    { {S}urprise, a {P}ython library for recommender systems},
     howpublished = {\url{http://surpriselib.com}},
     year = {2017}
     }
