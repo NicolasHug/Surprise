@@ -233,18 +233,26 @@ class SVD(AlgoBase):
     def estimate(self, u, i):
         # Should we cythonize this as well?
 
-        est = self.trainset.global_mean if self.biased else 0
+        known_user = self.trainset.knows_user(u)
+        known_item = self.trainset.knows_item(i)
 
-        if self.trainset.knows_user(u):
-            est += self.bu[u]
+        if self.biased:
+            est = self.trainset.global_mean
 
-        if self.trainset.knows_item(i):
-            est += self.bi[i]
+            if known_user:
+                est += self.bu[u]
 
-        if self.trainset.knows_user(u) and self.trainset.knows_item(i):
-            est += np.dot(self.qi[i], self.pu[u])
+            if known_item:
+                est += self.bi[i]
+
+            if known_user and known_item:
+                est += np.dot(self.qi[i], self.pu[u])
+
         else:
-            raise PredictionImpossible('User and item are unkown.')
+            if known_user and known_item:
+                est = np.dot(self.qi[i], self.pu[u])
+            else:
+                raise PredictionImpossible('User and item are unkown.')
 
         return est
 
@@ -640,18 +648,27 @@ class NMF(AlgoBase):
         self.qi = qi
 
     def estimate(self, u, i):
+        # Should we cythonize this as well?
 
-        est = self.trainset.global_mean if self.biased else 0
+        known_user = self.trainset.knows_user(u)
+        known_item = self.trainset.knows_item(i)
 
-        if self.trainset.knows_user(u):
-            est += self.bu[u]
+        if self.biased:
+            est = self.trainset.global_mean
 
-        if self.trainset.knows_item(i):
-            est += self.bi[i]
+            if known_user:
+                est += self.bu[u]
 
-        if self.trainset.knows_user(u) and self.trainset.knows_item(i):
-            est += np.dot(self.qi[i], self.pu[u])
+            if known_item:
+                est += self.bi[i]
+
+            if known_user and known_item:
+                est += np.dot(self.qi[i], self.pu[u])
+
         else:
-            raise PredictionImpossible('User and item are unkown.')
+            if known_user and known_item:
+                est = np.dot(self.qi[i], self.pu[u])
+            else:
+                raise PredictionImpossible('User and item are unkown.')
 
         return est

@@ -1,7 +1,10 @@
 Current
 =======
 
-* Corrected factor vectors initialization of SVD algorithms
+* Corrected prediction when only user (or only item) is unknown in SVD and NMF
+  algorithms. Thanks to kenoung.
+* Corrected factor vectors initialization of SVD algorithms. Thanks to
+  adideshp.
 
 VERSION 1.0.2
 =============
@@ -67,7 +70,7 @@ Enhancements
 API Changes
 -----------
 
-* Removed the @property decorator of for many iterators.
+* Removed the @property decorator for many iterators.
 * It's now up to the algorithms to decide if they can or cannot make a
 	prediction.
 
