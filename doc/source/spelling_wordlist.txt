@@ -6,10 +6,15 @@ testset
 namespace
 pdf
 dataset
+datasets
 scikit
 movielens
 timestamp
 algo
+knn_inspired
+slope_one
+accuracies
+NN
 
 
 

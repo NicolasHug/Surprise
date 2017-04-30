@@ -3,7 +3,7 @@
 Basic algorithms
 ----------------
 
-These are basic algorithm that do not do much work but that are still useful
+These are basic algorithms that do not do much work but that are still useful
 for comparing accuracies.
 
 .. autoclass:: surprise.prediction_algorithms.random_pred.NormalPredictor

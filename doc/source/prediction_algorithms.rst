@@ -3,9 +3,14 @@
 Using prediction algorithms
 ===========================
 
-Surprise provides with a bunch of built-in algorithms. You can find the details
-of each of these in the :mod:`surprise.prediction_algorithms` package
-documentation.
+Surprise provides with a bunch of built-in algorithms. All algorithms derive
+from the :class:`AlgoBase <surprise.prediction_algorithms.algo_base.AlgoBase>`
+base class, where are implemented some key methods (e.g. :meth:`predict
+<surprise.prediction_algorithms.algo_base.AlgoBase.predict>`, :meth:`train
+<surprise.prediction_algorithms.algo_base.AlgoBase.train>` and :meth:`test
+<surprise.prediction_algorithms.algo_base.AlgoBase.test>`). You can find the
+details of each of these in the :mod:`prediction_algorithms
+<surprise.prediction_algorithms>` package documentation.
 
 Every algorithm is part of the global Surprise namespace, so you only need to
 import their names from the Surprise package, for example: ::
