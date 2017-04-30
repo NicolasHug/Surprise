@@ -163,6 +163,16 @@ This project is licensed under the [BSD
 used for pretty much everything, including commercial applications. Please let
 us know how [Surprise](http://surpriselib.com) is useful to you!
 
+Here is a Bibtex entry if you ever need to cite Surprise in a research paper
+(please keep us posted, we would love to know if Surprise was helpful to you):
+
+    @Misc{Surprise,
+    author =   {Hug, Nicolas},
+    title =    {{S}urprise, a {P}ython library for recommender systems},
+    howpublished = {\url{http://surpriselib.com}},
+    year = {2017}
+    }
+
 Acknowledgements:
 ----------------
 
@@ -179,11 +189,7 @@ Any kind of feedback/criticism would be greatly appreciated (software design,
 documentation, improvement ideas, spelling mistakes, etc...).
 
 If you'd like to see some features or algorithms implemented in
-[Surprise](http://surpriselib.com), please let us know! Some of the current
-ideas are:
-
-- Bayesian PMF
-- RBM for CF
+[Surprise](http://surpriselib.com), please let us know!
 
 Please feel free to contribute (see
 [guidelines](https://github.com/NicolasHug/Surprise/blob/master/CONTRIBUTING.md))
