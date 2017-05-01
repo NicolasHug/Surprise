@@ -1,12 +1,13 @@
 TODO
 ====
 
+* Change the dumping machinery to be more consistent 
+* Complete FAQ
+
 * Implement some recommendation strategy (like recommend the items with the 10
   highest estimation)
 * Allow to discount similarities (see aggarwal)
 * Support conda?
-* Allow to test on the trainset
-* Change the dumping machinery to be more consistent 
 * Allow incremental updates for some algorithms
 * Profile code (mostly cython) to see what could be optimized
 * Change SVD RMSE on readme
@@ -20,6 +21,7 @@ Maybe, Maybe not
 Done:
 -----
 
+* Allow to test on the trainset
 * make bibtex entry
 * Verbosity of gridsearch still prints stuff because of evaluate. Fix that.
 * Make the r_ui param of predict optional
