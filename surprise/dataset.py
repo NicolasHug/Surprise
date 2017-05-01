@@ -639,7 +639,8 @@ class Trainset:
         cases where you want to to test your algorithm on the trainset.
         """
 
-        return [(u, i, r) for (u, i, r) in self.all_ratings()]
+        return [(self.to_raw_uid(u), self.to_raw_iid(i), r)
+                for (u, i, r) in self.all_ratings()]
 
     def build_anti_testset(self):
         """Return a list of ratings that can be used as a testset in the
@@ -659,7 +660,9 @@ class Trainset:
             for i in self.all_items():
                 user_items = [j for (j, _) in self.ur[u]]
                 if i not in user_items:
-                    anti_testset.append((u, i, self.global_mean))
+                    r_ui = (self.to_raw_uid(u), self.to_raw_iid(i),
+                            self.global_mean)
+                    anti_testset.append(r_ui)
         return anti_testset
 
     def all_users(self):
