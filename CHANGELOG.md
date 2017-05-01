@@ -1,6 +1,7 @@
 Current
 =======
 
+* Added possibility to get accuracy performances on the trainset
 * Added inner-to-raw id conversion in the Trainset class
 * The r_ui parameter of the predict() method is now optional
 * Fixed verbosity of the evaluate function

@@ -31,6 +31,7 @@ to contribute and send pull requests (see `GitHub page
    prediction_algorithms
    building_custom_algo
    notation_standards
+   FAQ
 
 
 .. toctree::

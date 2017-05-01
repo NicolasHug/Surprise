@@ -650,8 +650,8 @@ class Trainset:
         The ratings are all the ratings that are **not** in the trainset, i.e.
         all the ratings :math:`r_{ui}` where the user :math:`u` is known, the
         item :math:`i` is known, but the rating :math:`r_{ui}`  is not in the
-        trainset. As :math:`r_{ui}` is unkown, it is assumed to be equal to the
-        mean of all ratings :meth:`global_mean
+        trainset. As :math:`r_{ui}` is unknown, it is assumed to be equal to
+        the mean of all ratings :meth:`global_mean
         <surprise.dataset.Trainset.global_mean>`.
         """
 
