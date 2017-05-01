@@ -222,10 +222,12 @@ will still predict the mean of all ratings :math:`\mu`.
   whatever (but are still represented as strings).  On trainset creation, each
   raw id is mapped to a unique integer called inner id, which is a lot more
   suitable for `Surprise <https://nicolashug.github.io/Surprise/>`_ to
-  manipulate. To convert a raw id to an inner id, you can use the
-  :meth:`to_inner_uid() <surprise.dataset.Trainset.to_inner_uid>` and
-  :meth:`to_inner_iid() <surprise.dataset.Trainset.to_inner_iid>` methods of
-  the :class:`trainset <surprise.dataset.Trainset>`.
+  manipulate. Conversions between raw and inner ids can be done using the
+  :meth:`to_inner_uid() <surprise.dataset.Trainset.to_inner_uid>`,
+  :meth:`to_inner_iid() <surprise.dataset.Trainset.to_inner_iid>`,
+  :meth:`to_raw_uid() <surprise.dataset.Trainset.to_raw_uid>`, and
+  :meth:`to_raw_iid() <surprise.dataset.Trainset.to_raw_iid>` methods of the
+  :class:`trainset <surprise.dataset.Trainset>`.
 
 Obviously, it is perfectly fine to use the :meth:`predict()
 <surprise.prediction_algorithms.algo_base.AlgoBase.predict>` method directly

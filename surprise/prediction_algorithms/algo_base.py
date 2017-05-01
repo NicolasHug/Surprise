@@ -127,18 +127,21 @@ class AlgoBase:
         return pred
 
     def test(self, testset, verbose=False):
-        """Test the algorithm on given testset.
+        """Test the algorithm on given testset, i.e. estimate all the ratings
+        in the given testset.
 
         Args:
-            testset: A test set, as returned by the :meth:`folds
-                <surprise.dataset.Dataset.folds>` method.
+            testset: A test set, as returned by the :meth:`folds()
+                <surprise.dataset.Dataset.folds>` method or by the
+                :meth:`build_testset()
+                <surprise.dataset.Trainset.build_testset>` method.
             verbose(bool): Whether to print details for each predictions.
                 Default is False.
 
         Returns:
             A list of :class:`Prediction\
-                <surprise.prediction_algorithms.predictions.Prediction>`
-                objects.
+            <surprise.prediction_algorithms.predictions.Prediction>` objects
+            that contains all the estimated ratings.
         """
 
         # The ratings are translated back to their original scale.

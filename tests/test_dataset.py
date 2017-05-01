@@ -8,6 +8,7 @@ import os
 
 import pytest
 
+from surprise import BaselineOnly
 from surprise import Dataset
 from surprise import Reader
 
@@ -135,3 +136,29 @@ def test_trainset_testset():
         assert trainset.to_raw_iid(i) == 'item' + str(i)
     assert trainset._inner2raw_id_users is not None
     assert trainset._inner2raw_id_items is not None
+
+    # Test the build_testset() method
+    algo = BaselineOnly()
+    algo.train(trainset)
+    testset = trainset.build_testset()
+    algo.test(testset)  # ensure an algorithm can manage the data
+    assert ((trainset.to_inner_uid('user0'), trainset.to_inner_iid('item0'), 4)
+            in testset)
+    assert ((trainset.to_inner_uid('user3'), trainset.to_inner_iid('item1'), 5)
+            in testset)
+    assert ((trainset.to_inner_uid('user3'), trainset.to_inner_iid('item1'), 0)
+            not in testset)
+
+    # Test the build_anti_testset() method
+    algo = BaselineOnly()
+    algo.train(trainset)
+    testset = trainset.build_anti_testset()
+    algo.test(testset)  # ensure an algorithm can manage the data
+    assert ((trainset.to_inner_uid('user0'), trainset.to_inner_iid('item0'),
+             trainset.global_mean) not in testset)
+    assert ((trainset.to_inner_uid('user3'), trainset.to_inner_iid('item1'),
+             trainset.global_mean) not in testset)
+    assert ((trainset.to_inner_uid('user0'), trainset.to_inner_iid('item1'),
+             trainset.global_mean) in testset)
+    assert ((trainset.to_inner_uid('user3'), trainset.to_inner_iid('item0'),
+             trainset.global_mean) in testset)

@@ -628,6 +628,40 @@ class Trainset:
             for i, r in u_ratings:
                 yield u, i, r
 
+    def build_testset(self):
+        """Return a list of ratings that can be used as a testset in the
+        :meth:`test() <surprise.prediction_algorithms.algo_base.AlgoBase.test>`
+        method.
+
+        The ratings are all the ratings that are in the trainset, i.e. all the
+        ratings returned by the :meth:`all_ratings()
+        <surprise.dataset.Trainset.all_ratings>` generator. This is useful in
+        cases where you want to to test your algorithm on the trainset.
+        """
+
+        return [(u, i, r) for (u, i, r) in self.all_ratings()]
+
+    def build_anti_testset(self):
+        """Return a list of ratings that can be used as a testset in the
+        :meth:`test() <surprise.prediction_algorithms.algo_base.AlgoBase.test>`
+        method.
+
+        The ratings are all the ratings that are **not** in the trainset, i.e.
+        all the ratings :math:`r_{ui}` where the user :math:`u` is known, the
+        item :math:`i` is known, but the rating :math:`r_{ui}`  is not in the
+        trainset. As :math:`r_{ui}` is unkown, it is assumed to be equal to the
+        mean of all ratings :meth:`global_mean
+        <surprise.dataset.Trainset.global_mean>`.
+        """
+
+        anti_testset = []
+        for u in self.all_users():
+            for i in self.all_items():
+                user_items = [j for (j, _) in self.ur[u]]
+                if i not in user_items:
+                    anti_testset.append((u, i, self.global_mean))
+        return anti_testset
+
     def all_users(self):
         """Generator function to iterate over all users.
 
