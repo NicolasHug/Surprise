@@ -1,6 +1,7 @@
 Current
 =======
 
+* Added inner-to-raw id conversion in the Trainset class
 * The r_ui parameter of the predict() method is now optional
 * Fixed verbosity of the evaluate function
 * Corrected prediction when only user (or only item) is unknown in SVD and NMF

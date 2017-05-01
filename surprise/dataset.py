@@ -492,6 +492,10 @@ class Trainset:
         self._raw2inner_id_users = raw2inner_id_users
         self._raw2inner_id_items = raw2inner_id_items
         self._global_mean = None
+        # inner2raw dicts could be built right now (or even before) but they
+        # are not always useful so we wait until we need them.
+        self._inner2raw_id_users = None
+        self._inner2raw_id_items = None
 
     def knows_user(self, uid):
         """Indicate if the user is part of the trainset.
@@ -522,7 +526,7 @@ class Trainset:
         return iid in self.ir
 
     def to_inner_uid(self, ruid):
-        """Convert a raw **user** id to an inner id.
+        """Convert a **user** raw id to an inner id.
 
         See :ref:`this note<raw_inner_note>`.
 
@@ -542,8 +546,33 @@ class Trainset:
             raise ValueError(('User ' + str(ruid) +
                               ' is not part of the trainset.'))
 
+    def to_raw_uid(self, iuid):
+        """Convert a **user** inner id to a raw id.
+
+        See :ref:`this note<raw_inner_note>`.
+
+        Args:
+            iuid(int): The user inner id.
+
+        Returns:
+            str: The user raw id.
+
+        Raises:
+            ValueError: When ``iuid`` is not an inner id.
+        """
+
+        if self._inner2raw_id_users is None:
+            self._inner2raw_id_users = {inner: raw for (raw, inner) in
+                                        iteritems(self._raw2inner_id_users)}
+
+        try:
+            return self._inner2raw_id_users[iuid]
+        except KeyError:
+            raise ValueError((str(iuid) +
+                              ' is not a valid inner id.'))
+
     def to_inner_iid(self, riid):
-        """Convert a raw **item** id to an inner id.
+        """Convert an **item** raw id to an inner id.
 
         See :ref:`this note<raw_inner_note>`.
 
@@ -562,6 +591,31 @@ class Trainset:
         except KeyError:
             raise ValueError(('Item ' + str(riid) +
                               ' is not part of the trainset.'))
+
+    def to_raw_iid(self, iiid):
+        """Convert an **item** inner id to a raw id.
+
+        See :ref:`this note<raw_inner_note>`.
+
+        Args:
+            iiid(int): The item inner id.
+
+        Returns:
+            str: The item raw id.
+
+        Raises:
+            ValueError: When ``iiid`` is not an inner id.
+        """
+
+        if self._inner2raw_id_items is None:
+            self._inner2raw_id_items = {inner: raw for (raw, inner) in
+                                        iteritems(self._raw2inner_id_items)}
+
+        try:
+            return self._inner2raw_id_items[iiid]
+        except KeyError:
+            raise ValueError((str(iiid) +
+                              ' is not a valid inner id.'))
 
     def all_ratings(self):
         """Generator function to iterate over all ratings.

@@ -115,11 +115,23 @@ def test_trainset_testset():
     assert trainset.n_ratings == 6
     assert trainset.rating_scale == (1, 5)
 
-    # test raw2inner: ensure inner ids are given in proper order
-    raw2inner_id_users = trainset._raw2inner_id_users
+    # test raw2inner
     for i in range(4):
-        assert raw2inner_id_users['user' + str(i)] == i
+        assert trainset.to_inner_uid('user' + str(i)) == i
+    with pytest.raises(ValueError):
+        trainset.to_inner_uid('unkown_user')
 
-    raw2inner_id_items = trainset._raw2inner_id_items
     for i in range(2):
-        assert raw2inner_id_items['item' + str(i)] == i
+        assert trainset.to_inner_iid('item' + str(i)) == i
+    with pytest.raises(ValueError):
+        trainset.to_inner_iid('unkown_item')
+
+    # test inner2raw
+    assert trainset._inner2raw_id_users is None
+    assert trainset._inner2raw_id_items is None
+    for i in range(4):
+        assert trainset.to_raw_uid(i) == 'user' + str(i)
+    for i in range(2):
+        assert trainset.to_raw_iid(i) == 'item' + str(i)
+    assert trainset._inner2raw_id_users is not None
+    assert trainset._inner2raw_id_items is not None
