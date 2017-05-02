@@ -234,28 +234,6 @@ Obviously, it is perfectly fine to use the :meth:`predict()
 during a cross-validation process. It's then up to you to ensure that the user
 and item ids are present in the trainset though.
 
-.. _dumping:
-
-Dump the predictions for later analysis
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-You may want to save your algorithm predictions along with all the useful
-information about the algorithm. This way, you can run your algorithm once,
-save the results, and go back to them whenever you want to inspect in greater
-details each of the predictions, and get a good insight on why your algorithm
-performs well (or bad!). `Surprise <https://nicolashug.github.io/Surprise/>`_
-provides with some tools to do that.
-
-You can dump your algorithm predictions either using the :func:`evaluate()
-<surprise.evaluate.evaluate>` function, or do it manually with the :func:`dump
-<surprise.dump.dump>` function. Either way, an example is worth a thousand
-words, so here a few `jupyter <http://jupyter.org/>`_ notebooks:
-
-  - `Dumping and analysis of the KNNBasic algorithm
-    <http://nbviewer.jupyter.org/github/NicolasHug/Surprise/tree/master/examples/notebooks/KNNBasic_analysis.ipynb/>`_.
-  - `Comparison of two algorithms
-    <http://nbviewer.jupyter.org/github/NicolasHug/Surprise/tree/master/examples/notebooks/Compare.ipynb/>`_.
-
 Command line usage
 ~~~~~~~~~~~~~~~~~~
 

@@ -21,7 +21,7 @@ from .dataset import Trainset
 from .evaluate import evaluate
 from .evaluate import print_perf
 from .evaluate import GridSearch
-from .dump import dump
+from . import dump
 
 __all__ = ['AlgoBase', 'NormalPredictor', 'BaselineOnly', 'KNNBasic',
            'KNNWithMeans', 'KNNBaseline', 'SVD', 'SVDpp', 'NMF', 'SlopeOne',

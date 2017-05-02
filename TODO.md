@@ -1,11 +1,11 @@
 TODO
 ====
 
-* Change the dumping machinery to be more consistent 
 * Complete FAQ
 
 * Implement some recommendation strategy (like recommend the items with the 10
   highest estimation)
+* Rewright stuff on prediction dumping for analysis (l.40 building_on_algo)
 * Allow to discount similarities (see aggarwal)
 * Support conda?
 * Allow incremental updates for some algorithms
@@ -21,6 +21,7 @@ Maybe, Maybe not
 Done:
 -----
 
+* Change the dumping machinery to be more consistent 
 * Allow to test on the trainset
 * make bibtex entry
 * Verbosity of gridsearch still prints stuff because of evaluate. Fix that.

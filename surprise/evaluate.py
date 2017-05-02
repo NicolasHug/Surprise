@@ -32,11 +32,10 @@ def evaluate(algo, data, measures=['rmse', 'mae'], with_dump=False,
         measures(list of string): The performance measures to compute. Allowed
             names are function names as defined in the :mod:`accuracy
             <surprise.accuracy>` module. Default is ``['rmse', 'mae']``.
-        with_dump(bool): If True, the predictions, the trainsets and the
-            algorithm parameters will be dumped for later further analysis at
-            each fold (see :ref:`User Guide <dumping>`).  The file names will
-            be set as: ``'<date>-<algorithm name>-<fold number>'``.  Default is
-            ``False``.
+        with_dump(bool): If True, the predictions and the algorithm will be
+            dumped for later further analysis at each fold (see :ref:`FAQ
+            <save_algorithm_for_later_use>`). The file names will be set as:
+            ``'<date>-<algorithm name>-<fold number>'``.  Default is ``False``.
         dump_dir(str): The directory where to dump to files. Default is
             ``'~/.surprise_data/dumps/'``.
         verbose(int): Level of verbosity. If 0, nothing is printed. If 1

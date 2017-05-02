@@ -1,6 +1,8 @@
 Current
 =======
 
+* Changed the dumping process a bit (see API changes). Plus, dumps can now be
+  loaded.
 * Added possibility to get accuracy performances on the trainset
 * Added inner-to-raw id conversion in the Trainset class
 * The r_ui parameter of the predict() method is now optional
@@ -9,6 +11,15 @@ Current
   algorithms. Thanks to kenoung.
 * Corrected factor vectors initialization of SVD algorithms. Thanks to
   adideshp.
+
+API Changes
+-----------
+
+* The dump() method now dumps a list of predition (optional) and an algorithm
+  (optional as well). The algorithm is now a real algorithm object. The
+  trainset is not dumped anymore as it is already part of the algorithm anyway.
+* The dump() method is now part of the dump namespace, and not the global
+  namespace (so it is accessed by surprise.dump.dump)
 
 VERSION 1.0.2
 =============

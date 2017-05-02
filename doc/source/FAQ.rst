@@ -9,20 +9,44 @@ How to get the :math:`k` nearest neighbors of a user (or item)
 How to get the top-:math:`k` recommendations for a user
 -------------------------------------------------------
 
-How to save an algorithm for later use
---------------------------------------
+.. _save_algorithm_for_later_use:
+
+How to serialize an algorithm
+-----------------------------
+
+Prediction algortihms can be serialized and loaded back using the :func:`dump()
+<surprise.dump.dump>` and :func:`load() <surprise.dump.load>` functions. Here
+is a small example where the SVD algorithm is trained on a dataset and
+serialized. It is then reloaded and can be used again for making predictions:
+
+.. literalinclude:: ../../examples/serialize_algorithm.py
+    :caption: From file ``examples/serialize_algorithm.py``
+    :name: serialize_algorithm.py
+    :lines: 9-
 
 How to build my own prediction algorithm
 ----------------------------------------
 
+See the :ref:`user guide <building_custom_algo>`.
+
 What are raw and inner ids
 --------------------------
+
+See :ref:`this note <raw_inner_note>`.
 
 How to use my own dataset with Surprise
 ---------------------------------------
 
+See the :ref:`user guide <load_custom>`.
+
 How to tune an algorithm parameters
 -----------------------------------
+
+To tune the parameters of your algorithm, you can use the :class:`GridSearch
+<surprise.evaluate.GridSearch>` class as described :ref:`here
+<tuning_algorithm_parameters>`. After the tuning, you may want to have an
+:ref:`unbiased estimate of your algorithm performances
+<unbiased_estimate_after_tuning>`.
 
 How to get accuracy measures on the training set
 ------------------------------------------------
@@ -39,6 +63,8 @@ with the :meth:`test()
     :lines: 9-24
 
 Check out the example file for more usage examples.
+
+.. _unbiased_estimate_after_tuning:
 
 How to save some data for unbiased accuracy estimation
 ------------------------------------------------------
