@@ -40,8 +40,8 @@ def test_unknown_user_or_item():
     for klass in klasses:
         algo = klass()
         algo.train(trainset)
-        algo.predict(0, 'unknown_item', None)
-        algo.predict('unkown_user', 0, None)
+        algo.predict('user0', 'unknown_item', None)
+        algo.predict('unkown_user', 'item0', None)
         algo.predict('unkown_user', 'unknown_item', None)
 
 
@@ -68,3 +68,21 @@ def test_knns():
             for pred in predictions:
                 if not pred.details['was_impossible']:
                     assert min_k <= pred.details['actual_k'] <= k
+
+
+def test_nearest_neighbors():
+    """Ensure the nearest neighbors are different when using user-user
+    similarity vs item-item."""
+
+    reader = Reader(line_format='user item rating', sep=' ', skip_lines=3,
+                    rating_scale=(1, 5))
+
+    data_file = os.path.dirname(os.path.realpath(__file__)) + '/custom_train'
+    data = Dataset.load_from_file(data_file, reader)
+    trainset = data.build_full_trainset()
+
+    algo_ub = KNNBasic(sim_options={'user_based': True})
+    algo_ub.train(trainset)
+    algo_ib = KNNBasic(sim_options={'user_based': False})
+    algo_ib.train(trainset)
+    assert algo_ub.get_neighbors(0, k=10) != algo_ib.get_neighbors(0, k=10)

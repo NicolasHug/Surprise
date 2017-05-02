@@ -3,8 +3,25 @@
 FAQ
 ===
 
+.. _get_k_nearest_neighbors:
+
 How to get the :math:`k` nearest neighbors of a user (or item)
 --------------------------------------------------------------
+
+You can use the :meth:`get_neighbors()
+<surprise.prediction_algorithms.algo_base.AlgoBase.get_neighbors>` methods of
+the algorithm. This is only relevent for algorithms using a similarity measure,
+such as the :ref:`k-NN algorithms <pred_package_knn_inpired>`.
+
+Here is an example where we retrieve the k-nearest neighbors of the movie Toy
+Story from the MovieLens-100k dataset. The same can be done for users with
+minor changes.  There's a lot of boilerplate because of the id conversions, but
+it all boils down to the use of ``get_neighbors()``:
+
+.. literalinclude:: ../../examples/k_nearest_neighbors.py
+    :caption: From file ``examples/k_nearest_neighbors.py``
+    :name: k_nearest_neighbors.py
+    :lines: 10-
 
 How to get the top-:math:`k` recommendations for a user
 -------------------------------------------------------
@@ -53,7 +70,7 @@ How to get accuracy measures on the training set
 
 You can use the :meth:`build_testset()
 <surprise.dataset.Trainset.build_testset()>` method of the :class:`Trainset
-<surprise.dataset.Trainset>` object to build a trainset that can be then used
+<surprise.dataset.Trainset>` object to build a testset that can be then used
 with the :meth:`test()
 <surprise.prediction_algorithms.algo_base.AlgoBase.test>` method:
 

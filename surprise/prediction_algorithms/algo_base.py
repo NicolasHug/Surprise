@@ -159,6 +159,11 @@ class AlgoBase:
         passed at the creation of the algorithm (see
         :ref:`baseline_estimates_configuration`).
 
+        This method is only relevent for algorithms using :func:`Pearson
+        baseline similarty<surprise.similarities.pearson_baseline>` or the
+        :class:`BaselineOnly
+        <surprise.prediction_algorithms.baseline_only.BaselineOnly>` algorithm.
+
         Returns:
             A tuple ``(bu, bi)``, which are users and items baselines."""
 
@@ -189,6 +194,9 @@ class AlgoBase:
         The way the similarity matrix is computed depends on the
         ``sim_options`` parameter passed at the creation of the algorithm (see
         :ref:`similarity_measures_configuration`).
+
+        This method is only relevent for algorithms using a similarity measure,
+        such as the :ref:`k-NN algorithms <pred_package_knn_inpired>`.
 
         Returns:
             The similarity matrix."""
@@ -226,3 +234,36 @@ class AlgoBase:
         except KeyError:
             raise NameError('Wrong sim name ' + name + '. Allowed values ' +
                             'are ' + ', '.join(construction_func.keys()) + '.')
+
+    def get_neighbors(self, iid, k):
+        """Return the ``k`` nearest neighbors of ``iid``, which is the inner id
+        of a user or an item, depending on the ``user_based`` field of
+        ``sim_options`` (see :ref:`similarity_measures_configuration`).
+
+        As the similarities are computed on the basis of a similarity measure,
+        this method is only relevent for algorithms using a similarity measure,
+        such as the :ref:`k-NN algorithms <pred_package_knn_inpired>`.
+
+        For a usage example, see the :ref:`FAQ <get_k_nearest_neighbors>`.
+
+        Args:
+            iid(int): The (inner) id of the user (or item) for which we want
+                the nearest neighbors. See :ref:`this note<raw_inner_note>`.
+
+            k(int): The number of neighbors to retrieve.
+
+        Returns:
+            The list of the ``k`` (inner) ids of the closest users (or items)
+            to ``iid``.
+        """
+
+        if self.sim_options['user_based']:
+            all_instances = self.trainset.all_users
+        else:
+            all_instances = self.trainset.all_items
+
+        others = [(x, self.sim[iid, x]) for x in all_instances() if x != iid]
+        others.sort(key=lambda tple: tple[1], reverse=True)
+        k_nearest_neighbors = [j for (j, _) in others[:k]]
+
+        return k_nearest_neighbors

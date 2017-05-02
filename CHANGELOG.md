@@ -1,6 +1,8 @@
 Current
 =======
 
+* Added the possibility to retrieve the k nearest neighbors of a user or an
+  item.
 * Changed the dumping process a bit (see API changes). Plus, dumps can now be
   loaded.
 * Added possibility to get accuracy performances on the trainset
