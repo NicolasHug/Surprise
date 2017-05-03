@@ -1,9 +1,6 @@
 TODO
 ====
 
-* Complete FAQ
-
-* Rewright stuff on prediction dumping for analysis (l.40 building_on_algo)
 * Allow to discount similarities (see aggarwal)
 * Support conda?
 * Allow incremental updates for some algorithms
@@ -18,6 +15,7 @@ Maybe, Maybe not
 Done:
 -----
 
+* Complete FAQ
 * Change the dumping machinery to be more consistent 
 * Allow to test on the trainset
 * make bibtex entry

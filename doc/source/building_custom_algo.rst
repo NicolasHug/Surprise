@@ -37,7 +37,7 @@ return a dictionary with given details: ::
 
 This dictionary will be stored in the :class:`prediction
 <surprise.prediction_algorithms.predictions.Prediction>` as the ``details``
-field and can be used for later analysis.
+field and can be used for :ref:`later analysis <further_analysis>`.
 
 
 

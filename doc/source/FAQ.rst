@@ -75,6 +75,17 @@ serialized. It is then reloaded and can be used again for making predictions:
     :name: serialize_algorithm.py
     :lines: 9-
 
+.. _further_analysis:
+
+Algorithms can be serialized along with their predictions, so that can be
+further analyzed or compared with other algorithms, using pandas dataframes.
+Some examples are given in the two following notebooks:
+
+    * `Dumping and analysis of the KNNBasic algorithm
+      <http://nbviewer.jupyter.org/github/NicolasHug/Surprise/tree/master/examples/notebooks/KNNBasic_analysis.ipynb/>`_.
+    * `Comparison of two algorithms
+      <http://nbviewer.jupyter.org/github/NicolasHug/Surprise/tree/master/examples/notebooks/Compare.ipynb/>`_.
+
 How to build my own prediction algorithm
 ----------------------------------------
 
