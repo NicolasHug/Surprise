@@ -21,7 +21,7 @@ def dump(file_name, predictions=None, algo=None, verbose=0):
             <surprise.prediction_algorithms.algo_base.AlgoBase>`, optional):
             The algorithm to dump.
         verbose(int): Level of verbosity. If ``1``, then a message indicates
-            that the dumping went succesfully. Default is ``0``.
+            that the dumping went successfully. Default is ``0``.
     """
 
     dump_obj = {'predictions': predictions,

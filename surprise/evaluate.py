@@ -34,7 +34,7 @@ def evaluate(algo, data, measures=['rmse', 'mae'], with_dump=False,
             <surprise.accuracy>` module. Default is ``['rmse', 'mae']``.
         with_dump(bool): If True, the predictions and the algorithm will be
             dumped for later further analysis at each fold (see :ref:`FAQ
-            <save_algorithm_for_later_use>`). The file names will be set as:
+            <serialize_an_algorithm>`). The file names will be set as:
             ``'<date>-<algorithm name>-<fold number>'``.  Default is ``False``.
         dump_dir(str): The directory where to dump to files. Default is
             ``'~/.surprise_data/dumps/'``.

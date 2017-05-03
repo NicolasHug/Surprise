@@ -15,10 +15,14 @@ make sure that:
   warning (see below).
 
 
-All the tools needed for the development of surprise (sphinx, flake8,
+All the tools needed for the development of Surprise (sphinx, flake8,
 etc...) can be installed by running
 
     pip install -r requirements_dev.txt
+
+Then, you can install your local copy of the repo by running
+
+    pip install -e .
 
 Running tests
 -------------

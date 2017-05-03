@@ -159,7 +159,7 @@ class AlgoBase:
         passed at the creation of the algorithm (see
         :ref:`baseline_estimates_configuration`).
 
-        This method is only relevent for algorithms using :func:`Pearson
+        This method is only relevant for algorithms using :func:`Pearson
         baseline similarty<surprise.similarities.pearson_baseline>` or the
         :class:`BaselineOnly
         <surprise.prediction_algorithms.baseline_only.BaselineOnly>` algorithm.
@@ -195,7 +195,7 @@ class AlgoBase:
         ``sim_options`` parameter passed at the creation of the algorithm (see
         :ref:`similarity_measures_configuration`).
 
-        This method is only relevent for algorithms using a similarity measure,
+        This method is only relevant for algorithms using a similarity measure,
         such as the :ref:`k-NN algorithms <pred_package_knn_inpired>`.
 
         Returns:
@@ -241,7 +241,7 @@ class AlgoBase:
         ``sim_options`` (see :ref:`similarity_measures_configuration`).
 
         As the similarities are computed on the basis of a similarity measure,
-        this method is only relevent for algorithms using a similarity measure,
+        this method is only relevant for algorithms using a similarity measure,
         such as the :ref:`k-NN algorithms <pred_package_knn_inpired>`.
 
         For a usage example, see the :ref:`FAQ <get_k_nearest_neighbors>`.

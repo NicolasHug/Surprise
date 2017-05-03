@@ -3,35 +3,69 @@
 FAQ
 ===
 
+You will find here the Frequently Asked Questions, as well as some other
+use-case examples that are not part of the User Guide.
+
+How to get the top-N recommendations for each user
+----------------------------------------------------------
+
+Here is an example where we retrieve retrieve the top-10 items with highest
+rating prediction for each user in the MovieLens-100k dataset. We first train
+an SVD algorithm on the whole dataset, and then predict all the ratings for the
+pairs (user, item) that are not in the training set. We then retrieve the
+top-10 prediction for each user.
+
+.. literalinclude:: ../../examples/top_n_recommendations.py
+    :caption: From file ``examples/top_n_recommendations.py``
+    :name: top_n_recommendations.py
+    :lines: 10-
+
 .. _get_k_nearest_neighbors:
 
-How to get the :math:`k` nearest neighbors of a user (or item)
+How to get the k nearest neighbors of a user (or item)
 --------------------------------------------------------------
 
 You can use the :meth:`get_neighbors()
 <surprise.prediction_algorithms.algo_base.AlgoBase.get_neighbors>` methods of
-the algorithm. This is only relevent for algorithms using a similarity measure,
-such as the :ref:`k-NN algorithms <pred_package_knn_inpired>`.
+the algorithm object. This is only relevant for algorithms that use a
+similarity measure, such as the :ref:`k-NN algorithms
+<pred_package_knn_inpired>`.
 
-Here is an example where we retrieve the k-nearest neighbors of the movie Toy
-Story from the MovieLens-100k dataset. The same can be done for users with
-minor changes.  There's a lot of boilerplate because of the id conversions, but
-it all boils down to the use of ``get_neighbors()``:
+Here is an example where we retrieve the 10 nearest neighbors of the movie Toy
+Story from the MovieLens-100k dataset. The output is:
+
+.. parsed-literal::
+
+    The 10 nearest neighbors of Toy Story are:
+    Beauty and the Beast (1991)
+    Raiders of the Lost Ark (1981)
+    That Thing You Do! (1996)
+    Lion King, The (1994)
+    Craft, The (1996)
+    Liar Liar (1997)
+    Aladdin (1992)
+    Cool Hand Luke (1967)
+    Winnie the Pooh and the Blustery Day (1968)
+    Indiana Jones and the Last Crusade (1989)
+
+There's a lot of boilerplate because of the conversions between movie names and
+their raw/inner ids (see :ref:`this note <raw_inner_note>`), but it all boils
+down to the use of :meth:`get_neighbors()
+<surprise.prediction_algorithms.algo_base.AlgoBase.get_neighbors>`:
 
 .. literalinclude:: ../../examples/k_nearest_neighbors.py
     :caption: From file ``examples/k_nearest_neighbors.py``
     :name: k_nearest_neighbors.py
     :lines: 10-
 
-How to get the top-:math:`k` recommendations for a user
--------------------------------------------------------
+Naturally, the same can be done for users with minor modifications.
 
-.. _save_algorithm_for_later_use:
+.. _serialize_an_algorithm:
 
 How to serialize an algorithm
 -----------------------------
 
-Prediction algortihms can be serialized and loaded back using the :func:`dump()
+Prediction algorithms can be serialized and loaded back using the :func:`dump()
 <surprise.dump.dump>` and :func:`load() <surprise.dump.load>` functions. Here
 is a small example where the SVD algorithm is trained on a dataset and
 serialized. It is then reloaded and can be used again for making predictions:
@@ -44,22 +78,22 @@ serialized. It is then reloaded and can be used again for making predictions:
 How to build my own prediction algorithm
 ----------------------------------------
 
-See the :ref:`user guide <building_custom_algo>`.
+There's a whole guide :ref:`here<building_custom_algo>`.
 
 What are raw and inner ids
 --------------------------
 
 See :ref:`this note <raw_inner_note>`.
 
-How to use my own dataset with Surprise
----------------------------------------
+Can I use my own dataset with Surprise
+--------------------------------------
 
-See the :ref:`user guide <load_custom>`.
+Yes, you can. See the :ref:`user guide <load_custom>`.
 
 How to tune an algorithm parameters
 -----------------------------------
 
-To tune the parameters of your algorithm, you can use the :class:`GridSearch
+You can tune the parameters of an algorithm with the :class:`GridSearch
 <surprise.evaluate.GridSearch>` class as described :ref:`here
 <tuning_algorithm_parameters>`. After the tuning, you may want to have an
 :ref:`unbiased estimate of your algorithm performances

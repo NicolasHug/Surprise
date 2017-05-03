@@ -3,14 +3,11 @@ TODO
 
 * Complete FAQ
 
-* Implement some recommendation strategy (like recommend the items with the 10
-  highest estimation)
 * Rewright stuff on prediction dumping for analysis (l.40 building_on_algo)
 * Allow to discount similarities (see aggarwal)
 * Support conda?
 * Allow incremental updates for some algorithms
 * Profile code (mostly cython) to see what could be optimized
-* Change SVD RMSE on readme
 
 Maybe, Maybe not
 ----------------
