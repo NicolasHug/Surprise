@@ -1,18 +1,30 @@
 Current
 =======
 
+VERSION 1.0.3
+=============
+
+Date: 03/05/17
+
+Enhancements
+------------
+
+* Added FAQ in the doc
 * Added the possibility to retrieve the k nearest neighbors of a user or an
   item.
 * Changed the dumping process a bit (see API changes). Plus, dumps can now be
   loaded.
-* Added possibility to get accuracy performances on the trainset
+* Added possibility to build a testset from the ratings of a training set
 * Added inner-to-raw id conversion in the Trainset class
 * The r_ui parameter of the predict() method is now optional
+
+Fixes
+-----
 * Fixed verbosity of the evaluate function
 * Corrected prediction when only user (or only item) is unknown in SVD and NMF
-  algorithms. Thanks to kenoung.
+  algorithms. Thanks to kenoung!
 * Corrected factor vectors initialization of SVD algorithms. Thanks to
-  adideshp.
+  adideshp!
 
 API Changes
 -----------

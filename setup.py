@@ -2,6 +2,12 @@ from setuptools import setup, find_packages, Extension
 from codecs import open
 from os import path
 
+# sum up:
+# mktmpenv (Python version should not matter)
+# pip install numpy cython pypandoc
+# python setup.py sdist
+# twine upload dist/blabla.tar.gz [-r testpypi]
+
 try:
     import numpy as np
 except ImportError:
@@ -15,7 +21,7 @@ except ImportError:
 else:
     USE_CYTHON = True
 
-__version__ = '1.0.2'
+__version__ = '1.0.3'
 
 here = path.abspath(path.dirname(__file__))
 
