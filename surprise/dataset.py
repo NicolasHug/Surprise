@@ -621,7 +621,8 @@ class Trainset:
         """Generator function to iterate over all ratings.
 
         Yields:
-            A tuple ``(uid, iid, rating)`` where ids are inner ids.
+            A tuple ``(uid, iid, rating)`` where ids are inner ids (see
+            :ref:`this note <raw_inner_note>`).
         """
 
         for u, u_ratings in iteritems(self.ur):
