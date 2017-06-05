@@ -91,15 +91,36 @@ How to build my own prediction algorithm
 
 There's a whole guide :ref:`here<building_custom_algo>`.
 
+.. _raw_inner_note:
+
 What are raw and inner ids
 --------------------------
 
-See :ref:`this note <raw_inner_note>`.
+Users and items have a raw id and an inner id. Some methods will use/return a
+raw id (e.g. the :meth:`predict()
+<surprise.prediction_algorithms.algo_base.AlgoBase.predict>` method), while
+some other will use/return an inner id.
 
-Can I use my own dataset with Surprise
---------------------------------------
+Raw ids are ids as defined in a rating file or in a pandas dataframe. They can
+be strings or numbers. Note though that if the ratings were read from a file
+which is the standard scenario, they are represented as strings (see e.g.
+:ref:`here <train_on_whole_trainset>`).
 
-Yes, you can. See the :ref:`user guide <load_custom>`.
+On trainset creation, each raw id is mapped to a unique
+integer called inner id, which is a lot more suitable for `Surprise
+<https://nicolashug.github.io/Surprise/>`_ to manipulate. Conversions between
+raw and inner ids can be done using the :meth:`to_inner_uid()
+<surprise.dataset.Trainset.to_inner_uid>`, :meth:`to_inner_iid()
+<surprise.dataset.Trainset.to_inner_iid>`, :meth:`to_raw_uid()
+<surprise.dataset.Trainset.to_raw_uid>`, and :meth:`to_raw_iid()
+<surprise.dataset.Trainset.to_raw_iid>` methods of the :class:`trainset
+<surprise.dataset.Trainset>`.
+
+
+Can I use my own dataset with Surprise, and can it be a pandas dataframe
+------------------------------------------------------------------------
+
+Yes, and yes. See the :ref:`user guide <load_custom>`.
 
 How to tune an algorithm parameters
 -----------------------------------

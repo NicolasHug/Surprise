@@ -7,6 +7,7 @@ from __future__ import (absolute_import, division, print_function,
 import os
 
 import pytest
+import pandas as pd
 
 from surprise import BaselineOnly
 from surprise import Dataset
@@ -155,3 +156,44 @@ def test_trainset_testset():
     assert ('user3', 'item1', trainset.global_mean) not in testset
     assert ('user0', 'item1', trainset.global_mean) in testset
     assert ('user3', 'item0', trainset.global_mean) in testset
+
+
+def test_load_form_df():
+    """Ensure reading dataset from pandas dataframe is OK."""
+
+    # DF creation.
+    ratings_dict = {'itemID': [1, 1, 1, 2, 2],
+                    'userID': [9, 32, 2, 45, 'user_foo'],
+                    'rating': [3, 2, 4, 3, 1]}
+    df = pd.DataFrame(ratings_dict)
+
+    reader = Reader(rating_scale=(1, 5))
+    data = Dataset.load_from_df(df[['userID', 'itemID', 'rating']], reader)
+
+    # Assert split and folds can be used without problems
+    data.split(2)
+    assert sum(1 for _ in data.folds()) == 2
+
+    # assert users and items are correctly mapped
+    trainset = data.build_full_trainset()
+    assert trainset.knows_user(trainset.to_inner_uid(9))
+    assert trainset.knows_user(trainset.to_inner_uid('user_foo'))
+    assert trainset.knows_item(trainset.to_inner_iid(2))
+
+    # assert r(9, 1) = 3 and r(2, 1) = 4
+    uid9 = trainset.to_inner_uid(9)
+    uid2 = trainset.to_inner_uid(2)
+    iid1 = trainset.to_inner_iid(1)
+    assert trainset.ur[uid9] == [(iid1, 3)]
+    assert trainset.ur[uid2] == [(iid1, 4)]
+
+    # assert at least rating file or dataframe must be specified
+    with pytest.raises(ValueError):
+        data = Dataset.load_from_df(None, None)
+
+    # mess up the column ordering and assert that users are not correctly
+    # mapped
+    data = Dataset.load_from_df(df[['rating', 'itemID', 'userID']], reader)
+    trainset = data.build_full_trainset()
+    with pytest.raises(ValueError):
+        trainset.to_inner_uid('user_foo')
