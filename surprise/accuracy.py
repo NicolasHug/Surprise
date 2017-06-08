@@ -10,6 +10,7 @@ Available accuracy metrics:
     rmse
     mae
     fcp
+    prec
 """
 
 from __future__ import (absolute_import, division, print_function,
@@ -141,3 +142,40 @@ def fcp(predictions, verbose=True):
         print('FCP:  {0:1.4f}'.format(fcp))
 
     return fcp
+
+
+def prec(predictions, verbose=True):
+    """Compute the precision of a binary rating predictor.
+
+    Precision <https://en.wikipedia.org/wiki/Information_retrieval#Precision>
+    (also known as positive predictive value) is defined as the fraction of
+    test-positives that are also true-positives. This method only works when
+    the ratings are all either 0 or 1.
+
+    Args:
+        predictions (:obj:`list` of :obj:`Prediction\
+            <surprise.prediction_algorithms.predictions.Prediction>`):
+            A list of predictions, as returned by the :meth:`test()
+            <surprise.prediction_algorithms.algo_base.AlgoBase.test>` method.
+        verbose: If True, will print computed value. Default is ``True``.
+
+    Returns:
+        The precision
+
+    Raises:
+        ValueError: When ``predictions`` is empty.
+    """
+
+    if not predictions:
+        raise ValueError('Prediction list is empty.')
+
+    true_pos = np.sum([est == 1 and true_r == 1
+                       for (_, _, true_r, est, _) in predictions])
+    marked_pos = np.sum([est == 1
+                         for (_, _, _, est, _) in predictions])
+    prec = true_pos / marked_pos
+
+    if verbose:
+        print('PREC: {:1.4f}'.format(prec))
+
+    return prec
