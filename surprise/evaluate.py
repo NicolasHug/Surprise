@@ -10,6 +10,7 @@ import os
 import numpy as np
 from six import iteritems
 from six import itervalues
+from six import string_types
 from itertools import product
 
 from . import accuracy
@@ -29,9 +30,11 @@ def evaluate(algo, data, measures=['rmse', 'mae'], with_dump=False,
             The algorithm to evaluate.
         data(:obj:`Dataset <surprise.dataset.Dataset>`): The dataset on which
             to evaluate the algorithm.
-        measures(list of string): The performance measures to compute. Allowed
-            names are function names as defined in the :mod:`accuracy
-            <surprise.accuracy>` module. Default is ``['rmse', 'mae']``.
+        measures(list of string or functions): The performance measures to
+            compute. Allowed strings are function names as defined in the
+            :mod:`accuracy <surprise.accuracy>` module. Default is
+            ``['rmse', 'mae']``. If a function is passed, it must have the same
+            signature as the :mod:`accuracy <surprise.accuracy>`.
         with_dump(bool): If True, the predictions and the algorithm will be
             dumped for later further analysis at each fold (see :ref:`FAQ
             <serialize_an_algorithm>`). The file names will be set as:
@@ -49,9 +52,24 @@ def evaluate(algo, data, measures=['rmse', 'mae'], with_dump=False,
 
     performances = CaseInsensitiveDefaultDict(list)
 
+    measures_ = []
+    for elem in measures:
+        if isinstance(elem, string_types) and hasattr(accuracy, elem.lower()):
+            name = elem
+            f = getattr(accuracy, elem.lower())
+            measures_.append((name, f))
+        elif hasattr(elem, '__iter__'):
+            name, f = elem
+            if not callable(f):
+                raise ValueError('Measure function {!r} is not callable'
+                                 .format(f))
+            measures_.append((name, f))
+        else:
+            raise ValueError('Measure {!r} is not supported'.format(elem))
+
     if verbose:
         print('Evaluating {0} of algorithm {1}.'.format(
-              ', '.join((m.upper() for m in measures)),
+              ', '.join((name.upper() for name, f in measures_)),
               algo.__class__.__name__))
         print()
 
@@ -66,9 +84,8 @@ def evaluate(algo, data, measures=['rmse', 'mae'], with_dump=False,
         predictions = algo.test(testset, verbose=(verbose == 2))
 
         # compute needed performance statistics
-        for measure in measures:
-            f = getattr(accuracy, measure.lower())
-            performances[measure].append(f(predictions, verbose=verbose))
+        for name, f in measures_:
+            performances[name].append(f(predictions, verbose=verbose))
 
         if with_dump:
 
@@ -88,7 +105,7 @@ def evaluate(algo, data, measures=['rmse', 'mae'], with_dump=False,
     if verbose:
         print('-' * 12)
         print('-' * 12)
-        for measure in measures:
+        for measure, _ in measures_:
             print('Mean {0:4s}: {1:1.4f}'.format(
                   measure.upper(), np.mean(performances[measure])))
         print('-' * 12)
