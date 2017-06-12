@@ -169,11 +169,17 @@ def prec(predictions, verbose=True):
     if not predictions:
         raise ValueError('Prediction list is empty.')
 
-    true_pos = np.sum([est == 1 and true_r == 1
+    true_pos = np.sum([est > 0.5 and true_r == 1
                        for (_, _, true_r, est, _) in predictions])
-    marked_pos = np.sum([est == 1
+    marked_pos = np.sum([est > 0.5
                          for (_, _, _, est, _) in predictions])
-    prec = true_pos / marked_pos
+
+
+    try:
+        prec = true_pos / marked_pos
+    except ZeroDivisionError:
+        raise ValueError('Cannot compute precision because estimator gave no' +
+                         'positive results')
 
     if verbose:
         print('PREC: {:1.4f}'.format(prec))
