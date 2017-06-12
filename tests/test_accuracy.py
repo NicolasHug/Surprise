@@ -6,7 +6,7 @@ from math import sqrt
 
 import pytest
 
-from surprise.accuracy import mae, rmse, fcp
+from surprise.accuracy import mae, rmse, fcp, prec
 
 
 def pred(true_r, est, u0=None):
@@ -67,3 +67,16 @@ def test_fcp():
 
     with pytest.raises(ValueError):
         fcp([])
+
+
+def test_prec():
+    """Tests for the prec function."""
+
+    predictions = [pred(0, 0), pred(1, 1), pred(0, 0), pred(1, 0)]
+    assert prec(predictions) == 1
+
+    predictions = [pred(0, 0), pred(1, 1), pred(0, 0), pred(0, 1)]
+    assert prec(predictions) == 1/2
+
+    with pytest.raises(ValueError):
+        prec([])
