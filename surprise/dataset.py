@@ -196,6 +196,24 @@ class Dataset:
 
         return DatasetUserFolds(folds_files=folds_files, reader=reader)
 
+    @classmethod
+    def load_from_df(cls, df, reader):
+        """Load a dataset from a pandas dataframe.
+
+        Use this if you want to use a custom dataset that is stored in a pandas
+        dataframe. See the :ref:`User Guide<load_from_df_example>` for an
+        example.
+
+        Args:
+            df(`Dataframe`): The dataframe containing the ratings. It must have
+                three columns, corresponding to the user (raw) ids, the item
+                (raw) ids, and the ratings, in this order.
+            reader(:obj:`Reader`): A reader to read the file. Only the
+                ``rating_scale`` field needs to be specified.
+        """
+
+        return DatasetAutoFolds(reader=reader, df=df)
+
     def read_ratings(self, file_name):
         """Return a list of ratings (user, item, rating, timestamp) read from
         file_name"""
@@ -297,13 +315,21 @@ class DatasetAutoFolds(Dataset):
     cross-validation) are not predefined. (Or for when there are no folds at
     all)."""
 
-    def __init__(self, ratings_file=None, reader=None):
+    def __init__(self, ratings_file=None, reader=None, df=None):
 
         Dataset.__init__(self, reader)
-        self.ratings_file = ratings_file
         self.n_folds = 5
         self.shuffle = True
-        self.raw_ratings = self.read_ratings(self.ratings_file)
+
+        if ratings_file is not None:
+            self.ratings_file = ratings_file
+            self.raw_ratings = self.read_ratings(self.ratings_file)
+        elif df is not None:
+            self.df = df
+            self.raw_ratings = [(uid, iid, r, None) for (uid, iid, r) in
+                                self.df.itertuples(index=False)]
+        else:
+            raise ValueError('Must specify ratings file or dataframe.')
 
     def build_full_trainset(self):
         """Do not split the dataset into folds and just return a trainset as
@@ -382,7 +408,7 @@ class Reader():
             Accepted values are 'ml-100k', 'ml-1m', and 'jester'. Default
             is ``None``.
         line_format(:obj:`string`): The fields names, in the order at which
-            they are encountered on a line. Example: ``'item user rating'``.
+            they are encountered on a line. Default is ``'user item rating'``.
         sep(char): the separator between fields. Example : ``';'``.
         rating_scale(:obj:`tuple`, optional): The rating scale used for every
             rating.  Default is ``(1, 5)``.
@@ -391,7 +417,7 @@ class Reader():
 
     """
 
-    def __init__(self, name=None, line_format=None, sep=None,
+    def __init__(self, name=None, line_format='user item rating', sep=None,
                  rating_scale=(1, 5), skip_lines=0):
 
         if name:
@@ -621,7 +647,8 @@ class Trainset:
         """Generator function to iterate over all ratings.
 
         Yields:
-            A tuple ``(uid, iid, rating)`` where ids are inner ids.
+            A tuple ``(uid, iid, rating)`` where ids are inner ids (see
+            :ref:`this note <raw_inner_note>`).
         """
 
         for u, u_ratings in iteritems(self.ur):

@@ -1,6 +1,8 @@
 Current
 =======
 
+* Added possibility to load a dataset from a pandas dataframe
+
 VERSION 1.0.3
 =============
 

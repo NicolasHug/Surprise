@@ -39,39 +39,64 @@ You can of course use a custom dataset. `Surprise
 <https://nicolashug.github.io/Surprise/>`_ offers two ways of loading a custom
 dataset:
 
-- you can either specify a single file with all the ratings and
-  use the :meth:`split ()<surprise.dataset.DatasetAutoFolds.split>` method to
-  perform cross-validation ;
+- you can either specify a single file (or a pandas dataframe) with all the
+  ratings and use the :meth:`split ()<surprise.dataset.DatasetAutoFolds.split>`
+  method to perform cross-validation, or :ref:`train on the whole dataset
+  <train_on_whole_trainset>` ;
 - or if your dataset is already split into predefined folds, you can specify a
   list of files for training and testing.
 
 Either way, you will need to define a :class:`Reader <surprise.dataset.Reader>`
 object for `Surprise <https://nicolashug.github.io/Surprise/>`_ to be able to
-parse the file(s).
-
-We'll see how to handle both cases with the `movielens-100k dataset
-<http://grouplens.org/datasets/movielens/>`_. Of course this is a built-in
-dataset, but we will act as if it were not.
+parse the file(s). We'll see now how to handle both cases.
 
 .. _load_from_file_example:
 
-Load an entire dataset
-~~~~~~~~~~~~~~~~~~~~~~
+Load an entire dataset from a file or a dataframe
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-.. literalinclude:: ../../examples/load_custom_dataset.py
-    :caption: From file ``examples/load_custom_dataset.py``
-    :name: load_custom_dataset.py
-    :lines: 17-26
+- To load a dataset from a file, you will need the :meth:`load_from_file()
+  <surprise.dataset.Dataset.load_from_file>` method:
 
-.. note::
-    Actually, as the Movielens-100k dataset is builtin, `Surprise
-    <https://nicolashug.github.io/Surprise/>`_ provides with a proper reader so
-    in this case, we could have just created the reader like this: ::
+  .. literalinclude:: ../../examples/load_custom_dataset.py
+      :caption: From file ``examples/load_custom_dataset.py``
+      :name: load_custom_dataset.py
+      :lines: 17-26
 
-      reader = Reader('ml-100k')
+  For more details about readers and how to use them, see the :class:`Reader
+  class <surprise.dataset.Reader>` documentation.
 
-For more details about readers and how to use them, see the :class:`Reader
-class <surprise.dataset.Reader>` documentation.
+  .. note::
+      As you already know from the previous section, the Movielens-100k dataset
+      is built-in so a much quicker way to load the dataset is to do ``data =
+      Dataset.load_builtin('ml-100k')``. We will of course ignore this here.
+
+.. _load_from_df_example:
+
+- To load a dataset from a pandas dataframe, you will need the
+  :meth:`load_from_df() <surprise.dataset.Dataset.load_from_df>` method. You
+  will also need a :class:`Reader<surprise.dataset.Reader>` object, but only
+  the ``rating_scale`` parameter must be specified. The dataframe must have
+  three columns, corresponding to the user (raw) ids, the item (raw) ids, and
+  the ratings in this order. Each row thus corresponds to a given rating. This
+  is not restrictive as you can reorder the columns of your dataframe easily.
+
+  .. literalinclude:: ../../examples/load_from_dataframe.py
+      :caption: From file ``examples/load_from_dataframe.py``
+      :name: load_dom_dataframe.py
+      :lines: 19-28
+
+  The dataframe initially looks like this:
+
+  .. parsed-literal::
+
+            itemID  rating    userID
+      0       1       3         9
+      1       1       2        32
+      2       1       4         2
+      3       2       3        45
+      4       2       1  user_foo
+
 
 .. _load_from_folds_example:
 
@@ -209,25 +234,17 @@ is call the :meth:`predict()
     :name: query_for_predictions2.py
     :lines: 28-32
 
+The :meth:`predict()
+<surprise.prediction_algorithms.algo_base.AlgoBase.predict>` uses **raw** ids
+(read :ref:`this <raw_inner_note>`). As the dataset we have used has been read
+from a file, the raw ids are strings (even if they represent numbers).
+
 If the :meth:`predict()
 <surprise.prediction_algorithms.algo_base.AlgoBase.predict>` method is called
 with user or item ids that were not part of the trainset, it's up to the
 algorithm to decide if it still can make a prediction or not. If it can't,
 :meth:`predict() <surprise.prediction_algorithms.algo_base.AlgoBase.predict>`
 will still predict the mean of all ratings :math:`\mu`.
-
-.. _raw_inner_note:
-.. note::
-  Raw ids are ids as defined in a rating file. They can be strings, numbers, or
-  whatever (but are still represented as strings).  On trainset creation, each
-  raw id is mapped to a unique integer called inner id, which is a lot more
-  suitable for `Surprise <https://nicolashug.github.io/Surprise/>`_ to
-  manipulate. Conversions between raw and inner ids can be done using the
-  :meth:`to_inner_uid() <surprise.dataset.Trainset.to_inner_uid>`,
-  :meth:`to_inner_iid() <surprise.dataset.Trainset.to_inner_iid>`,
-  :meth:`to_raw_uid() <surprise.dataset.Trainset.to_raw_uid>`, and
-  :meth:`to_raw_iid() <surprise.dataset.Trainset.to_raw_iid>` methods of the
-  :class:`trainset <surprise.dataset.Trainset>`.
 
 Obviously, it is perfectly fine to use the :meth:`predict()
 <surprise.prediction_algorithms.algo_base.AlgoBase.predict>` method directly

@@ -1,4 +1,4 @@
-# Requirements file for development
+# Requirements file for travis
 numpy>=1.11.2
 Cython>=0.24.1
 six>=1.10.0
@@ -7,4 +7,4 @@ sphinx>=1.4.9
 sphinx_rtd_theme
 sphinxcontrib-bibtex
 flake8>=3.2.1
-
+pandas
