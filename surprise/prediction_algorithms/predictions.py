@@ -40,7 +40,10 @@ class Prediction(namedtuple('Prediction',
     def __str__(self):
         s = 'user: {uid:<10} '.format(uid=self.uid)
         s += 'item: {iid:<10} '.format(iid=self.iid)
-        s += 'r_ui = {r_ui:1.2f}   '.format(r_ui=self.r_ui)
+        if self.r_ui is not None:
+            s += 'r_ui = {r_ui:1.2f}   '.format(r_ui=self.r_ui)
+        else:
+            s += 'r_ui = None   '
         s += 'est = {est:1.2f}   '.format(est=self.est)
         s += str(self.details)
 
