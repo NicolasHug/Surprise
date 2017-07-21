@@ -5,6 +5,10 @@ layout: default
 title: Home
 ---
 
+### Temporary headline:
+
+The [Mangaki recommendation challenge](http://research.mangaki.fr/2017/07/18/mangaki-data-challenge-en/) is on! Have fun using Surprise!
+
 
 Overview
 --------
