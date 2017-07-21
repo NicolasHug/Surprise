@@ -5,6 +5,9 @@
 [![License](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)
 
 
+### Temporary headline:
+
+The [Mangaki recommendation challenge](http://research.mangaki.fr/2017/07/18/mangaki-data-challenge-en/) is on! Have fun using Surprise!
 
 
 Surprise
