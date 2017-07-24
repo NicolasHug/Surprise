@@ -163,7 +163,7 @@ def test_load_form_df():
 
     # DF creation.
     ratings_dict = {'itemID': [1, 1, 1, 2, 2],
-                    'userID': [9, 32, 2, 45, 'user_foo'],
+                    'userID': [9, 32, 2, 45, '10000'],
                     'rating': [3, 2, 4, 3, 1]}
     df = pd.DataFrame(ratings_dict)
 
@@ -177,7 +177,7 @@ def test_load_form_df():
     # assert users and items are correctly mapped
     trainset = data.build_full_trainset()
     assert trainset.knows_user(trainset.to_inner_uid(9))
-    assert trainset.knows_user(trainset.to_inner_uid('user_foo'))
+    assert trainset.knows_user(trainset.to_inner_uid('10000'))
     assert trainset.knows_item(trainset.to_inner_iid(2))
 
     # assert r(9, 1) = 3 and r(2, 1) = 4
@@ -196,4 +196,4 @@ def test_load_form_df():
     data = Dataset.load_from_df(df[['rating', 'itemID', 'userID']], reader)
     trainset = data.build_full_trainset()
     with pytest.raises(ValueError):
-        trainset.to_inner_uid('user_foo')
+        trainset.to_inner_uid('10000')

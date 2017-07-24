@@ -326,7 +326,8 @@ class DatasetAutoFolds(Dataset):
             self.raw_ratings = self.read_ratings(self.ratings_file)
         elif df is not None:
             self.df = df
-            self.raw_ratings = [(uid, iid, r, None) for (uid, iid, r) in
+            self.raw_ratings = [(uid, iid, float(r) + self.reader.offset, None)
+                                for (uid, iid, r) in
                                 self.df.itertuples(index=False)]
         else:
             raise ValueError('Must specify ratings file or dataframe.')
