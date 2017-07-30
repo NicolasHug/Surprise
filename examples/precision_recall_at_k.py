@@ -14,10 +14,10 @@ def precision_recall_at_k(predictions, k=10, threshold=3.5, verbose=True):
     Args:
         predictions(list of Prediction objects): The list of predictions, as
             returned by the test method of an algorithm.
-        k(int): The number of recommendations for which precision and recall
+        k(int): The number of recommendations on which precision and recall
             will be computed. Default is 10.
-        threshold(float): A value after which ratings are considered positive.
-            Default is 3.5
+        threshold(float): All rating greater than or equal to threshold are
+            considered positive. Default is 3.5
     Returns:
     A tuple with the value (Precision@k, Recall@k)
     '''
@@ -50,11 +50,12 @@ def precision_recall_at_k(predictions, k=10, threshold=3.5, verbose=True):
 
 
 def user_precision_recall(top_preds, threshold):
-    '''Return mean precision and recall for a specific user.
+    '''Return precision and recall for predictions.
 
     Args:
         top_preds(numpy 2d array): An array of [iid, est, true_r]
-        threshold(float): A value after which ratings are considered positive.
+        threshold(float): All rating greater than or equal to threshold are
+            considered positive. Default is 3.5
 
     Returns:
     A tuple with the value (Precision, Recall)

@@ -20,6 +20,23 @@ top-10 prediction for each user.
     :name: top_n_recommendations.py
     :lines: 10-
 
+.. _precision_recall_at_k:
+
+How to evaluate an algorithm using precision and recall at k metrics
+-----------------------------------------------------------------------
+
+Below is an example on how to compute Precision@k and Recall@k metrics for
+a recommendation model. We first split our dataset into train and test 
+folds. Using cross validation and on each iteration we train on our trainset 
+and get the predictions from the testset. Finally we compute Precision@k 
+and Recall@k for the predictions.
+
+
+.. literalinclude:: ../../examples/precision_recall_at_k.py
+    :caption: From file ``examples/precision_recall_at_k.py``
+    :name: precision_recall_at_k.py
+    :lines: 10-
+
 .. _get_k_nearest_neighbors:
 
 How to get the k nearest neighbors of a user (or item)
