@@ -8,7 +8,7 @@ from surprise import SVD
 
 
 def precision_recall_at_k(predictions, k=10, threshold=3.5, verbose=True):
-    '''Return Precision and recall at K metrics for each user.
+    '''Return Precision and recall at k metrics for each user.
 
     Args:
         predictions(list of Prediction objects): The list of predictions, as
@@ -41,10 +41,10 @@ def precision_recall_at_k(predictions, k=10, threshold=3.5, verbose=True):
         n_rel_at_k = len([i for i in true_r_list_k if i >= threshold])
 
         # Precision@K: Proportion of top-k documents that are relevant
-        precision_at_k = float(n_rel_at_k)/k
+        precision_at_k = float(n_rel_at_k) / k
 
         # Recall@K: Proportion of relevant items that are in the top-k
-        recall_at_k = float(n_rel_at_k)/n_rel if n_rel != 0 else 1
+        recall_at_k = float(n_rel_at_k) / n_rel if n_rel != 0 else 1
 
         precision_recall_k[uid] = (precision_at_k, recall_at_k)
 
