@@ -29,7 +29,7 @@ Below is an example on how to compute Precision@k and Recall@k metrics for
 a recommendation model. We first split our dataset into train and test 
 folds. Using cross validation and on each iteration we train on our trainset 
 and get the predictions from the testset. Finally we compute Precision@k 
-and Recall@k for the predictions.
+and Recall@k for each user in predictions.
 
 
 .. literalinclude:: ../../examples/precision_recall_at_k.py
