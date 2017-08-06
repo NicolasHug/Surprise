@@ -1,6 +1,13 @@
+"""
+This module illustrates how to compute Precision at k and Recall at k metrics.
+We first train an SVD algorithm on the MovieLens dataset, and then predict all
+the ratings for the pairs (user, item) that are not in the training set. We
+then compute Precision at k and Recall at k based on user defined k and
+threshold values.
+"""
+
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
-
 from collections import defaultdict
 
 from surprise import Dataset
@@ -22,29 +29,28 @@ def precision_recall_at_k(predictions, k=10, threshold=3.5, verbose=True):
         (precision@k, recall@k).
     '''
 
-    # First map the predictions to each user.
-    top_n = defaultdict(list)
+    # Map the predictions to each user.
+    user_est_true = defaultdict(list)
     precision_recall_k = defaultdict(tuple)
-    for uid, iid, true_r, est, _ in predictions:
-        top_n[uid].append((iid, est, true_r))
+    for uid, _, true_r, est, _ in predictions:
+        user_est_true[uid].append((est, true_r))
 
-    # Then sort the predictions for each user and retrieve the k highest ones.
-    for uid, user_ratings in top_n.items():
-        user_ratings.sort(key=lambda x: x[1], reverse=True)
-
+    for uid, user_ratings in user_est_true.items():
         # Count number of all relevant items
-        true_r_list = [x[2] for x in user_ratings]
-        n_rel = len([i for i in true_r_list if i >= threshold])
+        n_rel = sum((true_r >= threshold) for (_, true_r) in user_ratings)
+
+        # Sort list by estimated rating
+        user_ratings.sort(key=lambda x: x[0], reverse=True)
 
         # Count number of relevant items in the top-k predictions
-        true_r_list_k = [x[2] for x in user_ratings[:k]]
-        n_rel_at_k = len([i for i in true_r_list_k if i >= threshold])
+        n_rel_at_k = sum(
+            (true_r >= threshold) for (_, true_r) in user_ratings[:k])
 
         # Precision@K: Proportion of top-k documents that are relevant
-        precision_at_k = float(n_rel_at_k) / k
+        precision_at_k = n_rel_at_k / k
 
         # Recall@K: Proportion of relevant items that are in the top-k
-        recall_at_k = float(n_rel_at_k) / n_rel if n_rel != 0 else 1
+        recall_at_k = n_rel_at_k / n_rel if n_rel != 0 else 1
 
         precision_recall_k[uid] = (precision_at_k, recall_at_k)
 

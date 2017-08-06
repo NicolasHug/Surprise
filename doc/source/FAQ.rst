@@ -35,7 +35,7 @@ and Recall@k for each user in predictions.
 .. literalinclude:: ../../examples/precision_recall_at_k.py
     :caption: From file ``examples/precision_recall_at_k.py``
     :name: precision_recall_at_k.py
-    :lines: 10-
+    :lines: 11-
 
 .. _get_k_nearest_neighbors:
 
