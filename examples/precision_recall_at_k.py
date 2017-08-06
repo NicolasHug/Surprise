@@ -42,15 +42,20 @@ def precision_recall_at_k(predictions, k=10, threshold=3.5, verbose=True):
         # Sort list by estimated rating
         user_ratings.sort(key=lambda x: x[0], reverse=True)
 
-        # Count number of relevant items in the top-k predictions
-        n_rel_at_k = sum(
-            (true_r >= threshold) for (_, true_r) in user_ratings[:k])
+        # Count number of relevant items recommended in top k
+        n_rel_and_rec_k = sum(
+            ((true_r >= threshold) and (est >= threshold)) for (
+                est, true_r) in user_ratings[:k])
+
+        # Count number of recommended items in top k
+        n_rec_k = sum(
+            (est >= threshold) for (est, _) in user_ratings[:k])
 
         # Precision@K: Proportion of top-k documents that are relevant
-        precision_at_k = n_rel_at_k / k
+        precision_at_k = n_rel_and_rec_k / n_rec_k if n_rec_k != 0 else 1
 
         # Recall@K: Proportion of relevant items that are in the top-k
-        recall_at_k = n_rel_at_k / n_rel if n_rel != 0 else 1
+        recall_at_k = n_rel_and_rec_k / n_rel if n_rel != 0 else 1
 
         precision_recall_k[uid] = (precision_at_k, recall_at_k)
 
