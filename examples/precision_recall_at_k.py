@@ -1,9 +1,5 @@
 """
 This module illustrates how to compute Precision at k and Recall at k metrics.
-We first train an SVD algorithm on the MovieLens dataset, and then predict all
-the ratings for the pairs (user, item) that are not in the training set. We
-then compute Precision at k and Recall at k based on user defined k and
-threshold values.
 """
 
 from __future__ import (absolute_import, division, print_function,
@@ -14,7 +10,7 @@ from surprise import Dataset
 from surprise import SVD
 
 
-def precision_recall_at_k(predictions, k=10, threshold=3.5, verbose=True):
+def precision_recall_at_k(predictions, k=10, threshold=3.5):
     '''Return Precision and recall at k metrics for each user.
 
     Args:
@@ -48,13 +44,12 @@ def precision_recall_at_k(predictions, k=10, threshold=3.5, verbose=True):
                 est, true_r) in user_ratings[:k])
 
         # Count number of recommended items in top k
-        n_rec_k = sum(
-            (est >= threshold) for (est, _) in user_ratings[:k])
+        n_rec_k = sum((est >= threshold) for (est, _) in user_ratings[:k])
 
-        # Precision@K: Proportion of top-k documents that are relevant
+        # Precision@K: Proportion of recommended items that are relevant
         precision_at_k = n_rel_and_rec_k / n_rec_k if n_rec_k != 0 else 1
 
-        # Recall@K: Proportion of relevant items that are in the top-k
+        # Recall@K: Proportion of relevant items that are recommended
         recall_at_k = n_rel_and_rec_k / n_rel if n_rel != 0 else 1
 
         precision_recall_k[uid] = (precision_at_k, recall_at_k)
@@ -63,7 +58,6 @@ def precision_recall_at_k(predictions, k=10, threshold=3.5, verbose=True):
 
 
 data = Dataset.load_builtin('ml-100k')
-
 data.split(n_folds=5)
 algo = SVD()
 
