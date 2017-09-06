@@ -5,6 +5,7 @@ from .prediction_algorithms import NormalPredictor
 from .prediction_algorithms import BaselineOnly
 from .prediction_algorithms import KNNBasic
 from .prediction_algorithms import KNNWithMeans
+from .prediction_algorithms import KNNWithZScore
 from .prediction_algorithms import KNNBaseline
 from .prediction_algorithms import SVD
 from .prediction_algorithms import SVDpp
@@ -24,7 +25,7 @@ from .evaluate import GridSearch
 from . import dump
 
 __all__ = ['AlgoBase', 'NormalPredictor', 'BaselineOnly', 'KNNBasic',
-           'KNNWithMeans', 'KNNBaseline', 'SVD', 'SVDpp', 'NMF', 'SlopeOne',
+           'KNNWithMeans', 'KNNBaseline', 'KNNWithZScore', 'SVD', 'SVDpp', 'NMF', 'SlopeOne',
            'CoClustering', 'PredictionImpossible', 'Prediction', 'Dataset',
            'Reader', 'Trainset', 'evaluate', 'print_perf', 'GridSearch',
            'dump']

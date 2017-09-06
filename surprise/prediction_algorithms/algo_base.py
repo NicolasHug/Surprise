@@ -7,6 +7,7 @@ inherit.
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 
+from collections import defaultdict
 from .. import similarities as sims
 from .predictions import PredictionImpossible
 from .predictions import Prediction
@@ -188,7 +189,7 @@ class AlgoBase:
                              ' for baseline computation.' +
                              ' Available methods are als and sgd.')
 
-    def compute_similarities(self):
+    def compute_similarities(self, normalisation=None):
         """Build the similarity matrix.
 
         The way the similarity matrix is computed depends on the
@@ -213,7 +214,18 @@ class AlgoBase:
 
         min_support = self.sim_options.get('min_support', 1)
 
-        args = [n_x, yr, min_support]
+        # normalise yr
+        yr_normalised = yr
+        if normalisation == 'mean':
+            yr_normalised = defaultdict(list)
+            for i, xrs in yr.items():
+                yr_normalised[i] = [(xr[0], xr[1] - self.means[xr[0]]) for xr in xrs]
+        elif normalisation == 'zscore':
+            yr_normalised = defaultdict(list)
+            for i, xrs in yr.items():
+                yr_normalised[i] = [(xr[0], (xr[1] - self.means[xr[0]]) / self.sigmas[xr[0]]) for xr in xrs]
+
+        args = [n_x, yr_normalised, min_support]
 
         name = self.sim_options.get('name', 'msd').lower()
         if name == 'pearson_baseline':

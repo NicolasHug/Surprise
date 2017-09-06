@@ -29,5 +29,8 @@ on how to configure the ``sim_options`` parameter.
 .. autoclass:: surprise.prediction_algorithms.knns.KNNWithMeans
     :show-inheritance:
 
+.. autoclass:: surprise.prediction_algorithms.knns.KNNWithZScore
+    :show-inheritance:
+
 .. autoclass:: surprise.prediction_algorithms.knns.KNNBaseline
     :show-inheritance:

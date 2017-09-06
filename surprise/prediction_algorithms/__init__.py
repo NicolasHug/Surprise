@@ -11,6 +11,7 @@ The available prediction algorithms are:
     baseline_only.BaselineOnly
     knns.KNNBasic
     knns.KNNWithMeans
+    knns.KNNWithZScore
     knns.KNNBaseline
     matrix_factorization.SVD
     matrix_factorization.SVDpp
@@ -35,5 +36,5 @@ from .predictions import PredictionImpossible
 from .predictions import Prediction
 
 __all__ = ['AlgoBase', 'NormalPredictor', 'BaselineOnly', 'KNNBasic',
-           'KNNBaseline', 'KNNWithMeans', 'SVD', 'SVDpp', 'NMF', 'SlopeOne',
+           'KNNBaseline', 'KNNWithMeans', 'KNNWithZScore', 'SVD', 'SVDpp', 'NMF', 'SlopeOne',
            'CoClustering', 'PredictionImpossible', 'Prediction']
