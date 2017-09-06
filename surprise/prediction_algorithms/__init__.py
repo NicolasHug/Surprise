@@ -26,6 +26,7 @@ from .baseline_only import BaselineOnly
 from .knns import KNNBasic
 from .knns import KNNBaseline
 from .knns import KNNWithMeans
+from .knns import KNNWithZScore
 from .matrix_factorization import SVD
 from .matrix_factorization import SVDpp
 from .matrix_factorization import NMF
