@@ -25,9 +25,9 @@ from .evaluate import GridSearch
 from . import dump
 
 __all__ = ['AlgoBase', 'NormalPredictor', 'BaselineOnly', 'KNNBasic',
-           'KNNWithMeans', 'KNNBaseline', 'KNNWithZScore', 'SVD', 'SVDpp', 'NMF', 'SlopeOne',
-           'CoClustering', 'PredictionImpossible', 'Prediction', 'Dataset',
-           'Reader', 'Trainset', 'evaluate', 'print_perf', 'GridSearch',
-           'dump']
+           'KNNWithMeans', 'KNNBaseline', 'KNNWithZScore', 'SVD', 'SVDpp',
+           'NMF', 'SlopeOne', 'CoClustering', 'PredictionImpossible',
+           'Prediction', 'Dataset', 'Reader', 'Trainset', 'evaluate',
+           'print_perf', 'GridSearch', 'dump']
 
 __version__ = get_distribution('scikit-surprise').version

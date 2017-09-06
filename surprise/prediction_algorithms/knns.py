@@ -306,21 +306,22 @@ class KNNBaseline(SymmetricAlgo):
 
 
 class KNNWithZScore(SymmetricAlgo):
-    """A basic collaborative filtering algorithm, taking into account the z-score normalisation of each user.
+    """A basic collaborative filtering algorithm, taking into account
+        the z-score normalisation of each user.
 
     The prediction :math:`\\hat{r}_{ui}` is set as:
 
     .. math::
         \hat{r}_{ui} = \mu_u + \sigma_u \\frac{ \\sum\\limits_{v \in N^k_i(u)}
-        \\text{sim}(u, v) \cdot (r_{vi} - \mu_v) / \sigma_v} {\\sum\\limits_{v \in
-        N^k_i(u)} \\text{sim}(u, v)}
+        \\text{sim}(u, v) \cdot (r_{vi} - \mu_v) / \sigma_v} {\\sum\\limits_{v
+        \in N^k_i(u)} \\text{sim}(u, v)}
 
     or
 
     .. math::
         \hat{r}_{ui} = \mu_i + \sigma_i \\frac{ \\sum\\limits_{j \in N^k_u(i)}
-        \\text{sim}(i, j) \cdot (r_{uj} - \mu_j) / \sigma_j} {\\sum\\limits_{j \in
-        N^k_u(i)} \\text{sim}(i, j)}
+        \\text{sim}(i, j) \cdot (r_{uj} - \mu_j) / \sigma_j} {\\sum\\limits_{j
+        \in N^k_u(i)} \\text{sim}(i, j)}
 
     depending on the ``user_based`` field of the ``sim_options`` parameter.
 

@@ -219,11 +219,13 @@ class AlgoBase:
         if normalisation == 'mean':
             yr_normalised = defaultdict(list)
             for i, xrs in yr.items():
-                yr_normalised[i] = [(xr[0], xr[1] - self.means[xr[0]]) for xr in xrs]
+                yr_normalised[i] = [(xr[0], xr[1] - self.means[xr[0]])
+                                    for xr in xrs]
         elif normalisation == 'zscore':
             yr_normalised = defaultdict(list)
             for i, xrs in yr.items():
-                yr_normalised[i] = [(xr[0], (xr[1] - self.means[xr[0]]) / self.sigmas[xr[0]]) for xr in xrs]
+                yr_normalised[i] = [(xr[0], (xr[1] - self.means[xr[0]])
+                                     / self.sigmas[xr[0]]) for xr in xrs]
 
         args = [n_x, yr_normalised, min_support]
 

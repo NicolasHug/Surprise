@@ -37,5 +37,6 @@ from .predictions import PredictionImpossible
 from .predictions import Prediction
 
 __all__ = ['AlgoBase', 'NormalPredictor', 'BaselineOnly', 'KNNBasic',
-           'KNNBaseline', 'KNNWithMeans', 'KNNWithZScore', 'SVD', 'SVDpp', 'NMF', 'SlopeOne',
-           'CoClustering', 'PredictionImpossible', 'Prediction']
+           'KNNBaseline', 'KNNWithMeans', 'KNNWithZScore', 'SVD', 'SVDpp',
+           'NMF', 'SlopeOne', 'CoClustering', 'PredictionImpossible',
+           'Prediction']
