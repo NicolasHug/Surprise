@@ -165,11 +165,12 @@ class KNNWithMeans(SymmetricAlgo):
     def train(self, trainset):
 
         SymmetricAlgo.train(self, trainset)
-        self.sim = self.compute_similarities('mean')
 
         self.means = np.zeros(self.n_x)
         for x, ratings in iteritems(self.xr):
             self.means[x] = np.mean([r for (_, r) in ratings])
+
+        self.sim = self.compute_similarities('mean')
 
     def estimate(self, u, i):
 
