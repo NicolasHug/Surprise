@@ -199,6 +199,5 @@ Please feel free to contribute (see
 [guidelines](https://github.com/NicolasHug/Surprise/blob/master/CONTRIBUTING.md))
 and send pull requests!
 
-To contact us, send us a [tweet](https://twitter.com/Surpriselib) or mail us at
-contact at nicolas-hug dot com. For any bug or issue, please use
+For any bug or issue, please use
 the GitHub [project page](https://github.com/NicolasHug/Surprise).
