@@ -25,18 +25,15 @@ top-10 prediction for each user.
 How to compute precision@k and recall@k
 -----------------------------------------------------------------------
 
-Below is an example on how to compute Precision@k and Recall@k metrics for
-a recommendation model. We first split our dataset into train and test 
-folds. Using cross validation and on each iteration we train on our trainset 
-and get the predictions from the testset. Finally we compute Precision@k 
-and Recall@k for each user:
+Here is an example where we compute Precision@k and Recall@k for each user:
 
-* :math:`Precision@k = \frac{ | \{ \text{Recommended items that are relevant} \} | }{ | \{ \text{Recommended items} \} | }`
-* :math:`Recall@k = \frac{ | \{ \text{Recommended items that are relevant} \} | }{ | \{ \text{Relevant items} \} | }`
+:math:`\text{Precision@k} = \frac{ | \{ \text{Recommended items that are relevant} \} | }{ | \{ \text{Recommended items} \} | }`
+:math:`\text{Recall@k} = \frac{ | \{ \text{Recommended items that are relevant} \} | }{ | \{ \text{Relevant items} \} | }`
 
-An item is considered relevant if its rating is greater than the user defined threshold.
-An item is considered recommended if its estimated rating is greater than the
-user defined threshold, and if it is among the k highest estimated ratings.
+An item is considered relevant if its true rating :math:`r_{ui}` is greater
+than a given threshold.  An item is considered recommended if its estimated
+rating :math:`\hat{r}_{ui}` is greater than the threshold, and if it is among
+the k highest estimated ratings.
 
 .. literalinclude:: ../../examples/precision_recall_at_k.py
     :caption: From file ``examples/precision_recall_at_k.py``
