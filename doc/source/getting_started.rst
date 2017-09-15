@@ -55,8 +55,8 @@ parse the file(s). We'll see now how to handle both cases.
 Load an entire dataset from a file or a dataframe
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-- To load a dataset from a file, you will need the :meth:`load_from_file()
-  <surprise.dataset.Dataset.load_from_file>` method:
+- To load a dataset from a file (e.g. a csv file), you will need the
+  :meth:`load_from_file() <surprise.dataset.Dataset.load_from_file>` method:
 
   .. literalinclude:: ../../examples/load_custom_dataset.py
       :caption: From file ``examples/load_custom_dataset.py``
