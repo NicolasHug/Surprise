@@ -39,6 +39,7 @@ def main():
 
     parser = MyParser(
         description='Evaluate the performance of a rating prediction ' +
+        'algorithm ' +
         'on a given dataset using cross validation. You can use a built-in ' +
         'or a custom dataset, and you can choose to automatically split the ' +
         'dataset into folds, or manually specify train and test files. ' +
