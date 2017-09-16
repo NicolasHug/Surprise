@@ -39,16 +39,17 @@ You can of course use a custom dataset. `Surprise
 <https://nicolashug.github.io/Surprise/>`_ offers two ways of loading a custom
 dataset:
 
-- you can either specify a single file (or a pandas dataframe) with all the
-  ratings and use the :meth:`split ()<surprise.dataset.DatasetAutoFolds.split>`
-  method to perform cross-validation, or :ref:`train on the whole dataset
+- you can either specify a single file (e.g. a csv file) or a pandas dataframe
+  with all the ratings and use the :meth:`split
+  ()<surprise.dataset.DatasetAutoFolds.split>` method to perform
+  cross-validation, or :ref:`train on the whole dataset
   <train_on_whole_trainset>` ;
 - or if your dataset is already split into predefined folds, you can specify a
   list of files for training and testing.
 
 Either way, you will need to define a :class:`Reader <surprise.dataset.Reader>`
 object for `Surprise <https://nicolashug.github.io/Surprise/>`_ to be able to
-parse the file(s). We'll see now how to handle both cases.
+parse the file(s) or the dataframe. We'll see now how to handle both cases.
 
 .. _load_from_file_example:
 
