@@ -196,8 +196,8 @@ If you'd like to see some features or algorithms implemented in
 [Surprise](http://surpriselib.com), please let us know!
 
 Please feel free to contribute (see
-[guidelines](https://github.com/NicolasHug/Surprise/blob/master/CONTRIBUTING.md))
+[guidelines](https://github.com/NicolasHug/Surprise/blob/master/.github/CONTRIBUTING.md))
 and send pull requests!
 
-For any bug or issue, please use
-the GitHub [project page](https://github.com/NicolasHug/Surprise).
+For any bug or issue, please use the GitHub [project
+page](https://github.com/NicolasHug/Surprise).
