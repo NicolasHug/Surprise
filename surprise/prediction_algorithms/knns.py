@@ -353,10 +353,15 @@ class KNNWithZScore(SymmetricAlgo):
         SymmetricAlgo.train(self, trainset)
 
         self.means = np.zeros(self.n_x)
-        self.sigmas = np.ones(self.n_x)  # to avoid rare case when sigma==0
+        self.sigmas = np.zeros(self.n_x)
+        # when certain sigma is 0, use overall sigma
+        flat_list = [item for sublist in self.xr.values() for item in sublist]
+        self.overall_sigma = np.std([r for (_, r) in flat_list])
+
         for x, ratings in iteritems(self.xr):
             self.means[x] = np.mean([r for (_, r) in ratings])
-            self.sigmas[x] = np.std([r for (_, r) in ratings])
+            sigma = np.std([r for (_, r) in ratings])
+            self.sigmas[x] = self.overall_sigma if sigma == 0.0 else sigma
 
         self.sim = self.compute_similarities()
 
