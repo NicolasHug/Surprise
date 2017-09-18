@@ -170,7 +170,7 @@ class KNNWithMeans(SymmetricAlgo):
         for x, ratings in iteritems(self.xr):
             self.means[x] = np.mean([r for (_, r) in ratings])
 
-        self.sim = self.compute_similarities('mean')
+        self.sim = self.compute_similarities()
 
     def estimate(self, u, i):
 
@@ -358,7 +358,7 @@ class KNNWithZScore(SymmetricAlgo):
             self.means[x] = np.mean([r for (_, r) in ratings])
             self.sigmas[x] = np.std([r for (_, r) in ratings])
 
-        self.sim = self.compute_similarities(normalisation='zscore')
+        self.sim = self.compute_similarities()
 
     def estimate(self, u, i):
 
