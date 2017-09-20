@@ -4,6 +4,7 @@ from os import path
 
 # sum up:
 # mktmpenv (Python version should not matter)
+# Remove 'WARNING...' (load_from_dataframe.py)
 # pip install numpy cython pypandoc
 # python setup.py sdist
 # twine upload dist/blabla.tar.gz [-r testpypi]

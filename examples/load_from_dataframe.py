@@ -1,5 +1,8 @@
 """
 This module descibes how to load a dataset from a pandas dataframe.
+WARNING: this feature is only available in the latest version, so if you have
+installed surprise with pip this is not available. Please clone the repo and
+install it (see guidelines on the README).
 """
 
 from __future__ import (absolute_import, division, print_function,
