@@ -1,15 +1,16 @@
+<!--
+Before submitting an issue, PLEASE make sure it hasn't already been addressed
+by checking the past issues.
+-->
+
 #### Description
 <!--
-Describe your issue here. Before submitting an issue, please make sure it
-hasn't already been addressed by checking the past issues.
--->
+Describe your issue here.-->
 
 
 #### Steps/Code to Reproduce
 <!--
-Please provide a **minimal** code example for reproduction. If the code is too
-long, feel free to put it in a public gist and link it in the issue:
-https://gist.github.com
+Please provide a **minimal** code example for reproduction.
 -->
 
 #### Expected Results
