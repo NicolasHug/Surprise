@@ -154,8 +154,25 @@ class GridSearch:
         self.param_grid = param_grid
         self.measures = [measure.upper() for measure in measures]
         self.verbose = verbose
+
+        # As sim_options and bsl_options are dictionaries, they require a
+        # special treatment.
+        if 'sim_options' in param_grid:
+            sim_options = param_grid['sim_options']
+            sim_options_list = [dict(zip(sim_options, v)) for v in
+                                product(*sim_options.values())]
+            param_grid['sim_options'] = sim_options_list
+
+        if 'bsl_options' in param_grid:
+            bsl_options = param_grid['bsl_options']
+            bsl_options_list = [dict(zip(bsl_options, v)) for v in
+                                product(*bsl_options.values())]
+            param_grid['bsl_options'] = bsl_options_list
+
         self.param_combinations = [dict(zip(param_grid, v)) for v in
                                    product(*param_grid.values())]
+
+        print(self.param_combinations)
 
     def evaluate(self, data):
         """Runs the grid search on dataset.

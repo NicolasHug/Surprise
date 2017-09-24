@@ -11,6 +11,7 @@ import random
 from surprise import Dataset
 from surprise import Reader
 from surprise import SVD
+from surprise import KNNBaseline
 from surprise import evaluate
 from surprise import GridSearch
 
@@ -49,3 +50,21 @@ def test_best_estimator():
     best_estimator = grid_search.best_estimator['MAE']
     assert evaluate(
         best_estimator, data)['MAE'] == grid_search.best_score['MAE']
+
+
+def test_dict_parameters():
+    """Dict parameters like bsl_options and sim_options require special
+    treatment. We here test both in one shot with KNNBaseline."""
+
+    param_grid = {'bsl_options': {'method': ['als', 'sgd'],
+                                  'reg': [1, 2]},
+                  'k': [2, 3],
+                  'sim_options': {'name': ['msd', 'cosine'],
+                                  'min_support': [1, 5],
+                                  'user_based': [False]}
+                  }
+
+    grid_search = GridSearch(KNNBaseline, param_grid,
+                             measures=['FCP', 'mae', 'rMSE'])
+    grid_search.evaluate(data)
+    assert len(grid_search.cv_results['params']) == 32

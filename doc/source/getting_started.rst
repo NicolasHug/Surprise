@@ -185,6 +185,33 @@ For further analysis, we can easily read all the results in a pandas
 
 .. _iterate_over_folds:
 
+.. note::
+
+    Dictionary parameters such as ``bsl_options`` and ``sim_options`` require
+    particular treatment. See usage example below:
+
+    .. parsed-literal::
+
+        param_grid = {'k': [10, 20],
+                      'sim_options': {'name': ['msd', 'cosine'],
+                                      'min_support': [1, 5],
+                                      'user_based': [False]}
+                      }
+
+    Naturally, both can be combined, for example for the
+    :class:`KNNBaseline <surprise.prediction_algorithms.knns.KNNBaseline>`
+    algorithm:
+
+    .. parsed-literal::
+        param_grid = {'bsl_options': {'method': ['als', 'sgd'],
+                                      'reg': [1, 2]},
+                      'k': [2, 3],
+                      'sim_options': {'name': ['msd', 'cosine'],
+                                      'min_support': [1, 5],
+                                      'user_based': [False]}
+                      }
+
+
 Manually iterate over folds
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
