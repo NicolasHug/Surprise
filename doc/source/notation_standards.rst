@@ -24,6 +24,8 @@ In the documentation, you will find the following notation:
 * :math:`\mu` : the mean of all ratings.
 * :math:`\mu_u` : the mean of all ratings given by user :math:`u`.
 * :math:`\mu_i` : the mean of all ratings given to item :math:`i`.
+* :math:`\sigma_u` : the standard deviation of all ratings given by user :math:`u`.
+* :math:`\sigma_i` : the standard deviation of all ratings given to item :math:`i`.
 * :math:`N_i^k(u)` : the :math:`k` nearest neighbors of user :math:`u` that
   have rated item :math:`i`. This set is computed using a :mod:`similarity
   metric <surprise.similarities>`.

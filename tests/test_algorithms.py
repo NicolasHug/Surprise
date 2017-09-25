@@ -18,6 +18,7 @@ from surprise import SlopeOne
 from surprise import CoClustering
 from surprise import Dataset
 from surprise import Reader
+from surprise import KNNWithZScore
 
 
 def test_unknown_user_or_item():
@@ -36,7 +37,8 @@ def test_unknown_user_or_item():
         pass  # just need trainset and testset to be set
 
     klasses = (NormalPredictor, BaselineOnly, KNNBasic, KNNWithMeans,
-               KNNBaseline, SVD, SVDpp, NMF, SlopeOne, CoClustering)
+               KNNBaseline, SVD, SVDpp, NMF, SlopeOne, CoClustering,
+               KNNWithZScore)
     for klass in klasses:
         algo = klass()
         algo.train(trainset)
