@@ -165,12 +165,11 @@ class KNNWithMeans(SymmetricAlgo):
     def train(self, trainset):
 
         SymmetricAlgo.train(self, trainset)
+        self.sim = self.compute_similarities()
 
         self.means = np.zeros(self.n_x)
         for x, ratings in iteritems(self.xr):
             self.means[x] = np.mean([r for (_, r) in ratings])
-
-        self.sim = self.compute_similarities()
 
     def estimate(self, u, i):
 
@@ -308,7 +307,7 @@ class KNNBaseline(SymmetricAlgo):
 
 class KNNWithZScore(SymmetricAlgo):
     """A basic collaborative filtering algorithm, taking into account
-        the z-score normalisation of each user.
+        the z-score normalization of each user.
 
     The prediction :math:`\\hat{r}_{ui}` is set as:
 
@@ -326,6 +325,7 @@ class KNNWithZScore(SymmetricAlgo):
 
     depending on the ``user_based`` field of the ``sim_options`` parameter.
 
+    If :math:`\sigma` is 0, than the overall sigma is used in that case.
 
     Args:
         k(int): The (max) number of neighbors to take into account for
@@ -355,8 +355,8 @@ class KNNWithZScore(SymmetricAlgo):
         self.means = np.zeros(self.n_x)
         self.sigmas = np.zeros(self.n_x)
         # when certain sigma is 0, use overall sigma
-        flat_list = [item for sublist in self.xr.values() for item in sublist]
-        self.overall_sigma = np.std([r for (_, r) in flat_list])
+        self.overall_sigma = np.std([r for (_, _, r)
+                                     in self.trainset.all_ratings()])
 
         for x, ratings in iteritems(self.xr):
             self.means[x] = np.mean([r for (_, r) in ratings])
