@@ -6,6 +6,7 @@ from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 import numpy as np
 from six import iteritems
+import heapq
 
 from .predictions import PredictionImpossible
 from .algo_base import AlgoBase
@@ -99,13 +100,11 @@ class KNNBasic(SymmetricAlgo):
         x, y = self.switch(u, i)
 
         neighbors = [(x2, self.sim[x, x2], r) for (x2, r) in self.yr[y]]
-
-        # sort neighbors by similarity
-        neighbors = sorted(neighbors, key=lambda tple: tple[1], reverse=True)
+        k_neighbors = heapq.nlargest(self.k, neighbors)
 
         # compute weighted average
         sum_sim = sum_ratings = actual_k = 0
-        for (_, sim, r) in neighbors[:self.k]:
+        for (_, sim, r) in k_neighbors:
             if sim > 0:
                 sum_sim += sim
                 sum_ratings += sim * r
@@ -179,15 +178,13 @@ class KNNWithMeans(SymmetricAlgo):
         x, y = self.switch(u, i)
 
         neighbors = [(x2, self.sim[x, x2], r) for (x2, r) in self.yr[y]]
-
-        # sort neighbors by similarity
-        neighbors = sorted(neighbors, key=lambda tple: tple[1], reverse=True)
+        k_neighbors = heapq.nlargest(self.k, neighbors)
 
         est = self.means[x]
 
         # compute weighted average
         sum_sim = sum_ratings = actual_k = 0
-        for (nb, sim, r) in neighbors[:self.k]:
+        for (nb, sim, r) in k_neighbors:
             if sim > 0:
                 sum_sim += sim
                 sum_ratings += sim * (r - self.means[nb])
@@ -280,13 +277,11 @@ class KNNBaseline(SymmetricAlgo):
             return est
 
         neighbors = [(x2, self.sim[x, x2], r) for (x2, r) in self.yr[y]]
-
-        # sort neighbors by similarity
-        neighbors = sorted(neighbors, key=lambda tple: tple[1], reverse=True)
+        k_neighbors = heapq.nlargest(self.k, neighbors)
 
         # compute weighted average
         sum_sim = sum_ratings = actual_k = 0
-        for (nb, sim, r) in neighbors[:self.k]:
+        for (nb, sim, r) in k_neighbors:
             if sim > 0:
                 sum_sim += sim
                 nb_bsl = self.trainset.global_mean + self.bx[nb] + self.by[y]
@@ -373,15 +368,13 @@ class KNNWithZScore(SymmetricAlgo):
         x, y = self.switch(u, i)
 
         neighbors = [(x2, self.sim[x, x2], r) for (x2, r) in self.yr[y]]
-
-        # sort neighbors by similarity
-        neighbors = sorted(neighbors, key=lambda tple: tple[1], reverse=True)
+        k_neighbors = heapq.nlargest(self.k, neighbors)
 
         est = self.means[x]
 
         # compute weighted average
         sum_sim = sum_ratings = actual_k = 0
-        for (nb, sim, r) in neighbors[:self.k]:
+        for (nb, sim, r) in k_neighbors:
             if sim > 0:
                 sum_sim += sim
                 sum_ratings += sim * (r - self.means[nb]) / self.sigmas[nb]
