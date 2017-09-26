@@ -99,12 +99,12 @@ class KNNBasic(SymmetricAlgo):
 
         x, y = self.switch(u, i)
 
-        neighbors = [(x2, self.sim[x, x2], r) for (x2, r) in self.yr[y]]
+        neighbors = [(self.sim[x, x2], r) for (x2, r) in self.yr[y]]
         k_neighbors = heapq.nlargest(self.k, neighbors)
 
         # compute weighted average
         sum_sim = sum_ratings = actual_k = 0
-        for (_, sim, r) in k_neighbors:
+        for (sim, r) in k_neighbors:
             if sim > 0:
                 sum_sim += sim
                 sum_ratings += sim * r
@@ -178,7 +178,7 @@ class KNNWithMeans(SymmetricAlgo):
         x, y = self.switch(u, i)
 
         neighbors = [(x2, self.sim[x, x2], r) for (x2, r) in self.yr[y]]
-        k_neighbors = heapq.nlargest(self.k, neighbors)
+        k_neighbors = heapq.nlargest(self.k, neighbors, key=lambda t: t[1])
 
         est = self.means[x]
 
@@ -277,7 +277,7 @@ class KNNBaseline(SymmetricAlgo):
             return est
 
         neighbors = [(x2, self.sim[x, x2], r) for (x2, r) in self.yr[y]]
-        k_neighbors = heapq.nlargest(self.k, neighbors)
+        k_neighbors = heapq.nlargest(self.k, neighbors, key=lambda t: t[1])
 
         # compute weighted average
         sum_sim = sum_ratings = actual_k = 0
@@ -368,7 +368,7 @@ class KNNWithZScore(SymmetricAlgo):
         x, y = self.switch(u, i)
 
         neighbors = [(x2, self.sim[x, x2], r) for (x2, r) in self.yr[y]]
-        k_neighbors = heapq.nlargest(self.k, neighbors)
+        k_neighbors = heapq.nlargest(self.k, neighbors, key=lambda t: t[1])
 
         est = self.means[x]
 
