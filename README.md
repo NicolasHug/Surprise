@@ -202,5 +202,5 @@ Please feel free to contribute (see
 [guidelines](https://github.com/NicolasHug/Surprise/blob/master/.github/CONTRIBUTING.md))
 and send pull requests!
 
-For any bug or issue, please use the GitHub [project
+For any bug or issue about surprise, please use the GitHub [project
 page](https://github.com/NicolasHug/Surprise).
