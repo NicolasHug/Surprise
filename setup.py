@@ -2,12 +2,14 @@ from setuptools import setup, find_packages, Extension
 from codecs import open
 from os import path
 
-# sum up:
-# mktmpenv (Python version should not matter)
-# Remove 'WARNING...' (load_from_dataframe.py)
-# pip install numpy cython pypandoc
-# python setup.py sdist
-# twine upload dist/blabla.tar.gz [-r testpypi]
+"""
+Release instruction:
+mktmpenv (Python version should not matter)
+Remove 'WARNING...' (load_from_dataframe.py)
+pip install numpy cython pypandoc
+python setup.py sdist
+twine upload dist/blabla.tar.gz [-r testpypi]
+"""
 
 try:
     import numpy as np
@@ -39,34 +41,39 @@ with open(path.join(here, 'requirements.txt'), encoding='utf-8') as f:
     all_reqs = f.read().split('\n')
 
 install_requires = [x.strip() for x in all_reqs if 'git+' not in x]
-dependency_links = [x.strip().replace('git+', '') for x in all_reqs if x.startswith('git+')]
+dependency_links = [x.strip().replace('git+', '')
+                    for x in all_reqs if x.startswith('git+')]
 
 cmdclass = {}
 
 ext = '.pyx' if USE_CYTHON else '.c'
 
-extensions = [Extension('surprise.similarities',
-                       ['surprise/similarities' + ext],
-                        include_dirs=[np.get_include()]),
-              Extension('surprise.prediction_algorithms.matrix_factorization',
-                        ['surprise/prediction_algorithms/matrix_factorization' + ext],
-                        include_dirs=[np.get_include()]),
-              Extension('surprise.prediction_algorithms.optimize_baselines',
-                        ['surprise/prediction_algorithms/optimize_baselines' + ext],
-                        include_dirs=[np.get_include()]),
-              Extension('surprise.prediction_algorithms.slope_one',
-                        ['surprise/prediction_algorithms/slope_one' + ext],
-                        include_dirs=[np.get_include()]),
-              Extension('surprise.prediction_algorithms.co_clustering',
-                        ['surprise/prediction_algorithms/co_clustering' + ext],
-                        include_dirs=[np.get_include()]),
-             ]
+extensions = [
+    Extension(
+        'surprise.similarities',
+        ['surprise/similarities' + ext],
+        include_dirs=[np.get_include()]
+    ),
+    Extension(
+        'surprise.prediction_algorithms.matrix_factorization',
+        ['surprise/prediction_algorithms/matrix_factorization' + ext],
+        include_dirs=[np.get_include()]),
+    Extension('surprise.prediction_algorithms.optimize_baselines',
+              ['surprise/prediction_algorithms/optimize_baselines' + ext],
+              include_dirs=[np.get_include()]),
+    Extension('surprise.prediction_algorithms.slope_one',
+              ['surprise/prediction_algorithms/slope_one' + ext],
+              include_dirs=[np.get_include()]),
+    Extension('surprise.prediction_algorithms.co_clustering',
+              ['surprise/prediction_algorithms/co_clustering' + ext],
+              include_dirs=[np.get_include()]),
+]
 
 if USE_CYTHON:
     ext_modules = cythonize(extensions)
     cmdclass.update({'build_ext': build_ext})
 else:
-	ext_modules = extensions
+    ext_modules = extensions
 
 setup(
     name='scikit-surprise',
@@ -81,24 +88,24 @@ setup(
 
     license='GPLv3+',
     classifiers=[
-      'Development Status :: 5 - Production/Stable',
-      'Intended Audience :: Developers',
-      'Intended Audience :: Education',
-      'Intended Audience :: Science/Research',
-      'Topic :: Scientific/Engineering',
-      'License :: OSI Approved :: BSD License',
-      'Programming Language :: Python :: 3',
-      'Programming Language :: Python :: 2.7',
+        'Development Status :: 5 - Production/Stable',
+        'Intended Audience :: Developers',
+        'Intended Audience :: Education',
+        'Intended Audience :: Science/Research',
+        'Topic :: Scientific/Engineering',
+        'License :: OSI Approved :: BSD License',
+        'Programming Language :: Python :: 3',
+        'Programming Language :: Python :: 2.7',
     ],
     keywords='recommender recommendation system',
 
     packages=find_packages(exclude=['tests*']),
     include_package_data=True,
-    ext_modules = ext_modules,
+    ext_modules=ext_modules,
     cmdclass=cmdclass,
     install_requires=install_requires,
     dependency_links=dependency_links,
 
     entry_points={'console_scripts':
-                 ['surprise = surprise.__main__:main']},
+                  ['surprise = surprise.__main__:main']},
 )
