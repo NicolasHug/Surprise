@@ -10,6 +10,9 @@ title: Home
 The [Mangaki recommendation challenge](http://research.mangaki.fr/2017/07/18/mangaki-data-challenge-en/) is on! Have fun using Surprise!
 
 
+Surprise
+========
+
 Overview
 --------
 
@@ -199,5 +202,5 @@ Please feel free to contribute (see
 [guidelines](https://github.com/NicolasHug/Surprise/blob/master/.github/CONTRIBUTING.md))
 and send pull requests!
 
-For any bug or issue, please use the GitHub [project
+For any bug or issue about surprise, please use the GitHub [project
 page](https://github.com/NicolasHug/Surprise).
