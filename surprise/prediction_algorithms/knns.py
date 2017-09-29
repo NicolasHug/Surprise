@@ -100,7 +100,7 @@ class KNNBasic(SymmetricAlgo):
         x, y = self.switch(u, i)
 
         neighbors = [(self.sim[x, x2], r) for (x2, r) in self.yr[y]]
-        k_neighbors = heapq.nlargest(self.k, neighbors)
+        k_neighbors = heapq.nlargest(self.k, neighbors, key=lambda t: t[0])
 
         # compute weighted average
         sum_sim = sum_ratings = actual_k = 0
