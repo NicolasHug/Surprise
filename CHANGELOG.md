@@ -1,8 +1,5 @@
-Current
-=======
-
-VERSION 1.0.5 (in development)
-==============================
+VERSION 1.0.5 (latest, in development)
+======================================
 
 VERSION 1.0.4
 =============

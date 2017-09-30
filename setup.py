@@ -23,7 +23,7 @@ except ImportError:
 else:
     USE_CYTHON = True
 
-__version__ = '1.0.4'
+__version__ = 'latest'
 
 here = path.abspath(path.dirname(__file__))
 
