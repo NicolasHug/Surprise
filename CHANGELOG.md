@@ -1,7 +1,28 @@
 Current
 =======
 
+VERSION 1.0.5 (in development)
+==============================
+
+VERSION 1.0.4
+=============
+
+Date: 20/09/17
+
+Enhancements
+------------
+
 * Added possibility to load a dataset from a pandas dataframe
+* Added Precision and Recall examples to the FAQ (Maher Malaeb)
+* Added a kNN algorithm with normalization by z-score (Hengji Liu)
+* kNN algorithms now use heapq instead of list.sort() (computation time
+  enhancement for large datasets).
+
+Fixes
+-----
+
+* Prediciont.__str__() when r_ui is None
+* GridSearch for dict parameters is now working as expected
 
 VERSION 1.0.3
 =============

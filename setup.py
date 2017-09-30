@@ -5,8 +5,7 @@ from os import path
 """
 Release instruction:
 mktmpenv (Python version should not matter)
-Remove 'WARNING...' (load_from_dataframe.py)
-pip install numpy cython pypandoc
+pip install numpy cython pypandoc twine
 python setup.py sdist
 twine upload dist/blabla.tar.gz [-r testpypi]
 """
@@ -24,7 +23,7 @@ except ImportError:
 else:
     USE_CYTHON = True
 
-__version__ = '1.0.3'
+__version__ = '1.0.4'
 
 here = path.abspath(path.dirname(__file__))
 
