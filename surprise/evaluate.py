@@ -172,8 +172,6 @@ class GridSearch:
         self.param_combinations = [dict(zip(param_grid, v)) for v in
                                    product(*param_grid.values())]
 
-        print(self.param_combinations)
-
     def evaluate(self, data):
         """Runs the grid search on dataset.
 
