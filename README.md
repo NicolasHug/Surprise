@@ -142,20 +142,24 @@ the GNU [time](http://man7.org/linux/man-pages/man1/time.1.html) command.
 | [Slope One](http://surprise.readthedocs.io/en/stable/slope_one.html#surprise.prediction_algorithms.slope_one.SlopeOne)             |  .9065 |  .7144 |    8    |
 | [Co clustering](http://surprise.readthedocs.io/en/stable/co_clustering.html#surprise.prediction_algorithms.co_clustering.CoClustering)             |  .9155 |  .7174 |    2    |
 
-Installation / Usage
---------------------
+Installation
+------------
 
 The easiest way is to use pip (you'll need [numpy](http://www.numpy.org/)):
 
     $ pip install numpy
     $ pip install scikit-surprise
 
-Or you can clone the repo and build the source (you'll need
-[Cython](http://cython.org/) and [numpy](http://www.numpy.org/)):
+If you use conda (**should** work for Python 2.7, 3.5 and 3.6):
+
+    $ conda install -c nicolashug scikit-surprise
+
+For the latest version, you can also clone the repo and build the source
+(you'll first need [Cython](http://cython.org/) and
+[numpy](http://www.numpy.org/)):
 
     $ git clone https://github.com/NicolasHug/surprise.git
     $ python setup.py install
-
 
 License
 -------
