@@ -182,3 +182,20 @@ done as follows:
     :caption: From file ``examples/split_data_for_unbiased_estimation.py``
     :name: split_data_for_unbiased_estimation.py
     :lines: 10-
+
+How to have reproducible experiments
+------------------------------------
+
+Some algorithms randomly initialize their parameters (sometimes with
+``numpy``), and the cross-validation folds are also randomly generated. If you
+need to reproduce your experiments multiple times, you just have to set the
+seed of the RNG at the beginning of your program:
+
+.. code::
+
+    import random
+    import numpy as np
+
+    my_seed = 0
+    random.seed(my_seed)
+    numpy.random.seed(my_seed)
