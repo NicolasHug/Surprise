@@ -13,7 +13,8 @@ from surprise import Dataset
 param_grid = {'n_epochs': [5, 10], 'lr_all': [0.002, 0.005],
               'reg_all': [0.4, 0.6]}
 
-grid_search = GridSearch(SVD, param_grid, measures=['RMSE', 'FCP'])
+grid_search = GridSearch(SVD, param_grid, measures=['RMSE', 'FCP'],
+                         verbose=False)
 
 # Prepare Data
 data = Dataset.load_builtin('ml-100k')

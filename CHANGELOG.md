@@ -1,6 +1,11 @@
 VERSION 1.0.5 (latest, in development)
 ======================================
 
+Enhancements
+------------
+
+* GridSearch is now parallel, using joblib.
+
 VERSION 1.0.4
 =============
 
