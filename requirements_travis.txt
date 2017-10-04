@@ -8,3 +8,4 @@ sphinx_rtd_theme
 sphinxcontrib-bibtex
 flake8>=3.2.1
 pandas
+joblib>=0.11
