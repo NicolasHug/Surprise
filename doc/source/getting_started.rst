@@ -185,6 +185,7 @@ For further analysis, we can easily read all the results in a pandas
 
 .. _iterate_over_folds:
 
+.. _grid_search_note:
 .. note::
 
     Dictionary parameters such as ``bsl_options`` and ``sim_options`` require

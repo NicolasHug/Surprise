@@ -6,11 +6,13 @@ from __future__ import (absolute_import, division, print_function,
 from collections import defaultdict
 import time
 import os
+from itertools import product
 
 import numpy as np
 from six import iteritems
 from six import itervalues
-from itertools import product
+from joblib import Parallel
+from joblib import delayed
 
 from . import accuracy
 from .dump import dump
@@ -108,21 +110,45 @@ class GridSearch:
 
     Args:
         algo_class(:obj:`AlgoBase \
-            <surprise.prediction_algorithms.algo_base.AlgoBase>`):
-            A class object of of the algorithm to evaluate.
-        param_grid (dict):
-            The dictionary has algo_class parameters as keys (string) and list
-            of parameters as the desired values to try.  All combinations will
-            be evaluated with desired algorithm.
-        measures(list of string):
-            The performance measures to compute. Allowed names are function
-            names as defined in the :mod:`accuracy <surprise.accuracy>` module.
-            Default is ``['rmse', 'mae']``.
-        verbose(int):
-            Level of verbosity. If ``0``, nothing is printed. If ``1``,
-            accuracy measures for each parameters combination are printed, with
-            combination values. If ``2``, folds accuracy values are also
-            printed.  Default is ``1``.
+            <surprise.prediction_algorithms.algo_base.AlgoBase>`): The class
+            object of the algorithm to evaluate.
+        param_grid(dict): Dictionary with algorithm parameters as keys and
+            list of values as keys. All combinations will be evaluated with
+            desired algorithm. Dict parameters such as ``sim_options`` require
+            special treatment, see :ref:`this note<grid_search_note>`.
+        measures(list of string): The performance measures to compute. Allowed
+            names are function names as defined in the :mod:`accuracy
+            <surprise.accuracy>` module.  Default is ``['rmse', 'mae']``.
+        n_jobs(int): The maximum number of algorithm training in parallel.
+
+            - If ``-1``, all CPUs are used.
+            - If ``1`` is given, no parallel computing code is used at all,\
+                which is useful for debugging.
+            - For ``n_jobs`` below ``-1``, ``(n_cpus + n_jobs + 1)`` are\
+                used.  For example, with ``n_jobs = -2`` all CPUs but one are\
+                used.
+
+            Default is ``-1``.
+        pre_dispatch(int or string): Controls the number of jobs that get
+            dispatched during parallel execution. Reducing this number can be
+            useful to avoid an explosion of memory consumption when more jobs
+            get dispatched than CPUs can process. This parameter can be:
+
+            - ``None``, in which case all the jobs are immediately created\
+                and spawned. Use this for lightweight and fast-running\
+                jobs, to avoid delays due to on-demand spawning of the\
+                jobs.
+            - An int, giving the exact number of total jobs that are\
+                spawned.
+            - A string, giving an expression as a function of ``n_jobs``,\
+                as in ``'2*n_jobs'``.
+
+            Default is ``'2*n_jobs'``.
+        verbose(bool): Level of verbosity. If ``False``, nothing is printed. If
+            ``True``, The mean values of each measure are printed along for
+            each parameter combination. Default is ``True``.
+        joblib_verbose(int): Controls the verbosity of joblib: the higher, the
+            more messages.
 
     Attributes:
         cv_results (dict of arrays):
@@ -139,12 +165,13 @@ class GridSearch:
             that gave the best accuracy results for the chosen measure.
         best_index  (dict of ints):
             Using an accuracy measure as key, get the index that can be used
-            with `cv_results_` that achieved the highest accuracy for that
+            with `cv_results` that achieved the highest accuracy for that
             measure.
         """
 
     def __init__(self, algo_class, param_grid, measures=['rmse', 'mae'],
-                 verbose=1):
+                 n_jobs=-1, pre_dispatch='2*n_jobs', verbose=1,
+                 joblib_verbose=0):
         self.best_params = CaseInsensitiveDefaultDict(list)
         self.best_index = CaseInsensitiveDefaultDict(list)
         self.best_score = CaseInsensitiveDefaultDict(list)
@@ -153,7 +180,10 @@ class GridSearch:
         self.algo_class = algo_class
         self.param_grid = param_grid
         self.measures = [measure.upper() for measure in measures]
+        self.n_jobs = n_jobs
+        self.pre_dispatch = pre_dispatch
         self.verbose = verbose
+        self.joblib_verbose = joblib_verbose
 
         # As sim_options and bsl_options are dictionaries, they require a
         # special treatment.
@@ -172,8 +202,6 @@ class GridSearch:
         self.param_combinations = [dict(zip(param_grid, v)) for v in
                                    product(*param_grid.values())]
 
-        print(self.param_combinations)
-
     def evaluate(self, data):
         """Runs the grid search on dataset.
 
@@ -184,49 +212,34 @@ class GridSearch:
                 which to evaluate the algorithm.
         """
 
-        num_of_combinations = len(self.param_combinations)
-        params = []
+        if self.verbose:
+            print('Running grid search for the following parameter ' +
+                  'combinations:')
+            for combination in self.param_combinations:
+                print(combination)
+
+        delayed_list = (delayed(evaluate)(self.algo_class(**combination), data,
+                                          self.measures, verbose=0)
+                        for combination in self.param_combinations)
+        performances_list = Parallel(n_jobs=self.n_jobs,
+                                     pre_dispatch=self.pre_dispatch,
+                                     verbose=self.joblib_verbose)(delayed_list)
+
+        if self.verbose:
+            print('Resulsts:')
         scores = []
-
-        # evaluate each combination of parameters using the evaluate method
-        for combination_index, combination in enumerate(
-                self.param_combinations):
-            params.append(combination)
-
-            if self.verbose >= 1:
-                print('-' * 12)
-                print('Parameters combination {} of {}'.
-                      format(combination_index + 1, num_of_combinations))
-                print('params: ', combination)
-
-            # the algorithm to use along with the combination parameters
-            algo_instance = self.algo_class(**combination)
-            evaluate_results = evaluate(algo_instance, data,
-                                        measures=self.measures,
-                                        verbose=(self.verbose == 2))
-
-            # measures as keys and folds average as values
-            mean_score = {}
-            for measure in self.measures:
-                mean_score[measure] = np.mean(evaluate_results[measure])
+        for i, perf in enumerate(performances_list):
+            mean_score = {measure: np.mean(perf[measure]) for measure in
+                          self.measures}
             scores.append(mean_score)
-
-            if self.verbose == 1:
-                print('-' * 12)
-                for measure in self.measures:
-                    print('Mean {0:4s}: {1:1.4f}'.format(
-                        measure, mean_score[measure]))
-                print('-' * 12)
+            if self.verbose:
+                print(self.param_combinations[i])
+                print(mean_score)
+                print('-' * 10)
 
         # Add all scores and parameters lists to dict
-        self.cv_results['params'] = params
+        self.cv_results['params'] = self.param_combinations
         self.cv_results['scores'] = scores
-
-        # Add accuracy measures and algorithm parameters as keys to dict
-        for param, score in zip(params, scores):
-            for param_key, score_key in zip(param.keys(), score.keys()):
-                self.cv_results[param_key].append(param[param_key])
-                self.cv_results[score_key].append(score[score_key])
 
         # Get the best results
         for measure in self.measures:

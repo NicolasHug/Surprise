@@ -1,7 +1,37 @@
-Current
-=======
+VERSION 1.0.5 (latest, in development)
+======================================
+
+Enhancements
+------------
+
+* GridSearch is now parallel, using joblib.
+
+VERSION 1.0.4
+=============
+
+Date: 20/09/17
+
+Enhancements
+------------
 
 * Added possibility to load a dataset from a pandas dataframe
+* Added Precision and Recall examples to the FAQ (Maher Malaeb)
+* Added a kNN algorithm with normalization by z-score (Hengji Liu)
+* kNN algorithms now use heapq instead of list.sort() (computation time
+  enhancement for large datasets).
+
+Fixes
+-----
+
+* Prediciont.__str__() when r_ui is None
+* GridSearch for dict parameters is now working as expected
+
+API Changes
+-----------
+
+* param_grid for GridSearch is now slightly different for dict parameters (see
+  note on [the
+  docs](http://surprise.readthedocs.io/en/stable/getting_started.html#tune-algorithm-parameters-with-gridsearch)).
 
 VERSION 1.0.3
 =============

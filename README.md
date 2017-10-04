@@ -1,13 +1,8 @@
 [![GitHub version](https://badge.fury.io/gh/nicolashug%2FSurprise.svg)](https://badge.fury.io/gh/nicolashug%2FSurprise)
 [![Documentation Status](https://readthedocs.org/projects/surprise/badge/?version=stable)](http://surprise.readthedocs.io/en/stable/?badge=stable)
 [![Build Status](https://travis-ci.org/NicolasHug/Surprise.svg?branch=master)](https://travis-ci.org/NicolasHug/Surprise)
-[![python versions](https://img.shields.io/badge/python-2.7%2C%203.5-blue.svg)](http://surpriselib.com)
+[![python versions](https://img.shields.io/badge/python-2.7%2C%203.5%2C%203.6-blue.svg)](http://surpriselib.com)
 [![License](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)
-
-
-### Temporary headline:
-
-The [Mangaki recommendation challenge](http://research.mangaki.fr/2017/07/18/mangaki-data-challenge-en/) is on! Have fun using Surprise!
 
 
 Surprise
@@ -147,20 +142,24 @@ the GNU [time](http://man7.org/linux/man-pages/man1/time.1.html) command.
 | [Slope One](http://surprise.readthedocs.io/en/stable/slope_one.html#surprise.prediction_algorithms.slope_one.SlopeOne)             |  .9065 |  .7144 |    8    |
 | [Co clustering](http://surprise.readthedocs.io/en/stable/co_clustering.html#surprise.prediction_algorithms.co_clustering.CoClustering)             |  .9155 |  .7174 |    2    |
 
-Installation / Usage
---------------------
+Installation
+------------
 
 The easiest way is to use pip (you'll need [numpy](http://www.numpy.org/)):
 
     $ pip install numpy
     $ pip install scikit-surprise
 
-Or you can clone the repo and build the source (you'll need
-[Cython](http://cython.org/) and [numpy](http://www.numpy.org/)):
+If you use conda (**should** work for Python 2.7, 3.5 and 3.6):
+
+    $ conda install -c nicolashug scikit-surprise
+
+For the latest version, you can also clone the repo and build the source
+(you'll first need [Cython](http://cython.org/) and
+[numpy](http://www.numpy.org/)):
 
     $ git clone https://github.com/NicolasHug/surprise.git
     $ python setup.py install
-
 
 License
 -------
@@ -202,5 +201,5 @@ Please feel free to contribute (see
 [guidelines](https://github.com/NicolasHug/Surprise/blob/master/.github/CONTRIBUTING.md))
 and send pull requests!
 
-For any bug or issue, please use the GitHub [project
+For any bug or issue about surprise, please use the GitHub [project
 page](https://github.com/NicolasHug/Surprise).

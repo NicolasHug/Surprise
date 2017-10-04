@@ -1,6 +1,6 @@
 # Requirements file for development
 numpy>=1.11.2
-Cython>=0.24.1
+cython>=0.24.1
 six>=1.10.0
 pytest>=3.0.3
 sphinx>=1.4.9
@@ -9,3 +9,4 @@ sphinxcontrib-bibtex
 sphinxcontrib-spelling
 flake8>=3.2.1
 pandas
+joblib>=0.11
