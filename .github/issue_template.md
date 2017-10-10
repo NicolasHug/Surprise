@@ -1,6 +1,8 @@
-<!-- Before submitting an issue, make sure it hasn't already been addressed by
+<!-- IMPORTANT PLEASE READ!!!
+Before submitting an issue, make sure it hasn't already been addressed by
 checking the past issues and the documentation (FAQ, getting started / advanced
-usage guide, etc.).
+usage guide, etc.). In order to let me help you more efficiently, please fill
+the different fields below.
 
 Also, please keep in mind that I develop and maintain this software on my
 **free time**. So please, before asking for help, show me that you have already
