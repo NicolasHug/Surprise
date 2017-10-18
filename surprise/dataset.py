@@ -681,9 +681,9 @@ class Trainset:
         trainset. As :math:`r_{ui}` is unknown, it is assumed to be equal to
         the mean of all ratings :meth:`global_mean
         <surprise.dataset.Trainset.global_mean>`.
-        When fill is :code:`None` (default), the global mean will be used as a
-        replacement for unknown values. Otherwise, the :code:`fill` value will
-        be used for replacement.
+        When :code:`fill` is :code:`None` (default), the global mean will be
+        used as a replacement for unknown values. Otherwise, the :code:`fill`
+        value will be used for replacement.
         """
         fill = self.global_mean if fill is None else float(fill)
 
