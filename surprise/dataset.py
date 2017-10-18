@@ -670,7 +670,7 @@ class Trainset:
         return [(self.to_raw_uid(u), self.to_raw_iid(i), r)
                 for (u, i, r) in self.all_ratings()]
 
-    def build_anti_testset(self):
+    def build_anti_testset(self, fill=None):
         """Return a list of ratings that can be used as a testset in the
         :meth:`test() <surprise.prediction_algorithms.algo_base.AlgoBase.test>`
         method.
@@ -681,7 +681,11 @@ class Trainset:
         trainset. As :math:`r_{ui}` is unknown, it is assumed to be equal to
         the mean of all ratings :meth:`global_mean
         <surprise.dataset.Trainset.global_mean>`.
+        When fill is :code:`None` (default), the global mean will be used as a
+        replacement for unknown values. Otherwise, the :code:`fill` value will
+        be used for replacement.
         """
+        fill = self.global_mean if fill is None else float(fill)
 
         anti_testset = []
         for u in self.all_users():
@@ -689,7 +693,7 @@ class Trainset:
                 user_items = [j for (j, _) in self.ur[u]]
                 if i not in user_items:
                     r_ui = (self.to_raw_uid(u), self.to_raw_iid(i),
-                            self.global_mean)
+                            fill)
                     anti_testset.append(r_ui)
         return anti_testset
 
