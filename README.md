@@ -179,14 +179,15 @@ Here is a Bibtex entry if you ever need to cite Surprise in a research paper
     year = {2017}
     }
 
-Acknowledgements:
-----------------
+Contributors
+------------
 
-- [Pierre-François Gimenez](https://github.com/PFgimenez), for his valuable
-  insights on software design.
-- [Maher Malaeb](https://github.com/mahermalaeb), for the
-  [GridSearch](http://surprise.readthedocs.io/en/stable/evaluate.html#surprise.evaluate.GridSearch)
-  implementation.
+The following persons have contributed to [Surprise](http://surpriselib.com):
+
+Charles-Emmanuel Dias, Pierre-François Gimenez, Nicolas Hug, Hengji Liu,  Maher
+Malaeb, Naturale0, Mike Lee Williams, Chenchen Xu.
+
+Thanks a lot :) !
 
 Contributing, feedback, contact
 -------------------------------
