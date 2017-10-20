@@ -199,10 +199,10 @@ def test_load_form_df():
         trainset.to_inner_uid('10000')
 
 
-def test_build_anti_dataset():
-    ratings_dict = {'itemID': [1, 2, 3, 4, 5, 6, 7, 8],
-                    'userID': [1, 2, 3, 4, 5, 6, 7, 8],
-                    'rating': [1, 2, 3, 4, 5, 6, 7, 8]}
+def test_build_anti_testset():
+    ratings_dict = {'itemID': [1, 2, 3, 4, 5, 6, 7, 8, 9],
+                    'userID': [1, 2, 3, 4, 5, 6, 7, 8, 9],
+                    'rating': [1, 2, 3, 4, 5, 6, 7, 8, 9]}
     df = pd.DataFrame(ratings_dict)
 
     reader = Reader(rating_scale=(1, 5))
@@ -214,10 +214,9 @@ def test_build_anti_dataset():
         anti = trainset.build_anti_testset(fill=fillvalue)
         for (u, i, r) in anti:
             assert r == fillvalue
-
     # fill with global_mean
     anti = trainset.build_anti_testset(fill=None)
     for (u, i, r) in anti:
         assert r == trainset.global_mean
-    expect = trainset.n_users * trainset.n_items  # all disjunct
+    expect = trainset.n_users * trainset.n_items
     assert trainset.n_ratings + len(anti) == expect
