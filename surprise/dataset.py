@@ -688,7 +688,7 @@ class Trainset:
                 <surprise.dataset.Trainset.global_mean>` will be used.
 
         Returns:
-            A tuple ``(uid, iid, fill)`` where ids are raw ids.
+            A list of tuples ``(uid, iid, fill)`` where ids are raw ids.
         """
         fill = self.global_mean if fill is None else float(fill)
 
