@@ -197,3 +197,27 @@ def test_load_form_df():
     trainset = data.build_full_trainset()
     with pytest.raises(ValueError):
         trainset.to_inner_uid('10000')
+
+
+def test_build_anti_dataset():
+    ratings_dict = {'itemID': [1, 2, 3, 4, 5, 6, 7, 8],
+                    'userID': [1, 2, 3, 4, 5, 6, 7, 8],
+                    'rating': [1, 2, 3, 4, 5, 6, 7, 8]}
+    df = pd.DataFrame(ratings_dict)
+
+    reader = Reader(rating_scale=(1, 5))
+    data = Dataset.load_from_df(df[['userID', 'itemID', 'rating']], reader)
+    data.split(2)
+    trainset, __testset = next(data.folds())
+    # fill with some specific value
+    for fillvalue in (0, 42., -1):
+        anti = trainset.build_anti_testset(fill=fillvalue)
+        for (u, i, r) in anti:
+            assert r == fillvalue
+
+    # fill with global_mean
+    anti = trainset.build_anti_testset(fill=None)
+    for (u, i, r) in anti:
+        assert r == trainset.global_mean
+    expect = trainset.n_users * trainset.n_items  # all disjunct
+    assert trainset.n_ratings + len(anti) == expect
