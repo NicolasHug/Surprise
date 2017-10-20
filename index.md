@@ -181,8 +181,8 @@ Contributors
 
 The following persons have contributed to [Surprise](http://surpriselib.com):
 
-Charles-Emmanuel Dias, Pierre-François Gimenez, Nicolas Hug, Hengji Liu,  Maher
-Malaeb, Naturale0, Mike Lee Williams, Chenchen Xu.
+Charles-Emmanuel Dias, Lukas Galke, Pierre-François Gimenez, Nicolas Hug,
+Hengji Liu,  Maher Malaeb, Naturale0, Mike Lee Williams, Chenchen Xu.
 
 Thanks a lot :) !
 
