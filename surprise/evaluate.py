@@ -7,6 +7,7 @@ from collections import defaultdict
 import time
 import os
 from itertools import product
+import random
 
 import numpy as np
 from six import iteritems
@@ -144,6 +145,9 @@ class GridSearch:
                 as in ``'2*n_jobs'``.
 
             Default is ``'2*n_jobs'``.
+        seed(int): The value to use as seed for RNG. It will determine how
+            splits are defined. If ``None``, the current time since epoch is
+            used. Default is ``None``.
         verbose(bool): Level of verbosity. If ``False``, nothing is printed. If
             ``True``, The mean values of each measure are printed along for
             each parameter combination. Default is ``True``.
@@ -170,7 +174,7 @@ class GridSearch:
         """
 
     def __init__(self, algo_class, param_grid, measures=['rmse', 'mae'],
-                 n_jobs=-1, pre_dispatch='2*n_jobs', verbose=1,
+                 n_jobs=-1, pre_dispatch='2*n_jobs', seed=None, verbose=1,
                  joblib_verbose=0):
         self.best_params = CaseInsensitiveDefaultDict(list)
         self.best_index = CaseInsensitiveDefaultDict(list)
@@ -182,6 +186,7 @@ class GridSearch:
         self.measures = [measure.upper() for measure in measures]
         self.n_jobs = n_jobs
         self.pre_dispatch = pre_dispatch
+        self.seed = seed if seed is not None else int(time.time())
         self.verbose = verbose
         self.joblib_verbose = joblib_verbose
 
@@ -202,6 +207,14 @@ class GridSearch:
         self.param_combinations = [dict(zip(self.param_grid, v)) for v in
                                    product(*self.param_grid.values())]
 
+    def eval_helper(self, *args):
+        """Helper function that calls evaluate.evaluate() *after* having seeded
+        the RNG. RNG seeding is mandatory since evalute() is called by
+        different processes."""
+
+        random.seed(self.seed)
+        return evaluate(*args, verbose=0)
+
     def evaluate(self, data):
         """Runs the grid search on dataset.
 
@@ -218,9 +231,12 @@ class GridSearch:
             for combination in self.param_combinations:
                 print(combination)
 
-        delayed_list = (delayed(evaluate)(self.algo_class(**combination), data,
-                                          self.measures, verbose=0)
-                        for combination in self.param_combinations)
+        delayed_list = (
+            delayed(self.eval_helper)(self.algo_class(**combination),
+                                      data,
+                                      self.measures)
+            for combination in self.param_combinations
+        )
         performances_list = Parallel(n_jobs=self.n_jobs,
                                      pre_dispatch=self.pre_dispatch,
                                      verbose=self.joblib_verbose)(delayed_list)
