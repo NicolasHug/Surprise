@@ -207,14 +207,6 @@ class GridSearch:
         self.param_combinations = [dict(zip(self.param_grid, v)) for v in
                                    product(*self.param_grid.values())]
 
-    def eval_helper(self, *args):
-        """Helper function that calls evaluate.evaluate() *after* having seeded
-        the RNG. RNG seeding is mandatory since evalute() is called by
-        different processes."""
-
-        random.seed(self.seed)
-        return evaluate(*args, verbose=0)
-
     def evaluate(self, data):
         """Runs the grid search on dataset.
 
@@ -232,9 +224,10 @@ class GridSearch:
                 print(combination)
 
         delayed_list = (
-            delayed(self.eval_helper)(self.algo_class(**combination),
-                                      data,
-                                      self.measures)
+            delayed(seed_and_eval)(self.seed,
+                                   self.algo_class(**combination),
+                                   data,
+                                   self.measures)
             for combination in self.param_combinations
         )
         performances_list = Parallel(n_jobs=self.n_jobs,
@@ -308,3 +301,12 @@ def print_perf(performances):
         for (key, vals) in iteritems(performances))
 
     print(s)
+
+
+def seed_and_eval(seed, *args):
+    """Helper function that calls evaluate.evaluate() *after* having seeded
+    the RNG. RNG seeding is mandatory since evalute() is called by
+    different processes."""
+
+    random.seed(seed)
+    return evaluate(*args, verbose=0)
