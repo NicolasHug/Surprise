@@ -150,15 +150,17 @@ The easiest way is to use pip (you'll need [numpy](http://www.numpy.org/)):
     $ pip install numpy
     $ pip install scikit-surprise
 
-If you use conda (**should** work for Python 2.7, 3.5 and 3.6):
-
-    $ conda install -c nicolashug scikit-surprise
+If you use conda, you can install the package following [these
+guidelines](https://conda.io/docs/user-guide/getting-started.html#installing-a-package-with-pip)
+(still using pip).
 
 For the latest version, you can also clone the repo and build the source
 (you'll first need [Cython](http://cython.org/) and
 [numpy](http://www.numpy.org/)):
 
+    $ pip install numpy cython
     $ git clone https://github.com/NicolasHug/surprise.git
+    $ cd surprise
     $ python setup.py install
 
 License
