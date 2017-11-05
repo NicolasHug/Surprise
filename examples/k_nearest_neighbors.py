@@ -42,7 +42,7 @@ algo.train(trainset)
 # Read the mappings raw id <-> movie name
 rid_to_name, name_to_rid = read_item_names()
 
-# Retieve inner id of the movie Toy Story
+# Retrieve inner id of the movie Toy Story
 toy_story_raw_id = name_to_rid['Toy Story (1995)']
 toy_story_inner_id = algo.trainset.to_inner_iid(toy_story_raw_id)
 
