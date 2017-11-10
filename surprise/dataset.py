@@ -694,12 +694,10 @@ class Trainset:
 
         anti_testset = []
         for u in self.all_users():
-            for i in self.all_items():
-                user_items = [j for (j, _) in self.ur[u]]
-                if i not in user_items:
-                    r_ui = (self.to_raw_uid(u), self.to_raw_iid(i),
-                            fill)
-                    anti_testset.append(r_ui)
+            user_items = [j for (j, _) in self.ur[u]]
+            anti_testset.extend([(self.to_raw_uid(u), self.to_raw_iid(i),fill)
+             for i in filter(lambda i: i not in user_items, self.all_items())
+            ])
         return anti_testset
 
     def all_users(self):
