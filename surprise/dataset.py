@@ -28,23 +28,22 @@ Summary:
     Trainset
 """
 
-
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
+
+import itertools
+import os
+import random
+import sys
+import zipfile
 from collections import defaultdict
 from collections import namedtuple
-import sys
-import os
-import zipfile
-import itertools
-import random
 
 import numpy as np
-from six.moves import input
-from six.moves.urllib.request import urlretrieve
-from six.moves import range
 from six import iteritems
-
+from six.moves import input
+from six.moves import range
+from six.moves.urllib.request import urlretrieve
 
 # directory where builtin datasets are stored. For now it's in the home
 # directory under the .surprise_data. May be ask user to define it?
@@ -128,7 +127,7 @@ class Dataset:
             answered = False
             while not answered:
                 print('Dataset ' + name + ' could not be found. Do you want '
-                      'to download it? [Y/n] ', end='')
+                                          'to download it? [Y/n] ', end='')
                 choice = input().lower()
 
                 if choice in ['yes', 'y', '', 'omg this is so nice of you!!']:
@@ -694,10 +693,10 @@ class Trainset:
 
         anti_testset = []
         for u in self.all_users():
-            user_items = [j for (j, _) in self.ur[u]]
-            anti_testset.extend([(self.to_raw_uid(u), self.to_raw_iid(i),fill)
-             for i in filter(lambda i: i not in user_items, self.all_items())
-            ])
+            user_items = set([j for (j, _) in self.ur[u]])
+            anti_testset += [(self.to_raw_uid(u), self.to_raw_iid(i), fill)
+                             for i in self.all_items() if i not in user_items
+                             ]
         return anti_testset
 
     def all_users(self):
