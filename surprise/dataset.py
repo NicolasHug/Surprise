@@ -28,23 +28,22 @@ Summary:
     Trainset
 """
 
-
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
+
+import itertools
+import os
+import random
+import sys
+import zipfile
 from collections import defaultdict
 from collections import namedtuple
-import sys
-import os
-import zipfile
-import itertools
-import random
 
 import numpy as np
-from six.moves import input
-from six.moves.urllib.request import urlretrieve
-from six.moves import range
 from six import iteritems
-
+from six.moves import input
+from six.moves import range
+from six.moves.urllib.request import urlretrieve
 
 # directory where builtin datasets are stored. For now it's in the home
 # directory under the .surprise_data. May be ask user to define it?
@@ -128,7 +127,7 @@ class Dataset:
             answered = False
             while not answered:
                 print('Dataset ' + name + ' could not be found. Do you want '
-                      'to download it? [Y/n] ', end='')
+                                          'to download it? [Y/n] ', end='')
                 choice = input().lower()
 
                 if choice in ['yes', 'y', '', 'omg this is so nice of you!!']:
