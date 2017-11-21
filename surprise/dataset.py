@@ -103,7 +103,6 @@ class Dataset:
         <DatasetAutoFolds.split>` method. See an example in the :ref:`User
         Guide <load_builtin_example>`.
 
-
         Args:
             name(:obj:`string`): The name of the built-in dataset to load.
                 Accepted values are 'ml-100k', 'ml-1m', and 'jester'.
@@ -318,8 +317,7 @@ class DatasetAutoFolds(Dataset):
     def __init__(self, ratings_file=None, reader=None, df=None):
 
         Dataset.__init__(self, reader)
-        self.n_folds = 5
-        self.shuffle = True
+        self.has_been_split = False  # flag indicating if split() was called.
 
         if ratings_file is not None:
             self.ratings_file = ratings_file
@@ -347,15 +345,11 @@ class DatasetAutoFolds(Dataset):
 
     def raw_folds(self):
 
-        if self.shuffle:
-            random.shuffle(self.raw_ratings)
-            self.shuffle = False  # set to false for future calls to raw_folds
+        if not self.has_been_split:
+            self.split()
 
         def k_folds(seq, n_folds):
             """Inspired from scikit learn KFold method."""
-
-            if n_folds > len(seq) or n_folds < 2:
-                raise ValueError('Incorrect value for n_folds.')
 
             start, stop = 0, 0
             for fold_i in range(n_folds):
@@ -386,8 +380,14 @@ class DatasetAutoFolds(Dataset):
                 experiment is run. Default is ``True``.
         """
 
+        if n_folds > len(self.raw_ratings) or n_folds < 2:
+            raise ValueError('Incorrect value for n_folds.')
+
+        if shuffle:
+            random.shuffle(self.raw_ratings)
+
         self.n_folds = n_folds
-        self.shuffle = shuffle
+        self.has_been_split = True
 
 
 class Reader():

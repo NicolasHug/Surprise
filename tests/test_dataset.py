@@ -5,6 +5,7 @@ Module for testing the Dataset class.
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 import os
+import random
 
 import pytest
 import pandas as pd
@@ -14,6 +15,7 @@ from surprise import Dataset
 from surprise import Reader
 
 
+random.seed(1)
 reader = Reader(line_format='user item rating', sep=' ', skip_lines=3,
                 rating_scale=(1, 5))
 
@@ -41,6 +43,22 @@ def test_build_full_trainset():
     assert trainset.n_items == 2
 
 
+def test_no_call_to_split():
+    """Ensure, as mentioned in the split() docstring, that even if split is not
+    called then the data is split with 5 folds after being shuffled."""
+
+    custom_dataset_path = (os.path.dirname(os.path.realpath(__file__)) +
+                           '/custom_dataset')
+    data = Dataset.load_from_file(file_path=custom_dataset_path, reader=reader)
+
+    assert len(list(data.folds())) == 5
+
+    # make sure data has been shuffled. If not shuffled, the users in the
+    # testsets would be 0, 1, 2... 4 (in that order).
+    users = [int(testset[0][0][-1]) for (_, testset) in data.folds()]
+    assert users != list(range(5))
+
+
 def test_split():
     """Test the split method."""
 
@@ -48,43 +66,41 @@ def test_split():
                            '/custom_dataset')
     data = Dataset.load_from_file(file_path=custom_dataset_path, reader=reader)
 
-    # Test n_folds parameter
-    data.split(5)
-    assert len(list(data.folds())) == 5
-
-    with pytest.raises(ValueError):
-        data.split(10)
-        for fold in data.folds():
-            pass
-
-    with pytest.raises(ValueError):
-        data.split(1)
-        for fold in data.folds():
-            pass
+    # Test the shuffle parameter
+    # Make sure data has not been shuffled. If not shuffled, the users in the
+    # testsets are be 0, 1, 2... 4 (in that order).
+    data.split(n_folds=5, shuffle=False)
+    users = [int(testset[0][0][-1]) for (_, testset) in data.folds()]
+    assert users == list(range(5))
 
     # Test the shuffle parameter
+    # Make sure that when called two times without shuffling, folds are the
+    # same.
     data.split(n_folds=3, shuffle=False)
     testsets_a = [testset for (_, testset) in data.folds()]
     data.split(n_folds=3, shuffle=False)
     testsets_b = [testset for (_, testset) in data.folds()]
     assert testsets_a == testsets_b
 
-    # We'll shuffle and check that folds are now different. There's a chance
-    # that they're still the same, just by lack of luck. If after 10000 tries
-    # the're still the same, there's a high probability that our code is
-    # faulty. If we're very (very very very) unlucky, it may fail though (or
-    # loop for eternity).
-    i = 0
-    while testsets_a == testsets_b:
-        data.split(n_folds=3, shuffle=True)
-        testsets_b = [testset for (_, testset) in data.folds()]
-        i += 1
-    assert i < 10000
+    # We'll now shuffle b and check that folds are different.
+    data.split(n_folds=3, shuffle=True)
+    testsets_b = [testset for (_, testset) in data.folds()]
+    assert testsets_a != testsets_b
 
     # Ensure that folds are the same if split is not called again
     testsets_a = [testset for (_, testset) in data.folds()]
     testsets_b = [testset for (_, testset) in data.folds()]
     assert testsets_a == testsets_b
+
+    # Test n_folds parameter
+    data.split(5)
+    assert len(list(data.folds())) == 5
+
+    with pytest.raises(ValueError):
+        data.split(10)  # Too big (greater than number of ratings)
+
+    with pytest.raises(ValueError):
+        data.split(1)  # Too low (must be >= 2)
 
 
 def test_trainset_testset():
