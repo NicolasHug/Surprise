@@ -381,7 +381,8 @@ class DatasetAutoFolds(Dataset):
         """
 
         if n_folds > len(self.raw_ratings) or n_folds < 2:
-            raise ValueError('Incorrect value for n_folds.')
+            raise ValueError('Incorrect value for n_folds. Must be >=2 and '
+                             'less than the number or entries')
 
         if shuffle:
             random.shuffle(self.raw_ratings)
@@ -476,8 +477,8 @@ class Reader():
                 timestamp = None
 
         except IndexError:
-            raise ValueError(('Impossible to parse line.' +
-                              ' Check the line_format  and sep parameters.'))
+            raise ValueError('Impossible to parse line. Check the line_format'
+                             ' and sep parameters.')
 
         return uid, iid, float(r) + self.offset, timestamp
 
@@ -570,8 +571,8 @@ class Trainset:
         try:
             return self._raw2inner_id_users[ruid]
         except KeyError:
-            raise ValueError(('User ' + str(ruid) +
-                              ' is not part of the trainset.'))
+            raise ValueError('User ' + str(ruid) +
+                             ' is not part of the trainset.')
 
     def to_raw_uid(self, iuid):
         """Convert a **user** inner id to a raw id.
@@ -595,8 +596,7 @@ class Trainset:
         try:
             return self._inner2raw_id_users[iuid]
         except KeyError:
-            raise ValueError((str(iuid) +
-                              ' is not a valid inner id.'))
+            raise ValueError(str(iuid) + ' is not a valid inner id.')
 
     def to_inner_iid(self, riid):
         """Convert an **item** raw id to an inner id.
@@ -616,8 +616,8 @@ class Trainset:
         try:
             return self._raw2inner_id_items[riid]
         except KeyError:
-            raise ValueError(('Item ' + str(riid) +
-                              ' is not part of the trainset.'))
+            raise ValueError('Item ' + str(riid) +
+                             ' is not part of the trainset.')
 
     def to_raw_iid(self, iiid):
         """Convert an **item** inner id to a raw id.
@@ -641,8 +641,7 @@ class Trainset:
         try:
             return self._inner2raw_id_items[iiid]
         except KeyError:
-            raise ValueError((str(iiid) +
-                              ' is not a valid inner id.'))
+            raise ValueError(str(iiid) + ' is not a valid inner id.')
 
     def all_ratings(self):
         """Generator function to iterate over all ratings.
