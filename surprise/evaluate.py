@@ -300,8 +300,8 @@ def print_perf(performances):
     s += '\n'.join(row_format.format(
         key.upper(),
         *['{:1.4f}'.format(v) for v in vals] +
-         ['{:1.4f}'.format(np.mean(vals))])
-                   for (key, vals) in iteritems(performances))
+        ['{:1.4f}'.format(np.mean(vals))])
+        for (key, vals) in iteritems(performances))
 
     print(s)
 

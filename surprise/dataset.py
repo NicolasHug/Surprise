@@ -416,7 +416,7 @@ class Reader():
             rating.  Default is ``(1, 5)``.
         skip_lines(:obj:`int`, optional): Number of lines to skip at the
             beginning of the file. Default is ``0``.
-        implicit(:obj:`bool`, optional): Whether to transform the explicit 
+        implicit(:obj:`bool`, optional): Whether to transform the explicit
             feedback to implicit feedback with threshold parameter.
             Default is ``False``.
         threshold(:obj:`float`, optional): The threshold for transforming
@@ -740,6 +740,7 @@ class Trainset:
 
         It's only computed once."""
         if self._global_mean is None:
-            self._global_mean = np.mean([r for (_, _, r) in self.all_ratings()])
+            self._global_mean = np.mean([r for (_, _, r)
+                                         in self.all_ratings()])
 
         return self._global_mean

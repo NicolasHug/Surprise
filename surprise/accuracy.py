@@ -220,9 +220,6 @@ def hr(predictions, verbose=True, **kwargs):
     if verbose:
         print('HR:  {0:1.4f}'.format(hr_))
 
-    print('testset:  ' + str(len(predictions)) + '   not enough sample: ' + str(
-        record))
-
     return hr_
 
 
@@ -304,8 +301,5 @@ def arhr(predictions, verbose=True, **kwargs):
 
     if verbose:
         print('ARHR:  {0:1.4f}'.format(arhr_))
-
-    print('testset:  ' + str(len(predictions)) + '   not enough sample: ' + str(
-        record))
 
     return arhr_
