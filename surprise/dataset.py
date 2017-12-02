@@ -417,19 +417,21 @@ class Reader():
         skip_lines(:obj:`int`, optional): Number of lines to skip at the
             beginning of the file. Default is ``0``.
         implicit(:obj:`bool`, optional): Whether to transform the explicit 
-            feedback to implicit feedback with threshold parameter. Default is
-            ``False``
-        threshold(:obj:`float`, optional): The threshold for transforming explicit
-            feedback to implicit feedback. Default is ``None``
+            feedback to implicit feedback with threshold parameter.
+            Default is ``False``.
+        threshold(:obj:`float`, optional): The threshold for transforming
+            explicit feedback to implicit feedback. Default is ``None``.
 
     """
 
     def __init__(self, name=None, line_format='user item rating', sep=None,
-                 rating_scale=(1, 5), skip_lines=0, implicit=False, threshold=None):
+                 rating_scale=(1, 5), skip_lines=0, implicit=False,
+                 threshold=None):
 
         if implicit and threshold is None:
             raise ValueError(
-                'Must specify the threshold for transforming explicit data to implicit data, use threshold=0 for implicit data')
+                'Must specify the threshold for transforming explicit data '
+                'to implicit data, use threshold=0 for implicit data')
 
         if name:
             try:
@@ -738,7 +740,6 @@ class Trainset:
 
         It's only computed once."""
         if self._global_mean is None:
-            self._global_mean = np.mean([r for (_, _, r) in
-                                         self.all_ratings()])
+            self._global_mean = np.mean([r for (_, _, r) in self.all_ratings()])
 
         return self._global_mean

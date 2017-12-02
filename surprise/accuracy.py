@@ -147,7 +147,8 @@ def hr(predictions, verbose=True, **kwargs):
     """Compute hit rate for implicit feedback
 
    #users is the total number of users, and #hits is the number of users
-   whose item in the testing set is recommended (i.e., hit) in the size-N recommendation list.
+   whose item in the testing set is recommended (i.e., hit) in the size-N
+   recommendation list.
 
     .. math::
         \\text{HR} = \\frac{#hits}{|#users|} \
@@ -156,10 +157,11 @@ def hr(predictions, verbose=True, **kwargs):
     Item-based top-n recommendation algorithms,
     ACM Transactions on Information Systems, vol. 22, pp.143–177, January 2004.
 
-    Attention: in that paper, the author puts one non-zero item into test set randomly,
-    and uses the remaining entries for training. While evaluating, the author checks whether
-    the selected item is in the top-N list. For convenience here, I make a new test set
-    consisted of one non-zero item and other zero items which are from the old test set.
+    Attention: in that paper, the author puts one non-zero item into test set
+    randomly, and uses the remaining entries for training. While evaluating,
+    the author checks whether the selected item is in the top-N list.
+    For convenience here, I make a new test set consisted of one non-zero item
+    and other zero items which are from the old test set.
 
     Args:
         predictions (:obj:`list` of :obj:`Prediction\
@@ -218,7 +220,8 @@ def hr(predictions, verbose=True, **kwargs):
     if verbose:
         print('HR:  {0:1.4f}'.format(hr_))
 
-    print('testset:  ' + str(len(predictions)) + '   not enough sample: ' + str(record))
+    print('testset:  ' + str(len(predictions)) + '   not enough sample: ' + str(
+        record))
 
     return hr_
 
@@ -226,12 +229,14 @@ def hr(predictions, verbose=True, **kwargs):
 def arhr(predictions, verbose=True, **kwargs):
     """Compute Average Reciprocal Hit-Rank for implicit feedback
 
-    if an item of a user is hit, p is the position of the item in the ranked recommendation list.
-    ARHR is a weighted version of HR and it measures how strongly an item is recommended,
-    in which the weight is the reciprocal of the hit position in the recommendation list
+    if an item of a user is hit, p is the position of the item in the ranked
+    recommendation list. ARHR is a weighted version of HR and it measures
+    how strongly an item is recommended, in which the weight is the reciprocal
+    of the hit position in the recommendation list
 
     .. math::
-        \\text{ARHR} = \\frac{1}{|\\hat{#users}|} \\sum^{#hits}_{i=1}\\frac{1}{p_i}\
+        \\text{ARHR} = \\frac{1}{|\\hat{#users}|}
+        \\sum^{#hits}_{i=1}\\frac{1}{p_i}\
 
     M. Deshpande and G. Karypis,
     Item-based top-n recommendation algorithms,
@@ -300,6 +305,7 @@ def arhr(predictions, verbose=True, **kwargs):
     if verbose:
         print('ARHR:  {0:1.4f}'.format(arhr_))
 
-    print('testset:  ' + str(len(predictions)) + '   not enough sample: ' + str(record))
+    print('testset:  ' + str(len(predictions)) + '   not enough sample: ' + str(
+        record))
 
     return arhr_

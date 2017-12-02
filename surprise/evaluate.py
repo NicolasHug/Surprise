@@ -73,7 +73,8 @@ def evaluate(algo, data, measures=['rmse', 'mae'], topN=0, with_dump=False,
         # compute needed performance statistics
         for measure in measures:
             f = getattr(accuracy, measure.lower())
-            performances[measure].append(f(predictions, verbose=verbose, topN=topN))
+            performances[measure].append(
+                f(predictions, verbose=verbose, topN=topN))
 
         if with_dump:
 
