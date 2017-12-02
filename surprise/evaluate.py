@@ -19,7 +19,7 @@ from . import accuracy
 from .dump import dump
 
 
-def evaluate(algo, data, measures=['rmse', 'mae'], with_dump=False,
+def evaluate(algo, data, measures=['rmse', 'mae'], topN=0, with_dump=False,
              dump_dir=None, verbose=1):
     """Evaluate the performance of the algorithm on given data.
 
@@ -35,6 +35,8 @@ def evaluate(algo, data, measures=['rmse', 'mae'], with_dump=False,
         measures(list of string): The performance measures to compute. Allowed
             names are function names as defined in the :mod:`accuracy
             <surprise.accuracy>` module. Default is ``['rmse', 'mae']``.
+        topN(:obj:`int`, optional): The number of items in top-N list. Default
+            is ``0``
         with_dump(bool): If True, the predictions and the algorithm will be
             dumped for later further analysis at each fold (see :ref:`FAQ
             <serialize_an_algorithm>`). The file names will be set as:
@@ -71,7 +73,7 @@ def evaluate(algo, data, measures=['rmse', 'mae'], with_dump=False,
         # compute needed performance statistics
         for measure in measures:
             f = getattr(accuracy, measure.lower())
-            performances[measure].append(f(predictions, verbose=verbose))
+            performances[measure].append(f(predictions, verbose=verbose, topN=topN))
 
         if with_dump:
 

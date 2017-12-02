@@ -403,6 +403,8 @@ class Reader():
     arbitrarily defined (see below).  brackets indicate that the timestamp
     field is optional.
 
+    And the implicit feedback transformer is implemented.
+
 
     Args:
         name(:obj:`string`, optional): If specified, a Reader for one of the
@@ -416,11 +418,19 @@ class Reader():
             rating.  Default is ``(1, 5)``.
         skip_lines(:obj:`int`, optional): Number of lines to skip at the
             beginning of the file. Default is ``0``.
+        implicit(:obj:`bool`, optional): Whether to transform the explicit 
+            feedback to implicit feedback with threshold parameter. Default is
+            ``False``
+        threshold(:obj:`float`, optional): The threshold for transforming explicit
+            feedback to implicit feedback. Default is ``None``
 
     """
 
     def __init__(self, name=None, line_format='user item rating', sep=None,
-                 rating_scale=(1, 5), skip_lines=0):
+                 rating_scale=(1, 5), skip_lines=0, implicit=False, threshold=None):
+        
+        if implicit and threshold is None:
+            raise ValueError('Must specify the threshold for transforming explicit data to implicit data, use threshold=0 for implicit data')
 
         if name:
             try:
@@ -433,6 +443,8 @@ class Reader():
             self.sep = sep
             self.skip_lines = skip_lines
             self.rating_scale = rating_scale
+            self.implicit = implicit
+            self.threshold = threshold
 
             lower_bound, higher_bound = rating_scale
             self.offset = -lower_bound + 1 if lower_bound <= 0 else 0
@@ -475,6 +487,12 @@ class Reader():
                 uid, iid, r = (line[i].strip()
                                for i in self.indexes)
                 timestamp = None
+            
+            if self.implicit:
+                if float(r) > self.threshold:
+                    r = 1
+                else:
+                    r = 0
 
         except IndexError:
             raise ValueError('Impossible to parse line. Check the line_format'
