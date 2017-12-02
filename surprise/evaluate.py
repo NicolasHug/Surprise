@@ -56,8 +56,8 @@ def evaluate(algo, data, measures=['rmse', 'mae'], topN=0, with_dump=False,
 
     if verbose:
         print('Evaluating {0} of algorithm {1}.'.format(
-              ', '.join((m.upper() for m in measures)),
-              algo.__class__.__name__))
+            ', '.join((m.upper() for m in measures)),
+            algo.__class__.__name__))
         print()
 
     for fold_i, (trainset, testset) in enumerate(data.folds()):
@@ -95,7 +95,7 @@ def evaluate(algo, data, measures=['rmse', 'mae'], topN=0, with_dump=False,
         print('-' * 12)
         for measure in measures:
             print('Mean {0:4s}: {1:1.4f}'.format(
-                  measure.upper(), np.mean(performances[measure])))
+                measure.upper(), np.mean(performances[measure])))
         print('-' * 12)
         print('-' * 12)
 
@@ -279,6 +279,7 @@ class CaseInsensitiveDefaultDict(defaultdict):
         Used for the returned dict, so that users can use perf['RMSE'] or
         perf['rmse'] indifferently.
     """
+
     def __setitem__(self, key, value):
         super(CaseInsensitiveDefaultDict, self).__setitem__(key.lower(), value)
 
@@ -287,7 +288,6 @@ class CaseInsensitiveDefaultDict(defaultdict):
 
 
 def print_perf(performances):
-
     # retrieve number of folds. Kind of ugly...
     n_folds = [len(values) for values in itervalues(performances)][0]
 
@@ -299,8 +299,8 @@ def print_perf(performances):
     s += '\n'.join(row_format.format(
         key.upper(),
         *['{:1.4f}'.format(v) for v in vals] +
-        ['{:1.4f}'.format(np.mean(vals))])
-        for (key, vals) in iteritems(performances))
+         ['{:1.4f}'.format(np.mean(vals))])
+                   for (key, vals) in iteritems(performances))
 
     print(s)
 

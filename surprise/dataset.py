@@ -28,7 +28,6 @@ Summary:
     Trainset
 """
 
-
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 from collections import defaultdict
@@ -44,7 +43,6 @@ from six.moves import input
 from six.moves.urllib.request import urlretrieve
 from six.moves import range
 from six import iteritems
-
 
 # directory where builtin datasets are stored. For now it's in the home
 # directory under the .surprise_data. May be ask user to define it?
@@ -127,7 +125,7 @@ class Dataset:
             answered = False
             while not answered:
                 print('Dataset ' + name + ' could not be found. Do you want '
-                      'to download it? [Y/n] ', end='')
+                                          'to download it? [Y/n] ', end='')
                 choice = input().lower()
 
                 if choice in ['yes', 'y', '', 'omg this is so nice of you!!']:
@@ -428,9 +426,10 @@ class Reader():
 
     def __init__(self, name=None, line_format='user item rating', sep=None,
                  rating_scale=(1, 5), skip_lines=0, implicit=False, threshold=None):
-        
+
         if implicit and threshold is None:
-            raise ValueError('Must specify the threshold for transforming explicit data to implicit data, use threshold=0 for implicit data')
+            raise ValueError(
+                'Must specify the threshold for transforming explicit data to implicit data, use threshold=0 for implicit data')
 
         if name:
             try:
@@ -487,7 +486,7 @@ class Reader():
                 uid, iid, r = (line[i].strip()
                                for i in self.indexes)
                 timestamp = None
-            
+
             if self.implicit:
                 if float(r) > self.threshold:
                     r = 1

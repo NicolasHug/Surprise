@@ -44,7 +44,7 @@ def rmse(predictions, verbose=True, **kwargs):
     if not predictions:
         raise ValueError('Prediction list is empty.')
 
-    mse = np.mean([float((true_r - est)**2)
+    mse = np.mean([float((true_r - est) ** 2)
                    for (_, _, true_r, est, _) in predictions])
     rmse_ = np.sqrt(mse)
 
