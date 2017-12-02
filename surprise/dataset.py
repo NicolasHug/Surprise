@@ -494,12 +494,14 @@ class Reader():
                     r = 1
                 else:
                     r = 0
+            else:
+                r = float(r) + self.offset
 
         except IndexError:
             raise ValueError('Impossible to parse line. Check the line_format'
                              ' and sep parameters.')
 
-        return uid, iid, float(r) + self.offset, timestamp
+        return uid, iid, r, timestamp
 
 
 class Trainset:
