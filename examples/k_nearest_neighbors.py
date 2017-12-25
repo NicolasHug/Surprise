@@ -7,11 +7,11 @@ algo.get_neighbors().
 
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
-import os
 import io  # needed because of weird encoding of u.item file
 
 from surprise import KNNBaseline
 from surprise import Dataset
+from surprise import get_dataset_dir
 
 
 def read_item_names():
@@ -19,8 +19,7 @@ def read_item_names():
     mappings to convert raw ids into movie names and movie names into raw ids.
     """
 
-    file_name = (os.path.expanduser('~') +
-                 '/.surprise_data/ml-100k/ml-100k/u.item')
+    file_name = get_dataset_dir() + '/ml-100k/ml-100k/u.item'
     rid_to_name = {}
     name_to_rid = {}
     with io.open(file_name, 'r', encoding='ISO-8859-1') as f:

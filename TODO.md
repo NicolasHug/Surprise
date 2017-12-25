@@ -1,7 +1,6 @@
 TODO
 ====
 
-* Allow to change data folder from env variable like scikit learn
 * Allow to discount similarities (see aggarwal)
 * Allow incremental updates for some algorithms
 * Profile code (mostly cython) to see what could be optimized
@@ -15,6 +14,7 @@ Maybe, Maybe not
 Done:
 -----
 
+* Allow to change data folder from env variable
 * Complete FAQ
 * Change the dumping machinery to be more consistent 
 * Allow to test on the trainset

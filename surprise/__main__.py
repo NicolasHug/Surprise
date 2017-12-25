@@ -6,6 +6,7 @@ import random as rd
 import sys
 import shutil
 import argparse
+import os
 
 import numpy as np
 
@@ -127,7 +128,7 @@ def main():
 
     parser.add_argument('--with-dump', dest='with_dump', action='store_true',
                         help='Dump the algorithm ' +
-                        'results in a file (one file per fold)' +
+                        'results in a file (one file per fold). ' +
                         'Default is False.'
                         )
 
@@ -136,11 +137,11 @@ def main():
                         default=None,
                         help='Where to dump the files. Ignored if ' +
                         'with-dump is not set. Default is ' +
-                        '~/.surprise_data/dumps.'
+                        os.path.join(dataset.get_dataset_dir(), 'dumps/')
                         )
 
     parser.add_argument('--clean', dest='clean', action='store_true',
-                        help='Remove the ' + dataset.DATASETS_DIR +
+                        help='Remove the ' + dataset.get_dataset_dir() +
                         ' directory and exit.'
                         )
 
@@ -150,8 +151,9 @@ def main():
     args = parser.parse_args()
 
     if args.clean:
-        shutil.rmtree(dataset.DATASETS_DIR)
-        print('Removed', dataset.DATASETS_DIR)
+        folder = dataset.get_dataset_dir()
+        shutil.rmtree(folder)
+        print('Removed', folder)
         exit()
 
     # setup RNG

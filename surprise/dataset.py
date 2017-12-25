@@ -35,6 +35,7 @@ from collections import defaultdict
 from collections import namedtuple
 import sys
 import os
+from os.path import join
 import zipfile
 import itertools
 import random
@@ -46,9 +47,19 @@ from six.moves import range
 from six import iteritems
 
 
-# directory where builtin datasets are stored. For now it's in the home
-# directory under the .surprise_data. May be ask user to define it?
-DATASETS_DIR = os.path.expanduser('~') + '/.surprise_data/'
+def get_dataset_dir():
+    '''Return folder where downloaded datasets and other data are stored.
+    Default folder is ~/.surprise_data/, but it can also be set by the
+    environment variable ``SURPRISE_DATA_FOLDER``.
+    '''
+
+    folder = os.environ.get('SURPRISE_DATA_FOLDER', os.path.expanduser('~') +
+                            '/.surprise_data/')
+    if not os.path.exists(folder):
+        os.makedirs(folder)
+
+    return folder
+
 
 # a builtin dataset has
 # - an url (where to download it)
@@ -60,7 +71,7 @@ BUILTIN_DATASETS = {
     'ml-100k':
         BuiltinDataset(
             url='http://files.grouplens.org/datasets/movielens/ml-100k.zip',
-            path=DATASETS_DIR + 'ml-100k/ml-100k/u.data',
+            path=join(get_dataset_dir(), 'ml-100k/ml-100k/u.data'),
             reader_params=dict(line_format='user item rating timestamp',
                                rating_scale=(1, 5),
                                sep='\t')
@@ -68,7 +79,7 @@ BUILTIN_DATASETS = {
     'ml-1m':
         BuiltinDataset(
             url='http://files.grouplens.org/datasets/movielens/ml-1m.zip',
-            path=DATASETS_DIR + 'ml-1m/ml-1m/ratings.dat',
+            path=join(get_dataset_dir(), 'ml-1m/ml-1m/ratings.dat'),
             reader_params=dict(line_format='user item rating timestamp',
                                rating_scale=(1, 5),
                                sep='::')
@@ -76,7 +87,7 @@ BUILTIN_DATASETS = {
     'jester':
         BuiltinDataset(
             url='http://eigentaste.berkeley.edu/dataset/jester_dataset_2.zip',
-            path=DATASETS_DIR + 'jester/jester_ratings.dat',
+            path=join(get_dataset_dir(), 'jester/jester_ratings.dat'),
             reader_params=dict(line_format='user item rating',
                                rating_scale=(-10, 10))
         )
@@ -137,18 +148,16 @@ class Dataset:
                     print("Ok then, I'm out!")
                     sys.exit()
 
-            if not os.path.exists(DATASETS_DIR):
-                os.makedirs(DATASETS_DIR)
-
             print('Trying to download dataset from ' + dataset.url + '...')
-            urlretrieve(dataset.url, DATASETS_DIR + 'tmp.zip')
+            tmp_file_path = join(get_dataset_dir(), 'tmp.zip')
+            urlretrieve(dataset.url, tmp_file_path)
 
-            with zipfile.ZipFile(DATASETS_DIR + 'tmp.zip', 'r') as tmp_zip:
-                tmp_zip.extractall(DATASETS_DIR + name)
+            with zipfile.ZipFile(tmp_file_path, 'r') as tmp_zip:
+                tmp_zip.extractall(join(get_dataset_dir(), name))
 
-            os.remove(DATASETS_DIR + 'tmp.zip')
-            print('Done! Dataset', name, 'has been saved to', DATASETS_DIR +
-                  name)
+            os.remove(tmp_file_path)
+            print('Done! Dataset', name, 'has been saved to',
+                  join(get_dataset_dir(), name))
 
         reader = Reader(**dataset.reader_params)
 

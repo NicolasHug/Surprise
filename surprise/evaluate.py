@@ -15,6 +15,7 @@ from six import itervalues
 from joblib import Parallel
 from joblib import delayed
 
+from .dataset import get_dataset_dir
 from . import accuracy
 from .dump import dump
 
@@ -40,7 +41,9 @@ def evaluate(algo, data, measures=['rmse', 'mae'], with_dump=False,
             <serialize_an_algorithm>`). The file names will be set as:
             ``'<date>-<algorithm name>-<fold number>'``.  Default is ``False``.
         dump_dir(str): The directory where to dump to files. Default is
-            ``'~/.surprise_data/dumps/'``.
+            ``'~/.surprise_data/dumps/'``, or the folder specified by the
+            ``'SURPRISE_DATA_FOLDER'`` environment variable (see :ref:`FAQ
+            <data_folder>`).
         verbose(int): Level of verbosity. If 0, nothing is printed. If 1
             (default), accuracy measures for each folds are printed, with a
             final summary. If 2, every prediction is printed.
@@ -76,7 +79,7 @@ def evaluate(algo, data, measures=['rmse', 'mae'], with_dump=False,
         if with_dump:
 
             if dump_dir is None:
-                dump_dir = os.path.expanduser('~') + '/.surprise_data/dumps/'
+                dump_dir = os.path.join(get_dataset_dir(), 'dumps/')
 
             if not os.path.exists(dump_dir):
                 os.makedirs(dump_dir)

@@ -23,11 +23,11 @@ evaluate the performance of an algorithm:
 If `Surprise <https://nicolashug.github.io/Surprise/>`_ cannot find the
 `movielens-100k dataset <http://grouplens.org/datasets/movielens/>`_, it will
 offer to download it and will store it under the ``.surprise_data`` folder in
-your home directory.  The :meth:`split()
-<surprise.dataset.DatasetAutoFolds.split>` method automatically splits the
-dataset into 3 folds and the :func:`evaluate() <surprise.evaluate.evaluate>`
-function runs the cross-validation procedure and compute some :mod:`accuracy
-<surprise.accuracy>` measures.
+your home directory (you can also choose to save it :ref:`somewhere else
+<data_folder>`).  The :meth:`split() <surprise.dataset.DatasetAutoFolds.split>`
+method automatically splits the dataset into 3 folds and the :func:`evaluate()
+<surprise.evaluate.evaluate>` function runs the cross-validation procedure and
+compute some :mod:`accuracy <surprise.accuracy>` measures.
 
 
 .. _load_custom:

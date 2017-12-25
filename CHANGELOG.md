@@ -5,6 +5,8 @@ Enhancements
 ------------
 
 * GridSearch is now parallel, using joblib.
+* default data directory can now be custom with env variable
+  SURPRISE_DATA_FOLDER
 
 VERSION 1.0.4
 =============

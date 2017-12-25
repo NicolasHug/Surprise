@@ -19,6 +19,7 @@ from .prediction_algorithms import Prediction
 from .dataset import Dataset
 from .dataset import Reader
 from .dataset import Trainset
+from .dataset import get_dataset_dir
 from .evaluate import evaluate
 from .evaluate import print_perf
 from .evaluate import GridSearch
@@ -28,6 +29,6 @@ __all__ = ['AlgoBase', 'NormalPredictor', 'BaselineOnly', 'KNNBasic',
            'KNNWithMeans', 'KNNBaseline', 'SVD', 'SVDpp', 'NMF', 'SlopeOne',
            'CoClustering', 'PredictionImpossible', 'Prediction', 'Dataset',
            'Reader', 'Trainset', 'evaluate', 'print_perf', 'GridSearch',
-           'dump', 'KNNWithZScore']
+           'dump', 'KNNWithZScore', 'get_dataset_dir']
 
 __version__ = get_distribution('scikit-surprise').version
