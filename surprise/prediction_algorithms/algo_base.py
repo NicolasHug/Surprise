@@ -40,7 +40,7 @@ class AlgoBase:
         structures and set the self.trainset attribute.
 
         Args:
-            trainset(:obj:`Trainset <surprise.dataset.Trainset>`) : A training
+            trainset(:obj:`Trainset <surprise.Trainset>`) : A training
                 set, as returned by the :meth:`folds
                 <surprise.dataset.Dataset.folds>` method.
         """
@@ -134,7 +134,7 @@ class AlgoBase:
             testset: A test set, as returned by the :meth:`folds()
                 <surprise.dataset.Dataset.folds>` method or by the
                 :meth:`build_testset()
-                <surprise.dataset.Trainset.build_testset>` method.
+                <surprise.Trainset.build_testset>` method.
             verbose(bool): Whether to print details for each predictions.
                 Default is False.
 

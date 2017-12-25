@@ -1,5 +1,5 @@
-"""The :mod:`evaluate` module defines the :func:`evaluate` function and
-:class:`GridSearch` class """
+"""The :mod:`evaluate <surprise.evaluate>` module defines the :func:`evaluate`
+function and :class:`GridSearch` class """
 
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
@@ -15,7 +15,7 @@ from six import itervalues
 from joblib import Parallel
 from joblib import delayed
 
-from .dataset import get_dataset_dir
+from .builtin_datasets import get_dataset_dir
 from . import accuracy
 from .dump import dump
 

@@ -22,7 +22,7 @@ from surprise.prediction_algorithms import SlopeOne
 from surprise.prediction_algorithms import CoClustering
 import surprise.dataset as dataset
 from surprise.dataset import Dataset
-from surprise.dataset import Reader  # noqa
+from surprise.builtin_datasets import get_dataset_dir
 from surprise.evaluate import evaluate
 from surprise import __version__
 
@@ -137,11 +137,11 @@ def main():
                         default=None,
                         help='Where to dump the files. Ignored if ' +
                         'with-dump is not set. Default is ' +
-                        os.path.join(dataset.get_dataset_dir(), 'dumps/')
+                        os.path.join(get_dataset_dir(), 'dumps/')
                         )
 
     parser.add_argument('--clean', dest='clean', action='store_true',
-                        help='Remove the ' + dataset.get_dataset_dir() +
+                        help='Remove the ' + get_dataset_dir() +
                         ' directory and exit.'
                         )
 
@@ -151,7 +151,7 @@ def main():
     args = parser.parse_args()
 
     if args.clean:
-        folder = dataset.get_dataset_dir()
+        folder = get_dataset_dir()
         shutil.rmtree(folder)
         print('Removed', folder)
         exit()

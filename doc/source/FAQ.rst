@@ -130,11 +130,11 @@ On trainset creation, each raw id is mapped to a unique
 integer called inner id, which is a lot more suitable for `Surprise
 <https://nicolashug.github.io/Surprise/>`_ to manipulate. Conversions between
 raw and inner ids can be done using the :meth:`to_inner_uid()
-<surprise.dataset.Trainset.to_inner_uid>`, :meth:`to_inner_iid()
-<surprise.dataset.Trainset.to_inner_iid>`, :meth:`to_raw_uid()
-<surprise.dataset.Trainset.to_raw_uid>`, and :meth:`to_raw_iid()
-<surprise.dataset.Trainset.to_raw_iid>` methods of the :class:`trainset
-<surprise.dataset.Trainset>`.
+<surprise.Trainset.to_inner_uid>`, :meth:`to_inner_iid()
+<surprise.Trainset.to_inner_iid>`, :meth:`to_raw_uid()
+<surprise.Trainset.to_raw_uid>`, and :meth:`to_raw_iid()
+<surprise.Trainset.to_raw_iid>` methods of the :class:`trainset
+<surprise.Trainset>`.
 
 
 Can I use my own dataset with Surprise, and can it be a pandas dataframe
@@ -155,8 +155,8 @@ How to get accuracy measures on the training set
 ------------------------------------------------
 
 You can use the :meth:`build_testset()
-<surprise.dataset.Trainset.build_testset()>` method of the :class:`Trainset
-<surprise.dataset.Trainset>` object to build a testset that can be then used
+<surprise.Trainset.build_testset()>` method of the :class:`Trainset
+<surprise.Trainset>` object to build a testset that can be then used
 with the :meth:`test()
 <surprise.prediction_algorithms.algo_base.AlgoBase.test>` method:
 

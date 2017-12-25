@@ -44,5 +44,7 @@ to contribute and send pull requests (see `GitHub page
    similarities
    accuracy
    dataset
+   trainset
+   reader 
    evaluate
    dump

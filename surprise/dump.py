@@ -1,5 +1,5 @@
 """
-The :mod:`dump` module defines the :func:`dump` function.
+The :mod:`dump <surprise.dump>` module defines the :func:`dump` function.
 """
 
 import pickle

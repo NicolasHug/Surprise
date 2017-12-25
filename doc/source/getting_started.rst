@@ -47,7 +47,7 @@ dataset:
 - or if your dataset is already split into predefined folds, you can specify a
   list of files for training and testing.
 
-Either way, you will need to define a :class:`Reader <surprise.dataset.Reader>`
+Either way, you will need to define a :class:`Reader <surprise.reader.Reader>`
 object for `Surprise <https://nicolashug.github.io/Surprise/>`_ to be able to
 parse the file(s) or the dataframe. We'll see now how to handle both cases.
 
@@ -65,7 +65,7 @@ Load an entire dataset from a file or a dataframe
       :lines: 17-26
 
   For more details about readers and how to use them, see the :class:`Reader
-  class <surprise.dataset.Reader>` documentation.
+  class <surprise.reader.Reader>` documentation.
 
   .. note::
       As you already know from the previous section, the Movielens-100k dataset
@@ -76,7 +76,7 @@ Load an entire dataset from a file or a dataframe
 
 - To load a dataset from a pandas dataframe, you will need the
   :meth:`load_from_df() <surprise.dataset.Dataset.load_from_df>` method. You
-  will also need a :class:`Reader<surprise.dataset.Reader>` object, but only
+  will also need a :class:`Reader<surprise.reader.Reader>` object, but only
   the ``rating_scale`` parameter must be specified. The dataframe must have
   three columns, corresponding to the user (raw) ids, the item (raw) ids, and
   the ratings in this order. Each row thus corresponds to a given rating. This
@@ -241,7 +241,7 @@ performing cross-validation (i.e. there is no test set).
 The latter is pretty straightforward: all you need is to load a dataset, and
 the :meth:`build_full_trainset()
 <surprise.dataset.DatasetAutoFolds.build_full_trainset>` method to build the
-:class:`trainset <surprise.dataset.Trainset>` and train you algorithm:
+:class:`trainset <surprise.trainset.Trainset>` and train you algorithm:
 
 .. literalinclude:: ../../examples/query_for_predictions.py
     :caption: From file ``examples/query_for_predictions.py``

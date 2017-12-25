@@ -68,7 +68,7 @@ Once the base class :meth:`train()
 <surprise.prediction_algorithms.algo_base.AlgoBase.train>` method has returned,
 all the info you need about the current training set (rating values, etc...) is
 stored in the ``self.trainset`` attribute. This is a :class:`Trainset
-<surprise.dataset.Trainset>` object that has many attributes and methods of
+<surprise.Trainset>` object that has many attributes and methods of
 interest for prediction.
 
 To illustrate its usage, let's make an algorithm that predicts an average

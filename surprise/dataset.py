@@ -1,5 +1,6 @@
 """
-the :mod:`dataset` module defines some tools for managing datasets.
+The :mod:`dataset <surprise.dataset>` module defines the :class:`Dataset` class
+and other subclasses which are used for managing datasets.
 
 Users may use both *built-in* and user-defined datasets (see the
 :ref:`getting_started` page for examples). Right now, three built-in datasets
@@ -10,10 +11,7 @@ are available:
 * The `Jester <http://eigentaste.berkeley.edu/dataset/>`_ dataset 2.
 
 Built-in datasets can all be loaded (or downloaded if you haven't already)
-using the :meth:`Dataset.load_builtin` method. For each built-in dataset,
-Surprise also provide predefined :class:`readers <Reader>` which are useful if
-you want to use a custom dataset that has the same format as a built-in one.
-
+using the :meth:`Dataset.load_builtin` method.
 Summary:
 
 .. autosummary::
@@ -24,74 +22,24 @@ Summary:
     Dataset.load_from_folds
     Dataset.folds
     DatasetAutoFolds.split
-    Reader
-    Trainset
 """
 
 
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 from collections import defaultdict
-from collections import namedtuple
 import sys
 import os
-from os.path import join
-import zipfile
 import itertools
 import random
 
-import numpy as np
 from six.moves import input
-from six.moves.urllib.request import urlretrieve
 from six.moves import range
-from six import iteritems
 
-
-def get_dataset_dir():
-    '''Return folder where downloaded datasets and other data are stored.
-    Default folder is ~/.surprise_data/, but it can also be set by the
-    environment variable ``SURPRISE_DATA_FOLDER``.
-    '''
-
-    folder = os.environ.get('SURPRISE_DATA_FOLDER', os.path.expanduser('~') +
-                            '/.surprise_data/')
-    if not os.path.exists(folder):
-        os.makedirs(folder)
-
-    return folder
-
-
-# a builtin dataset has
-# - an url (where to download it)
-# - a path (where it is located on the filesystem)
-# - the parameters of the corresponding reader
-BuiltinDataset = namedtuple('BuiltinDataset', ['url', 'path', 'reader_params'])
-
-BUILTIN_DATASETS = {
-    'ml-100k':
-        BuiltinDataset(
-            url='http://files.grouplens.org/datasets/movielens/ml-100k.zip',
-            path=join(get_dataset_dir(), 'ml-100k/ml-100k/u.data'),
-            reader_params=dict(line_format='user item rating timestamp',
-                               rating_scale=(1, 5),
-                               sep='\t')
-        ),
-    'ml-1m':
-        BuiltinDataset(
-            url='http://files.grouplens.org/datasets/movielens/ml-1m.zip',
-            path=join(get_dataset_dir(), 'ml-1m/ml-1m/ratings.dat'),
-            reader_params=dict(line_format='user item rating timestamp',
-                               rating_scale=(1, 5),
-                               sep='::')
-        ),
-    'jester':
-        BuiltinDataset(
-            url='http://eigentaste.berkeley.edu/dataset/jester_dataset_2.zip',
-            path=join(get_dataset_dir(), 'jester/jester_ratings.dat'),
-            reader_params=dict(line_format='user item rating',
-                               rating_scale=(-10, 10))
-        )
-}
+from .reader import Reader
+from .builtin_datasets import download_builtin_dataset
+from .builtin_datasets import BUILTIN_DATASETS
+from .trainset import Trainset
 
 
 class Dataset:
@@ -148,16 +96,7 @@ class Dataset:
                     print("Ok then, I'm out!")
                     sys.exit()
 
-            print('Trying to download dataset from ' + dataset.url + '...')
-            tmp_file_path = join(get_dataset_dir(), 'tmp.zip')
-            urlretrieve(dataset.url, tmp_file_path)
-
-            with zipfile.ZipFile(tmp_file_path, 'r') as tmp_zip:
-                tmp_zip.extractall(join(get_dataset_dir(), name))
-
-            os.remove(tmp_file_path)
-            print('Done! Dataset', name, 'has been saved to',
-                  join(get_dataset_dir(), name))
+            download_builtin_dataset(name)
 
         reader = Reader(**dataset.reader_params)
 
@@ -175,7 +114,8 @@ class Dataset:
 
         Args:
             file_path(:obj:`string`): The path to the file containing ratings.
-            reader(:obj:`Reader`): A reader to read the file.
+            reader(:obj:`Reader <surprise.reader.Reader>`): A reader to read
+                the file.
         """
 
         return DatasetAutoFolds(ratings_file=file_path, reader=reader)
@@ -198,7 +138,8 @@ class Dataset:
             folds_files(:obj:`iterable` of :obj:`tuples`): The list of the
                 folds. A fold is a tuple of the form ``(path_to_train_file,
                 path_to_test_file)``.
-            reader(:obj:`Reader`): A reader to read the files.
+            reader(:obj:`Reader <surprise.reader.Reader>`): A reader to read
+                the files.
 
         """
 
@@ -216,8 +157,9 @@ class Dataset:
             df(`Dataframe`): The dataframe containing the ratings. It must have
                 three columns, corresponding to the user (raw) ids, the item
                 (raw) ids, and the ratings, in this order.
-            reader(:obj:`Reader`): A reader to read the file. Only the
-                ``rating_scale`` field needs to be specified.
+            reader(:obj:`Reader <surprise.reader.Reader>`): A reader to read
+                the file. Only the ``rating_scale`` field needs to be
+                specified.
         """
 
         return DatasetAutoFolds(reader=reader, df=df)
@@ -237,7 +179,8 @@ class Dataset:
         See :ref:`User Guide <iterate_over_folds>` for usage.
 
         Yields:
-            tuple: :class:`Trainset` and testset of current fold.
+            tuple: :class:`Trainset <surprise.Trainset>` and testset
+            of current fold.
         """
 
         for raw_trainset, raw_testset in self.raw_folds():
@@ -347,7 +290,7 @@ class DatasetAutoFolds(Dataset):
         <train_on_whole_trainset>`.
 
         Returns:
-            The :class:`Trainset`.
+            The :class:`Trainset <surprise.Trainset>`.
         """
 
         return self.construct_trainset(self.raw_ratings)
@@ -398,339 +341,3 @@ class DatasetAutoFolds(Dataset):
 
         self.n_folds = n_folds
         self.has_been_split = True
-
-
-class Reader():
-    """The Reader class is used to parse a file containing ratings.
-
-    Such a file is assumed to specify only one rating per line, and each line
-    needs to respect the following structure: ::
-
-        user ; item ; rating ; [timestamp]
-
-    where the order of the fields and the separator (here ';') may be
-    arbitrarily defined (see below).  brackets indicate that the timestamp
-    field is optional.
-
-
-    Args:
-        name(:obj:`string`, optional): If specified, a Reader for one of the
-            built-in datasets is returned and any other parameter is ignored.
-            Accepted values are 'ml-100k', 'ml-1m', and 'jester'. Default
-            is ``None``.
-        line_format(:obj:`string`): The fields names, in the order at which
-            they are encountered on a line. Default is ``'user item rating'``.
-        sep(char): the separator between fields. Example : ``';'``.
-        rating_scale(:obj:`tuple`, optional): The rating scale used for every
-            rating.  Default is ``(1, 5)``.
-        skip_lines(:obj:`int`, optional): Number of lines to skip at the
-            beginning of the file. Default is ``0``.
-
-    """
-
-    def __init__(self, name=None, line_format='user item rating', sep=None,
-                 rating_scale=(1, 5), skip_lines=0):
-
-        if name:
-            try:
-                self.__init__(**BUILTIN_DATASETS[name].reader_params)
-            except KeyError:
-                raise ValueError('unknown reader ' + name +
-                                 '. Accepted values are ' +
-                                 ', '.join(BUILTIN_DATASETS.keys()) + '.')
-        else:
-            self.sep = sep
-            self.skip_lines = skip_lines
-            self.rating_scale = rating_scale
-
-            lower_bound, higher_bound = rating_scale
-            self.offset = -lower_bound + 1 if lower_bound <= 0 else 0
-
-            splitted_format = line_format.split()
-
-            entities = ['user', 'item', 'rating']
-            if 'timestamp' in splitted_format:
-                self.with_timestamp = True
-                entities.append('timestamp')
-            else:
-                self.with_timestamp = False
-
-            # check that all fields are correct
-            if any(field not in entities for field in splitted_format):
-                raise ValueError('line_format parameter is incorrect.')
-
-            self.indexes = [splitted_format.index(entity) for entity in
-                            entities]
-
-    def parse_line(self, line):
-        '''Parse a line.
-
-        Ratings are translated so that they are all strictly positive.
-
-        Args:
-            line(str): The line to parse
-
-        Returns:
-            tuple: User id, item id, rating and timestamp. The timestamp is set
-            to ``None`` if it does no exist.
-            '''
-
-        line = line.split(self.sep)
-        try:
-            if self.with_timestamp:
-                uid, iid, r, timestamp = (line[i].strip()
-                                          for i in self.indexes)
-            else:
-                uid, iid, r = (line[i].strip()
-                               for i in self.indexes)
-                timestamp = None
-
-        except IndexError:
-            raise ValueError('Impossible to parse line. Check the line_format'
-                             ' and sep parameters.')
-
-        return uid, iid, float(r) + self.offset, timestamp
-
-
-class Trainset:
-    """A trainset contains all useful data that constitutes a training set.
-
-    It is used by the :meth:`train()
-    <surprise.prediction_algorithms.algo_base.AlgoBase.train>` method of every
-    prediction algorithm. You should not try to built such an object on your
-    own but rather use the :meth:`Dataset.folds` method or the
-    :meth:`DatasetAutoFolds.build_full_trainset` method.
-
-    Attributes:
-        ur(:obj:`defaultdict` of :obj:`list`): The users ratings. This is a
-            dictionary containing lists of tuples of the form ``(item_inner_id,
-            rating)``. The keys are user inner ids.
-        ir(:obj:`defaultdict` of :obj:`list`): The items ratings. This is a
-            dictionary containing lists of tuples of the form ``(user_inner_id,
-            rating)``. The keys are item inner ids.
-        n_users: Total number of users :math:`|U|`.
-        n_items: Total number of items :math:`|I|`.
-        n_ratings: Total number of ratings :math:`|R_{train}|`.
-        rating_scale(tuple): The minimum and maximal rating of the rating
-            scale.
-        global_mean: The mean of all ratings :math:`\\mu`.
-    """
-
-    def __init__(self, ur, ir, n_users, n_items, n_ratings, rating_scale,
-                 offset, raw2inner_id_users, raw2inner_id_items):
-
-        self.ur = ur
-        self.ir = ir
-        self.n_users = n_users
-        self.n_items = n_items
-        self.n_ratings = n_ratings
-        self.rating_scale = rating_scale
-        self.offset = offset
-        self._raw2inner_id_users = raw2inner_id_users
-        self._raw2inner_id_items = raw2inner_id_items
-        self._global_mean = None
-        # inner2raw dicts could be built right now (or even before) but they
-        # are not always useful so we wait until we need them.
-        self._inner2raw_id_users = None
-        self._inner2raw_id_items = None
-
-    def knows_user(self, uid):
-        """Indicate if the user is part of the trainset.
-
-        A user is part of the trainset if the user has at least one rating.
-
-        Args:
-            uid(int): The (inner) user id. See :ref:`this
-                note<raw_inner_note>`.
-        Returns:
-            ``True`` if user is part of the trainset, else ``False``.
-        """
-
-        return uid in self.ur
-
-    def knows_item(self, iid):
-        """Indicate if the item is part of the trainset.
-
-        An item is part of the trainset if the item was rated at least once.
-
-        Args:
-            iid(int): The (inner) item id. See :ref:`this
-                note<raw_inner_note>`.
-        Returns:
-            ``True`` if item is part of the trainset, else ``False``.
-        """
-
-        return iid in self.ir
-
-    def to_inner_uid(self, ruid):
-        """Convert a **user** raw id to an inner id.
-
-        See :ref:`this note<raw_inner_note>`.
-
-        Args:
-            ruid(str): The user raw id.
-
-        Returns:
-            int: The user inner id.
-
-        Raises:
-            ValueError: When user is not part of the trainset.
-        """
-
-        try:
-            return self._raw2inner_id_users[ruid]
-        except KeyError:
-            raise ValueError('User ' + str(ruid) +
-                             ' is not part of the trainset.')
-
-    def to_raw_uid(self, iuid):
-        """Convert a **user** inner id to a raw id.
-
-        See :ref:`this note<raw_inner_note>`.
-
-        Args:
-            iuid(int): The user inner id.
-
-        Returns:
-            str: The user raw id.
-
-        Raises:
-            ValueError: When ``iuid`` is not an inner id.
-        """
-
-        if self._inner2raw_id_users is None:
-            self._inner2raw_id_users = {inner: raw for (raw, inner) in
-                                        iteritems(self._raw2inner_id_users)}
-
-        try:
-            return self._inner2raw_id_users[iuid]
-        except KeyError:
-            raise ValueError(str(iuid) + ' is not a valid inner id.')
-
-    def to_inner_iid(self, riid):
-        """Convert an **item** raw id to an inner id.
-
-        See :ref:`this note<raw_inner_note>`.
-
-        Args:
-            riid(str): The item raw id.
-
-        Returns:
-            int: The item inner id.
-
-        Raises:
-            ValueError: When item is not part of the trainset.
-        """
-
-        try:
-            return self._raw2inner_id_items[riid]
-        except KeyError:
-            raise ValueError('Item ' + str(riid) +
-                             ' is not part of the trainset.')
-
-    def to_raw_iid(self, iiid):
-        """Convert an **item** inner id to a raw id.
-
-        See :ref:`this note<raw_inner_note>`.
-
-        Args:
-            iiid(int): The item inner id.
-
-        Returns:
-            str: The item raw id.
-
-        Raises:
-            ValueError: When ``iiid`` is not an inner id.
-        """
-
-        if self._inner2raw_id_items is None:
-            self._inner2raw_id_items = {inner: raw for (raw, inner) in
-                                        iteritems(self._raw2inner_id_items)}
-
-        try:
-            return self._inner2raw_id_items[iiid]
-        except KeyError:
-            raise ValueError(str(iiid) + ' is not a valid inner id.')
-
-    def all_ratings(self):
-        """Generator function to iterate over all ratings.
-
-        Yields:
-            A tuple ``(uid, iid, rating)`` where ids are inner ids (see
-            :ref:`this note <raw_inner_note>`).
-        """
-
-        for u, u_ratings in iteritems(self.ur):
-            for i, r in u_ratings:
-                yield u, i, r
-
-    def build_testset(self):
-        """Return a list of ratings that can be used as a testset in the
-        :meth:`test() <surprise.prediction_algorithms.algo_base.AlgoBase.test>`
-        method.
-
-        The ratings are all the ratings that are in the trainset, i.e. all the
-        ratings returned by the :meth:`all_ratings()
-        <surprise.dataset.Trainset.all_ratings>` generator. This is useful in
-        cases where you want to to test your algorithm on the trainset.
-        """
-
-        return [(self.to_raw_uid(u), self.to_raw_iid(i), r)
-                for (u, i, r) in self.all_ratings()]
-
-    def build_anti_testset(self, fill=None):
-        """Return a list of ratings that can be used as a testset in the
-        :meth:`test() <surprise.prediction_algorithms.algo_base.AlgoBase.test>`
-        method.
-
-        The ratings are all the ratings that are **not** in the trainset, i.e.
-        all the ratings :math:`r_{ui}` where the user :math:`u` is known, the
-        item :math:`i` is known, but the rating :math:`r_{ui}`  is not in the
-        trainset. As :math:`r_{ui}` is unknown, it is either replaced by the
-        :code:`fill` value or assumed to be equal to the mean of all ratings
-        :meth:`global_mean <surprise.dataset.Trainset.global_mean>`.
-
-        Args:
-            fill(float): The value to fill unknown ratings. If :code:`None` the
-                global mean of all ratings :meth:`global_mean
-                <surprise.dataset.Trainset.global_mean>` will be used.
-
-        Returns:
-            A list of tuples ``(uid, iid, fill)`` where ids are raw ids.
-        """
-        fill = self.global_mean if fill is None else float(fill)
-
-        anti_testset = []
-        for u in self.all_users():
-            user_items = set([j for (j, _) in self.ur[u]])
-            anti_testset += [(self.to_raw_uid(u), self.to_raw_iid(i), fill) for
-                             i in self.all_items() if
-                             i not in user_items]
-        return anti_testset
-
-    def all_users(self):
-        """Generator function to iterate over all users.
-
-        Yields:
-            Inner id of users.
-        """
-        return range(self.n_users)
-
-    def all_items(self):
-        """Generator function to iterate over all items.
-
-        Yields:
-            Inner id of items.
-        """
-        return range(self.n_items)
-
-    @property
-    def global_mean(self):
-        """Return the mean of all ratings.
-
-        It's only computed once."""
-        if self._global_mean is None:
-            self._global_mean = np.mean([r for (_, _, r) in
-                                         self.all_ratings()])
-
-        return self._global_mean

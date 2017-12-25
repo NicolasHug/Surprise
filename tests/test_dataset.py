@@ -13,7 +13,7 @@ import pandas as pd
 from surprise import BaselineOnly
 from surprise import Dataset
 from surprise import Reader
-from surprise.dataset import get_dataset_dir
+from surprise.builtin_datasets import get_dataset_dir
 
 
 random.seed(1)

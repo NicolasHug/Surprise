@@ -17,9 +17,9 @@ from .prediction_algorithms import PredictionImpossible
 from .prediction_algorithms import Prediction
 
 from .dataset import Dataset
-from .dataset import Reader
-from .dataset import Trainset
-from .dataset import get_dataset_dir
+from .reader import Reader
+from .trainset import Trainset
+from .builtin_datasets import get_dataset_dir
 from .evaluate import evaluate
 from .evaluate import print_perf
 from .evaluate import GridSearch
