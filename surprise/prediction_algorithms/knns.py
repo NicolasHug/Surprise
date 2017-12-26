@@ -31,9 +31,9 @@ class SymmetricAlgo(AlgoBase):
 
         AlgoBase.__init__(self, sim_options=sim_options, **kwargs)
 
-    def train(self, trainset):
+    def fit(self, trainset):
 
-        AlgoBase.train(self, trainset)
+        AlgoBase.fit(self, trainset)
 
         ub = self.sim_options['user_based']
         self.n_x = self.trainset.n_users if ub else self.trainset.n_items
@@ -87,9 +87,9 @@ class KNNBasic(SymmetricAlgo):
         self.k = k
         self.min_k = min_k
 
-    def train(self, trainset):
+    def fit(self, trainset):
 
-        SymmetricAlgo.train(self, trainset)
+        SymmetricAlgo.fit(self, trainset)
         self.sim = self.compute_similarities()
 
     def estimate(self, u, i):
@@ -161,9 +161,9 @@ class KNNWithMeans(SymmetricAlgo):
         self.k = k
         self.min_k = min_k
 
-    def train(self, trainset):
+    def fit(self, trainset):
 
-        SymmetricAlgo.train(self, trainset)
+        SymmetricAlgo.fit(self, trainset)
         self.sim = self.compute_similarities()
 
         self.means = np.zeros(self.n_x)
@@ -256,9 +256,9 @@ class KNNBaseline(SymmetricAlgo):
         self.k = k
         self.min_k = min_k
 
-    def train(self, trainset):
+    def fit(self, trainset):
 
-        SymmetricAlgo.train(self, trainset)
+        SymmetricAlgo.fit(self, trainset)
         self.bu, self.bi = self.compute_baselines()
         self.bx, self.by = self.switch(self.bu, self.bi)
         self.sim = self.compute_similarities()
@@ -343,9 +343,9 @@ class KNNWithZScore(SymmetricAlgo):
         self.k = k
         self.min_k = min_k
 
-    def train(self, trainset):
+    def fit(self, trainset):
 
-        SymmetricAlgo.train(self, trainset)
+        SymmetricAlgo.fit(self, trainset)
 
         self.means = np.zeros(self.n_x)
         self.sigmas = np.zeros(self.n_x)

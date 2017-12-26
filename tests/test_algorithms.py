@@ -41,7 +41,7 @@ def test_unknown_user_or_item():
                KNNWithZScore)
     for klass in klasses:
         algo = klass()
-        algo.train(trainset)
+        algo.fit(trainset)
         algo.predict('user0', 'unknown_item', None)
         algo.predict('unkown_user', 'item0', None)
         algo.predict('unkown_user', 'unknown_item', None)
@@ -65,7 +65,7 @@ def test_knns():
     for klass in klasses:
         algo = klass(k=k, min_k=min_k)
         for trainset, testset in data.folds():
-            algo.train(trainset)
+            algo.fit(trainset)
             predictions = algo.test(testset)
             for pred in predictions:
                 if not pred.details['was_impossible']:
@@ -84,7 +84,7 @@ def test_nearest_neighbors():
     trainset = data.build_full_trainset()
 
     algo_ub = KNNBasic(sim_options={'user_based': True})
-    algo_ub.train(trainset)
+    algo_ub.fit(trainset)
     algo_ib = KNNBasic(sim_options={'user_based': False})
-    algo_ib.train(trainset)
+    algo_ib.fit(trainset)
     assert algo_ub.get_neighbors(0, k=10) != algo_ib.get_neighbors(0, k=10)

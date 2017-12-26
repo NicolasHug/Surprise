@@ -28,9 +28,9 @@ class BaselineOnly(AlgoBase):
 
         AlgoBase.__init__(self, bsl_options=bsl_options)
 
-    def train(self, trainset):
+    def fit(self, trainset):
 
-        AlgoBase.train(self, trainset)
+        AlgoBase.fit(self, trainset)
         self.bu, self.bi = self.compute_baselines()
 
     def estimate(self, u, i):

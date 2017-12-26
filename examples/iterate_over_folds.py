@@ -20,7 +20,7 @@ algo = BaselineOnly()
 for trainset, testset in data.folds():
 
     # train and test algorithm.
-    algo.train(trainset)
+    algo.fit(trainset)
     predictions = algo.test(testset)
 
     # Compute and print Root Mean Squared Error

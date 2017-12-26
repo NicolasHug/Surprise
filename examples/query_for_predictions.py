@@ -19,7 +19,7 @@ trainset = data.build_full_trainset()
 
 # Build an algorithm, and train it.
 algo = KNNBasic()
-algo.train(trainset)
+algo.fit(trainset)
 
 
 ##########################################

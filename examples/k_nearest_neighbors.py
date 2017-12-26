@@ -36,7 +36,7 @@ data = Dataset.load_builtin('ml-100k')
 trainset = data.build_full_trainset()
 sim_options = {'name': 'pearson_baseline', 'user_based': False}
 algo = KNNBaseline(sim_options=sim_options)
-algo.train(trainset)
+algo.fit(trainset)
 
 # Read the mappings raw id <-> movie name
 rid_to_name, name_to_rid = read_item_names()

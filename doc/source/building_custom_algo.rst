@@ -41,13 +41,13 @@ field and can be used for :ref:`later analysis <further_analysis>`.
 
 
 
-The ``train`` method
+The ``fit`` method
 ~~~~~~~~~~~~~~~~~~~~
 
 Now, let's make a slightly cleverer algorithm that predicts the average of all
 the ratings of the trainset. As this is a constant value that does not depend
 on current user or item, we would rather compute it once and for all. This can
-be done by defining the ``train`` method:
+be done by defining the ``fit`` method:
 
 .. literalinclude:: ../../examples/building_custom_algorithms/most_basic_algorithm2.py
     :caption: From file ``examples/building_custom_algorithms/most_basic_algorithm2.py``
@@ -55,17 +55,17 @@ be done by defining the ``train`` method:
     :lines: 15-35
 
 
-The ``train`` method is called by the :func:`evaluate
+The ``fit`` method is called by the :func:`evaluate
 <surprise.evaluate.evaluate>` function at each fold of a cross-validation
 process, (but you can also :ref:`call it yourself <iterate_over_folds>`).
-Before doing anything, you should call the base class :meth:`train()
-<surprise.prediction_algorithms.algo_base.AlgoBase.train>` method.
+Before doing anything, you should call the base class :meth:`fit()
+<surprise.prediction_algorithms.algo_base.AlgoBase.fit>` method.
 
 The ``trainset`` attribute
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Once the base class :meth:`train()
-<surprise.prediction_algorithms.algo_base.AlgoBase.train>` method has returned,
+Once the base class :meth:`fit()
+<surprise.prediction_algorithms.algo_base.AlgoBase.fit>` method has returned,
 all the info you need about the current training set (rating values, etc...) is
 stored in the ``self.trainset`` attribute. This is a :class:`Trainset
 <surprise.Trainset>` object that has many attributes and methods of
@@ -81,7 +81,7 @@ rating for the item:
     :lines: 22-35
 
 Note that it would have been a better idea to compute all the user means in the
-``train`` method, thus avoiding the same computations multiple times.
+``fit`` method, thus avoiding the same computations multiple times.
 
 
 When the prediction is impossible
@@ -113,7 +113,7 @@ Methods :meth:`compute_baselines()
 <surprise.prediction_algorithms.algo_base.AlgoBase.compute_baselines>`   and
 :meth:`compute_similarities()
 <surprise.prediction_algorithms.algo_base.AlgoBase.compute_similarities>` can
-be called in the ``train`` method (or anywhere else).
+be called in the ``fit`` method (or anywhere else).
 
 .. literalinclude:: ../../examples/building_custom_algorithms/with_baselines_or_sim.py
     :caption: From file ``examples/building_custom_algorithms/.with_baselines_or_sim.py``

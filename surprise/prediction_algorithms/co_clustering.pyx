@@ -55,12 +55,12 @@ class CoClustering(AlgoBase):
         self.n_epochs = n_epochs
         self.verbose=verbose
 
-    def train(self, trainset):
+    def fit(self, trainset):
 
         # All this implementation was hugely inspired from MyMediaLite:
         # https://github.com/zenogantner/MyMediaLite/blob/master/src/MyMediaLite/RatingPrediction/CoClustering.cs
 
-        AlgoBase.train(self, trainset)
+        AlgoBase.fit(self, trainset)
 
         # User and item means
         cdef np.ndarray[np.double_t] user_mean

@@ -19,9 +19,9 @@ class MyOwnAlgorithm(AlgoBase):
         AlgoBase.__init__(self, sim_options=sim_options,
                           bsl_options=bsl_options)
 
-    def train(self, trainset):
+    def fit(self, trainset):
 
-        AlgoBase.train(self, trainset)
+        AlgoBase.fit(self, trainset)
 
         # Compute baselines and similarities
         self.bu, self.bi = self.compute_baselines()

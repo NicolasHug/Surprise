@@ -41,7 +41,7 @@ class SlopeOne(AlgoBase):
 
         AlgoBase.__init__(self)
 
-    def train(self, trainset):
+    def fit(self, trainset):
 
         n_items = trainset.n_items
 
@@ -52,7 +52,7 @@ class SlopeOne(AlgoBase):
 
         cdef int u, i, j, r_ui, r_uj
 
-        AlgoBase.train(self, trainset)
+        AlgoBase.fit(self, trainset)
 
         freq = np.zeros((trainset.n_items, trainset.n_items), np.int)
         dev = np.zeros((trainset.n_items, trainset.n_items), np.double)

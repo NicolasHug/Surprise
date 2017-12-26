@@ -40,7 +40,7 @@ algo = grid_search.best_estimator['RMSE']
 
 # retrain on the whole set A
 trainset = data.build_full_trainset()
-algo.train(trainset)
+algo.fit(trainset)
 
 # Compute biased accuracy on A
 predictions = algo.test(trainset.build_testset())

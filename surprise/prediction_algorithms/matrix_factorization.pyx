@@ -130,9 +130,9 @@ class SVD(AlgoBase):
 
         AlgoBase.__init__(self)
 
-    def train(self, trainset):
+    def fit(self, trainset):
 
-        AlgoBase.train(self, trainset)
+        AlgoBase.fit(self, trainset)
         self.sgd(trainset)
 
     def sgd(self, trainset):
@@ -348,9 +348,9 @@ class SVDpp(AlgoBase):
 
         AlgoBase.__init__(self)
 
-    def train(self, trainset):
+    def fit(self, trainset):
 
-        AlgoBase.train(self, trainset)
+        AlgoBase.fit(self, trainset)
         self.sgd(trainset)
 
     def sgd(self, trainset):
@@ -552,9 +552,9 @@ class NMF(AlgoBase):
 
         AlgoBase.__init__(self)
 
-    def train(self, trainset):
+    def fit(self, trainset):
 
-        AlgoBase.train(self, trainset)
+        AlgoBase.fit(self, trainset)
         self.sgd(trainset)
 
     def sgd(self, trainset):

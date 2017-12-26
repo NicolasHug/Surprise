@@ -8,8 +8,8 @@ from six import iteritems
 class Trainset:
     """A trainset contains all useful data that constitutes a training set.
 
-    It is used by the :meth:`train()
-    <surprise.prediction_algorithms.algo_base.AlgoBase.train>` method of every
+    It is used by the :meth:`fit()
+    <surprise.prediction_algorithms.algo_base.AlgoBase.fit>` method of every
     prediction algorithm. You should not try to built such an object on your
     own but rather use the :meth:`Dataset.folds()
     <surprise.dataset.Dataset.folds>` method or the

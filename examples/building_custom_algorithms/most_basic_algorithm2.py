@@ -20,10 +20,10 @@ class MyOwnAlgorithm(AlgoBase):
         # Always call base method before doing anything.
         AlgoBase.__init__(self)
 
-    def train(self, trainset):
+    def fit(self, trainset):
 
         # Here again: call base method before doing anything.
-        AlgoBase.train(self, trainset)
+        AlgoBase.fit(self, trainset)
 
         # Compute the average rating. We might as well use the
         # trainset.global_mean attribute ;)

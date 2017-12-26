@@ -17,7 +17,7 @@ data = Dataset.load_builtin('ml-100k')
 trainset = data.build_full_trainset()
 
 algo = SVD()
-algo.train(trainset)
+algo.fit(trainset)
 
 # Compute predictions of the 'original' algorithm.
 predictions = algo.test(trainset.build_testset())

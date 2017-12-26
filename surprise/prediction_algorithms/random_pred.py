@@ -29,9 +29,9 @@ class NormalPredictor(AlgoBase):
 
         AlgoBase.__init__(self)
 
-    def train(self, trainset):
+    def fit(self, trainset):
 
-        AlgoBase.train(self, trainset)
+        AlgoBase.fit(self, trainset)
 
         num = sum((r - self.trainset.global_mean)**2
                   for (_, _, r) in self.trainset.all_ratings())

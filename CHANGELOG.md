@@ -8,6 +8,12 @@ Enhancements
 * default data directory can now be custom with env variable
   SURPRISE_DATA_FOLDER
 
+API Changes
+-----------
+
+* The train() method is now deprecated and replaced by the fit() method (same
+  signature). Calls to train() should still work as before.
+
 VERSION 1.0.4
 =============
 

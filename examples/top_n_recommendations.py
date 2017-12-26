@@ -44,7 +44,7 @@ def get_top_n(predictions, n=10):
 data = Dataset.load_builtin('ml-100k')
 trainset = data.build_full_trainset()
 algo = SVD()
-algo.train(trainset)
+algo.fit(trainset)
 
 # Than predict ratings for all pairs (u, i) that are NOT in the training set.
 testset = trainset.build_anti_testset()

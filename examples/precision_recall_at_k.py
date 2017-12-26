@@ -49,7 +49,7 @@ data.split(n_folds=5)
 algo = SVD()
 
 for trainset, testset in data.folds():
-    algo.train(trainset)
+    algo.fit(trainset)
     predictions = algo.test(testset)
     precisions, recalls = precision_recall_at_k(predictions, k=5, threshold=4)
 

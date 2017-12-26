@@ -16,7 +16,7 @@ data = Dataset.load_builtin('ml-100k')
 algo = SVD()
 
 trainset = data.build_full_trainset()
-algo.train(trainset)
+algo.fit(trainset)
 
 testset = trainset.build_testset()
 predictions = algo.test(testset)
@@ -29,7 +29,7 @@ print('CV procedure:')
 data.split(3)
 for i, (trainset_cv, testset_cv) in enumerate(data.folds()):
     print('fold number', i + 1)
-    algo.train(trainset_cv)
+    algo.fit(trainset_cv)
 
     print('On testset,', end='  ')
     predictions = algo.test(testset_cv)

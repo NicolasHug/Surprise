@@ -68,7 +68,7 @@ def evaluate(algo, data, measures=['rmse', 'mae'], with_dump=False,
             print('Fold ' + str(fold_i + 1))
 
         # train and test algorithm. Keep all rating predictions in a list
-        algo.train(trainset)
+        algo.fit(trainset)
         predictions = algo.test(testset, verbose=(verbose == 2))
 
         # compute needed performance statistics

@@ -157,7 +157,7 @@ def test_trainset_testset():
 
     # Test the build_testset() method
     algo = BaselineOnly()
-    algo.train(trainset)
+    algo.fit(trainset)
     testset = trainset.build_testset()
     algo.test(testset)  # ensure an algorithm can manage the data
     assert ('user0', 'item0', 4) in testset
@@ -166,7 +166,7 @@ def test_trainset_testset():
 
     # Test the build_anti_testset() method
     algo = BaselineOnly()
-    algo.train(trainset)
+    algo.fit(trainset)
     testset = trainset.build_anti_testset()
     algo.test(testset)  # ensure an algorithm can manage the data
     assert ('user0', 'item0', trainset.global_mean) not in testset

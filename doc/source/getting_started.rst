@@ -220,7 +220,7 @@ We have so far used the :func:`evaluate() <surprise.evaluate.evaluate>`
 function that does all the hard work for us. If you want to have better control
 on your experiments, you can use the :meth:`folds()
 <surprise.dataset.Dataset.folds>` generator of your dataset, and then the
-:meth:`train() <surprise.prediction_algorithms.algo_base.AlgoBase.train>` and
+:meth:`fit() <surprise.prediction_algorithms.algo_base.AlgoBase.fit>` and
 :meth:`test() <surprise.prediction_algorithms.algo_base.AlgoBase.test>` methods
 of your algorithm on each of the folds:
 
@@ -241,7 +241,7 @@ performing cross-validation (i.e. there is no test set).
 The latter is pretty straightforward: all you need is to load a dataset, and
 the :meth:`build_full_trainset()
 <surprise.dataset.DatasetAutoFolds.build_full_trainset>` method to build the
-:class:`trainset <surprise.trainset.Trainset>` and train you algorithm:
+:class:`trainset <surprise.Trainset>` and train you algorithm:
 
 .. literalinclude:: ../../examples/query_for_predictions.py
     :caption: From file ``examples/query_for_predictions.py``

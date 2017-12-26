@@ -28,5 +28,5 @@ data = Dataset.load_from_df(df[['userID', 'itemID', 'rating']], reader)
 data.split(2)  # data can now be used normally
 
 for trainset, testset in data.folds():
-    algo.train(trainset)
+    algo.fit(trainset)
     algo.test(testset)

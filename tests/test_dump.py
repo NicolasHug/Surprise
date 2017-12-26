@@ -30,7 +30,7 @@ def test_dump():
         pass
 
     algo = BaselineOnly()
-    algo.train(trainset)
+    algo.fit(trainset)
     predictions = algo.test(testset)
 
     with tempfile.NamedTemporaryFile() as tmp_file:
