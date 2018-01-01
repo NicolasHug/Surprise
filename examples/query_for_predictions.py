@@ -10,8 +10,7 @@ from surprise import KNNBasic
 from surprise import Dataset
 from surprise import evaluate
 
-# Load the movielens-100k dataset and split it into 3 folds for
-# cross-validation.
+# Load the movielens-100k dataset
 data = Dataset.load_builtin('ml-100k')
 
 # Retrieve the trainset.

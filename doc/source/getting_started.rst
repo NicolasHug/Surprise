@@ -246,7 +246,7 @@ the :meth:`build_full_trainset()
 .. literalinclude:: ../../examples/query_for_predictions.py
     :caption: From file ``examples/query_for_predictions.py``
     :name: query_for_predictions.py
-    :lines: 15-22
+    :lines: 14-21
 
 Now, there's no way we could call the :meth:`test()
 <surprise.prediction_algorithms.algo_base.AlgoBase.test>` method, because we
@@ -261,7 +261,7 @@ is call the :meth:`predict()
 .. literalinclude:: ../../examples/query_for_predictions.py
     :caption: From file ``examples/query_for_predictions.py``
     :name: query_for_predictions2.py
-    :lines: 28-32
+    :lines: 27-31
 
 The :meth:`predict()
 <surprise.prediction_algorithms.algo_base.AlgoBase.predict>` uses **raw** ids
