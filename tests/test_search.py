@@ -11,7 +11,6 @@ import numpy as np
 from surprise import Dataset
 from surprise import Reader
 from surprise import SVD
-from surprise import KNNBasic
 from surprise.model_selection import KFold
 from surprise.model_selection import PredefinedKFold
 from surprise.model_selection import GridSearchCV
@@ -64,13 +63,14 @@ def test_same_splits():
     check their RMSE scores are the same once averaged over the splits, which
     should be enough). We use as much parallelism as possible."""
 
-    data_file = os.path.join(os.path.dirname(__file__), './u1_ml100k_train')
+    data_file = os.path.join(os.path.dirname(__file__), './u1_ml100k_test')
     data = Dataset.load_from_file(data_file, reader=Reader('ml-100k'))
     kf = KFold(3, shuffle=True, random_state=4)
 
     # all RMSE should be the same (as param combinations are the same)
-    param_grid = {'k': [1, 1], 'min_k': [3, 3]}
-    gs = GridSearchCV(KNNBasic, param_grid, measures=['RMSE'], cv=kf,
+    param_grid = {'n_epochs': [5], 'lr_all': [.2, .2],
+                  'reg_all': [.4, .4], 'n_factors': [5], 'random_state': [0]}
+    gs = GridSearchCV(SVD, param_grid, measures=['RMSE'], cv=kf,
                       n_jobs=-1)
     gs.fit(data)
 
@@ -88,11 +88,12 @@ def test_same_splits():
 def test_cv_results():
     '''Test the cv_results attribute'''
 
-    f = os.path.join(os.path.dirname(__file__), './u1_ml100k_train')
+    f = os.path.join(os.path.dirname(__file__), './u1_ml100k_test')
     data = Dataset.load_from_file(f, Reader('ml-100k'))
     kf = KFold(3, shuffle=True, random_state=4)
-    param_grid = {'k': [1, 10], 'sim_options': {'name': ['msd', 'cosine']}}
-    gs = GridSearchCV(KNNBasic, param_grid, measures=['RMSE', 'mae'], cv=kf)
+    param_grid = {'n_epochs': [5], 'lr_all': [.2, .2],
+                  'reg_all': [.4, .4], 'n_factors': [5], 'random_state': [0]}
+    gs = GridSearchCV(SVD, param_grid, measures=['RMSE', 'mae'], cv=kf)
     gs.fit(data)
 
     # test keys split*_test_rmse, mean and std dev.

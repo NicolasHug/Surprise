@@ -3,14 +3,6 @@ TODO
 
 
 * Update README example before new rewlease, as well as computation times
-* all algorithms using random initialization should allow to define
-  random_state. This is paramount for having correct gridsearch results (else
-  different initializations are used for the various parameter combinations).
-  When done, change tests of these algorithms so that they all use the same
-  seed. Right now tests about different RMSE values are not relevant. Also, use
-  SVD on test file when possible for grid search tests. Right now we use knn on
-  train (test does not have enough ratings for parameters to be impactful) and
-  it's slower.
 * Make all fit methods (for algo and GridSearch) return self. Update docs on
   building custom algorithms, and on getting started -> gridsearch (add
   example?).
@@ -24,6 +16,7 @@ TODO
 Done:
 -----
 
+* all algorithms using random initialization now have a random_state parameter.
 * CV iterators:
   - Write basic CV iterators
   - evaluate -> rewrite to use CV iterators. Rename it into cross_validate.

@@ -11,6 +11,8 @@ Enhancements
 * GridSearch is now parallel, using joblib.
 * default data directory can now be custom with env variable
   SURPRISE_DATA_FOLDER
+* Algorithms using a random initialization (e.g. SVD, NMF, CoClustering) now
+  have a random_state parameter for seeding the RNG.
 
 API Changes
 -----------
