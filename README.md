@@ -64,7 +64,7 @@ Getting started, example
 ------------------------
 
 Here is a simple example showing how you can (down)load a dataset, split it for
-3-folds cross-validation, and compute the MAE and RMSE of the
+3-fold cross-validation, and compute the MAE and RMSE of the
 [SVD](http://surprise.readthedocs.io/en/stable/matrix_factorization.html#surprise.prediction_algorithms.matrix_factorization.SVD)
 algorithm.
 

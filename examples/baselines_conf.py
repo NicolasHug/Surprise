@@ -9,7 +9,7 @@ from __future__ import (absolute_import, division, print_function,
 from surprise import BaselineOnly
 from surprise import KNNBasic
 from surprise import Dataset
-from surprise import evaluate
+from surprise.model_selection import cross_validate
 
 
 # Load the movielens-100k dataset.
@@ -24,7 +24,7 @@ bsl_options = {'method': 'als',
                }
 algo = BaselineOnly(bsl_options=bsl_options)
 
-evaluate(algo, data)
+cross_validate(algo, data, verbose=True)
 
 # Example using SGD
 print('Using SGD')
@@ -33,7 +33,7 @@ bsl_options = {'method': 'sgd',
                }
 algo = BaselineOnly(bsl_options=bsl_options)
 
-evaluate(algo, data)
+cross_validate(algo, data, verbose=True)
 
 # Some similarity measures may use baselines. It works just the same.
 print('Using ALS with pearson_baseline similarity')
@@ -43,4 +43,4 @@ bsl_options = {'method': 'als',
 sim_options = {'name': 'pearson_baseline'}
 algo = KNNBasic(bsl_options=bsl_options, sim_options=sim_options)
 
-evaluate(algo, data)
+cross_validate(algo, data, verbose=True)

@@ -23,7 +23,9 @@ from surprise.prediction_algorithms import CoClustering
 import surprise.dataset as dataset
 from surprise.dataset import Dataset
 from surprise.builtin_datasets import get_dataset_dir
-from surprise.evaluate import evaluate
+from surprise.model_selection import cross_validate
+from surprise.model_selection import KFold
+from surprise.model_selection import PredefinedKFold
 from surprise import __version__
 
 
@@ -172,7 +174,7 @@ def main():
             parser.error('-reader parameter is needed.')
         reader = eval(args.reader)
         data = Dataset.load_from_file(args.load_custom, reader=reader)
-        data.split(n_folds=args.n_folds)
+        cv = KFold(n_splits=args.n_folds, random_state=args.seed)
 
     elif args.folds_files is not None:  # load from files
         if args.reader is None:
@@ -182,12 +184,13 @@ def main():
         folds_files = [(folds_files[i], folds_files[i + 1])
                        for i in range(0, len(folds_files) - 1, 2)]
         data = Dataset.load_from_folds(folds_files=folds_files, reader=reader)
+        cv = PredefinedKFold()
 
     else:  # load builtin dataset and split
         data = Dataset.load_builtin(args.load_builtin)
-        data.split(n_folds=args.n_folds)
+        cv = KFold(n_splits=args.n_folds, random_state=args.seed)
 
-    evaluate(algo, data, with_dump=args.with_dump, dump_dir=args.dump_dir)
+    cross_validate(algo, data, cv=cv, verbose=True)
 
 
 if __name__ == "__main__":

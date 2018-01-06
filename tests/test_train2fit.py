@@ -6,11 +6,12 @@ import pytest
 from surprise import Dataset
 from surprise import Reader
 from surprise import AlgoBase
+from surprise.model_selection import KFold
 
 
 data_file = os.path.join(os.path.dirname(__file__), './u1_ml100k_train')
 data = Dataset.load_from_file(data_file, Reader('ml-100k'))
-data.split(2)
+kf = KFold(n_splits=2)
 
 
 def test_new_style_algo():
@@ -38,7 +39,7 @@ def test_new_style_algo():
             return self.est
 
     algo = CustomAlgoFit()
-    for i, (trainset, testset) in enumerate(data.folds()):
+    for i, (trainset, testset) in enumerate(kf.split(data)):
         algo.fit(trainset)
         predictions = algo.test(testset)
 
@@ -52,8 +53,9 @@ def test_new_style_algo():
         assert algo.cnt == i
 
     algo = CustomAlgoFit()
-    for i, (trainset, testset) in enumerate(data.folds()):
-        algo.train(trainset)
+    for i, (trainset, testset) in enumerate(kf.split(data)):
+        with pytest.warns(UserWarning):
+            algo.train(trainset)
         predictions = algo.test(testset)
 
         # Make sure AlgoBase.fit has been called
@@ -94,8 +96,9 @@ def test_old_style_algo():
 
     with pytest.warns(UserWarning):
         algo = CustomAlgoTrain()
-    for i, (trainset, testset) in enumerate(data.folds()):
-        algo.fit(trainset)
+    for i, (trainset, testset) in enumerate(kf.split(data)):
+        with pytest.warns(UserWarning):
+            algo.fit(trainset)
         predictions = algo.test(testset)
 
         # Make sure AlgoBase.fit has been called
@@ -109,8 +112,9 @@ def test_old_style_algo():
 
     with pytest.warns(UserWarning):
         algo = CustomAlgoTrain()
-    for i, (trainset, testset) in enumerate(data.folds()):
-        algo.train(trainset)
+    for i, (trainset, testset) in enumerate(kf.split(data)):
+        with pytest.warns(UserWarning):
+            algo.train(trainset)
         predictions = algo.test(testset)
 
         # Make sure AlgoBase.fit has been called

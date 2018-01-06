@@ -8,6 +8,7 @@ from collections import defaultdict
 
 from surprise import Dataset
 from surprise import SVD
+from surprise.model_selection import KFold
 
 
 def precision_recall_at_k(predictions, k=10, threshold=3.5):
@@ -45,10 +46,10 @@ def precision_recall_at_k(predictions, k=10, threshold=3.5):
 
 
 data = Dataset.load_builtin('ml-100k')
-data.split(n_folds=5)
+kf = KFold(n_splits=5)
 algo = SVD()
 
-for trainset, testset in data.folds():
+for trainset, testset in kf.split(data):
     algo.fit(trainset)
     predictions = algo.test(testset)
     precisions, recalls = precision_recall_at_k(predictions, k=5, threshold=4)

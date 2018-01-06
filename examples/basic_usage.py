@@ -1,6 +1,6 @@
 """
-This module descibes the most basic usage of surprise: you define a prediction
-algorithm, (down)load a dataset and evaluate the performances of the algorithm.
+This module describes the most basic usage of Surprise: you define a prediction
+algorithm, (down)load a dataset and run a cross-validation procedure.
 """
 
 from __future__ import (absolute_import, division, print_function,
@@ -8,18 +8,14 @@ from __future__ import (absolute_import, division, print_function,
 
 from surprise import SVD
 from surprise import Dataset
-from surprise import evaluate, print_perf
+from surprise.model_selection import cross_validate
 
 
 # Load the movielens-100k dataset (download it if needed),
-# and split it into 3 folds for cross-validation.
 data = Dataset.load_builtin('ml-100k')
-data.split(n_folds=3)
 
 # We'll use the famous SVD algorithm.
 algo = SVD()
 
-# Evaluate performances of our algorithm on the dataset.
-perf = evaluate(algo, data, measures=['RMSE', 'MAE'])
-
-print_perf(perf)
+# Run 5-fold cross-validation and print results
+cross_validate(algo, data, measures=['RMSE', 'MAE'], cv=5, verbose=True)

@@ -4,57 +4,140 @@ Getting Started
 ===============
 
 
-.. _load_builtin_example:
-
 Basic usage
 -----------
 
+.. _cross_validate_example:
+
+Automatic cross-validation
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 `Surprise <https://nicolashug.github.io/Surprise/>`_ has a set of built-in
 :ref:`algorithms<prediction_algorithms>` and :ref:`datasets <dataset>` for you
-to play with. In its simplest form, it takes about four lines of code to
-evaluate the performance of an algorithm:
+to play with. In its simplest form, it only takes a few lines of code to
+run a cross-validation procedure:
 
 .. literalinclude:: ../../examples/basic_usage.py
     :caption: From file ``examples/basic_usage.py``
     :name: basic_usage.py
     :lines: 9-
 
+The result should be as follows (actual values may vary due to randomization):
 
-If `Surprise <https://nicolashug.github.io/Surprise/>`_ cannot find the
-`movielens-100k dataset <http://grouplens.org/datasets/movielens/>`_, it will
-offer to download it and will store it under the ``.surprise_data`` folder in
-your home directory (you can also choose to save it :ref:`somewhere else
-<data_folder>`).  The :meth:`split() <surprise.dataset.DatasetAutoFolds.split>`
-method automatically splits the dataset into 3 folds and the :func:`evaluate()
-<surprise.evaluate.evaluate>` function runs the cross-validation procedure and
-compute some :mod:`accuracy <surprise.accuracy>` measures.
+.. parsed-literal::
 
+    Evaluating RMSE, MAE of algorithm SVD on 5 split(s).
+
+                Fold 1  Fold 2  Fold 3  Fold 4  Fold 5  Mean    Std
+    RMSE        0.9311  0.9370  0.9320  0.9317  0.9391  0.9342  0.0032
+    MAE         0.7350  0.7375  0.7341  0.7342  0.7375  0.7357  0.0015
+    Fit time    6.53    7.11    7.23    7.15    3.99    6.40    1.23
+    Test time   0.26    0.26    0.25    0.15    0.13    0.21    0.06
+
+
+The :meth:`load_builtin() <surprise.dataset.Dataset.load_builtin>` method will
+offer to download the `movielens-100k dataset
+<http://grouplens.org/datasets/movielens/>`_ if it has not already been
+downloaded, and it will save it in the ``.surprise_data`` folder in your home
+directory (you can also choose to save it :ref:`somewhere else <data_folder>`).
+
+We are here using the well-known
+:class:`SVD<surprise.prediction_algorithms.matrix_factorization.SVD>`
+algorithm, but many other algorithms are available. See
+:ref:`prediction_algorithms` for more details.
+
+The :func:`cross_validate()<surprise.model_selection.validation.cross_validate>`
+function runs a cross-validation procedure according to the ``cv`` argument,
+and computes some :mod:`accuracy <surprise.accuracy>` measures. We are here
+using a classical 5-fold cross-validation, but fancier iterators can be used
+(see :ref:`here <cross_validation_iterators_api>`).
+
+Train-test split and the fit() method
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. _train_test_split_example:
+
+If you don't want to run a full cross-validation procedure, you can use the
+:func:`train_test_split() <surprise.model_selection.split.train_test_split>`
+to sample a trainset and a testset with given sizes, and use the :mod:`accuracy
+metric<surprise.accuracy>` of your chosing. You'll need to use the :meth:`fit()
+<surprise.prediction_algorithms.algo_base.AlgoBase.fit>` method which will
+train the algorithm on the trainset, and the :meth:`test()
+<surprise.prediction_algorithms.algo_base.AlgoBase.test>` method which will
+return the predictions made from the testset:
+
+.. literalinclude:: ../../examples/train_test_split.py
+    :caption: From file ``examples/train_test_split.py``
+    :name: train_test_split.py
+    :lines: 8-
+
+Result:
+
+.. parsed-literal::
+
+    RMSE: 0.9411
+
+In some cases, your trainset and testset are already defined by some files.
+Please refer to :ref:`this section <load_from_folds_example>` to handle such cases.
+
+
+.. _train_on_whole_trainset:
+
+Train on a whole trainset and the predict() method
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Obviously, we could also simply fit our algorithm to the whole dataset, rather
+than running cross-validation. This can be done by using the
+:meth:`build_full_trainset()
+<surprise.dataset.DatasetAutoFolds.build_full_trainset>` method which will
+build a :class:`trainset <surprise.Trainset>` object:
+
+.. literalinclude:: ../../examples/predict_ratings.py
+    :caption: From file ``examples/predict_ratings.py``
+    :name: predict_ratings.py
+    :lines: 9-20
+
+We can now predict ratings by directly calling the :meth:`predict()
+<surprise.prediction_algorithms.algo_base.AlgoBase.predict>` method.  Let's say
+you're interested in user 196 and item 302 (make sure they're in the
+trainset!), and you know that the true rating :math:`r_{ui} = 4`:
+
+.. literalinclude:: ../../examples/predict_ratings.py
+    :caption: From file ``examples/predict_ratings.py``
+    :name: predict_ratings2.py
+    :lines: 23-27
+
+The result should be:
+
+.. parsed-literal::
+
+    user: 196        item: 302        r_ui = 4.00   est = 4.06   {'actual_k': 40, 'was_impossible': False}
+
+.. note::
+
+    The :meth:`predict()
+    <surprise.prediction_algorithms.algo_base.AlgoBase.predict>` uses **raw**
+    ids (please read :ref:`this <raw_inner_note>` about raw and inner ids). As
+    the dataset we have used has been read from a file, the raw ids are strings
+    (even if they represent numbers).
+
+We have so far used a built-in dataset, but you can of course use your own.
+This is explained in the next section.
 
 .. _load_custom:
 
-Load a custom dataset
----------------------
+Use a custom dataset
+--------------------
 
-You can of course use a custom dataset. `Surprise
-<https://nicolashug.github.io/Surprise/>`_ offers two ways of loading a custom
-dataset:
-
-- you can either specify a single file (e.g. a csv file) or a pandas dataframe
-  with all the ratings and use the :meth:`split
-  ()<surprise.dataset.DatasetAutoFolds.split>` method to perform
-  cross-validation, or :ref:`train on the whole dataset
-  <train_on_whole_trainset>` ;
-- or if your dataset is already split into predefined folds, you can specify a
-  list of files for training and testing.
-
-Either way, you will need to define a :class:`Reader <surprise.reader.Reader>`
-object for `Surprise <https://nicolashug.github.io/Surprise/>`_ to be able to
-parse the file(s) or the dataframe. We'll see now how to handle both cases.
+`Surprise <https://nicolashug.github.io/Surprise/>`_ has a set of  builtin
+:ref:`datasets <dataset>`, but you can of course use a custom dataset.
+Loading a rating dataset can be done either from a file (e.g. a csv file), or
+from a pandas dataframe.  Either way, you will need to define a :class:`Reader
+<surprise.reader.Reader>` object for `Surprise
+<https://nicolashug.github.io/Surprise/>`_ to be able to parse the file or the
+dataframe.
 
 .. _load_from_file_example:
-
-Load an entire dataset from a file or a dataframe
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 - To load a dataset from a file (e.g. a csv file), you will need the
   :meth:`load_from_file() <surprise.dataset.Dataset.load_from_file>` method:
@@ -62,7 +145,7 @@ Load an entire dataset from a file or a dataframe
   .. literalinclude:: ../../examples/load_custom_dataset.py
       :caption: From file ``examples/load_custom_dataset.py``
       :name: load_custom_dataset.py
-      :lines: 17-26
+      :lines: 12-28
 
   For more details about readers and how to use them, see the :class:`Reader
   class <surprise.reader.Reader>` documentation.
@@ -85,7 +168,7 @@ Load an entire dataset from a file or a dataframe
   .. literalinclude:: ../../examples/load_from_dataframe.py
       :caption: From file ``examples/load_from_dataframe.py``
       :name: load_dom_dataframe.py
-      :lines: 19-28
+      :lines: 8-29
 
   The dataframe initially looks like this:
 
@@ -99,91 +182,99 @@ Load an entire dataset from a file or a dataframe
       4       2       1  user_foo
 
 
+.. _use_cross_validation_iterators:
+
+Use cross-validation iterators
+------------------------------
+
+For cross-validation, we can use the :func:`cross_validate()
+<surprise.model_selection.validation.cross_validate>`
+function that does all the hard work for us. But for a better control, we can
+also instanciate a cross-validation iterator, and make predictions over each
+split using the ``split()`` method of the iterator, and the
+:meth:`test()<surprise.prediction_algorithms.algo_base.AlgoBase.test>` method
+of the algorithm. Here is an example where we use a classical K-fold
+cross-validation procedure with 3 splits:
+
+.. literalinclude:: ../../examples/use_cross_validation_iterators.py
+    :caption: From file ``examples/use_cross_validation_iterators.py``
+    :name: use_cross_validation_iterators.py
+    :lines: 8-
+
+Result could be, e.g.:
+
+.. parsed-literal::
+    RMSE: 0.9374
+    RMSE: 0.9476
+    RMSE: 0.9478
+
+Other cross-validation iterator can be used, like LeaveOneOut or ShuffleSplit.
+See all the available iterators :ref:`here <cross_validation_iterators_api>`.
+
+---------------------
+
 .. _load_from_folds_example:
 
-Load a dataset with predefined folds
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+A special case of cross-validation is when the folds are already predefined by
+some files. For instance, the movielens-100K dataset already provides 5 train
+and test files (u1.base, u1.test ... u5.base, u5.test). Surprise can handle
+this case by using a :class:`surprise.model_selection.split.PredefinedKFold`
+object:
 
 .. literalinclude:: ../../examples/load_custom_dataset_predefined_folds.py
     :caption: From file ``examples/load_custom_dataset_predefined_folds.py``
     :name: load_custom_dataset_predefined_folds.py
-    :lines: 18-30
+    :lines: 13-
 
 Of course, nothing prevents you from only loading a single file for training
 and a single file for testing. However, the ``folds_files`` parameter still
 needs to be a ``list``.
 
-
-Advanced usage
---------------
-
-We will here get a little deeper on what can `Surprise
-<https://nicolashug.github.io/Surprise/>`_ do for you.
-
 .. _tuning_algorithm_parameters:
 
-Tune algorithm parameters with GridSearch
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Tune algorithm parameters with GridSearchCV
+-------------------------------------------
 
-The :func:`evaluate() <surprise.evaluate.evaluate>` function gives us the
-results on one set of parameters given to the algorithm. If the user wants
-to try the algorithm on a different set of parameters, the
-:class:`GridSearch <surprise.evaluate.GridSearch>` class comes to the rescue.
-Given a ``dict`` of parameters, this
-class exhaustively tries all the combination of parameters and helps get the
-best combination for an accuracy measurement. It is analogous to
-`GridSearchCV <http://scikit-learn.org/stable/modules/generated/sklearn.model
-_selection.GridSearchCV.html>`_ from scikit-learn.
+The :func:`cross_validate()
+<surprise.model_selection.validation.cross_validate>` function reports accuracy
+metric over a cross-validation procedure for a given set of parameters.  If you
+want to know which parameter combination yields the best results, the
+:class:`GridSearchCV <surprise.model_selection.search.GridSearchCV>` class
+comes to the rescue.  Given a ``dict`` of parameters, this class exhaustively
+tries all the combinations of parameters and reports the best parameters for any
+accuracy measure (averaged over the different splits). It is heavily inspired
+from scikit-learn's `GridSearchCV
+<http://scikit-learn.org/stable/modules/generated/sklearn.model
+_selection.GridSearchCV.html>`_.
 
-For instance, suppose that we want to tune the parameters of the
-:class:`SVD <surprise.prediction_algorithms.matrix_factorization.SVD>`. Some of
-the parameters of this algorithm are ``n_epochs``, ``lr_all`` and ``reg_all``.
-Thus we define a parameters grid as follows
+Here is an example where we try different values for parameters ``n_epochs``,
+``lr_all`` and ``reg_all`` of the :class:`SVD
+<surprise.prediction_algorithms.matrix_factorization.SVD>` algorithm.
 
 .. literalinclude:: ../../examples/grid_search_usage.py
     :caption: From file ``examples/grid_search_usage.py``
     :name: grid_search_usage.py
-    :lines: 13-14
+    :lines: 9-26
 
-Next we define a :class:`GridSearch <surprise.evaluate.GridSearch>` instance
-and give it the class
-:class:`SVD <surprise.prediction_algorithms.matrix_factorization.SVD>` as an
-algorithm, and ``param_grid``. We will compute both the
-RMSE and FCP values for all the combination. Thus the following definition:
+Result:
+
+.. parsed-literal::
+
+    0.961300130118
+    {'n_epochs': 10, 'lr_all': 0.005, 'reg_all': 0.4}
+
+We are here evaluating the average RMSE and MAE over a 3-fold cross-validation
+procedure, but any :ref:`cross-validation iterator
+<cross_validation_iterators_api>` can used.
+
+Once ``fit()`` has been called, the ``best_estimator`` attribute gives us an
+algorithm instance with the optimal set of parameters, which can be used how we
+please:
 
 .. literalinclude:: ../../examples/grid_search_usage.py
     :caption: From file ``examples/grid_search_usage.py``
     :name: grid_search_usage2.py
-    :lines: 16
-
-Now that :class:`GridSearch <surprise.evaluate.GridSearch>` instance is ready,
-we can evaluate the algorithm on any data with the
-:meth:`GridSearch.evaluate()<surprise.evaluate.GridSearch.evaluate>` method,
-exactly like with the regular
-:func:`evaluate() <surprise.evaluate.evaluate>` function:
-
-.. literalinclude:: ../../examples/grid_search_usage.py
-    :caption: From file ``examples/grid_search_usage.py``
-    :name: grid_search_usage3.py
-    :lines: 19-22
-
-Everything is ready now to read the results. For example, we get the best RMSE
-and FCP scores and parameters as follows:
-
-.. literalinclude:: ../../examples/grid_search_usage.py
-    :caption: From file ``examples/grid_search_usage.py``
-    :name: grid_search_usage4.py
-    :lines: 24-38
-
-For further analysis, we can easily read all the results in a pandas
-``DataFrame`` as follows:
-
-.. literalinclude:: ../../examples/grid_search_usage.py
-    :caption: From file ``examples/grid_search_usage.py``
-    :name: grid_search_usage5.py
-    :lines: 40-
-
-.. _iterate_over_folds:
+    :lines: 28-30
 
 .. _grid_search_note:
 .. note::
@@ -212,76 +303,41 @@ For further analysis, we can easily read all the results in a pandas
                                       'user_based': [False]}
                       }
 
+For further analysis, the ``cv_results`` attribute has all the needed
+information and can be imported in a pandas dataframe:
 
-Manually iterate over folds
-~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.. literalinclude:: ../../examples/grid_search_usage.py
+    :caption: From file ``examples/grid_search_usage.py``
+    :name: grid_search_usage3.py
+    :lines: 33
 
-We have so far used the :func:`evaluate() <surprise.evaluate.evaluate>`
-function that does all the hard work for us. If you want to have better control
-on your experiments, you can use the :meth:`folds()
-<surprise.dataset.Dataset.folds>` generator of your dataset, and then the
-:meth:`fit() <surprise.prediction_algorithms.algo_base.AlgoBase.fit>` and
-:meth:`test() <surprise.prediction_algorithms.algo_base.AlgoBase.test>` methods
-of your algorithm on each of the folds:
+In our example, the ``cv_results`` attribute looks like this:
 
-.. literalinclude:: ../../examples/iterate_over_folds.py
-    :caption: From file ``examples/iterate_over_folds.py``
-    :name: iterate_over_folds.py
-    :lines: 15-
+.. parsed-literal::
 
-.. _train_on_whole_trainset:
+    'split0_test_rmse':   [1.0, 1.01, 0.98, 0.99, 0.98, 0.99, 0.97, 0.98]
+    'split1_test_rmse':   [1.0, 1.0, 0.97, 0.98, 0.98, 0.99, 0.96, 0.97]
+    'split2_test_rmse':   [0.99, 1.0, 0.97, 0.98, 0.97, 0.98, 0.96, 0.97]
+    'mean_test_rmse':     [1.0, 1.0, 0.97, 0.98, 0.98, 0.99, 0.96, 0.97]
+    'std_test_rmse':      [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+    'rank_test_rmse':     [7 8 3 5 4 6 1 2]
+    'split0_test_mae':    [0.81, 0.82, 0.78, 0.8, 0.79, 0.8, 0.78, 0.79]
+    'split1_test_mae':    [0.81, 0.82, 0.78, 0.79, 0.79, 0.8, 0.77, 0.79]
+    'split2_test_mae':    [0.8, 0.81, 0.78, 0.79, 0.78, 0.79, 0.77, 0.78]
+    'mean_test_mae':      [0.81, 0.81, 0.78, 0.79, 0.79, 0.8, 0.77, 0.78]
+    'std_test_mae':       [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+    'rank_test_mae':      [7 8 2 5 4 6 1 3]
+    'mean_fit_time':      [1.5, 1.58, 1.58, 1.51, 2.99, 3.01, 3.05, 3.06]
+    'std_fit_time':       [0.02, 0.03, 0.05, 0.01, 0.02, 0.02, 0.05, 0.04]
+    'mean_test_time':     [0.45, 0.47, 0.44, 0.45, 0.44, 0.47, 0.47, 0.31]
+    'std_test_time':      [0.0, 0.04, 0.01, 0.0, 0.01, 0.04, 0.03, 0.09]
+    'params':             [{'n_epochs': 5, 'lr_all': 0.002, 'reg_all': 0.4}, {'n_epochs': 5, 'lr_all': 0.002, 'reg_all': 0.6}, {'n_epochs': 5, 'lr_all': 0.005, 'reg_all': 0.4}, {'n_epochs': 5, 'lr_all': 0.005, 'reg_all': 0.6}, {'n_epochs': 10, 'lr_all': 0.002, 'reg_all': 0.4}, {'n_epochs': 10, 'lr_all': 0.002, 'reg_all': 0.6}, {'n_epochs': 10, 'lr_all': 0.005, 'reg_all': 0.4}, {'n_epochs': 10, 'lr_all': 0.005, 'reg_all': 0.6}]
 
-Train on a whole trainset and specifically query for predictions
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-We will here review how to get a prediction for specified users and items. In
-the mean time, we will also review how to train on a whole dataset, without
-performing cross-validation (i.e. there is no test set).
-
-The latter is pretty straightforward: all you need is to load a dataset, and
-the :meth:`build_full_trainset()
-<surprise.dataset.DatasetAutoFolds.build_full_trainset>` method to build the
-:class:`trainset <surprise.Trainset>` and train you algorithm:
-
-.. literalinclude:: ../../examples/query_for_predictions.py
-    :caption: From file ``examples/query_for_predictions.py``
-    :name: query_for_predictions.py
-    :lines: 14-21
-
-Now, there's no way we could call the :meth:`test()
-<surprise.prediction_algorithms.algo_base.AlgoBase.test>` method, because we
-have no testset. But you can still get predictions for the users and items you
-want.
-
-Let's say you're interested in user 196 and item 302 (make sure they're in the
-trainset!), and you know that the true rating :math:`r_{ui} = 4`. All you need
-is call the :meth:`predict()
-<surprise.prediction_algorithms.algo_base.AlgoBase.predict>` method:
-
-.. literalinclude:: ../../examples/query_for_predictions.py
-    :caption: From file ``examples/query_for_predictions.py``
-    :name: query_for_predictions2.py
-    :lines: 27-31
-
-The :meth:`predict()
-<surprise.prediction_algorithms.algo_base.AlgoBase.predict>` uses **raw** ids
-(read :ref:`this <raw_inner_note>`). As the dataset we have used has been read
-from a file, the raw ids are strings (even if they represent numbers).
-
-If the :meth:`predict()
-<surprise.prediction_algorithms.algo_base.AlgoBase.predict>` method is called
-with user or item ids that were not part of the trainset, it's up to the
-algorithm to decide if it still can make a prediction or not. If it can't,
-:meth:`predict() <surprise.prediction_algorithms.algo_base.AlgoBase.predict>`
-will still predict the mean of all ratings :math:`\mu`.
-
-Obviously, it is perfectly fine to use the :meth:`predict()
-<surprise.prediction_algorithms.algo_base.AlgoBase.predict>` method directly
-during a cross-validation process. It's then up to you to ensure that the user
-and item ids are present in the trainset though.
+As you can see, each list has the same size of the number of parameter
+combination.
 
 Command line usage
-~~~~~~~~~~~~~~~~~~
+------------------
 
 Surprise can also be used from the command line, for example:
 

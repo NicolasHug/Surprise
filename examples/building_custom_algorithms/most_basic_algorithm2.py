@@ -10,7 +10,7 @@ import numpy as np
 
 from surprise import AlgoBase
 from surprise import Dataset
-from surprise import evaluate
+from surprise.model_selection import cross_validate
 
 
 class MyOwnAlgorithm(AlgoBase):
@@ -38,4 +38,4 @@ class MyOwnAlgorithm(AlgoBase):
 data = Dataset.load_builtin('ml-100k')
 algo = MyOwnAlgorithm()
 
-evaluate(algo, data)
+cross_validate(algo, data, verbose=True)

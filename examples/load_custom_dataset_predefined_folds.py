@@ -10,10 +10,11 @@ from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 import os
 
-from surprise import BaselineOnly
+from surprise import SVD
 from surprise import Dataset
-from surprise import evaluate
 from surprise import Reader
+from surprise import accuracy
+from surprise.model_selection import PredefinedKFold
 
 # path to dataset folder
 files_dir = os.path.expanduser('~/.surprise_data/ml-100k/ml-100k/')
@@ -28,9 +29,15 @@ test_file = files_dir + 'u%d.test'
 folds_files = [(train_file % i, test_file % i) for i in (1, 2, 3, 4, 5)]
 
 data = Dataset.load_from_folds(folds_files, reader=reader)
+pkf = PredefinedKFold()
 
-# We'll use an algorithm that predicts baseline estimates.
-algo = BaselineOnly()
+algo = SVD()
 
-# Evaluate performances of our algorithm on the dataset.
-evaluate(algo, data)
+for trainset, testset in pkf.split(data):
+
+    # train and test algorithm.
+    algo.fit(trainset)
+    predictions = algo.test(testset)
+
+    # Compute and print Root Mean Squared Error
+    accuracy.rmse(predictions, verbose=True)

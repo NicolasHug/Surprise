@@ -1,3 +1,9 @@
+'''This module contains built-in datasets that can be automatically
+downloaded.'''
+
+from __future__ import (absolute_import, division, print_function,
+                        unicode_literals)
+
 from six.moves.urllib.request import urlretrieve
 import zipfile
 from collections import namedtuple
@@ -52,7 +58,9 @@ BUILTIN_DATASETS = {
 }
 
 
-def download_builtin_dataset(name, dataset):
+def download_builtin_dataset(name):
+
+    dataset = BUILTIN_DATASETS[name]
 
     print('Trying to download dataset from ' + dataset.url + '...')
     tmp_file_path = join(get_dataset_dir(), 'tmp.zip')

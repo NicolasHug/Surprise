@@ -4,6 +4,10 @@ VERSION 1.0.5 (latest, in development)
 Enhancements
 ------------
 
+* Cross-validation tools have been entirely reworked. We can now rely on
+  powerful and flexible cross-validation iterators, inspired by scikit-learn's
+  API.
+* the evaluate() method has been replaced by cross-validate which is parallel.
 * GridSearch is now parallel, using joblib.
 * default data directory can now be custom with env variable
   SURPRISE_DATA_FOLDER
@@ -13,6 +17,11 @@ API Changes
 
 * The train() method is now deprecated and replaced by the fit() method (same
   signature). Calls to train() should still work as before.
+* Using data.split() or accessing the data.folds() generator is deprecated and
+  replaced by the use of the more powefull CV iterators.
+* evaluate() is deprecated and  replaced by model_selection.cross_validate(),
+  which is parallel.
+* GridSearch is deprecated and replaced by model_selection.GridSearchCV()
 
 VERSION 1.0.4
 =============

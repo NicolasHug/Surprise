@@ -10,10 +10,8 @@ import pandas as pd
 from surprise import NormalPredictor
 from surprise import Dataset
 from surprise import Reader
+from surprise.model_selection import cross_validate
 
-
-# Dummy algo
-algo = NormalPredictor()
 
 # Creation of the dataframe. Column names are irrelevant.
 ratings_dict = {'itemID': [1, 1, 1, 2, 2],
@@ -23,10 +21,9 @@ df = pd.DataFrame(ratings_dict)
 
 # A reader is still needed but only the rating_scale param is requiered.
 reader = Reader(rating_scale=(1, 5))
+
 # The columns must correspond to user id, item id and ratings (in that order).
 data = Dataset.load_from_df(df[['userID', 'itemID', 'rating']], reader)
-data.split(2)  # data can now be used normally
 
-for trainset, testset in data.folds():
-    algo.fit(trainset)
-    algo.test(testset)
+# We can now use this dataset as we please, e.g. calling cross_validate
+cross_validate(NormalPredictor(), data, cv=2)

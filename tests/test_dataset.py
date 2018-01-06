@@ -52,11 +52,13 @@ def test_no_call_to_split():
                            '/custom_dataset')
     data = Dataset.load_from_file(file_path=custom_dataset_path, reader=reader)
 
-    assert len(list(data.folds())) == 5
+    with pytest.warns(UserWarning):
+        assert len(list(data.folds())) == 5
 
     # make sure data has been shuffled. If not shuffled, the users in the
     # testsets would be 0, 1, 2... 4 (in that order).
-    users = [int(testset[0][0][-1]) for (_, testset) in data.folds()]
+    with pytest.warns(UserWarning):
+        users = [int(testset[0][0][-1]) for (_, testset) in data.folds()]
     assert users != list(range(5))
 
 
@@ -69,33 +71,38 @@ def test_split():
 
     # Test the shuffle parameter
     # Make sure data has not been shuffled. If not shuffled, the users in the
-    # testsets are be 0, 1, 2... 4 (in that order).
-    data.split(n_folds=5, shuffle=False)
-    users = [int(testset[0][0][-1]) for (_, testset) in data.folds()]
-    assert users == list(range(5))
+    # testsets are 0, 1, 2... 4 (in that order).
+    with pytest.warns(UserWarning):
+        data.split(n_folds=5, shuffle=False)
+        users = [int(testset[0][0][-1]) for (_, testset) in data.folds()]
+        assert users == list(range(5))
 
     # Test the shuffle parameter
     # Make sure that when called two times without shuffling, folds are the
     # same.
-    data.split(n_folds=3, shuffle=False)
-    testsets_a = [testset for (_, testset) in data.folds()]
-    data.split(n_folds=3, shuffle=False)
-    testsets_b = [testset for (_, testset) in data.folds()]
-    assert testsets_a == testsets_b
+    with pytest.warns(UserWarning):
+        data.split(n_folds=3, shuffle=False)
+        testsets_a = [testset for (_, testset) in data.folds()]
+        data.split(n_folds=3, shuffle=False)
+        testsets_b = [testset for (_, testset) in data.folds()]
+        assert testsets_a == testsets_b
 
     # We'll now shuffle b and check that folds are different.
-    data.split(n_folds=3, shuffle=True)
-    testsets_b = [testset for (_, testset) in data.folds()]
-    assert testsets_a != testsets_b
+    with pytest.warns(UserWarning):
+        data.split(n_folds=3, shuffle=True)
+        testsets_b = [testset for (_, testset) in data.folds()]
+        assert testsets_a != testsets_b
 
     # Ensure that folds are the same if split is not called again
-    testsets_a = [testset for (_, testset) in data.folds()]
-    testsets_b = [testset for (_, testset) in data.folds()]
-    assert testsets_a == testsets_b
+    with pytest.warns(UserWarning):
+        testsets_a = [testset for (_, testset) in data.folds()]
+        testsets_b = [testset for (_, testset) in data.folds()]
+        assert testsets_a == testsets_b
 
     # Test n_folds parameter
-    data.split(5)
-    assert len(list(data.folds())) == 5
+    with pytest.warns(UserWarning):
+        data.split(5)
+        assert len(list(data.folds())) == 5
 
     with pytest.raises(ValueError):
         data.split(10)  # Too big (greater than number of ratings)
@@ -113,8 +120,8 @@ def test_trainset_testset():
 
     data = Dataset.load_from_folds(folds_files=folds_files, reader=reader)
 
-    for trainset, testset in data.folds():
-        pass  # just need trainset and testset to be set
+    with pytest.warns(UserWarning):
+        trainset, testset = next(data.folds())
 
     # test ur
     ur = trainset.ur
@@ -188,8 +195,9 @@ def test_load_form_df():
     data = Dataset.load_from_df(df[['userID', 'itemID', 'rating']], reader)
 
     # Assert split and folds can be used without problems
-    data.split(2)
-    assert sum(1 for _ in data.folds()) == 2
+    with pytest.warns(UserWarning):
+        data.split(2)
+        assert sum(1 for _ in data.folds()) == 2
 
     # assert users and items are correctly mapped
     trainset = data.build_full_trainset()
@@ -224,8 +232,9 @@ def test_build_anti_testset():
 
     reader = Reader(rating_scale=(1, 5))
     data = Dataset.load_from_df(df[['userID', 'itemID', 'rating']], reader)
-    data.split(2)
-    trainset, __testset = next(data.folds())
+    with pytest.warns(UserWarning):
+        data.split(2)
+        trainset, __testset = next(data.folds())
     # fill with some specific value
     for fillvalue in (0, 42., -1):
         anti = trainset.build_anti_testset(fill=fillvalue)

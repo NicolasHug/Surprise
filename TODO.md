@@ -1,19 +1,44 @@
 TODO
 ====
 
-* Allow to discount similarities (see aggarwal)
+
+* Update README example before new rewlease, as well as computation times
+* all algorithms using random initialization should allow to define
+  random_state. This is paramount for having correct gridsearch results (else
+  different initializations are used for the various parameter combinations).
+  When done, change tests of these algorithms so that they all use the same
+  seed. Right now tests about different RMSE values are not relevant. Also, use
+  SVD on test file when possible for grid search tests. Right now we use knn on
+  train (test does not have enough ratings for parameters to be impactful) and
+  it's slower.
+* Make all fit methods (for algo and GridSearch) return self. Update docs on
+  building custom algorithms, and on getting started -> gridsearch (add
+  example?).
+* Update doc of MF algo to indicate how to retrieve latent factors.
+
+* make some filtering dataset tools, like remove users/items with less/more
+  than n ratings, binarize a dataset, etc...
+* check conda forge
 * Allow incremental updates for some algorithms
-* Profile code (mostly cython) to see what could be optimized
-
-Maybe, Maybe not
-----------------
-
-* allow a back up algorithm  when prediction is impossible. Right now it's just
-  the mean rating that is predicted. Maybe user would want to choose it.
 
 Done:
 -----
 
+* CV iterators:
+  - Write basic CV iterators
+  - evaluate -> rewrite to use CV iterators. Rename it into cross_validate.
+  - Same for GridSearch. Keep it in a model_selection module like scikit-learn
+    so that we can keep the old deprecated version. 
+  - Make cross validation parallel with joblib
+  - Add deprecation warnings for evaluate and GridSearch()
+  - handle the cv_results attribute for grid search
+  - (re)write all verbose settings for gridsearch and cross_validate
+  - Change examples so they use CV iterators and the new gridsearch and
+    cross_validate
+  - indicate in docs that split(), folds(), evaluate() and gridsearch() are
+    deprecated
+  - Write comments, docstring and update all docs
+  - Update main and command-line usage doc in getting started.rst
 * Allow to change data folder from env variable
 * Complete FAQ
 * Change the dumping machinery to be more consistent 

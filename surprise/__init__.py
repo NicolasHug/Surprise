@@ -23,12 +23,13 @@ from .builtin_datasets import get_dataset_dir
 from .evaluate import evaluate
 from .evaluate import print_perf
 from .evaluate import GridSearch
+from . import model_selection
 from . import dump
 
 __all__ = ['AlgoBase', 'NormalPredictor', 'BaselineOnly', 'KNNBasic',
            'KNNWithMeans', 'KNNBaseline', 'SVD', 'SVDpp', 'NMF', 'SlopeOne',
            'CoClustering', 'PredictionImpossible', 'Prediction', 'Dataset',
            'Reader', 'Trainset', 'evaluate', 'print_perf', 'GridSearch',
-           'dump', 'KNNWithZScore', 'get_dataset_dir']
+           'dump', 'KNNWithZScore', 'get_dataset_dir', 'model_selection']
 
 __version__ = get_distribution('scikit-surprise').version

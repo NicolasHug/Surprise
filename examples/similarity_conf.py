@@ -8,7 +8,7 @@ from __future__ import (absolute_import, division, print_function,
 
 from surprise import KNNBasic
 from surprise import Dataset
-from surprise import evaluate
+from surprise.model_selection import cross_validate
 
 
 # Load the movielens-100k dataset.
@@ -20,7 +20,7 @@ sim_options = {'name': 'cosine',
                }
 algo = KNNBasic(sim_options=sim_options)
 
-evaluate(algo, data)
+cross_validate(algo, data, verbose=True)
 
 # Example using pearson_baseline similarity
 sim_options = {'name': 'pearson_baseline',
@@ -28,4 +28,4 @@ sim_options = {'name': 'pearson_baseline',
                }
 algo = KNNBasic(sim_options=sim_options)
 
-evaluate(algo, data)
+cross_validate(algo, data, verbose=True)

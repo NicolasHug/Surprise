@@ -55,10 +55,11 @@ be done by defining the ``fit`` method:
     :lines: 15-35
 
 
-The ``fit`` method is called by the :func:`evaluate
-<surprise.evaluate.evaluate>` function at each fold of a cross-validation
-process, (but you can also :ref:`call it yourself <iterate_over_folds>`).
-Before doing anything, you should call the base class :meth:`fit()
+The ``fit`` method is called e.g. by the :func:`cross_validate
+<surprise.model_selection.validation.cross_validate>` function at each fold of
+a cross-validation process, (but you can also :ref:`call it yourself
+<use_cross_validation_iterators>`).  Before doing anything, you should call the
+base class :meth:`fit()
 <surprise.prediction_algorithms.algo_base.AlgoBase.fit>` method.
 
 The ``trainset`` attribute

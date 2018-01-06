@@ -1,27 +1,28 @@
 """
-This module descibes how to manually train and test an algorithm without using
-the evaluate() function.
+This module descibes how to use cross-validation iterators.
 """
 
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 
-from surprise import BaselineOnly
+from surprise import SVD
 from surprise import Dataset
 from surprise import accuracy
+from surprise.model_selection import KFold
 
-# Load the movielens-100k dataset and split it into 3 folds for
-# cross-validation.
+# Load the movielens-100k dataset
 data = Dataset.load_builtin('ml-100k')
-data.split(n_folds=3)
 
-algo = BaselineOnly()
+# define a cross-validation iterator
+kf = KFold(n_splits=3)
 
-for trainset, testset in data.folds():
+algo = SVD()
+
+for trainset, testset in kf.split(data):
 
     # train and test algorithm.
     algo.fit(trainset)
     predictions = algo.test(testset)
 
     # Compute and print Root Mean Squared Error
-    rmse = accuracy.rmse(predictions, verbose=True)
+    accuracy.rmse(predictions, verbose=True)

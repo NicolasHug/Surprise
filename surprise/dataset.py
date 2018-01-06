@@ -32,6 +32,7 @@ import sys
 import os
 import itertools
 import random
+import warnings
 
 from six.moves import input
 from six.moves import range
@@ -60,7 +61,7 @@ class Dataset:
         If the dataset has not already been loaded, it will be downloaded and
         saved. You will have to split your dataset using the :meth:`split
         <DatasetAutoFolds.split>` method. See an example in the :ref:`User
-        Guide <load_builtin_example>`.
+        Guide <cross_validate_example>`.
 
         Args:
             name(:obj:`string`): The name of the built-in dataset to load.
@@ -174,14 +175,22 @@ class Dataset:
         return raw_ratings
 
     def folds(self):
-        """Generator function to iterate over the folds of the Dataset.
+        """
+        Generator function to iterate over the folds of the Dataset.
 
-        See :ref:`User Guide <iterate_over_folds>` for usage.
+        .. warning::
+            Deprecated since version 1.05. Use :ref:`cross-validation iterators
+            <use_cross_validation_iterators>` instead. This method will be
+            removed in later versions.
 
         Yields:
             tuple: :class:`Trainset <surprise.Trainset>` and testset
             of current fold.
         """
+
+        warnings.warn('Using data.split() or using load_from_folds() '
+                      'without using a CV iterator is now deprecated. ',
+                      UserWarning)
 
         for raw_trainset, raw_testset in self.raw_folds():
             trainset = self.construct_trainset(raw_trainset)
@@ -314,10 +323,16 @@ class DatasetAutoFolds(Dataset):
         return k_folds(self.raw_ratings, self.n_folds)
 
     def split(self, n_folds=5, shuffle=True):
-        """Split the dataset into folds for future cross-validation.
+        """
+        Split the dataset into folds for future cross-validation.
+
+        .. warning::
+            Deprecated since version 1.05. Use :ref:`cross-validation iterators
+            <use_cross_validation_iterators>` instead. This method will be
+            removed in later versions.
 
         If you forget to call :meth:`split`, the dataset will be automatically
-        shuffled and split for 5-folds cross-validation.
+        shuffled and split for 5-fold cross-validation.
 
         You can obtain repeatable splits over your all your experiments by
         seeding the RNG: ::

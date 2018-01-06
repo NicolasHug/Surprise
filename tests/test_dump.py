@@ -11,6 +11,7 @@ from surprise import BaselineOnly
 from surprise import Dataset
 from surprise import Reader
 from surprise import dump
+from surprise.model_selection import PredefinedKFold
 
 
 def test_dump():
@@ -25,9 +26,9 @@ def test_dump():
     test_file = os.path.join(os.path.dirname(__file__), './u1_ml100k_test')
     data = Dataset.load_from_folds([(train_file, test_file)],
                                    Reader('ml-100k'))
+    pkf = PredefinedKFold()
 
-    for trainset, testset in data.folds():
-        pass
+    trainset, testset = next(pkf.split(data))
 
     algo = BaselineOnly()
     algo.fit(trainset)

@@ -12,7 +12,7 @@ import random
 from surprise import SVD
 from surprise import Dataset
 from surprise import accuracy
-from surprise import GridSearch
+from surprise.model_selection import GridSearchCV
 
 
 # Load the full dataset.
@@ -28,15 +28,14 @@ A_raw_ratings = raw_ratings[:threshold]
 B_raw_ratings = raw_ratings[threshold:]
 
 data.raw_ratings = A_raw_ratings  # data is now the set A
-data.split(n_folds=3)
 
 # Select your best algo with grid search.
 print('Grid Search...')
 param_grid = {'n_epochs': [5, 10], 'lr_all': [0.002, 0.005]}
-grid_search = GridSearch(SVD, param_grid, measures=['RMSE'], verbose=0)
-grid_search.evaluate(data)
+grid_search = GridSearchCV(SVD, param_grid, measures=['rmse'], cv=3)
+grid_search.fit(data)
 
-algo = grid_search.best_estimator['RMSE']
+algo = grid_search.best_estimator['rmse']
 
 # retrain on the whole set A
 trainset = data.build_full_trainset()

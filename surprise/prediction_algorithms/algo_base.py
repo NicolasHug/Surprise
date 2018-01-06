@@ -48,6 +48,8 @@ class AlgoBase(object):
         '''Deprecated method: use :meth:`fit() <AlgoBase.fit>`
         instead.'''
 
+        warnings.warn('train() is deprecated. Use fit() instead', UserWarning)
+
         self.skip_train = True
         self.fit(trainset)
 
@@ -92,8 +94,8 @@ class AlgoBase(object):
 
         The ``predict`` method converts raw ids to inner ids and then calls the
         ``estimate`` method which is defined in every derived class. If the
-        prediction is impossible (for whatever reason), the prediction is set
-        to the global mean of all ratings.
+        prediction is impossible (e.g. because the user and/or the item is
+        unkown), the prediction is set to the global mean of all ratings.
 
         Args:
             uid: (Raw) id of the user. See :ref:`this note<raw_inner_note>`.
@@ -168,10 +170,10 @@ class AlgoBase(object):
         in the given testset.
 
         Args:
-            testset: A test set, as returned by the :meth:`folds()
-                <surprise.dataset.Dataset.folds>` method or by the
-                :meth:`build_testset()
-                <surprise.Trainset.build_testset>` method.
+            testset: A test set, as returned by a :ref:`cross-validation
+                itertor<use_cross_validation_iterators>` or by the
+                :meth:`build_testset() <surprise.Trainset.build_testset>`
+                method.
             verbose(bool): Whether to print details for each predictions.
                 Default is False.
 

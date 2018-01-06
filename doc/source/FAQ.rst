@@ -123,11 +123,13 @@ some other will use/return an inner id.
 
 Raw ids are ids as defined in a rating file or in a pandas dataframe. They can
 be strings or numbers. Note though that if the ratings were read from a file
-which is the standard scenario, they are represented as strings (see e.g.
-:ref:`here <train_on_whole_trainset>`).
+which is the standard scenario, they are represented as strings. **This is
+important to know if you're using e.g.** :meth:`predict()
+<surprise.prediction_algorithms.algo_base.AlgoBase.predict>` **or other methods
+that accept raw ids as parameters.**
 
-On trainset creation, each raw id is mapped to a unique
-integer called inner id, which is a lot more suitable for `Surprise
+On trainset creation, each raw id is mapped to a unique integer called inner
+id, which is a lot more suitable for `Surprise
 <https://nicolashug.github.io/Surprise/>`_ to manipulate. Conversions between
 raw and inner ids can be done using the :meth:`to_inner_uid()
 <surprise.Trainset.to_inner_uid>`, :meth:`to_inner_iid()
@@ -145,8 +147,8 @@ Yes, and yes. See the :ref:`user guide <load_custom>`.
 How to tune an algorithm parameters
 -----------------------------------
 
-You can tune the parameters of an algorithm with the :class:`GridSearch
-<surprise.evaluate.GridSearch>` class as described :ref:`here
+You can tune the parameters of an algorithm with the :class:`GridSearchCV
+<surprise.model_selection.search.GridSearchCV>` class as described :ref:`here
 <tuning_algorithm_parameters>`. After the tuning, you may want to have an
 :ref:`unbiased estimate of your algorithm performances
 <unbiased_estimate_after_tuning>`.
@@ -163,7 +165,7 @@ with the :meth:`test()
 .. literalinclude:: ../../examples/evaluate_on_trainset.py
     :caption: From file ``examples/evaluate_on_trainset.py``
     :name: evaluate_on_trainset.py
-    :lines: 9-24
+    :lines: 9-25
 
 Check out the example file for more usage examples.
 

@@ -8,6 +8,8 @@ import os
 import tempfile
 import shutil
 
+import pytest
+
 from surprise import NormalPredictor
 from surprise import Dataset
 from surprise import Reader
@@ -27,8 +29,9 @@ def test_performances():
 
     algo = NormalPredictor()
     tmp_dir = tempfile.mkdtemp()  # create tmp dir
-    performances = evaluate(algo, data, measures=['RmSe', 'Mae'],
-                            with_dump=True, dump_dir=tmp_dir, verbose=2)
+    with pytest.warns(UserWarning):
+        performances = evaluate(algo, data, measures=['RmSe', 'Mae'],
+                                with_dump=True, dump_dir=tmp_dir, verbose=2)
     shutil.rmtree(tmp_dir)  # remove tmp dir
 
     assert performances['RMSE'] is performances['rmse']
