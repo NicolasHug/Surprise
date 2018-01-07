@@ -29,7 +29,9 @@ class Reader():
             Accepted values are 'ml-100k', 'ml-1m', and 'jester'. Default
             is ``None``.
         line_format(:obj:`string`): The fields names, in the order at which
-            they are encountered on a line. Default is ``'user item rating'``.
+            they are encountered on a line. Please note that ``line_format`` is
+            always space-separated (use the ``sep`` parameter). Default is
+            ``'user item rating'``.
         sep(char): the separator between fields. Example : ``';'``.
         rating_scale(:obj:`tuple`, optional): The rating scale used for every
             rating.  Default is ``(1, 5)``.

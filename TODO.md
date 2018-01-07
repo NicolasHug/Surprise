@@ -6,16 +6,16 @@ TODO
 * Make all fit methods (for algo and GridSearch) return self. Update docs on
   building custom algorithms, and on getting started -> gridsearch (add
   example?).
-* Update doc of MF algo to indicate how to retrieve latent factors.
 
+* check conda forge
 * make some filtering dataset tools, like remove users/items with less/more
   than n ratings, binarize a dataset, etc...
-* check conda forge
 * Allow incremental updates for some algorithms
 
 Done:
 -----
 
+* Update doc of MF algo to indicate how to retrieve latent factors.
 * all algorithms using random initialization now have a random_state parameter.
 * CV iterators:
   - Write basic CV iterators

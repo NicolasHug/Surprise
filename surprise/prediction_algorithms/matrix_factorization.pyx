@@ -113,6 +113,16 @@ class SVD(AlgoBase):
             RNG. If ``None``, the current RNG from numpy is used.  Default is
             ``None``.
         verbose: If ``True``, prints the current epoch. Default is ``False``.
+
+    Attributes:
+        pu(numpy array of size (n_users, n_factors)): The user factors (only
+            exists if ``fit()`` has been called)
+        qi(numpy array of size (n_items, n_factors)): The item factors (only
+            exists if ``fit()`` has been called)
+        bu(numpy array of size (n_users)): The user biases (only
+            exists if ``fit()`` has been called)
+        bi(numpy array of size (n_items)): The item biases (only
+            exists if ``fit()`` has been called)
     """
 
     def __init__(self, n_factors=100, n_epochs=20, biased=True, init_mean=0,
@@ -341,6 +351,18 @@ class SVDpp(AlgoBase):
             RNG. If ``None``, the current RNG from numpy is used.  Default is
             ``None``.
         verbose: If ``True``, prints the current epoch. Default is ``False``.
+
+    Attributes:
+        pu(numpy array of size (n_users, n_factors)): The user factors (only
+            exists if ``fit()`` has been called)
+        qi(numpy array of size (n_items, n_factors)): The item factors (only
+            exists if ``fit()`` has been called)
+        yj(numpy array of size (n_items, n_factors)): The (implicit) item
+            factors (only exists if ``fit()`` has been called)
+        bu(numpy array of size (n_users)): The user biases (only
+            exists if ``fit()`` has been called)
+        bi(numpy array of size (n_items)): The item biases (only
+            exists if ``fit()`` has been called)
     """
 
     def __init__(self, n_factors=20, n_epochs=20, init_mean=0, init_std_dev=.1,
@@ -556,6 +578,16 @@ class NMF(AlgoBase):
             RNG. If ``None``, the current RNG from numpy is used.  Default is
             ``None``.
         verbose: If ``True``, prints the current epoch. Default is ``False``.
+
+    Attributes:
+        pu(numpy array of size (n_users, n_factors)): The user factors (only
+            exists if ``fit()`` has been called)
+        qi(numpy array of size (n_items, n_factors)): The item factors (only
+            exists if ``fit()`` has been called)
+        bu(numpy array of size (n_users)): The user biases (only
+            exists if ``fit()`` has been called)
+        bi(numpy array of size (n_items)): The item biases (only
+            exists if ``fit()`` has been called)
     """
 
     def __init__(self, n_factors=15, n_epochs=50, biased=False, reg_pu=.06,
