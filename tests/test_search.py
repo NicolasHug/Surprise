@@ -7,6 +7,7 @@ from __future__ import (absolute_import, division, print_function,
 import os
 
 import numpy as np
+import pytest
 
 from surprise import Dataset
 from surprise import Reader
@@ -139,3 +140,52 @@ def test_cv_results():
     assert gs.cv_results['params'][best_index] == gs.best_params['rmse']
     best_index = np.argmin(gs.cv_results['rank_test_mae'])
     assert gs.cv_results['params'][best_index] == gs.best_params['mae']
+
+
+def test_refit():
+
+    data_file = os.path.join(os.path.dirname(__file__), './u1_ml100k_test')
+    data = Dataset.load_from_file(data_file, Reader('ml-100k'))
+
+    param_grid = {'n_epochs': [5], 'lr_all': [0.002, 0.005],
+                  'reg_all': [0.4, 0.6], 'n_factors': [2]}
+
+    # assert gs.fit() and gs.test will use best estimator for mae (first
+    # appearing in measures)
+    gs = GridSearchCV(SVD, param_grid, measures=['mae', 'rmse'], cv=2,
+                      refit=True)
+    gs.fit(data)
+    gs_preds = gs.test(data.construct_testset(data.raw_ratings))
+    mae_preds = gs.best_estimator['mae'].test(
+        data.construct_testset(data.raw_ratings))
+    assert gs_preds == mae_preds
+
+    # assert gs.fit() and gs.test will use best estimator for rmse
+    gs = GridSearchCV(SVD, param_grid, measures=['mae', 'rmse'], cv=2,
+                      refit='rmse')
+    gs.fit(data)
+    gs_preds = gs.test(data.construct_testset(data.raw_ratings))
+    rmse_preds = gs.best_estimator['rmse'].test(
+        data.construct_testset(data.raw_ratings))
+    assert gs_preds == rmse_preds
+    # test that predict() can be called
+    gs.predict(2, 4)
+
+    # assert test() and predict() cannot be used when refit is false
+    gs = GridSearchCV(SVD, param_grid, measures=['mae', 'rmse'], cv=2,
+                      refit=False)
+    gs.fit(data)
+    with pytest.raises(ValueError):
+        gs_preds = gs.test(data.construct_testset(data.raw_ratings))
+    with pytest.raises(ValueError):
+        gs.predict('1', '2')
+
+    # test that error is raised if used with load_from_folds
+    train_file = os.path.join(os.path.dirname(__file__), './u1_ml100k_train')
+    test_file = os.path.join(os.path.dirname(__file__), './u1_ml100k_test')
+    data = Dataset.load_from_folds([(train_file, test_file)],
+                                   Reader('ml-100k'))
+    gs = GridSearchCV(SVD, param_grid, measures=['mae', 'rmse'], cv=2,
+                      refit=True)
+    with pytest.raises(ValueError):
+        gs.fit(data)

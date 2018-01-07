@@ -3,8 +3,6 @@ TODO
 
 
 * Update README example before new rewlease, as well as computation times
-* grid search should allow the refit param and the test method using the best
-  estimator
 
 * check conda forge
 * make some filtering dataset tools, like remove users/items with less/more
@@ -14,6 +12,7 @@ TODO
 Done:
 -----
 
+* Grid search now has the refit param.
 * Grid search and cross_validate now allow return_train_score
 * Make all fit methods return self. Update docs on building custom algorithms
 * Update doc of MF algo to indicate how to retrieve latent factors.

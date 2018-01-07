@@ -5,9 +5,11 @@ from itertools import product
 import numpy as np
 from joblib import Parallel
 from joblib import delayed
+from six import string_types
 
 from .split import get_cv
 from .validation import fit_and_score
+from ..dataset import DatasetUserFolds
 
 
 class GridSearchCV:
@@ -38,6 +40,14 @@ class GridSearchCV:
             appropriate ``n_splits`` parameter. If ``None``, :class:`KFold
             <surprise.model_selection.split.KFold>` is used with
             ``n_splits=5``.
+        refit(bool or str): If ``True``, refit the algorithm on the whole
+            dataset using the set of parameters that gave the best average
+            performance for the first measure of ``measures``. Other measures
+            can be used by passing a string (corresponding to the measure
+            name). Then, you can use the ``test()`` and ``predict()`` methods.
+            ``refit`` can only be used if the ``data`` parameter given to
+            ``fit()`` hasn't been loaded with :meth:`load_from_folds()
+            <surprise.dataset.Dataset.load_from_folds>`. Default is ``False``.
         return_train_measures(bool): Whether to compute performance measures on
             the trainsets. If ``True``, the ``cv_results`` attribute will
             also contain measures for trainsets. Default is ``False``.
@@ -92,13 +102,23 @@ class GridSearchCV:
     '''
 
     def __init__(self, algo_class, param_grid, measures=['rmse', 'mae'],
-                 cv=None, return_train_measures=False, n_jobs=-1,
+                 cv=None, refit=False, return_train_measures=False, n_jobs=-1,
                  pre_dispatch='2*n_jobs', joblib_verbose=0):
 
         self.algo_class = algo_class
         self.param_grid = param_grid.copy()
         self.measures = [measure.lower() for measure in measures]
         self.cv = cv
+        if isinstance(refit, string_types):
+            if refit.lower() not in self.measures:
+                raise ValueError('It looks like the measure you want to use '
+                                 'with refit ({}) is not in the measures '
+                                 'parameter')
+            self.refit = refit.lower()
+        elif refit is True:
+            self.refit = self.measures[0]
+        else:
+            self.refit = False
         self.return_train_measures = return_train_measures
         self.n_jobs = n_jobs
         self.pre_dispatch = pre_dispatch
@@ -129,6 +149,10 @@ class GridSearchCV:
             data (:obj:`Dataset <surprise.dataset.Dataset>`): The dataset on
                 which to evaluate the algorithm, in parallel.
         '''
+
+        if self.refit and isinstance(data, DatasetUserFolds):
+            raise ValueError('refit cannot be used when data has been '
+                             'loaded with load_from_folds().')
 
         cv = get_cv(self.cv)
 
@@ -221,8 +245,35 @@ class GridSearchCV:
         # cv_results: set params key
         cv_results['params'] = self.param_combinations
 
+        if self.refit:
+            best_estimator[self.refit].fit(data.build_full_trainset())
+
         self.best_index = best_index
         self.best_params = best_params
         self.best_score = best_score
         self.best_estimator = best_estimator
         self.cv_results = cv_results
+
+    def test(self, testset, verbose=False):
+        '''Call ``test()`` on the estimator with the best found parameters
+        (according the the ``refit`` parameter). See :meth:`AlgoBase.test()
+        <surprise.prediction_algorithms.algo_base.AlgoBase.test>`.
+
+        Only available if ``refit`` is not ``False``.
+        '''
+
+        if not self.refit:
+            raise ValueError('refit is False, cannot use test()')
+        return self.best_estimator[self.refit].test(testset, verbose)
+
+    def predict(self, *args):
+        '''Call ``predict()`` on the estimator with the best found parameters
+        (according the the ``refit`` parameter). See :meth:`AlgoBase.predict()
+        <surprise.prediction_algorithms.algo_base.AlgoBase.predict>`.
+
+        Only available if ``refit`` is not ``False``.
+        '''
+
+        if not self.refit:
+            raise ValueError('refit is False, cannot use predict()')
+        return self.best_estimator[self.refit].predict(*args)

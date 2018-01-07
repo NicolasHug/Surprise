@@ -195,10 +195,10 @@ Use cross-validation iterators
 ------------------------------
 
 For cross-validation, we can use the :func:`cross_validate()
-<surprise.model_selection.validation.cross_validate>`
-function that does all the hard work for us. But for a better control, we can
-also instanciate a cross-validation iterator, and make predictions over each
-split using the ``split()`` method of the iterator, and the
+<surprise.model_selection.validation.cross_validate>` function that does all
+the hard work for us. But for a better control, we can also instanciate a
+cross-validation iterator, and make predictions over each split using the
+``split()`` method of the iterator, and the
 :meth:`test()<surprise.prediction_algorithms.algo_base.AlgoBase.test>` method
 of the algorithm. Here is an example where we use a classical K-fold
 cross-validation procedure with 3 splits:
@@ -217,6 +217,8 @@ Result could be, e.g.:
 
 Other cross-validation iterator can be used, like LeaveOneOut or ShuffleSplit.
 See all the available iterators :ref:`here <cross_validation_iterators_api>`.
+The design of Surprise's cross-validation tools is heavily inspired from the
+excellent scikit-learn API.
 
 ---------------------
 
