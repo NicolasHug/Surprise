@@ -154,6 +154,8 @@ class SVD(AlgoBase):
         AlgoBase.fit(self, trainset)
         self.sgd(trainset)
 
+        return self
+
     def sgd(self, trainset):
 
         # OK, let's breath. I've seen so many different implementation of this
@@ -394,6 +396,8 @@ class SVDpp(AlgoBase):
         AlgoBase.fit(self, trainset)
         self.sgd(trainset)
 
+        return self
+
     def sgd(self, trainset):
 
         # user biases
@@ -617,6 +621,8 @@ class NMF(AlgoBase):
 
         AlgoBase.fit(self, trainset)
         self.sgd(trainset)
+
+        return self
 
     def sgd(self, trainset):
 

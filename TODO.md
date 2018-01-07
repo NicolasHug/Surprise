@@ -3,9 +3,9 @@ TODO
 
 
 * Update README example before new rewlease, as well as computation times
-* Make all fit methods (for algo and GridSearch) return self. Update docs on
-  building custom algorithms, and on getting started -> gridsearch (add
-  example?).
+* grid search should allow the refit param and the test method using the best
+  estimator
+* Grid search and cross_validate should allow return_train_score
 
 * check conda forge
 * make some filtering dataset tools, like remove users/items with less/more
@@ -15,6 +15,7 @@ TODO
 Done:
 -----
 
+* Make all fit methods return self. Update docs on building custom algorithms
 * Update doc of MF algo to indicate how to retrieve latent factors.
 * all algorithms using random initialization now have a random_state parameter.
 * CV iterators:

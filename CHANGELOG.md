@@ -11,6 +11,8 @@ Enhancements
 * GridSearch is now parallel, using joblib.
 * default data directory can now be custom with env variable
   SURPRISE_DATA_FOLDER
+* the fit() (and train()) methods now return self, which allows one-liners like
+  algo.fit(trainset).test(testset)
 * Algorithms using a random initialization (e.g. SVD, NMF, CoClustering) now
   have a random_state parameter for seeding the RNG.
 

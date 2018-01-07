@@ -33,6 +33,8 @@ class BaselineOnly(AlgoBase):
         AlgoBase.fit(self, trainset)
         self.bu, self.bi = self.compute_baselines()
 
+        return self
+
     def estimate(self, u, i):
 
         est = self.trainset.global_mean

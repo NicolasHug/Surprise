@@ -30,6 +30,8 @@ class MyOwnAlgorithm(AlgoBase):
         self.the_mean = np.mean([r for (_, _, r) in
                                  self.trainset.all_ratings()])
 
+        return self
+
     def estimate(self, u, i):
 
         return self.the_mean

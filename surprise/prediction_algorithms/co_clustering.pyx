@@ -152,6 +152,8 @@ class CoClustering(AlgoBase):
         self.avg_cltr_i = avg_cltr_i
         self.avg_cocltr = avg_cocltr
 
+        return self
+
     def compute_averages(self, np.ndarray[np.int_t] cltr_u,
                          np.ndarray[np.int_t] cltr_i):
         """Compute cluster averages.

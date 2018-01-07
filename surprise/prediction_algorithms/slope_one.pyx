@@ -77,6 +77,8 @@ class SlopeOne(AlgoBase):
         self.user_mean = [np.mean([r for (_, r) in trainset.ur[u]])
                           for u in trainset.all_users()]
 
+        return self
+
     def estimate(self, u, i):
 
         if not (self.trainset.knows_user(u) and self.trainset.knows_item(i)):

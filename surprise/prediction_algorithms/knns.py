@@ -41,6 +41,8 @@ class SymmetricAlgo(AlgoBase):
         self.xr = self.trainset.ur if ub else self.trainset.ir
         self.yr = self.trainset.ir if ub else self.trainset.ur
 
+        return self
+
     def switch(self, u_stuff, i_stuff):
         """Return x_stuff and y_stuff depending on the user_based field."""
 
@@ -91,6 +93,8 @@ class KNNBasic(SymmetricAlgo):
 
         SymmetricAlgo.fit(self, trainset)
         self.sim = self.compute_similarities()
+
+        return self
 
     def estimate(self, u, i):
 
@@ -169,6 +173,8 @@ class KNNWithMeans(SymmetricAlgo):
         self.means = np.zeros(self.n_x)
         for x, ratings in iteritems(self.xr):
             self.means[x] = np.mean([r for (_, r) in ratings])
+
+        return self
 
     def estimate(self, u, i):
 
@@ -262,6 +268,8 @@ class KNNBaseline(SymmetricAlgo):
         self.bu, self.bi = self.compute_baselines()
         self.bx, self.by = self.switch(self.bu, self.bi)
         self.sim = self.compute_similarities()
+
+        return self
 
     def estimate(self, u, i):
 
@@ -359,6 +367,8 @@ class KNNWithZScore(SymmetricAlgo):
             self.sigmas[x] = self.overall_sigma if sigma == 0.0 else sigma
 
         self.sim = self.compute_similarities()
+
+        return self
 
     def estimate(self, u, i):
 

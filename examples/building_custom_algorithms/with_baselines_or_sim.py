@@ -27,6 +27,8 @@ class MyOwnAlgorithm(AlgoBase):
         self.bu, self.bi = self.compute_baselines()
         self.sim = self.compute_similarities()
 
+        return self
+
     def estimate(self, u, i):
 
         if not (self.trainset.knows_user(u) and self.trainset.knows_item(i)):

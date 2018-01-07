@@ -38,6 +38,8 @@ class NormalPredictor(AlgoBase):
         denum = self.trainset.n_ratings
         self.sigma = np.sqrt(num / denum)
 
+        return self
+
     def estimate(self, *_):
 
         return np.random.normal(self.trainset.global_mean, self.sigma)

@@ -53,6 +53,8 @@ class AlgoBase(object):
         self.skip_train = True
         self.fit(trainset)
 
+        return self
+
     def fit(self, trainset):
         """Train an algorithm on a given training set.
 
@@ -64,6 +66,9 @@ class AlgoBase(object):
             trainset(:obj:`Trainset <surprise.Trainset>`) : A training
                 set, as returned by the :meth:`folds
                 <surprise.dataset.Dataset.folds>` method.
+
+        Returns:
+            self
         """
 
         # Check if train method is overridden: this means the object is an old
@@ -88,6 +93,8 @@ class AlgoBase(object):
 
         # (re) Initialise baselines
         self.bu = self.bi = None
+
+        return self
 
     def predict(self, uid, iid, r_ui=None, clip=True, verbose=False):
         """Compute the rating prediction for given user and item.

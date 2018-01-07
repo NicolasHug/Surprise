@@ -6,6 +6,8 @@ from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 import os
 
+import pytest
+
 from surprise import NormalPredictor
 from surprise import BaselineOnly
 from surprise import KNNBasic
@@ -20,6 +22,7 @@ from surprise import Dataset
 from surprise import Reader
 from surprise import KNNWithZScore
 from surprise.model_selection import PredefinedKFold
+from surprise.model_selection import train_test_split
 
 
 def test_unknown_user_or_item():
@@ -44,6 +47,14 @@ def test_unknown_user_or_item():
         algo.predict('user0', 'unknown_item', None)
         algo.predict('unkown_user', 'item0', None)
         algo.predict('unkown_user', 'unknown_item', None)
+
+    # unrelated, but test the fit().test() one-liner:
+    trainset, testset = train_test_split(data, test_size=2)
+    for klass in klasses:
+        algo = klass()
+        algo.fit(trainset).test(testset)
+        with pytest.warns(UserWarning):
+            algo.train(trainset).test(testset)
 
 
 def test_knns():

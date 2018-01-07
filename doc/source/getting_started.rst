@@ -77,6 +77,13 @@ Result:
 
     RMSE: 0.9411
 
+Note that you can train and test an algorithm with the following one-line:
+
+.. parsed-literal::
+
+    predictions = algo.fit(trainset).test(testset)
+
+
 In some cases, your trainset and testset are already defined by some files.
 Please refer to :ref:`this section <load_from_folds_example>` to handle such cases.
 

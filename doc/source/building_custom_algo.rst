@@ -52,7 +52,7 @@ be done by defining the ``fit`` method:
 .. literalinclude:: ../../examples/building_custom_algorithms/most_basic_algorithm2.py
     :caption: From file ``examples/building_custom_algorithms/most_basic_algorithm2.py``
     :name: most_basic_algorithm2.py
-    :lines: 15-35
+    :lines: 16-37
 
 
 The ``fit`` method is called e.g. by the :func:`cross_validate
@@ -61,6 +61,9 @@ a cross-validation process, (but you can also :ref:`call it yourself
 <use_cross_validation_iterators>`).  Before doing anything, you should call the
 base class :meth:`fit()
 <surprise.prediction_algorithms.algo_base.AlgoBase.fit>` method.
+
+Note that the ``fit()`` method returns ``self``. This allows to use expression
+like ``algo.fit(trainset).test(testset)``.
 
 The ``trainset`` attribute
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -79,7 +82,7 @@ rating for the item:
 .. literalinclude:: ../../examples/building_custom_algorithms/mean_rating_user_item.py
     :caption: From file ``examples/building_custom_algorithms/mean_rating_user_item.py``
     :name: mean_rating_user_item.py
-    :lines: 22-35
+    :lines: 23-35
 
 Note that it would have been a better idea to compute all the user means in the
 ``fit`` method, thus avoiding the same computations multiple times.
