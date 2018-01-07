@@ -14,7 +14,8 @@ from .split import get_cv
 from .. import accuracy
 
 
-def cross_validate(algo, data, measures=['rmse', 'mae'], cv=None, n_jobs=-1,
+def cross_validate(algo, data, measures=['rmse', 'mae'], cv=None,
+                   return_train_measures=False, n_jobs=-1,
                    pre_dispatch='2*n_jobs', verbose=False):
     '''
     Run a cross validation procedure for a given algorithm, reporting accuracy
@@ -38,6 +39,8 @@ def cross_validate(algo, data, measures=['rmse', 'mae'], cv=None, n_jobs=-1,
             appropriate ``n_splits`` parameter. If ``None``, :class:`KFold
             <surprise.model_selection.split.KFold>` is used with
             ``n_splits=5``.
+        return_train_measures(bool): Whether to compute performance measures on
+            the trainsets. Default is ``False``.
         n_jobs(int): The maximum number of folds evaluated in parallel.
 
             - If ``-1``, all CPUs are used.
@@ -72,8 +75,13 @@ def cross_validate(algo, data, measures=['rmse', 'mae'], cv=None, n_jobs=-1,
         dict: A dict with the following keys:
 
             - ``'test_*'`` where ``*`` corresponds to a lower-case accuracy
-              measure, eg ``'test_rmse'``: numpy array with accuracy values for
-              each split.
+              measure, e.g. ``'test_rmse'``: numpy array with accuracy values
+              for each testset.
+
+            - ``'train_*'`` where ``*`` corresponds to a lower-case accuracy
+              measure, e.g. ``'train_rmse'``: numpy array with accuracy values
+              for each trainset. Only available if ``return_train_measures`` is
+              ``True``.
 
             - ``'fit_time'``: numpy array with the training time in seconds for
               each split.
@@ -87,32 +95,41 @@ def cross_validate(algo, data, measures=['rmse', 'mae'], cv=None, n_jobs=-1,
 
     cv = get_cv(cv)
 
-    delayed_list = (delayed(fit_and_score)(algo, trainset, testset, measures)
+    delayed_list = (delayed(fit_and_score)(algo, trainset, testset, measures,
+                                           return_train_measures)
                     for (trainset, testset) in cv.split(data))
     out = Parallel(n_jobs=n_jobs, pre_dispatch=pre_dispatch)(delayed_list)
-    test_measures_dicts, fit_times, test_times = zip(*out)
 
-    # transform list of dicts into dict of lists
-    # Same as in GridSearchCV.fit()
+    (test_measures_dicts,
+     train_measures_dicts,
+     fit_times,
+     test_times) = zip(*out)
+
     test_measures = dict()
-    for m in test_measures_dicts[0]:
-        test_measures[m] = np.asarray([d[m] for d in test_measures_dicts])
-
+    train_measures = dict()
     ret = dict()
     for m in measures:
+        # transform list of dicts into dict of lists
+        # Same as in GridSearchCV.fit()
+        test_measures[m] = np.asarray([d[m] for d in test_measures_dicts])
         ret['test_' + m] = test_measures[m]
+        if return_train_measures:
+            train_measures[m] = np.asarray([d[m] for d in
+                                            train_measures_dicts])
+            ret['train_' + m] = test_measures[m]
 
     ret['fit_time'] = fit_times
     ret['test_time'] = test_times
 
     if verbose:
-        print_summary(algo, measures, test_measures, fit_times, test_times,
-                      cv.n_splits)
+        print_summary(algo, measures, test_measures, train_measures, fit_times,
+                      test_times, cv.n_splits)
 
     return ret
 
 
-def fit_and_score(algo, trainset, testset, measures):
+def fit_and_score(algo, trainset, testset, measures,
+                  return_train_measures=False):
     '''Helper method that trains an algorithm and compute accuracy measures on
     a testset. Also report train and test times.
 
@@ -125,12 +142,18 @@ def fit_and_score(algo, trainset, testset, measures):
         measures(list of string): The performance measures to compute. Allowed
             names are function names as defined in the :mod:`accuracy
             <surprise.accuracy>` module.
+        return_train_measures(bool): Whether to compute performance measures on
+            the trainset. Default is ``False``.
 
     Returns:
         tuple: A tuple containing:
 
-            - A dictionary mapping each accuracy metric to its value (keys must
-              be lower case).
+            - A dictionary mapping each accuracy metric to its value on the
+            testset (keys are lower case).
+
+            - A dictionary mapping each accuracy metric to its value on the
+            trainset (keys are lower case). This dict is empty if
+            return_train_measures is False.
 
             - The fit time in seconds.
 
@@ -144,16 +167,22 @@ def fit_and_score(algo, trainset, testset, measures):
     predictions = algo.test(testset)
     test_time = time.time() - start_test
 
+    if return_train_measures:
+        train_predictions = algo.test(trainset.build_testset())
+
     test_measures = dict()
-    for measure in measures:
-        f = getattr(accuracy, measure.lower())
-        test_measures[measure] = f(predictions, verbose=0)
+    train_measures = dict()
+    for m in measures:
+        f = getattr(accuracy, m.lower())
+        test_measures[m] = f(predictions, verbose=0)
+        if return_train_measures:
+            train_measures[m] = f(train_predictions, verbose=0)
 
-    return test_measures, fit_time, test_time
+    return test_measures, train_measures, fit_time, test_time
 
 
-def print_summary(algo, measures, test_measures, fit_times, test_times,
-                  n_splits):
+def print_summary(algo, measures, test_measures, train_measures, fit_times,
+                  test_times, n_splits):
     '''Helper for printing the result of cross_validate.'''
 
     print('Evaluating {0} of algorithm {1} on {2} split(s).'.format(
@@ -161,18 +190,26 @@ def print_summary(algo, measures, test_measures, fit_times, test_times,
           algo.__class__.__name__, n_splits))
     print()
 
-    row_format = '{:<12}' + '{:<8}' * (n_splits + 2)
+    row_format = '{:<18}' + '{:<8}' * (n_splits + 2)
     s = row_format.format(
         '',
         *['Fold {0}'.format(i + 1) for i in range(n_splits)] + ['Mean'] +
         ['Std'])
     s += '\n'
     s += '\n'.join(row_format.format(
-        key.upper(),
+        key.upper() + ' (testset)',
         *['{:1.4f}'.format(v) for v in vals] +
         ['{:1.4f}'.format(np.mean(vals))] +
         ['{:1.4f}'.format(np.std(vals))])
         for (key, vals) in iteritems(test_measures))
+    if train_measures:
+        s += '\n'
+        s += '\n'.join(row_format.format(
+            key.upper() + ' (trainset)',
+            *['{:1.4f}'.format(v) for v in vals] +
+            ['{:1.4f}'.format(np.mean(vals))] +
+            ['{:1.4f}'.format(np.std(vals))])
+            for (key, vals) in iteritems(train_measures))
     s += '\n'
     s += row_format.format('Fit time',
                            *['{:.2f}'.format(t) for t in fit_times] +

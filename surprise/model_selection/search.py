@@ -139,7 +139,10 @@ class GridSearchCV:
                        pre_dispatch=self.pre_dispatch,
                        verbose=self.joblib_verbose)(delayed_list)
 
-        test_measures_dicts, fit_times, test_times = zip(*out)
+        (test_measures_dicts,
+         train_measures_dicts,
+         fit_times,
+         test_times) = zip(*out)
 
         # test_measures_dicts is a list of dict like this:
         # [{'mae': 1, 'rmse': 2}, {'mae': 2, 'rmse': 3} ...]
