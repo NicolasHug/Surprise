@@ -93,7 +93,8 @@ def test_cv_results():
     kf = KFold(3, shuffle=True, random_state=4)
     param_grid = {'n_epochs': [5], 'lr_all': [.2, .2],
                   'reg_all': [.4, .4], 'n_factors': [5], 'random_state': [0]}
-    gs = GridSearchCV(SVD, param_grid, measures=['RMSE', 'mae'], cv=kf)
+    gs = GridSearchCV(SVD, param_grid, measures=['RMSE', 'mae'], cv=kf,
+                      return_train_measures=True)
     gs.fit(data)
 
     # test keys split*_test_rmse, mean and std dev.
@@ -109,6 +110,20 @@ def test_cv_results():
                        np.std([gs.cv_results['split0_test_rmse'],
                                gs.cv_results['split1_test_rmse'],
                                gs.cv_results['split2_test_rmse']], axis=0))
+
+    # test keys split*_train_mae, mean and std dev.
+    assert gs.cv_results['split0_train_rmse'].shape == (4,)  # 4 param comb.
+    assert gs.cv_results['split1_train_rmse'].shape == (4,)  # 4 param comb.
+    assert gs.cv_results['split2_train_rmse'].shape == (4,)  # 4 param comb.
+    assert gs.cv_results['mean_train_rmse'].shape == (4,)  # 4 param comb.
+    assert np.allclose(gs.cv_results['mean_train_rmse'],
+                       np.mean([gs.cv_results['split0_train_rmse'],
+                                gs.cv_results['split1_train_rmse'],
+                                gs.cv_results['split2_train_rmse']], axis=0))
+    assert np.allclose(gs.cv_results['std_train_rmse'],
+                       np.std([gs.cv_results['split0_train_rmse'],
+                               gs.cv_results['split1_train_rmse'],
+                               gs.cv_results['split2_train_rmse']], axis=0))
 
     # test fit and train times dimensions.
     assert gs.cv_results['mean_fit_time'].shape == (4,)  # 4 param comb.

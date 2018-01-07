@@ -38,6 +38,9 @@ class GridSearchCV:
             appropriate ``n_splits`` parameter. If ``None``, :class:`KFold
             <surprise.model_selection.split.KFold>` is used with
             ``n_splits=5``.
+        return_train_measures(bool): Whether to compute performance measures on
+            the trainsets. If ``True``, the ``cv_results`` attribute will
+            also contain measures for trainsets. Default is ``False``.
         n_jobs(int): The maximum number of parallel training procedures.
 
             - If ``-1``, all CPUs are used.
@@ -89,13 +92,14 @@ class GridSearchCV:
     '''
 
     def __init__(self, algo_class, param_grid, measures=['rmse', 'mae'],
-                 cv=None, n_jobs=-1, pre_dispatch='2*n_jobs',
-                 joblib_verbose=0):
+                 cv=None, return_train_measures=False, n_jobs=-1,
+                 pre_dispatch='2*n_jobs', joblib_verbose=0):
 
         self.algo_class = algo_class
         self.param_grid = param_grid.copy()
         self.measures = [measure.lower() for measure in measures]
         self.cv = cv
+        self.return_train_measures = return_train_measures
         self.n_jobs = n_jobs
         self.pre_dispatch = pre_dispatch
         self.joblib_verbose = joblib_verbose
@@ -130,7 +134,8 @@ class GridSearchCV:
 
         delayed_list = (
             delayed(fit_and_score)(self.algo_class(**params), trainset,
-                                   testset, self.measures)
+                                   testset, self.measures,
+                                   self.return_train_measures)
             for params, (trainset, testset) in product(self.param_combinations,
                                                        cv.split(data))
         )
@@ -156,10 +161,15 @@ class GridSearchCV:
         # (n_parameters_combinations, n_splits). This way we can easily compute
         # the mean and std dev over all splits or over all param comb.
         test_measures = dict()
+        train_measures = dict()
         new_shape = (len(self.param_combinations), cv.get_n_folds())
         for m in self.measures:
             test_measures[m] = np.asarray([d[m] for d in test_measures_dicts])
             test_measures[m] = test_measures[m].reshape(new_shape)
+            if self.return_train_measures:
+                train_measures[m] = np.asarray([d[m] for d in
+                                                train_measures_dicts])
+                train_measures[m] = train_measures[m].reshape(new_shape)
 
         cv_results = dict()
         best_index = dict()
@@ -171,12 +181,20 @@ class GridSearchCV:
             for split in range(cv.get_n_folds()):
                 cv_results['split{0}_test_{1}'.format(split, m)] = \
                     test_measures[m][:, split]
+                if self.return_train_measures:
+                    cv_results['split{0}_train_{1}'.format(split, m)] = \
+                        train_measures[m][:, split]
 
-            # cv_results: set mean and std over all splits (testset) for each
-            # param comb
-            mean_measures = test_measures[m].mean(axis=1)
-            cv_results['mean_test_{}'.format(m)] = mean_measures
+            # cv_results: set mean and std over all splits (testset and
+            # trainset) for each param comb
+            mean_test_measures = test_measures[m].mean(axis=1)
+            cv_results['mean_test_{}'.format(m)] = mean_test_measures
             cv_results['std_test_{}'.format(m)] = test_measures[m].std(axis=1)
+            if self.return_train_measures:
+                mean_train_measures = train_measures[m].mean(axis=1)
+                cv_results['mean_train_{}'.format(m)] = mean_train_measures
+                cv_results['std_train_{}'.format(m)] = \
+                    train_measures[m].std(axis=1)
 
             # cv_results: set rank of each param comb
             indices = cv_results['mean_test_{}'.format(m)].argsort()
@@ -186,11 +204,11 @@ class GridSearchCV:
 
             # set best_index, and best_xxxx attributes
             if m in ('mae', 'rmse'):
-                best_index[m] = mean_measures.argmin()
+                best_index[m] = mean_test_measures.argmin()
             elif m in ('fcp', ):
-                best_index[m] = mean_measures.argmax()
+                best_index[m] = mean_test_measures.argmax()
             best_params[m] = self.param_combinations[best_index[m]]
-            best_score[m] = mean_measures[best_index[m]]
+            best_score[m] = mean_test_measures[best_index[m]]
             best_estimator[m] = self.algo_class(**best_params[m])
 
         # Cv results: set fit and train times (mean, std)
