@@ -1,5 +1,10 @@
-VERSION 1.0.5 (latest, in development)
-======================================
+Latest version, in development
+==============================
+
+* A lot to do here!
+
+VERSION 1.0.5
+=============
 
 Enhancements
 ------------
@@ -7,14 +12,17 @@ Enhancements
 * Cross-validation tools have been entirely reworked. We can now rely on
   powerful and flexible cross-validation iterators, inspired by scikit-learn's
   API.
-* the evaluate() method has been replaced by cross-validate which is parallel.
+* the evaluate() method has been replaced by cross-validate which is parallel
+  and can return measures on trainset as well as computation times.
 * GridSearch is now parallel, using joblib.
+* GridSearch now allows to refit an algorithm on the whole dataset.
 * default data directory can now be custom with env variable
   SURPRISE_DATA_FOLDER
 * the fit() (and train()) methods now return self, which allows one-liners like
   algo.fit(trainset).test(testset)
 * Algorithms using a random initialization (e.g. SVD, NMF, CoClustering) now
   have a random_state parameter for seeding the RNG.
+* The getting started guide has been rewritten
 
 API Changes
 -----------
