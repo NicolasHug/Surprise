@@ -22,7 +22,7 @@ First upload to test pypi:
 Check that install works on testpypi (also check md is converted to rst), then
 upload to pypi and check again.
 to install from testpypi:
-pip install --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple scikit-surprise
+pip install --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple scikit-surprise  # noqa
 
 push new release tag on github:
     git tag v1.0.x
