@@ -98,7 +98,8 @@ class GridSearchCV:
         cv_results (dict of arrays):
             A dict that contains accuracy measures over all splits, as well as
             train and test time for each parameter combination. Can be imported
-            into a pandas `DataFrame`.
+            into a pandas `DataFrame` (see :ref:`example
+            <cv_results_example>`).
     '''
 
     def __init__(self, algo_class, param_grid, measures=['rmse', 'mae'],
@@ -242,8 +243,11 @@ class GridSearchCV:
             cv_results['mean_{}_time'.format(s)] = times.mean(axis=1)
             cv_results['std_{}_time'.format(s)] = times.std(axis=1)
 
-        # cv_results: set params key
+        # cv_results: set params key and each param_* values
         cv_results['params'] = self.param_combinations
+        for param in self.param_combinations[0]:
+            cv_results['param_' + param] = [comb[param] for comb in
+                                            self.param_combinations]
 
         if self.refit:
             best_estimator[self.refit].fit(data.build_full_trainset())
