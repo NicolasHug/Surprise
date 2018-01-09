@@ -9,7 +9,7 @@ def test_regular_files():
 
     style_guide = flake8.get_style_guide(
         filename=['*.py'],
-        exclude=['doc', '.eggs', '*.egg', 'build'],
+        exclude=['doc', '.eggs', '*.egg', 'build', 'benchmark.py'],
         select=['E', 'W', 'F'],
     )
 

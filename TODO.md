@@ -2,11 +2,9 @@ TODO
 ====
 
 
-* Update README example before new rewlease, as well as computation times
-
-* check conda forge
 * make some filtering dataset tools, like remove users/items with less/more
   than n ratings, binarize a dataset, etc...
+* then implement MFBPR and see how it goes
 * Allow incremental updates for some algorithms
 
 Done:
