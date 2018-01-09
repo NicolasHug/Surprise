@@ -4,13 +4,43 @@ from os import path
 
 """
 Release instruction:
-mktmpenv (Python version should not matter)
-pip install numpy cython pypandoc twine
-python setup.py sdist
-twine upload dist/blabla.tar.gz [-r testpypi]
 
+pandoc must be install on machine so that readme (in markdown for jekyll) can
+be converted to rst (for pypi).
+
+Check that tests run correctly for 36 and 27 and doc compiles without warning
+(make clean first).
+
+change __version__ in setup.py to new version name.
+
+First upload to test pypi:
+    mktmpenv (Python version should not matter)
+    pip install numpy cython pypandoc twine
+    python setup.py sdist
+    twine upload dist/blabla.tar.gz -r testpypi
+
+Check that install works on testpypi (also check md is converted to rst), then
+upload to pypi and check again.
 to install from testpypi:
 pip install --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple scikit-surprise
+
+push new release tag on github:
+    git tag v1.0.x
+    git push --tags
+
+Check that RTD has updated 'stable' to the new release (may take a while).
+
+In the mean time, upload to conda:
+    Download new tar.gz from pypi, and check its sha:
+        openssl sha256 blabla.tar.gz
+    update recipe/meta.yaml on feedstock fork consequently (only version and
+    sha should be changed.  Maybe add some import tests).
+    Then open pull request on conda-forge feedstock and merge it when all
+    checks are OK.
+    Check on https://anaconda.org/conda-forge/scikit-surprise that new version
+    is available for all platforms.
+
+Then, maybe, celebrate.
 """
 
 try:
