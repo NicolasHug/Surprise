@@ -44,13 +44,15 @@ following purposes in mind**:
   (cosine, MSD, pearson...) are built-in.
 - Make it easy to implement [new algorithm
   ideas](http://surprise.readthedocs.io/en/stable/building_custom_algo.html).
-- Provide tools to [evaluate](http://surprise.readthedocs.io/en/stable/evaluate.html),
+- Provide tools to [evaluate](http://surprise.readthedocs.io/en/stable/model_selection.html),
   [analyse](http://nbviewer.jupyter.org/github/NicolasHug/Surprise/tree/master/examples/notebooks/KNNBasic_analysis.ipynb/)
   and
   [compare](http://nbviewer.jupyter.org/github/NicolasHug/Surprise/blob/master/examples/notebooks/Compare.ipynb)
   the algorithms performance. Cross-validation procedures can be run very
-  easily, as well as [exhaustive search over a set of
-  parameters](http://surprise.readthedocs.io/en/stable/getting_started.html#tune-algorithm-parameters-with-gridsearch).
+  easily using powerful CV iterators (inspired by
+  [scikit-learn](http://scikit-learn.org/) excellent tools), as well as
+  [exhaustive search over a set of
+  parameters](http://surprise.readthedocs.io/en/stable/getting_started.html#tune-algorithm-parameters-with-gridsearchcv).
 
 
 The name *SurPRISE* (roughly :) ) stands for Simple Python RecommendatIon
@@ -61,42 +63,40 @@ Getting started, example
 ------------------------
 
 Here is a simple example showing how you can (down)load a dataset, split it for
-3-folds cross-validation, and compute the MAE and RMSE of the
+5-fold cross-validation, and compute the MAE and RMSE of the
 [SVD](http://surprise.readthedocs.io/en/stable/matrix_factorization.html#surprise.prediction_algorithms.matrix_factorization.SVD)
 algorithm.
+
 
 ```python
 from surprise import SVD
 from surprise import Dataset
-from surprise import evaluate, print_perf
+from surprise.model_selection import cross_validate
 
-
-# Load the movielens-100k dataset (download it if needed),
-# and split it into 3 folds for cross-validation.
+# Load the movielens-100k dataset (download it if needed).
 data = Dataset.load_builtin('ml-100k')
-data.split(n_folds=3)
 
-# We'll use the famous SVD algorithm.
+# Use the famous SVD algorithm.
 algo = SVD()
 
-# Evaluate performances of our algorithm on the dataset.
-perf = evaluate(algo, data, measures=['RMSE', 'MAE'])
-
-print_perf(perf)
+# Run 5-fold cross-validation and print results.
+cross_validate(algo, data, measures=['RMSE', 'MAE'], cv=5, verbose=True)
 ```
 
 **Output**:
 
 ```
-Evaluating RMSE, MAE of algorithm SVD.
-
-        Fold 1  Fold 2  Fold 3  Mean
-MAE     0.7475  0.7447  0.7425  0.7449
-RMSE    0.9461  0.9436  0.9425  0.9441
+Evaluating RMSE, MAE of algorithm SVD on 5 split(s).                       
+                                                                           
+            Fold 1  Fold 2  Fold 3  Fold 4  Fold 5  Mean    Std            
+RMSE        0.9311  0.9370  0.9320  0.9317  0.9391  0.9342  0.0032         
+MAE         0.7350  0.7375  0.7341  0.7342  0.7375  0.7357  0.0015         
+Fit time    6.53    7.11    7.23    7.15    3.99    6.40    1.23           
+Test time   0.26    0.26    0.25    0.15    0.13    0.21    0.06 
 ```
 
 [Surprise](http://surpriselib.com) can do **much** more (e.g,
-[GridSearch](http://surprise.readthedocs.io/en/stable/getting_started.html#tune-algorithm-parameters-with-gridsearch))!
+[GridSearchCV](http://surprise.readthedocs.io/en/stable/getting_started.html#tune-algorithm-parameters-with-gridsearchcv))!
 You'll find [more usage
 examples](http://surprise.readthedocs.io/en/stable/getting_started.html) in the
 [documentation ](http://surprise.readthedocs.io/en/stable/index.html).
@@ -106,50 +106,53 @@ Benchmarks
 ----------
 
 Here are the average RMSE, MAE and total execution time of various algorithms
-(with their default parameters) on a 5-folds cross-validation procedure. The
+(with their default parameters) on a 5-fold cross-validation procedure. The
 datasets are the [Movielens](http://grouplens.org/datasets/movielens/) 100k and
-1M datasets. The folds are the same for all the algorithms (the random seed is
-set to 0). All experiments are run on a small laptop with Intel Core i3 1.7
-GHz, 4Go RAM. The execution time is the *real* execution time, as returned by
-the GNU [time](http://man7.org/linux/man-pages/man1/time.1.html) command.
+1M datasets. The folds are the same for all the algorithms. All experiments are
+run on a notebook with Intel Core i5 7th gen (2.5 GHz) and 8Go RAM.  The code
+for generating these tables can be found in the [benchmark
+example](https://github.com/NicolasHug/Surprise/tree/master/examples/benchmark.py).
 
-|  [Movielens 100k](http://grouplens.org/datasets/movielens/100k) |  RMSE  |   MAE  | Time (s) |
-|-----------------|:------:|:------:|:--------:|
-| [NormalPredictor](http://surprise.readthedocs.io/en/stable/basic_algorithms.html#surprise.prediction_algorithms.random_pred.NormalPredictor) | 1.5228 | 1.2242 |     4    |
-| [BaselineOnly](http://surprise.readthedocs.io/en/stable/basic_algorithms.html#surprise.prediction_algorithms.baseline_only.BaselineOnly)    |  .9445 |  .7488 |    5    |
-| [KNNBasic](http://surprise.readthedocs.io/en/stable/knn_inspired.html#surprise.prediction_algorithms.knns.KNNBasic)        |  .9789 |  .7732 |    27    |
-| [KNNWithMeans](http://surprise.readthedocs.io/en/stable/knn_inspired.html#surprise.prediction_algorithms.knns.KNNWithMeans)    |  .9514 |  .7500 |    30    |
-| [KNNBaseline](http://surprise.readthedocs.io/en/stable/knn_inspired.html#surprise.prediction_algorithms.knns.KNNBaseline)     |  .9306 |  .7334 |    44    |
-| [SVD](http://surprise.readthedocs.io/en/stable/matrix_factorization.html#surprise.prediction_algorithms.matrix_factorization.SVD)             |  .9364 |  .7381 |    46    |
-| [SVD++](http://surprise.readthedocs.io/en/stable/matrix_factorization.html#surprise.prediction_algorithms.matrix_factorization.SVDpp)             |  .9200 |  .7253 |    31min    |
-| [NMF](http://surprise.readthedocs.io/en/stable/matrix_factorization.html#surprise.prediction_algorithms.matrix_factorization.NMF)             |  .9634 |  .7572 |    55    |
-| [Slope One](http://surprise.readthedocs.io/en/stable/slope_one.html#surprise.prediction_algorithms.slope_one.SlopeOne)             |  .9454 |  .7430 |    25    |
-| [Co clustering](http://surprise.readthedocs.io/en/stable/co_clustering.html#surprise.prediction_algorithms.co_clustering.CoClustering)             |  .9678 |  .7579 |    15    |
+| [Movielens 100k](http://grouplens.org/datasets/movielens/100k)                                                                         |   RMSE |   MAE | Time    |
+|:---------------------------------------------------------------------------------------------------------------------------------------|-------:|------:|:--------|
+| [SVD](http://surprise.readthedocs.io/en/stable/matrix_factorization.html#surprise.prediction_algorithms.matrix_factorization.SVD)      |  0.934 | 0.737 | 0:00:11 |
+| [SVD++](http://surprise.readthedocs.io/en/stable/matrix_factorization.html#surprise.prediction_algorithms.matrix_factorization.SVDpp)  |  0.92  | 0.722 | 0:09:03 |
+| [NMF](http://surprise.readthedocs.io/en/stable/matrix_factorization.html#surprise.prediction_algorithms.matrix_factorization.NMF)      |  0.963 | 0.758 | 0:00:15 |
+| [Slope One](http://surprise.readthedocs.io/en/stable/slope_one.html#surprise.prediction_algorithms.slope_one.SlopeOne)                 |  0.946 | 0.743 | 0:00:08 |
+| [k-NN](http://surprise.readthedocs.io/en/stable/knn_inspired.html#surprise.prediction_algorithms.knns.KNNBasic)                        |  0.98  | 0.774 | 0:00:10 |
+| [Centered k-NN](http://surprise.readthedocs.io/en/stable/knn_inspired.html#surprise.prediction_algorithms.knns.KNNWithMeans)           |  0.951 | 0.749 | 0:00:10 |
+| [k-NN Baseline](http://surprise.readthedocs.io/en/stable/knn_inspired.html#surprise.prediction_algorithms.knns.KNNBaseline)            |  0.931 | 0.733 | 0:00:12 |
+| [Co-Clustering](http://surprise.readthedocs.io/en/stable/co_clustering.html#surprise.prediction_algorithms.co_clustering.CoClustering) |  0.963 | 0.753 | 0:00:03 |
+| [Baseline](http://surprise.readthedocs.io/en/stable/basic_algorithms.html#surprise.prediction_algorithms.baseline_only.BaselineOnly)   |  0.944 | 0.748 | 0:00:01 |
+| [Random](http://surprise.readthedocs.io/en/stable/basic_algorithms.html#surprise.prediction_algorithms.random_pred.NormalPredictor)    |  1.514 | 1.215 | 0:00:01 |
 
 
-|  [Movielens 1M](http://grouplens.org/datasets/movielens/1m) |  RMSE  |   MAE  | Time (min) |
-|-----------------|:------:|:------:|:--------:|
-| [NormalPredictor](http://surprise.readthedocs.io/en/stable/basic_algorithms.html#surprise.prediction_algorithms.random_pred.NormalPredictor) | 1.5037 | 1.2051 |     < 1    |
-| [BaselineOnly](http://surprise.readthedocs.io/en/stable/basic_algorithms.html#surprise.prediction_algorithms.baseline_only.BaselineOnly)    |  .9086 | .7194 |    < 1    |
-| [KNNBasic](http://surprise.readthedocs.io/en/stable/knn_inspired.html#surprise.prediction_algorithms.knns.KNNBasic)        |  .9207 |  .7250 |    22    |
-| [KNNWithMeans](http://surprise.readthedocs.io/en/stable/knn_inspired.html#surprise.prediction_algorithms.knns.KNNWithMeans)    |  .9292 |  .7386 |    22    |
-| [KNNBaseline](http://surprise.readthedocs.io/en/stable/knn_inspired.html#surprise.prediction_algorithms.knns.KNNBaseline)     |  .8949 | .7063 |    44    |
-| [SVD](http://surprise.readthedocs.io/en/stable/matrix_factorization.html#surprise.prediction_algorithms.matrix_factorization.SVD)             |  .8738 |  .6858 |    7    |
-| [NMF](http://surprise.readthedocs.io/en/stable/matrix_factorization.html#surprise.prediction_algorithms.matrix_factorization.NMF)             |  .9155 |  .7232 |    9    |
-| [Slope One](http://surprise.readthedocs.io/en/stable/slope_one.html#surprise.prediction_algorithms.slope_one.SlopeOne)             |  .9065 |  .7144 |    8    |
-| [Co clustering](http://surprise.readthedocs.io/en/stable/co_clustering.html#surprise.prediction_algorithms.co_clustering.CoClustering)             |  .9155 |  .7174 |    2    |
+| [Movielens 1M](http://grouplens.org/datasets/movielens/1m)                                                                             |   RMSE |   MAE | Time    |
+|:---------------------------------------------------------------------------------------------------------------------------------------|-------:|------:|:--------|
+| [SVD](http://surprise.readthedocs.io/en/stable/matrix_factorization.html#surprise.prediction_algorithms.matrix_factorization.SVD)      |  0.873 | 0.686 | 0:02:13 |
+| [SVP++](http://surprise.readthedocs.io/en/stable/matrix_factorization.html#surprise.prediction_algorithms.matrix_factorization.SVDpp)  |  0.862 | 0.673 | 2:54:19 |
+| [NMF](http://surprise.readthedocs.io/en/stable/matrix_factorization.html#surprise.prediction_algorithms.matrix_factorization.NMF)      |  0.916 | 0.724 | 0:02:31 |
+| [Slope One](http://surprise.readthedocs.io/en/stable/slope_one.html#surprise.prediction_algorithms.slope_one.SlopeOne)                 |  0.907 | 0.715 | 0:02:31 |
+| [k-NN](http://surprise.readthedocs.io/en/stable/knn_inspired.html#surprise.prediction_algorithms.knns.KNNBasic)                        |  0.923 | 0.727 | 0:05:27 |
+| [Centered k-NN](http://surprise.readthedocs.io/en/stable/knn_inspired.html#surprise.prediction_algorithms.knns.KNNWithMeans)           |  0.929 | 0.738 | 0:05:43 |
+| [k-NN Baseline](http://surprise.readthedocs.io/en/stable/knn_inspired.html#surprise.prediction_algorithms.knns.KNNBaseline)            |  0.895 | 0.706 | 0:05:55 |
+| [Co-Clustering](http://surprise.readthedocs.io/en/stable/co_clustering.html#surprise.prediction_algorithms.co_clustering.CoClustering) |  0.915 | 0.717 | 0:00:31 |
+| [Baseline](http://surprise.readthedocs.io/en/stable/basic_algorithms.html#surprise.prediction_algorithms.baseline_only.BaselineOnly)   |  0.909 | 0.719 | 0:00:19 |
+| [Random](http://surprise.readthedocs.io/en/stable/basic_algorithms.html#surprise.prediction_algorithms.random_pred.NormalPredictor)    |  1.504 | 1.206 | 0:00:19 |
+
 
 Installation
 ------------
 
-The easiest way is to use pip (you'll need [numpy](http://www.numpy.org/)):
+With pip (you'll need [numpy](http://www.numpy.org/), and a C compiler. Windows
+users might prefer using conda):
 
     $ pip install numpy
     $ pip install scikit-surprise
 
-If you use conda, you can install the package following [these
-guidelines](https://conda.io/docs/user-guide/getting-started.html#installing-a-package-with-pip)
-(still using pip).
+With conda:
+
+    $ conda install -c conda-forge scikit-surprise
 
 For the latest version, you can also clone the repo and build the source
 (you'll first need [Cython](http://cython.org/) and
@@ -204,4 +207,4 @@ and send pull requests!
 
 For bugs, issues or questions about [Surprise](http://surpriselib.com), you can
 use the GitHub [project page](https://github.com/NicolasHug/Surprise) (please
-don't send me emails as there would be no record for future users).
+don't send me emails as there would be no record for other users).
