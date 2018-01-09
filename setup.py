@@ -8,6 +8,9 @@ mktmpenv (Python version should not matter)
 pip install numpy cython pypandoc twine
 python setup.py sdist
 twine upload dist/blabla.tar.gz [-r testpypi]
+
+to install from testpypi:
+pip install --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple scikit-surprise
 """
 
 try:
@@ -23,7 +26,7 @@ except ImportError:
 else:
     USE_CYTHON = True
 
-__version__ = '1.0.5'
+__version__ = 'latest'
 
 here = path.abspath(path.dirname(__file__))
 
