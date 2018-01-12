@@ -247,6 +247,14 @@ class Dataset:
         return [(ruid, riid, r_ui_trans)
                 for (ruid, riid, r_ui_trans, _) in raw_testset]
 
+    def binarize(self, threshold=4):
+
+        self.raw_ratings = [(uid, iid,
+                             int((r_ui - self.reader.offset) >= threshold),
+                             timestamp)
+                            for (uid, iid, r_ui, timestamp)
+                            in self.raw_ratings]
+
 
 class DatasetUserFolds(Dataset):
     """A derived class from :class:`Dataset` for which folds (for

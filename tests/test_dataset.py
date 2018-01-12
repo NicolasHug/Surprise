@@ -257,3 +257,42 @@ def test_get_dataset_dir():
     # Fall back to default
     del os.environ['SURPRISE_DATA_FOLDER']
     assert get_dataset_dir() == os.path.expanduser('~' + '/.surprise_data/')
+
+def test_binarize():
+
+    custom_dataset_path = (os.path.dirname(os.path.realpath(__file__)) +
+                           '/custom_dataset')
+    reader = Reader(line_format='user item rating', sep=' ', skip_lines=3,
+                    rating_scale=(1, 5))
+
+    data = Dataset.load_from_file(file_path=custom_dataset_path, reader=reader)
+    data.binarize(threshold=4)
+    ratings = [r for (_, _, r, _) in data.raw_ratings]
+    assert ratings == [1, 1, 0, 1, 0]
+
+    data = Dataset.load_from_file(file_path=custom_dataset_path, reader=reader)
+    data.binarize(threshold=5)
+    ratings = [r for (_, _, r, _) in data.raw_ratings]
+    assert ratings == [0, 0, 0, 1, 0]
+
+    data = Dataset.load_from_file(file_path=custom_dataset_path, reader=reader)
+    data.binarize(threshold=6)
+    ratings = [r for (_, _, r, _) in data.raw_ratings]
+    assert ratings == [0, 0, 0, 0, 0]
+
+    # test when there's an offset
+    ratings_dict = {'itemID': [1, 1, 1, 1, 1],
+                    'userID': [1, 2, 3, 4, 5],
+                    'rating': [-10, 10, 0, -5, 5]}
+    df = pd.DataFrame(ratings_dict)
+    reader = Reader(rating_scale=(-10, 10))
+
+    data = Dataset.load_from_df(df[['userID', 'itemID', 'rating']], reader)
+    data.binarize(threshold=-4)
+    ratings = [r for (_, _, r, _) in data.raw_ratings]
+    assert ratings == [0, 1, 1, 0, 1]
+
+    data = Dataset.load_from_df(df[['userID', 'itemID', 'rating']], reader)
+    data.binarize(threshold=5)
+    ratings = [r for (_, _, r, _) in data.raw_ratings]
+    assert ratings == [0, 1, 0, 0, 1]
