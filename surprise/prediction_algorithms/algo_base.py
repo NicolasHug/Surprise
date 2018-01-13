@@ -96,7 +96,7 @@ class AlgoBase(object):
 
         return self
 
-    def predict(self, uid, iid, r_ui=None, clip=True, verbose=False):
+    def predict(self, uid, iid, r_ui=None, clip=False, verbose=False):
         """Compute the rating prediction for given user and item.
 
         The ``predict`` method converts raw ids to inner ids and then calls the
