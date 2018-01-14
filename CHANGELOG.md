@@ -1,7 +1,16 @@
 Latest version, in development
 ==============================
 
-* A lot to do here!
+Enhancements
+------------
+
+* When PredictionImpossible is raised, the prediction is now deferred to
+  default_prediction() method, which can be overridden is child classes. This
+  allows to not always set the default prediction to the average rating, which
+  can be useful for some algorithms (e.g. thos working with implicit positive
+  feedback).
+* LeaveOneOut() now accepts a min_n_ratings parameter to make sure users in the
+  trainset have at least min_n_ratings ratings.
 
 VERSION 1.0.5
 =============

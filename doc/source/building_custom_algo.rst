@@ -95,15 +95,18 @@ It's up to your algorithm to decide if it can or cannot yield a prediction. If
 the prediction is impossible, then you can raise the
 :class:`PredictionImpossible
 <surprise.prediction_algorithms.predictions.PredictionImpossible>` exception.
-You'll need to import it first): ::
+You'll need to import it first: ::
 
-  from surprise import PredictionImpossible
+    from surprise import PredictionImpossible
 
 
 This exception will be caught by the :meth:`predict()
 <surprise.prediction_algorithms.algo_base.AlgoBase.predict>` method, and the
-estimation :math:`\hat{r}_{ui}` will be set to the global mean of all ratings
-:math:`\mu`.
+estimation :math:`\hat{r}_{ui}` will be set according to
+the :meth:`default_prediction()
+<surprise.prediction_algorithms.algo_base.AlgoBase.default_prediction>` method,
+which can be overridden. By default, it returns the average of all ratings in
+the trainset.
 
 Using similarities and baselines
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

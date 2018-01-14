@@ -102,7 +102,8 @@ class AlgoBase(object):
         The ``predict`` method converts raw ids to inner ids and then calls the
         ``estimate`` method which is defined in every derived class. If the
         prediction is impossible (e.g. because the user and/or the item is
-        unkown), the prediction is set to the global mean of all ratings.
+        unkown), the prediction is set according to :meth:`default_prediction()
+        <surprise.prediction_algorithms.algo_base.AlgoBase.default_prediction>`.
 
         Args:
             uid: (Raw) id of the user. See :ref:`this note<raw_inner_note>`.
@@ -151,7 +152,7 @@ class AlgoBase(object):
             details['was_impossible'] = False
 
         except PredictionImpossible as e:
-            est = self.trainset.global_mean
+            est = self.default_prediction()
             details['was_impossible'] = True
             details['reason'] = str(e)
 
@@ -171,6 +172,19 @@ class AlgoBase(object):
             print(pred)
 
         return pred
+
+    def default_prediction(self):
+        '''Used when the ``PredictionImpossible`` exception is raised during a
+        call to :meth:`predict()
+        <surprise.prediction_algorithms.algo_base.AlgoBase.predict>`. By
+        default, return the global mean of all ratings (can be overridden in
+        child classes).
+
+        Returns:
+            (float): The mean of all ratings in the trainset.
+        '''
+
+        return self.trainset.global_mean
 
     def test(self, testset, verbose=False):
         """Test the algorithm on given testset, i.e. estimate all the ratings
