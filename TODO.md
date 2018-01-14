@@ -8,16 +8,11 @@ current issues:
   been binarized. E.g. it will still be (1, 5) for a binarized movielens. Ugly
   solution: change self.reader.rating_scale in Dataset.binarize. Should find
   out a better way to do this. Maybe get rid of rating_scale entirely?
-* returning average rating when PredictionImpossible is raised is not really
-  meaningful for algorithms predicting a score like BPR. Also not meaningful
-  when trainset is only comprised of implicit positive feedback. Solution: add
-  a default_estimate() method to AlgoBase() that can be overridden in
-  subclasses.
-* for the same reason, it makes no sense to clip ratings in predict() (plus, as
-  the rating_scale parameter is used and is not correct, it makes even less
-  sense). Solution: test() method should allow to pass parameters to predict()
-  as well as cross_validate() and GridSearch(). I REMOVED CLIPPING BY DEFAULT
-  TO TEST BPR BUT IT SHOULD BE PUT BACK.
+* It makes no sense to clip ratings in predict() (plus, as the rating_scale
+  parameter is used and is not correct, it makes even less sense) for algorithm
+  reurning a score and not a rating. Solution: test() method should allow to
+  pass parameters to predict() as well as cross_validate() and GridSearch(). I
+  REMOVED CLIPPING BY DEFAULT TO TEST BPR BUT IT SHOULD BE PUT BACK.
 * How can AUC measure fit within current tools (cross_validate, etc.)? Can it
   be used with other CV iterators than just LeaveOneOut?
 * Using anti_testset() for AUC computation is not correct. anti_testset() will
