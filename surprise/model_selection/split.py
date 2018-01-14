@@ -355,9 +355,9 @@ class LeaveOneOut():
             only used if ``shuffle`` is ``True``.  Default is ``None``.
         min_n_ratings(int): Minimum number of ratings for each user in the
             trainset. E.g. if ``min_n_ratings`` is ``2``, we are sure each user
-            has at least ``2`` ratings in the trainset (and ``1``) in the
-            testset. Other users are discarded. Default is ``0``, so some users
-            (having only one rating) may be in the testset and not in the
+            has at least ``2`` ratings in the trainset (and ``1`` in the
+            testset). Other users are discarded. Default is ``0``, so some
+            users (having only one rating) may be in the testset and not in the
             trainset.
     '''
 
