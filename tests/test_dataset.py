@@ -267,18 +267,17 @@ def test_binarize():
 
     data = Dataset.load_from_file(file_path=custom_dataset_path, reader=reader)
     data.binarize(threshold=4)
-    ratings = [r for (_, _, r, _) in data.raw_ratings]
-    assert ratings == [1, 1, 0, 1, 0]
+    assert data.raw_ratings == [('user0', 'item0', 1, None),
+                                ('user1', 'item0', 1, None),
+                                ('user3', 'item1', 1, None)]
 
     data = Dataset.load_from_file(file_path=custom_dataset_path, reader=reader)
     data.binarize(threshold=5)
-    ratings = [r for (_, _, r, _) in data.raw_ratings]
-    assert ratings == [0, 0, 0, 1, 0]
+    assert data.raw_ratings == [('user3', 'item1', 1, None)]
 
     data = Dataset.load_from_file(file_path=custom_dataset_path, reader=reader)
     data.binarize(threshold=6)
-    ratings = [r for (_, _, r, _) in data.raw_ratings]
-    assert ratings == [0, 0, 0, 0, 0]
+    assert not data.raw_ratings
 
     # test when there's an offset
     ratings_dict = {'itemID': [1, 1, 1, 1, 1],
@@ -289,10 +288,8 @@ def test_binarize():
 
     data = Dataset.load_from_df(df[['userID', 'itemID', 'rating']], reader)
     data.binarize(threshold=-4)
-    ratings = [r for (_, _, r, _) in data.raw_ratings]
-    assert ratings == [0, 1, 1, 0, 1]
+    assert len(data.raw_ratings) == 3
 
     data = Dataset.load_from_df(df[['userID', 'itemID', 'rating']], reader)
     data.binarize(threshold=5)
-    ratings = [r for (_, _, r, _) in data.raw_ratings]
-    assert ratings == [0, 1, 0, 0, 1]
+    assert len(data.raw_ratings) == 2
