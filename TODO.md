@@ -20,8 +20,9 @@ current issues:
   TO TEST BPR BUT IT SHOULD BE PUT BACK.
 * How can AUC measure fit within current tools (cross_validate, etc.)? Can it
   be used with other CV iterators than just LeaveOneOut?
-* Do something with LeaveOneOut to avoid users in testset and not in trainset
-  (those with only one rating)
+* Using anti_testset() for AUC computation is not correct. anti_testset() will
+  include the item that was in the testset (positive feedback), and we are only
+  interested in items with negative feedback.
 
 
 * convert lists in ur and ir into sets for quicker look-up?
