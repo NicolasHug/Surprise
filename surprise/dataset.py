@@ -249,11 +249,10 @@ class Dataset:
 
     def binarize(self, threshold=4):
 
-        self.raw_ratings = [(uid, iid,
-                             int((r_ui - self.reader.offset) >= threshold),
-                             timestamp)
+        self.raw_ratings = [(uid, iid, 1, timestamp)
                             for (uid, iid, r_ui, timestamp)
-                            in self.raw_ratings]
+                            in self.raw_ratings
+                            if (r_ui - self.reader.offset) >= threshold]
 
 
 class DatasetUserFolds(Dataset):
