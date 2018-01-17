@@ -41,7 +41,7 @@ def load(file_name, encoding='ASCII'):
     Args:
         file_name(str): The path of the file from which the algorithm is
             to be loaded
-        encoding(str, optional): Encoding that pickle should use.
+        encoding(str, optional): Pickle encoding (only supported on Python3).
             default value is 'ASCII'.
 
     Returns:
@@ -54,6 +54,9 @@ def load(file_name, encoding='ASCII'):
 
     """
 
-    dump_obj = pickle.load(open(file_name, 'rb'), encoding=encoding)
+    try:
+        dump_obj = pickle.load(open(file_name, 'rb'), encoding=encoding)
+    except TypeError:  # python2 does not know about encoding
+        dump_obj = pickle.load(open(file_name, 'rb'))
 
     return dump_obj['predictions'], dump_obj['algo']
