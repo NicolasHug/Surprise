@@ -33,7 +33,7 @@ def dump(file_name, predictions=None, algo=None, verbose=0):
         print('The dump has been saved as file', file_name)
 
 
-def load(file_name):
+def load(file_name, encoding='ASCII'):
     """A basic wrapper around Pickle to deserialize a list of prediction and/or
     an algorithm that were dumped on drive using :func:`dump()
     <surprise.dump.dump>`.
@@ -41,6 +41,8 @@ def load(file_name):
     Args:
         file_name(str): The path of the file from which the algorithm is
             to be loaded
+        encoding(str, optional): Encoding that pickle should use.
+            default value is 'ASCII'.
 
     Returns:
         A tuple ``(predictions, algo)`` where ``predictions`` is a list of
@@ -52,6 +54,6 @@ def load(file_name):
 
     """
 
-    dump_obj = pickle.load(open(file_name, 'rb'))
+    dump_obj = pickle.load(open(file_name, 'rb'), encoding='ASCII')
 
     return dump_obj['predictions'], dump_obj['algo']
