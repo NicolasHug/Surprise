@@ -54,6 +54,6 @@ def load(file_name, encoding='ASCII'):
 
     """
 
-    dump_obj = pickle.load(open(file_name, 'rb'), encoding='ASCII')
+    dump_obj = pickle.load(open(file_name, 'rb'), encoding=encoding)
 
     return dump_obj['predictions'], dump_obj['algo']
