@@ -2,6 +2,7 @@ TODO
 ====
 
 
+* Document get_dataset_dir()...
 * make some filtering dataset tools, like remove users/items with less/more
   than n ratings, binarize a dataset, etc...
 * then implement MFBPR and see how it goes
