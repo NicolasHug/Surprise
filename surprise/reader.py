@@ -3,6 +3,10 @@
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 
+import itertools
+
+import os
+
 from .builtin_datasets import BUILTIN_DATASETS
 
 
@@ -73,6 +77,14 @@ class Reader():
 
             self.indexes = [splitted_format.index(entity) for entity in
                             entities]
+
+    def read_ratings(self, file_name):
+        """Return a list of ratings (user, item, rating, timestamp) read from
+        file_name"""
+        with open(os.path.expanduser(file_name)) as f:
+            raw_ratings = [self.parse_line(line) for line in
+                           itertools.islice(f, self.skip_lines, None)]
+        return raw_ratings
 
     def parse_line(self, line):
         '''Parse a line.
