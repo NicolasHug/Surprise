@@ -10,15 +10,14 @@ import numpy as np
 
 import surprise.similarities as sims
 
-
-n_x = 7
+n_x = 8
 yr_global = {
-        0: [(0, 3), (1, 3), (2, 3),                 (5, 1), (6, 2)], # noqa
-        1: [(0, 4), (1, 4), (2, 4),                               ], # noqa
-        2: [                (2, 5), (3, 2), (4, 3)                ], # noqa
-        3: [        (1, 1), (2, 4), (3, 2), (4, 3), (5, 3), (6, 4)], # noqa
-        4: [        (1, 5), (2, 1),                 (5, 2), (6, 3)], # noqa
-        }
+    0: [(0, 3), (1, 3), (2, 3), (5, 1),                 (6, 1.5), (7, 3)],  # noqa
+    1: [(0, 4), (1, 4), (2, 4),                                         ],  # noqa
+    2: [                (2, 5), (3, 2), (4, 3)                          ],  # noqa
+    3: [(1, 1),         (2, 4), (3, 2), (4, 3), (5, 3), (6, 3.5), (7, 2)],  # noqa
+    4: [(1, 5),         (2, 1),                 (5, 2), (6, 2.5), (7, 2.5)], # noqa
+}
 
 
 def test_cosine_sim():
@@ -53,8 +52,12 @@ def test_cosine_sim():
     assert sim[0, 3] == 0
     assert sim[0, 4] == 0
 
-    # non constant and different ratings: cosine sim must be in ]0, 1[
-    assert 0 < sim[5, 6] < 1
+    # check for float point support and computation correctness
+    dot_product56 = 1 * 1.5 + 3 * 3.5 + 2 * 2.5
+    assert sim[5, 6] == (dot_product56 /
+                         ((1 ** 2 + 3 ** 2 + 2 ** 2) *
+                          (1.5 ** 2 + 3.5 ** 2 + 2.5 ** 2)) ** 0.5
+                         )
 
     # ensure min_support is taken into account. Only users 1 and 2 have more
     # than 4 common ratings.
@@ -138,11 +141,22 @@ def test_pearson_sim():
     assert sim[0, 3] == 0
     assert sim[0, 4] == 0
 
-    # almost same ratings (just with an offset of 1)
+    # almost same ratings (just with an offset of 0.5)
     assert sim[5, 6] == 1
 
     # ratings vary in the same direction
     assert sim[2, 5] > 0
+
+    # check for float point support and computation correctness
+    mean6 = (1.5 + 3.5 + 2.5) / 3
+    var6 = (1.5 - mean6) ** 2 + (3.5 - mean6) ** 2 + (2.5 - mean6) ** 2
+    mean7 = (3 + 2 + 2.5) / 3
+    var7 = (3 - mean7) ** 2 + (2 - mean7) ** 2 + (2.5 - mean7) ** 2
+    num = sum([((1.5 - mean6) * (3 - mean7)),
+               ((3.5 - mean6) * (2 - mean7)),
+               ((2.5 - mean6) * (2.5 - mean7))
+               ])
+    assert sim[6, 7] == num / (var6 * var7) ** 0.5
 
     # ensure min_support is taken into account. Only users 1 and 2 have more
     # than 4 common ratings.
