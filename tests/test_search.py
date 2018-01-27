@@ -276,7 +276,6 @@ def test_randomizedsearchcv_same_splits():
     rs.fit(data)
 
     rmse_scores = [m for m in rs.cv_results['mean_test_rmse']]
-    print(f'RMSE scores: {rmse_scores}')
     assert len(set(rmse_scores)) == 1  # assert rmse_scores are all equal
 
     # Note: actually, even when setting random_state=None in kf, the same folds
