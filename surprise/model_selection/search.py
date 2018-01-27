@@ -76,7 +76,6 @@ class BaseSearchCV(with_metaclass(ABCMeta)):
             for params, (trainset, testset) in product(self.param_combinations,
                                                        cv.split(data))
         )
-
         out = Parallel(n_jobs=self.n_jobs,
                        pre_dispatch=self.pre_dispatch,
                        verbose=self.joblib_verbose)(delayed_list)
@@ -290,7 +289,7 @@ class GridSearchCV(BaseSearchCV):
             algo_class=algo_class, measures=measures, cv=cv, refit=refit,
             return_train_measures=return_train_measures, n_jobs=n_jobs,
             pre_dispatch=pre_dispatch, joblib_verbose=joblib_verbose)
-        self.param_grid = self._parse_options(param_grid)
+        self.param_grid = self._parse_options(param_grid.copy())
         self.param_combinations = [dict(zip(self.param_grid, v)) for v in
                                    product(*self.param_grid.values())]
 
@@ -408,7 +407,8 @@ class RandomizedSearchCV(BaseSearchCV):
             pre_dispatch=pre_dispatch, joblib_verbose=joblib_verbose)
         self.n_iter = n_iter
         self.random_state = random_state
-        self.param_distributions = self._parse_options(param_distributions)
+        self.param_distributions = self._parse_options(
+            param_distributions.copy())
         self.param_combinations = self._sample_parameters(
             self.param_distributions, self.n_iter, self.random_state)
 
