@@ -13,6 +13,7 @@ from .validation import fit_and_score
 from ..dataset import DatasetUserFolds
 from ..utils import get_rng
 
+
 class BaseSearchCV(with_metaclass(ABCMeta)):
     """Base class for hyper parameter search with cross-validation."""
 
@@ -193,6 +194,7 @@ class BaseSearchCV(with_metaclass(ABCMeta)):
             raise ValueError('refit is False, cannot use predict()')
         return self.best_estimator[self.refit].predict(*args)
 
+
 class GridSearchCV(BaseSearchCV):
     '''The :class:`GridSearchCV` class computes accuracy metrics for an
     algorithm on various combinations of parameters, over a cross-validation
@@ -292,7 +294,6 @@ class GridSearchCV(BaseSearchCV):
         self.param_grid = self._parse_options(param_grid.copy())
         self.param_combinations = [dict(zip(self.param_grid, v)) for v in
                                    product(*self.param_grid.values())]
-
 
 
 class RandomizedSearchCV(BaseSearchCV):

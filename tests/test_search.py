@@ -21,11 +21,11 @@ from surprise.model_selection import cross_validate
 # Tests for GridSearchCV class
 def test_basesearchcv_parse_options():
     param_grid = {'bsl_options': {'method': ['als', 'sgd'],
-                              'reg': [1, 2]},
-              'k': [2, 3],
-              'sim_options': {'name': ['msd', 'cosine'],
-                              'min_support': [1, 5],
-                              'user_based': [False]}}
+                                  'reg': [1, 2]},
+                  'k': [2, 3],
+                  'sim_options': {'name': ['msd', 'cosine'],
+                                  'min_support': [1, 5],
+                                  'user_based': [False]}}
     gs = GridSearchCV(SVD, param_grid)
     parsed_params = gs.param_grid
     assert len(parsed_params['sim_options']) == 4  # 2 method x 2 reg

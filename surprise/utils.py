@@ -23,4 +23,3 @@ def get_rng(random_state):
     raise ValueError('Wrong random state. Expecting None, an int or a numpy '
                      'RandomState instance, got a '
                      '{}'.format(type(random_state)))
-
