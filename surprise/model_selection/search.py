@@ -467,7 +467,7 @@ class RandomizedSearchCV:
         # check if all distributions are given as lists
         # if so, sample without replacement
         all_lists = np.all([not hasattr(v, 'rvs')
-                            for v in  param_distributions.values()])
+                            for v in param_distributions.values()])
         rnd = get_rng(random_state)
 
         # sort for reproducibility
@@ -495,7 +495,6 @@ class RandomizedSearchCV:
                 combos.append(params)
 
         return combos
-
 
     def fit(self, data):
         '''Runs the ``fit()`` method of the algorithm over ``n_iter`` randomly
@@ -637,3 +636,4 @@ class RandomizedSearchCV:
         if not self.refit:
             raise ValueError('refit is False, cannot use predict()')
         return self.best_estimator[self.refit].predict(*args)
+    

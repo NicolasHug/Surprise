@@ -25,6 +25,7 @@ def get_rng(random_state):
                      'RandomState instance, got a '
                      '{}'.format(type(random_state)))
 
+
 def _parse_version(version_string):
     version = []
     for x in version_string.split('.'):
@@ -34,5 +35,6 @@ def _parse_version(version_string):
             # x may be of the form dev-1ea1592
             version.append(x)
     return tuple(version)
+
 
 sp_version = _parse_version(scipy.__version__)

@@ -18,19 +18,8 @@ from surprise.model_selection import PredefinedKFold
 from surprise.model_selection import GridSearchCV, RandomizedSearchCV
 from surprise.model_selection import cross_validate
 
-# @pytest.fixture()
-# def rs():
-#     param_distributions = {'bsl_options': {'method': ['als', 'sgd'],
-#                                            'reg': [1, 2]},
-#                            'k': [2, 3],
-#                            'sim_options': {'name': ['msd', 'cosine'],
-#                                            'min_support': [1, 5],
-#                                            'user_based': [False]}
-#                            }
-#     rs = RandomizedSearchCV(SVD, param_distributions)
-#     return
-
 # Tests for GridSearchCV class
+
 
 def test_gridsearchcv_parameter_combinations():
     """Make sure that parameter_combinations attribute is correct (has correct
@@ -204,6 +193,7 @@ def test_gridsearchcv_refit():
     with pytest.raises(ValueError):
         gs.fit(data)
 
+
 # Tests for RandomizedSearchCV
 
 def test_randomizedsearchcv_parameter_combinations_all_lists():
@@ -219,6 +209,7 @@ def test_randomizedsearchcv_parameter_combinations_all_lists():
     rs = RandomizedSearchCV(SVD, param_distributions, n_iter=10)
     assert len(rs.param_combinations) == 10
 
+
 def test_randomizedsearchcv_parameter_combinations_with_distribution():
     """Ensure the parameter_combinations attribute populates correctly by
     checking its length."""
@@ -232,6 +223,7 @@ def test_randomizedsearchcv_parameter_combinations_with_distribution():
     rs = RandomizedSearchCV(SVD, param_distributions, n_iter=10)
     assert len(rs.param_combinations) == 10
 
+
 def test_randomizedsearchcv_best_estimator():
     """Ensure that the best estimator is the one that gives the best score (by
     re-running it)"""
@@ -244,7 +236,7 @@ def test_randomizedsearchcv_best_estimator():
                            'reg_all': uniform(0.04, 0.02), 'n_factors': [1],
                            'init_std_dev': [0]}
     rs = RandomizedSearchCV(SVD, param_distributions, measures=['mae'],
-                      cv=PredefinedKFold(), joblib_verbose=100)
+                            cv=PredefinedKFold(), joblib_verbose=100)
     rs.fit(data)
     best_estimator = rs.best_estimator['mae']
 
@@ -253,6 +245,7 @@ def test_randomizedsearchcv_best_estimator():
                          cv=PredefinedKFold())['test_mae']
 
     assert mae == rs.best_score['mae']
+
 
 def test_randomizedsearchcv_same_splits():
     """Ensure that all parameter combinations are tested on the same splits (we
@@ -265,8 +258,8 @@ def test_randomizedsearchcv_same_splits():
 
     # all RMSE should be the same (as param combinations are the same)
     param_distributions = {'n_epochs': [5], 'lr_all': uniform(.2, 0),
-                  'reg_all': uniform(.4, 0), 'n_factors': [5],
-                  'random_state': [0]}
+                           'reg_all': uniform(.4, 0), 'n_factors': [5],
+                           'random_state': [0]}
     rs = RandomizedSearchCV(SVD, param_distributions, measures=['RMSE'], cv=kf,
                             n_jobs=-1)
     rs.fit(data)
@@ -282,6 +275,7 @@ def test_randomizedsearchcv_same_splits():
     rmse_scores += [m for m in rs.cv_results['mean_test_rmse']]
     assert len(set(rmse_scores)) == 1  # assert rmse_scores are all equal
 
+
 def test_randomizedsearchcv_cv_results():
     '''Test the cv_results attribute'''
 
@@ -291,17 +285,17 @@ def test_randomizedsearchcv_cv_results():
     param_distributions = {'n_epochs': [5], 'lr_all': uniform(.2, .3),
                            'reg_all': uniform(.4, .3), 'n_factors': [5],
                            'random_state': [0]}
-    n_iter=5
+    n_iter = 5
     rs = RandomizedSearchCV(SVD, param_distributions, n_iter=n_iter,
                             measures=['RMSE', 'mae'], cv=kf,
                             return_train_measures=True)
     rs.fit(data)
 
     # test keys split*_test_rmse, mean and std dev.
-    assert rs.cv_results['split0_test_rmse'].shape == (n_iter,)  # n_iter param comb.
-    assert rs.cv_results['split1_test_rmse'].shape == (n_iter,)  # n_iter param comb.
-    assert rs.cv_results['split2_test_rmse'].shape == (n_iter,)  # n_iter param comb.
-    assert rs.cv_results['mean_test_rmse'].shape == (n_iter,)  # n_iter param comb.
+    assert rs.cv_results['split0_test_rmse'].shape == (n_iter,)
+    assert rs.cv_results['split1_test_rmse'].shape == (n_iter,)
+    assert rs.cv_results['split2_test_rmse'].shape == (n_iter,)
+    assert rs.cv_results['mean_test_rmse'].shape == (n_iter,)
     assert np.allclose(rs.cv_results['mean_test_rmse'],
                        np.mean([rs.cv_results['split0_test_rmse'],
                                 rs.cv_results['split1_test_rmse'],
@@ -312,10 +306,10 @@ def test_randomizedsearchcv_cv_results():
                                rs.cv_results['split2_test_rmse']], axis=0))
 
     # test keys split*_train_mae, mean and std dev.
-    assert rs.cv_results['split0_train_rmse'].shape == (n_iter,)  # n_iter param comb.
-    assert rs.cv_results['split1_train_rmse'].shape == (n_iter,)  # n_iter param comb.
-    assert rs.cv_results['split2_train_rmse'].shape == (n_iter,)  # n_iter param comb.
-    assert rs.cv_results['mean_train_rmse'].shape == (n_iter,)  # n_iter param comb.
+    assert rs.cv_results['split0_train_rmse'].shape == (n_iter,)
+    assert rs.cv_results['split1_train_rmse'].shape == (n_iter,)
+    assert rs.cv_results['split2_train_rmse'].shape == (n_iter,)
+    assert rs.cv_results['mean_train_rmse'].shape == (n_iter,)
     assert np.allclose(rs.cv_results['mean_train_rmse'],
                        np.mean([rs.cv_results['split0_train_rmse'],
                                 rs.cv_results['split1_train_rmse'],
@@ -326,10 +320,10 @@ def test_randomizedsearchcv_cv_results():
                                rs.cv_results['split2_train_rmse']], axis=0))
 
     # test fit and train times dimensions.
-    assert rs.cv_results['mean_fit_time'].shape == (n_iter,)  # n_iter param comb.
-    assert rs.cv_results['std_fit_time'].shape == (n_iter,)  # n_iter param comb.
-    assert rs.cv_results['mean_test_time'].shape == (n_iter,)  # n_iter param comb.
-    assert rs.cv_results['std_test_time'].shape == (n_iter,)  # n_iter param comb.
+    assert rs.cv_results['mean_fit_time'].shape == (n_iter,)
+    assert rs.cv_results['std_fit_time'].shape == (n_iter,)
+    assert rs.cv_results['mean_test_time'].shape == (n_iter,)
+    assert rs.cv_results['std_test_time'].shape == (n_iter,)
 
     assert rs.cv_results['params'] is rs.param_combinations
 
@@ -340,13 +334,14 @@ def test_randomizedsearchcv_cv_results():
     best_index = np.argmin(rs.cv_results['rank_test_mae'])
     assert rs.cv_results['params'][best_index] == rs.best_params['mae']
 
+
 def test_randomizedsearchcv_refit():
 
     data_file = os.path.join(os.path.dirname(__file__), './u1_ml100k_test')
     data = Dataset.load_from_file(data_file, Reader('ml-100k'))
 
     param_distributions = {'n_epochs': [5], 'lr_all': uniform(0.002, 0.003),
-                          'reg_all': uniform(0.4, 0.2), 'n_factors': [2]}
+                           'reg_all': uniform(0.4, 0.2), 'n_factors': [2]}
 
     # assert rs.fit() and rs.test will use best estimator for mae (first
     # appearing in measures)
