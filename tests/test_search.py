@@ -18,6 +18,7 @@ from surprise.model_selection import PredefinedKFold
 from surprise.model_selection import GridSearchCV, RandomizedSearchCV
 from surprise.model_selection import cross_validate
 
+
 # Tests for GridSearchCV class
 def test_basesearchcv_parse_options():
     param_grid = {'bsl_options': {'method': ['als', 'sgd'],
