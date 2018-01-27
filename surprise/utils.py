@@ -1,10 +1,11 @@
-'''The utils module contains the get_rng function.'''
+'''The utils module contains the get_rng and _parse_version functions.'''
 
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 import numbers
 
 import numpy as np
+import scipy
 
 
 def get_rng(random_state):
@@ -23,3 +24,15 @@ def get_rng(random_state):
     raise ValueError('Wrong random state. Expecting None, an int or a numpy '
                      'RandomState instance, got a '
                      '{}'.format(type(random_state)))
+
+def _parse_version(version_string):
+    version = []
+    for x in version_string.split('.'):
+        try:
+            version.append(int(x))
+        except ValueError:
+            # x may be of the form dev-1ea1592
+            version.append(x)
+    return tuple(version)
+
+sp_version = _parse_version(scipy.__version__)
