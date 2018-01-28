@@ -18,22 +18,28 @@ class BaseSearchCV(with_metaclass(ABCMeta)):
     """Base class for hyper parameter search with cross-validation."""
 
     @abstractmethod
-    def __init__(self, algo_class, measures=['rmse', 'mae'],
-                 cv=None, refit=False, return_train_measures=False, n_jobs=-1,
+    def __init__(self, algo_class, measures=['rmse', 'mae'], cv=None,
+                 refit=False, return_train_measures=False, n_jobs=-1,
                  pre_dispatch='2*n_jobs', joblib_verbose=0):
+
         self.algo_class = algo_class
         self.measures = [measure.lower() for measure in measures]
         self.cv = cv
+
         if isinstance(refit, string_types):
             if refit.lower() not in self.measures:
                 raise ValueError('It looks like the measure you want to use '
                                  'with refit ({}) is not in the measures '
                                  'parameter')
+
             self.refit = refit.lower()
+
         elif refit is True:
             self.refit = self.measures[0]
+
         else:
             self.refit = False
+
         self.return_train_measures = return_train_measures
         self.n_jobs = n_jobs
         self.pre_dispatch = pre_dispatch
@@ -42,6 +48,7 @@ class BaseSearchCV(with_metaclass(ABCMeta)):
     def _parse_options(self, params):
         # As sim_options and bsl_options are dictionaries, they require a
         # special treatment.
+
         if 'sim_options' in params:
             sim_options = params['sim_options']
             sim_options_list = [dict(zip(sim_options, v)) for v in
@@ -53,16 +60,17 @@ class BaseSearchCV(with_metaclass(ABCMeta)):
             bsl_options_list = [dict(zip(bsl_options, v)) for v in
                                 product(*bsl_options.values())]
             params['bsl_options'] = bsl_options_list
+
         return params
 
     def fit(self, data):
-        '''Runs the ``fit()`` method of the algorithm for all parameter
+        """Runs the ``fit()`` method of the algorithm for all parameter
         combinations, over different splits given by the ``cv`` parameter.
 
         Args:
             data (:obj:`Dataset <surprise.dataset.Dataset>`): The dataset on
                 which to evaluate the algorithm, in parallel.
-        '''
+        """
 
         if self.refit and isinstance(data, DatasetUserFolds):
             raise ValueError('refit cannot be used when data has been '
@@ -171,34 +179,36 @@ class BaseSearchCV(with_metaclass(ABCMeta)):
         self.cv_results = cv_results
 
     def test(self, testset, verbose=False):
-        '''Call ``test()`` on the estimator with the best found parameters
+        """Call ``test()`` on the estimator with the best found parameters
         (according the the ``refit`` parameter). See :meth:`AlgoBase.test()
         <surprise.prediction_algorithms.algo_base.AlgoBase.test>`.
 
         Only available if ``refit`` is not ``False``.
-        '''
+        """
 
         if not self.refit:
             raise ValueError('refit is False, cannot use test()')
+
         return self.best_estimator[self.refit].test(testset, verbose)
 
     def predict(self, *args):
-        '''Call ``predict()`` on the estimator with the best found parameters
+        """Call ``predict()`` on the estimator with the best found parameters
         (according the the ``refit`` parameter). See :meth:`AlgoBase.predict()
         <surprise.prediction_algorithms.algo_base.AlgoBase.predict>`.
 
         Only available if ``refit`` is not ``False``.
-        '''
+        """
 
         if not self.refit:
             raise ValueError('refit is False, cannot use predict()')
+
         return self.best_estimator[self.refit].predict(*args)
 
 
 class GridSearchCV(BaseSearchCV):
-    '''The :class:`GridSearchCV` class computes accuracy metrics for an
+    """The :class:`GridSearchCV` class computes accuracy metrics for an
     algorithm on various combinations of parameters, over a cross-validation
-    procedure. This is useful for finiding the best set of parameters for a
+    procedure. This is useful for finding the best set of parameters for a
     prediction algorithm. It is analogous to `GridSearchCV
     <http://scikit-learn.org/stable/modules/generated/sklearn.
     model_selection.GridSearchCV.html>`_ from scikit-learn.
@@ -283,21 +293,23 @@ class GridSearchCV(BaseSearchCV):
             train and test time for each parameter combination. Can be imported
             into a pandas `DataFrame` (see :ref:`example
             <cv_results_example>`).
-    '''
+    """
     def __init__(self, algo_class, param_grid, measures=['rmse', 'mae'],
                  cv=None, refit=False, return_train_measures=False, n_jobs=-1,
                  pre_dispatch='2*n_jobs', joblib_verbose=0):
+
         super(GridSearchCV, self).__init__(
             algo_class=algo_class, measures=measures, cv=cv, refit=refit,
             return_train_measures=return_train_measures, n_jobs=n_jobs,
             pre_dispatch=pre_dispatch, joblib_verbose=joblib_verbose)
+
         self.param_grid = self._parse_options(param_grid.copy())
         self.param_combinations = [dict(zip(self.param_grid, v)) for v in
                                    product(*self.param_grid.values())]
 
 
 class RandomizedSearchCV(BaseSearchCV):
-    '''The :class:`RandomizedSearchCV` class computes accuracy metrics for an
+    """The :class:`RandomizedSearchCV` class computes accuracy metrics for an
     algorithm on various combinations of parameters, over a cross-validation
     procedure. As opposed to GridSearchCV, which uses an exhaustive
     combinatorial approach, RandomizedSearchCV samples randomly from the
@@ -366,13 +378,13 @@ class RandomizedSearchCV(BaseSearchCV):
                 as in ``'2*n_jobs'``.
 
             Default is ``'2*n_jobs'``.
-        random_state(int, RandomState or None, optional): Pseudo random number
+        random_state(int, RandomState or None): Pseudo random number
             generator seed used for random uniform sampling from lists of
             possible values instead of scipy.stats distributions. If int,
-            random_state is the seed used by the random number generator. If
-            ``RandomState`` instance, random_state is the random number
+            ``random_state`` is the seed used by the random number generator.
+            If ``RandomState`` instance, ``random_state`` is the random number
             generator. If ``None``, the random number generator is the
-            RandomState instance used by `np.random`..  Default is ``None``.
+            RandomState instance used by ``np.random``.  Default is ``None``.
         joblib_verbose(int): Controls the verbosity of joblib: the higher, the
             more messages.
 
@@ -397,15 +409,17 @@ class RandomizedSearchCV(BaseSearchCV):
             train and test time for each parameter combination. Can be imported
             into a pandas `DataFrame` (see :ref:`example
             <cv_results_example>`).
-    '''
+    """
     def __init__(self, algo_class, param_distributions, n_iter=10,
                  measures=['rmse', 'mae'], cv=None, refit=False,
                  return_train_measures=False, n_jobs=-1,
                  pre_dispatch='2*n_jobs', random_state=None, joblib_verbose=0):
+
         super(RandomizedSearchCV, self).__init__(
             algo_class=algo_class, measures=measures, cv=cv, refit=refit,
             return_train_measures=return_train_measures, n_jobs=n_jobs,
             pre_dispatch=pre_dispatch, joblib_verbose=joblib_verbose)
+
         self.n_iter = n_iter
         self.random_state = random_state
         self.param_distributions = self._parse_options(
@@ -415,7 +429,7 @@ class RandomizedSearchCV(BaseSearchCV):
 
     @staticmethod
     def _sample_parameters(param_distributions, n_iter, random_state=None):
-        '''Samples ``n_iter`` parameter combinations from
+        """Samples ``n_iter`` parameter combinations from
         ``param_distributions`` using ``random_state`` as a seed.
 
         Non-deterministic iterable over random candidate combinations for
@@ -433,22 +447,23 @@ class RandomizedSearchCV(BaseSearchCV):
         guaranteed from SciPy 0.16 onwards.
 
         Args:
-            param_distributions (dict): Dictionary where the keys are
+            param_distributions(dict): Dictionary where the keys are
                 parameters and values are distributions from which a parameter
                 is to be sampled. Distributions either have to provide a
                 ``rvs`` function to sample from them, or can be given as a list
                  of values, where a uniform distribution is assumed.
-            n_iter (int): Number of parameter settings produced.
+            n_iter(int): Number of parameter settings produced.
                 Default is ``10``.
-            random_state (int, RandomState instance or None, optional):
+            random_state(int, RandomState instance or None):
                 Pseudo random number generator seed used for random uniform
                 sampling from lists of possible values instead of scipy.stats
                 distributions. If ``None``, the random number generator is the
                 random state instance used by np.random.  Default is ``None``.
 
         Returns:
-            combos (list): List of parameter dictionaries with sampled values.
-        '''
+            combos(list): List of parameter dictionaries with sampled values.
+        """
+
         # check if all distributions are given as lists
         # if so, sample without replacement
         all_lists = np.all([not hasattr(v, 'rvs')

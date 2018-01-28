@@ -21,6 +21,7 @@ from surprise.model_selection import cross_validate
 
 # Tests for GridSearchCV class
 def test_basesearchcv_parse_options():
+    """Check that _parse_options explodes nested dictionaries."""
     param_grid = {'bsl_options': {'method': ['als', 'sgd'],
                                   'reg': [1, 2]},
                   'k': [2, 3],
@@ -102,7 +103,7 @@ def test_gridsearchcv_same_splits():
 
 
 def test_gridsearchcv_cv_results():
-    '''Test the cv_results attribute'''
+    """Test the cv_results attribute"""
 
     f = os.path.join(os.path.dirname(__file__), './u1_ml100k_test')
     data = Dataset.load_from_file(f, Reader('ml-100k'))
@@ -158,6 +159,7 @@ def test_gridsearchcv_cv_results():
 
 
 def test_gridsearchcv_refit():
+    """Test refit function of GridSearchCV."""
 
     data_file = os.path.join(os.path.dirname(__file__), './u1_ml100k_test')
     data = Dataset.load_from_file(data_file, Reader('ml-100k'))
@@ -288,7 +290,7 @@ def test_randomizedsearchcv_same_splits():
 
 
 def test_randomizedsearchcv_cv_results():
-    '''Test the cv_results attribute'''
+    """Test the cv_results attribute"""
 
     f = os.path.join(os.path.dirname(__file__), './u1_ml100k_test')
     data = Dataset.load_from_file(f, Reader('ml-100k'))
@@ -347,6 +349,7 @@ def test_randomizedsearchcv_cv_results():
 
 
 def test_randomizedsearchcv_refit():
+    """Test refit method of RandomizedSearchCV class."""
 
     data_file = os.path.join(os.path.dirname(__file__), './u1_ml100k_test')
     data = Dataset.load_from_file(data_file, Reader('ml-100k'))
