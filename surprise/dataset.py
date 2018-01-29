@@ -117,6 +117,11 @@ class Dataset:
             reader(:obj:`Reader <surprise.reader.Reader>`): A reader to read
                 the file.
         """
+        if file_path is None:
+            raise ValueError('You must specify the path to file with data.')
+        if reader is None:
+            raise ValueError('You must specify reader.')
+
         raw_ratings = reader.read_ratings(file_path)
         return DatasetAutoFolds(raw_ratings=raw_ratings, reader=reader)
 
@@ -142,7 +147,6 @@ class Dataset:
                 the files.
 
         """
-
         return DatasetUserFolds(folds_files=folds_files, reader=reader)
 
     @classmethod
@@ -161,6 +165,11 @@ class Dataset:
                 the file. Only the ``rating_scale`` field needs to be
                 specified.
         """
+        if df is None:
+            raise ValueError('You must specify dataframe.')
+        if reader is None:
+            raise ValueError('You must specify reader.')
+
         raw_ratings = [(uid, iid, float(r) + reader.offset, None)
                        for (uid, iid, r) in
                        df.itertuples(index=False)]
@@ -168,7 +177,19 @@ class Dataset:
 
     @classmethod
     def from_tuples(cls, tuples, reader):
-        """Builds Dataset (without folds) from given list of ratings (user, item, rating, timestamp)."""
+        """Builds Dataset (without folds) from given list of ratings.
+
+        Args:
+            tuples: raw data tuples like (user, item, rating, timestamp).
+            reader(:obj:`Reader <surprise.reader.Reader>`): A reader to read
+                the file. Only the ``rating_scale`` field needs to be
+                specified.
+        """
+        if tuples is None:
+            raise ValueError('You must specify tuples.')
+        if reader is None:
+            raise ValueError('You must specify reader.')
+
         return DatasetAutoFolds(raw_ratings=tuples, reader=reader)
 
     def folds(self):
@@ -273,6 +294,9 @@ class DatasetAutoFolds(Dataset):
     all)."""
 
     def __init__(self, raw_ratings, reader=None):
+        """FOR PRIVATE USE ONLY.
+        If you want to create :class:`DatasetAutoFolds` from raw data,
+        please, use :meth:`split <Dataset.from_tuples>` method."""
         Dataset.__init__(self, reader)
         self.has_been_split = False  # flag indicating if split() was called.
         self.raw_ratings = raw_ratings
