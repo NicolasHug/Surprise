@@ -431,8 +431,8 @@ class PredefinedKFold():
         self.n_splits = len(data.folds_files)
         for train_file, test_file in data.folds_files:
 
-            raw_trainset = data.read_ratings(train_file)
-            raw_testset = data.read_ratings(test_file)
+            raw_trainset = data.reader.read_ratings(train_file)
+            raw_testset = data.reader.read_ratings(test_file)
             trainset = data.construct_trainset(raw_trainset)
             testset = data.construct_testset(raw_testset)
 
