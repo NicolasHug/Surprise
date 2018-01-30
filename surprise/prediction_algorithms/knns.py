@@ -7,7 +7,9 @@ from __future__ import (absolute_import, division, print_function,
 import numpy as np
 from six import iteritems
 import heapq
+from collections import defaultdict
 
+from .. import similarities as sims
 from .predictions import PredictionImpossible
 from .algo_base import AlgoBase
 
@@ -25,11 +27,32 @@ class SymmetricAlgo(AlgoBase):
 
     When the algo is user-based x denotes a user and y an item. Else, it's
     reversed.
+
+    Args:
+        sim_options(dict, optional): Parameters for similarity metrics,
+            used to define nearest nighbours.
+            See :ref:`similarity-measure-configuration` for usage.
+        fix_k_neighbors(boolean): Defines whether k neighbours used to
+            predict similarity are fixed, i.e. same neighbours are used for any
+            item, or k neighbours are obtained for each item as the closest
+            neighbours among those who actually rated this item (for user_based
+            similarity) or among all similar items (for item-item similarity).
+            Default = False
+            - For item-item kNN - usual strategy is to obtain k
+            closest items, among all items rated by current user (use default)
+            - For user_based kNN - to obtain some kind of prediction for
+            a greater number of items use non-fixed neighbors (default).
+            To obtain consistent ranking among top-N predctions - use fixed k.
     """
 
-    def __init__(self, sim_options={}, **kwargs):
+    def __init__(self, sim_options={}, fix_k_neighbors=False, **kwargs):
 
-        AlgoBase.__init__(self, sim_options=sim_options, **kwargs)
+        AlgoBase.__init__(self, **kwargs)
+
+        self.sim_options = sim_options
+        if 'user_based' not in self.sim_options:
+            self.sim_options['user_based'] = True
+        self.fix_k_neighbors = fix_k_neighbors
 
     def fit(self, trainset):
 
@@ -50,6 +73,100 @@ class SymmetricAlgo(AlgoBase):
             return u_stuff, i_stuff
         else:
             return i_stuff, u_stuff
+
+    def select_k_neighbors(self):
+
+        k_neighbors=defaultdict(list)
+
+        n=self.sim.shape[1]
+        # find indexes of k+1 closest neighbors (as one of them is the element
+        # itself)
+        k_plus_neighbors=np.argpartition(self.sim,n-self.k-1)[:,n-self.k-1:]
+
+        for i,neighbors in enumerate(k_plus_neighbors):
+            k_neighbors[i] = [(j,self.sim[i,j]) for j in neighbors if j!=i]
+
+        self.kNN = k_neighbors
+
+    def compute_similarities(self):
+        """Build the similarity matrix.
+
+        The way the similarity matrix is computed depends on the
+        ``sim_options`` parameter passed at the creation of the algorithm (see
+        :ref:`similarity_measures_configuration`).
+
+        This method is only relevant for algorithms using a similarity measure,
+        such as the :ref:`k-NN algorithms <pred_package_knn_inpired>`.
+
+        Returns:
+            The similarity matrix."""
+
+        construction_func = {'cosine': sims.cosine,
+                             'msd': sims.msd,
+                             'pearson': sims.pearson,
+                             'pearson_baseline': sims.pearson_baseline}
+
+        if self.sim_options['user_based']:
+            n_x, yr = self.trainset.n_users, self.trainset.ir
+        else:
+            n_x, yr = self.trainset.n_items, self.trainset.ur
+
+        min_support = self.sim_options.get('min_support', 1)
+
+        args = [n_x, yr, min_support]
+
+        name = self.sim_options.get('name', 'msd').lower()
+        if name == 'pearson_baseline':
+            shrinkage = self.sim_options.get('shrinkage', 100)
+            bu, bi = self.compute_baselines()
+            if self.sim_options['user_based']:
+                bx, by = bu, bi
+            else:
+                bx, by = bi, bu
+
+            args += [self.trainset.global_mean, bx, by, shrinkage]
+
+        try:
+            print('Computing the {0} similarity matrix...'.format(name))
+            sim = construction_func[name](*args)
+            print('Done computing similarity matrix.')
+            return sim
+        except KeyError:
+            raise NameError('Wrong sim name ' + name + '. Allowed values ' +
+                            'are ' + ', '.join(construction_func.keys()) + '.')
+
+    def get_neighbors(self, iid, k):
+        """Return the ``k`` nearest neighbors of ``iid``, which is the inner id
+        of a user or an item, depending on the ``user_based`` field of
+        ``sim_options`` (see :ref:`similarity_measures_configuration`).
+
+        As the similarities are computed on the basis of a similarity measure,
+        this method is only relevant for algorithms using a similarity measure,
+        such as the :ref:`k-NN algorithms <pred_package_knn_inpired>`.
+
+        For a usage example, see the :ref:`FAQ <get_k_nearest_neighbors>`.
+
+        Args:
+            iid(int): The (inner) id of the user (or item) for which we want
+                the nearest neighbors. See :ref:`this note<raw_inner_note>`.
+
+            k(int): The number of neighbors to retrieve.
+
+        Returns:
+            The list of the ``k`` (inner) ids of the closest users (or items)
+            to ``iid``.
+        """
+
+        if self.sim_options['user_based']:
+            all_instances = self.trainset.all_users
+        else:
+            all_instances = self.trainset.all_items
+
+        others = [(x, self.sim[iid, x]) for x in all_instances() if x != iid]
+        others.sort(key=lambda tple: tple[1], reverse=True)
+        k_nearest_neighbors = [j for (j, _) in others[:k]]
+
+        return k_nearest_neighbors
 
 
 class KNNBasic(SymmetricAlgo):
@@ -81,11 +198,24 @@ class KNNBasic(SymmetricAlgo):
         sim_options(dict): A dictionary of options for the similarity
             measure. See :ref:`similarity_measures_configuration` for accepted
             options.
+        fix_k_neighbors(boolean): Defines whether k neighbours used to
+            predict similarity are fixed, i.e. same neighbours are used for any
+            item, or k neighbours are obtained for each item as the closest
+            neighbours among those who actually rated this item (for user_based
+            similarity) or among all similar items (for item-item similarity).
+            Default = False
+            - For item-item kNN - usual strategy is to obtain k
+            closest items, among all items rated by current user (use default)
+            - For user_based kNN - to obtain some kind of prediction for
+            a greater number of items use non-fixed neighbors (default).
+            To obtain consistent ranking among top-N predctions - use fixed k.
     """
 
-    def __init__(self, k=40, min_k=1, sim_options={}, **kwargs):
+    def __init__(self, k=40, min_k=1, sim_options={},
+                 fix_k_neighbors=False, **kwargs):
 
-        SymmetricAlgo.__init__(self, sim_options=sim_options, **kwargs)
+        SymmetricAlgo.__init__(self, sim_options=sim_options,
+                               fix_k_neighbors=fix_k_neighbors, **kwargs)
         self.k = k
         self.min_k = min_k
 
@@ -94,6 +224,10 @@ class KNNBasic(SymmetricAlgo):
         SymmetricAlgo.fit(self, trainset)
         self.sim = self.compute_similarities()
 
+        if self.fix_k_neighbors:
+            self.select_k_neighbors()
+            del self.sim
+
         return self
 
     def estimate(self, u, i):
@@ -101,15 +235,22 @@ class KNNBasic(SymmetricAlgo):
         if not (self.trainset.knows_user(u) and self.trainset.knows_item(i)):
             raise PredictionImpossible('User and/or item is unkown.')
 
-        x, y = self.switch(u, i)
-
-        neighbors = [(self.sim[x, x2], r) for (x2, r) in self.yr[y]]
-        k_neighbors = heapq.nlargest(self.k, neighbors, key=lambda t: t[0])
+        if self.fix_k_neighbors:
+            k_neighbors=[]
+            x, y = self.switch(u, i)
+            for (x2, r) in self.yr[y]:
+                for t in self.kNN[x]:
+                    if x2 == t[0]:
+                        k_neighbors.append((t[1], r))
+        else:
+            x, y = self.switch(u, i)
+            neighbors = [(self.sim[x, x2], r) for (x2, r) in self.yr[y]]
+            k_neighbors = heapq.nlargest(self.k, neighbors, key=lambda t: t[0])
 
         # compute weighted average
         sum_sim = sum_ratings = actual_k = 0
         for (sim, r) in k_neighbors:
-            if sim > 0:
+            if sim > 0 and r!=0:
                 sum_sim += sim
                 sum_ratings += sim * r
                 actual_k += 1
@@ -156,11 +297,24 @@ class KNNWithMeans(SymmetricAlgo):
         sim_options(dict): A dictionary of options for the similarity
             measure. See :ref:`similarity_measures_configuration` for accepted
             options.
+        fix_k_neighbors(boolean): Defines whether k neighbours used to
+            predict similarity are fixed, i.e. same neighbours are used for any
+            item, or k neighbours are obtained for each item as the closest
+            neighbours among those who actually rated this item (for user_based
+            similarity) or among all similar items (for item-item similarity).
+            Default = False
+            - For item-item kNN - usual strategy is to obtain k
+            closest items, among all items rated by current user (use default)
+            - For user_based kNN - to obtain some kind of prediction for
+            a greater number of items use non-fixed neighbors (default).
+            To obtain consistent ranking among top-N predctions - use fixed k.
     """
 
-    def __init__(self, k=40, min_k=1, sim_options={}, **kwargs):
+    def __init__(self, k=40, min_k=1, sim_options={}, fix_k_neighbors=False,
+                 **kwargs):
 
-        SymmetricAlgo.__init__(self, sim_options=sim_options, **kwargs)
+        SymmetricAlgo.__init__(self, sim_options=sim_options,
+                               fix_k_neighbors=fix_k_neighbors, **kwargs)
 
         self.k = k
         self.min_k = min_k
@@ -251,13 +405,25 @@ class KNNBaseline(SymmetricAlgo):
         bsl_options(dict): A dictionary of options for the baseline estimates
             computation. See :ref:`baseline_estimates_configuration` for
             accepted options.
-
+        fix_k_neighbors(boolean): Defines whether k neighbours used to
+            predict similarity are fixed, i.e. same neighbours are used for any
+            item, or k neighbours are obtained for each item as the closest
+            neighbours among those who actually rated this item (for user_based
+            similarity) or among all similar items (for item-item similarity).
+            Default = False
+            - For item-item kNN - usual strategy is to obtain k
+            closest items, among all items rated by current user (use default)
+            - For user_based kNN - to obtain some kind of prediction for
+            a greater number of items use non-fixed neighbors (default).
+            To obtain consistent ranking among top-N predctions - use fixed k.
     """
 
-    def __init__(self, k=40, min_k=1, sim_options={}, bsl_options={}):
+    def __init__(self, k=40, min_k=1, sim_options={}, bsl_options={},
+                 fix_k_neighbors=False):
 
         SymmetricAlgo.__init__(self, sim_options=sim_options,
-                               bsl_options=bsl_options)
+                               bsl_options=bsl_options,
+                               fix_k_neighbors=fix_k_neighbors)
 
         self.k = k
         self.min_k = min_k
@@ -342,14 +508,28 @@ class KNNWithZScore(SymmetricAlgo):
         sim_options(dict): A dictionary of options for the similarity
             measure. See :ref:`similarity_measures_configuration` for accepted
             options.
+        fix_k_neighbors(boolean): Defines whether k neighbours used to
+            predict similarity are fixed, i.e. same neighbours are used for any
+            item, or k neighbours are obtained for each item as the closest
+            neighbours among those who actually rated this item (for user_based
+            similarity) or among all similar items (for item-item similarity).
+            Default = False
+            - For item-item kNN - usual strategy is to obtain k
+            closest items, among all items rated by current user (use default)
+            - For user_based kNN - to obtain some kind of prediction for
+            a greater number of items use non-fixed neighbors (default).
+            To obtain consistent ranking among top-N predctions - use fixed k.
     """
 
-    def __init__(self, k=40, min_k=1, sim_options={}, **kwargs):
+    def __init__(self, k=40, min_k=1, sim_options={}, fix_k_neighbors=False,
+                 **kwargs):
 
-        SymmetricAlgo.__init__(self, sim_options=sim_options, **kwargs)
+        SymmetricAlgo.__init__(self, sim_options=sim_options, **kwargs,
+                               fix_k_neighbors=fix_k_neighbors)
 
         self.k = k
         self.min_k = min_k
+
 
     def fit(self, trainset):
 
