@@ -524,8 +524,8 @@ class KNNWithZScore(SymmetricAlgo):
     def __init__(self, k=40, min_k=1, sim_options={}, fix_k_neighbors=False,
                  **kwargs):
 
-        SymmetricAlgo.__init__(self, sim_options=sim_options, **kwargs,
-                               fix_k_neighbors=fix_k_neighbors)
+        SymmetricAlgo.__init__(self, sim_options=sim_options,
+                               fix_k_neighbors=fix_k_neighbors, **kwargs)
 
         self.k = k
         self.min_k = min_k
