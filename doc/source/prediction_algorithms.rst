@@ -130,6 +130,9 @@ argument is a dictionary with the following (all optional) keys:
   ``'False'``) for the similarity not to be zero. Simply put, if
   :math:`|I_{uv}| < \text{min_support}` then :math:`\text{sim}(u, v) = 0`. The
   same goes for items.
+- ``'common_ratings_only'``: Determines whether only common user/item ratings are
+  taken into account or all the full rating vectors are considered
+  (only relevant for cosine-based similraty). Default is ``True``.
 - ``'shrinkage'``: Shrinkage parameter to apply (only relevant for
   :func:`pearson_baseline <surprise.similarities.pearson_baseline>` similarity).
   Default is 100.

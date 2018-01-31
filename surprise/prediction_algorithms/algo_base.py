@@ -285,6 +285,10 @@ class AlgoBase(object):
                 bx, by = bi, bu
 
             args += [self.trainset.global_mean, bx, by, shrinkage]
+        elif name == 'cosine':
+            common_ratings_only = self.sim_options.get('common_ratings_only',
+                                                       True)
+            args += [common_ratings_only]
 
         try:
             print('Computing the {0} similarity matrix...'.format(name))
