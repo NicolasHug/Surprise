@@ -26,6 +26,8 @@ class AlgoBase(object):
             baseline estimate, the ``baseline_options`` parameter is used to
             configure how they are computed. See
             :ref:`baseline_estimates_configuration` for usage.
+        verbose(bool): Whether to print trace messages of bias estimation,
+            similarity, etc.  Default is True.
     """
 
     def __init__(self, **kwargs):
@@ -34,6 +36,7 @@ class AlgoBase(object):
         self.sim_options = kwargs.get('sim_options', {})
         if 'user_based' not in self.sim_options:
             self.sim_options['user_based'] = True
+        self.verbose = bool(kwargs.get('verbose', True))
         self.skip_train = False
 
         if (guf(self.__class__.fit) is guf(AlgoBase.fit) and
@@ -240,7 +243,8 @@ class AlgoBase(object):
         method_name = self.bsl_options.get('method', 'als')
 
         try:
-            print('Estimating biases using', method_name + '...')
+            if self.verbose:
+                print('Estimating biases using', method_name + '...')
             self.bu, self.bi = method[method_name](self)
             return self.bu, self.bi
         except KeyError:
@@ -287,9 +291,11 @@ class AlgoBase(object):
             args += [self.trainset.global_mean, bx, by, shrinkage]
 
         try:
-            print('Computing the {0} similarity matrix...'.format(name))
+            if self.verbose:
+                print('Computing the {0} similarity matrix...'.format(name))
             sim = construction_func[name](*args)
-            print('Done computing similarity matrix.')
+            if self.verbose:
+                print('Done computing similarity matrix.')
             return sim
         except KeyError:
             raise NameError('Wrong sim name ' + name + '. Allowed values ' +

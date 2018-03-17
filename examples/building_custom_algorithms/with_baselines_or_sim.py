@@ -14,10 +14,11 @@ from surprise import PredictionImpossible
 
 class MyOwnAlgorithm(AlgoBase):
 
-    def __init__(self, sim_options={}, bsl_options={}):
+    def __init__(self, sim_options={}, bsl_options={}, verbose=True):
 
         AlgoBase.__init__(self, sim_options=sim_options,
-                          bsl_options=bsl_options)
+                          bsl_options=bsl_options,
+                          verbose=verbose)
 
     def fit(self, trainset):
 
