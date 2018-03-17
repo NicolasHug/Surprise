@@ -254,7 +254,8 @@ class KNNBaseline(SymmetricAlgo):
 
     """
 
-    def __init__(self, k=40, min_k=1, sim_options={}, bsl_options={}, **kwargs):
+    def __init__(self, k=40, min_k=1, sim_options={}, bsl_options={},
+                    **kwargs):
 
         SymmetricAlgo.__init__(self, sim_options=sim_options,
                                bsl_options=bsl_options, **kwargs)
