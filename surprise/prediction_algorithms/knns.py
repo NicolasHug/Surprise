@@ -266,7 +266,7 @@ class KNNBaseline(SymmetricAlgo):
                  verbose=True, **kwargs):
 
         SymmetricAlgo.__init__(self, sim_options=sim_options,
-                               bsl_options=bsl_options,  verbose=verbose,
+                               bsl_options=bsl_options, verbose=verbose,
                                **kwargs)
 
         self.k = k
