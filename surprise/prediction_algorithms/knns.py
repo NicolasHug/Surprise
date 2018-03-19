@@ -81,11 +81,14 @@ class KNNBasic(SymmetricAlgo):
         sim_options(dict): A dictionary of options for the similarity
             measure. See :ref:`similarity_measures_configuration` for accepted
             options.
+        verbose(bool): Whether to print trace messages of bias estimation,
+            similarity, etc.  Default is True.
     """
 
-    def __init__(self, k=40, min_k=1, sim_options={}, **kwargs):
+    def __init__(self, k=40, min_k=1, sim_options={}, verbose=True, **kwargs):
 
-        SymmetricAlgo.__init__(self, sim_options=sim_options, **kwargs)
+        SymmetricAlgo.__init__(self, sim_options=sim_options, verbose=verbose,
+                               **kwargs)
         self.k = k
         self.min_k = min_k
 
@@ -156,11 +159,14 @@ class KNNWithMeans(SymmetricAlgo):
         sim_options(dict): A dictionary of options for the similarity
             measure. See :ref:`similarity_measures_configuration` for accepted
             options.
+        verbose(bool): Whether to print trace messages of bias estimation,
+            similarity, etc.  Default is True.
     """
 
-    def __init__(self, k=40, min_k=1, sim_options={}, **kwargs):
+    def __init__(self, k=40, min_k=1, sim_options={}, verbose=True, **kwargs):
 
-        SymmetricAlgo.__init__(self, sim_options=sim_options, **kwargs)
+        SymmetricAlgo.__init__(self, sim_options=sim_options,
+                               verbose=verbose, **kwargs)
 
         self.k = k
         self.min_k = min_k
@@ -251,14 +257,17 @@ class KNNBaseline(SymmetricAlgo):
         bsl_options(dict): A dictionary of options for the baseline estimates
             computation. See :ref:`baseline_estimates_configuration` for
             accepted options.
+        verbose(bool): Whether to print trace messages of bias estimation,
+            similarity, etc.  Default is True.
 
     """
 
     def __init__(self, k=40, min_k=1, sim_options={}, bsl_options={},
-                    **kwargs):
+                 verbose=True, **kwargs):
 
         SymmetricAlgo.__init__(self, sim_options=sim_options,
-                               bsl_options=bsl_options, **kwargs)
+                               bsl_options=bsl_options,  verbose=verbose,
+                               **kwargs)
 
         self.k = k
         self.min_k = min_k
@@ -343,11 +352,14 @@ class KNNWithZScore(SymmetricAlgo):
         sim_options(dict): A dictionary of options for the similarity
             measure. See :ref:`similarity_measures_configuration` for accepted
             options.
+        verbose(bool): Whether to print trace messages of bias estimation,
+            similarity, etc.  Default is True.
     """
 
-    def __init__(self, k=40, min_k=1, sim_options={}, **kwargs):
+    def __init__(self, k=40, min_k=1, sim_options={}, verbose=True, **kwargs):
 
-        SymmetricAlgo.__init__(self, sim_options=sim_options, **kwargs)
+        SymmetricAlgo.__init__(self, sim_options=sim_options, verbose=verbose,
+                               **kwargs)
 
         self.k = k
         self.min_k = min_k

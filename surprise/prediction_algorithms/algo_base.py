@@ -26,8 +26,6 @@ class AlgoBase(object):
             baseline estimate, the ``baseline_options`` parameter is used to
             configure how they are computed. See
             :ref:`baseline_estimates_configuration` for usage.
-        verbose(bool): Whether to print trace messages of bias estimation,
-            similarity, etc.  Default is True.
     """
 
     def __init__(self, **kwargs):
