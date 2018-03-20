@@ -88,7 +88,7 @@ def test_gridsearchcv_same_splits():
     param_grid = {'n_epochs': [5], 'lr_all': [.2, .2],
                   'reg_all': [.4, .4], 'n_factors': [5], 'random_state': [0]}
     gs = GridSearchCV(SVD, param_grid, measures=['RMSE'], cv=kf,
-                      n_jobs=-1)
+                      n_jobs=1)
     gs.fit(data)
 
     rmse_scores = [m for m in gs.cv_results['mean_test_rmse']]
@@ -275,7 +275,7 @@ def test_randomizedsearchcv_same_splits():
                            'reg_all': uniform(.4, 0), 'n_factors': [5],
                            'random_state': [0]}
     rs = RandomizedSearchCV(SVD, param_distributions, measures=['RMSE'], cv=kf,
-                            n_jobs=-1)
+                            n_jobs=1)
     rs.fit(data)
 
     rmse_scores = [m for m in rs.cv_results['mean_test_rmse']]
