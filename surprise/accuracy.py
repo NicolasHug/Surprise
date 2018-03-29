@@ -92,8 +92,8 @@ def asym_rmse(predictions, weight=0.5, verbose=True):
     """Compute Asymmetric RMSE (Root Mean Squared Error).
 
     .. math::
-        \\text{Asymmetric RMSE} = \\sqrt{\\frac{1}{|\\hat{R}|} 
-        \\sum_{\\hat{r}_{ui} \in \\hat{R}}(r_{ui} - \\hat{r}_{ui})^2 |\\omega 
+        \\text{Asymmetric RMSE} = \\sqrt{\\frac{1}{|\\hat{R}|}
+        \\sum_{\\hat{r}_{ui} \in \\hat{R}}(r_{ui} - \\hat{r}_{ui})^2 |\\omega
         - 1_{r_{ui} - \\hat{r}_{ui} < 0}|}.
 
     Args:
@@ -117,8 +117,8 @@ def asym_rmse(predictions, weight=0.5, verbose=True):
 
     res = np.array([float(true_r - est)
                     for (_, _, true_r, est, _) in predictions])
-    asym_rmse_ = np.sqrt(np.mean(res**2 * np.abs(weight - 
-                         (res<0).astype(int))))
+    asym_rmse_ = np.sqrt(np.mean(res**2 * np.abs(weight -
+                                                 (res < 0).astype(int))))
 
     if verbose:
         print('Asymmetric RMSE: {0:1.4f}'.format(asym_rmse_))
@@ -131,7 +131,7 @@ def asym_mae(predictions, weight=0.5, verbose=True):
 
     .. math::
         \\text{Asymmetric MAE} = \\frac{1}{|\\hat{R}|} \\sum_{\\hat{r}_{ui} \in
-        \\hat{R}}|r_{ui} - \\hat{r}_{ui}| |\\omega - 1_{r_{ui} - \\hat{r}_{ui} 
+        \\hat{R}}|r_{ui} - \\hat{r}_{ui}| |\\omega - 1_{r_{ui} - \\hat{r}_{ui}
         < 0}|.
 
     Args:
@@ -155,7 +155,7 @@ def asym_mae(predictions, weight=0.5, verbose=True):
 
     res = np.array([float(true_r - est)
                     for (_, _, true_r, est, _) in predictions])
-    asym_mae_ = np.mean(np.abs(res) * np.abs(weight - (res<0).astype(int)))
+    asym_mae_ = np.mean(np.abs(res) * np.abs(weight - (res < 0).astype(int)))
 
     if verbose:
         print('Asymmetric MAE: {0:1.4f}'.format(asym_mae_))
