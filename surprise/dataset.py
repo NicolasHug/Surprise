@@ -53,6 +53,8 @@ class Dataset:
     def __init__(self, reader):
 
         self.reader = reader
+        self.raw_user_features = None
+        self.raw_item_features = None
 
     @classmethod
     def load_builtin(cls, name='ml-100k'):
@@ -164,6 +166,28 @@ class Dataset:
         """
 
         return DatasetAutoFolds(reader=reader, df=df)
+
+    def load_features_df(self, features_df, user_features=True):
+        """Load features from a pandas dataframe into a dataset.
+
+        Use this if you want to add user or item features to a dataset. Only
+        certain prediction algorithms in the :mod:`prediction_algorithms`
+        package support this additional data.
+
+        Args:
+            features_df(`Dataframe`): The dataframe containing the features. It
+                must have two columns or more, corresponding to the user or
+                item (raw) ids, and the features, in this order.
+            user_features(:obj:`bool`): Whether the features are for the users
+                or the items. Default is ``True``.
+        """
+
+        if user_features:
+            self.user_features_df = features_df
+            self.raw_user_features = features_df.values.tolist()
+        else:
+            self.item_features_df = features_df
+            self.raw_item_features = features_df.values.tolist()
 
     def read_ratings(self, file_name):
         """Return a list of ratings (user, item, rating, timestamp) read from
