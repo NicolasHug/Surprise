@@ -274,12 +274,18 @@ class Dataset:
 
         n_users = len(ur)  # number of users
         n_items = len(ir)  # number of items
+        n_user_features = len(u_features)
+        n_item_features = len(i_features)
         n_ratings = len(raw_trainset)
 
         trainset = Trainset(ur,
                             ir,
+                            u_features,
+                            i_features,
                             n_users,
                             n_items,
+                            n_user_features,
+                            n_item_features,
                             n_ratings,
                             self.reader.rating_scale,
                             self.reader.offset,

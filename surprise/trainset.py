@@ -33,21 +33,34 @@ class Trainset:
         ir(:obj:`defaultdict` of :obj:`list`): The items ratings. This is a
             dictionary containing lists of tuples of the form ``(user_inner_id,
             rating)``. The keys are item inner ids.
+        u_features(:obj:`defaultdict` of :obj:`list`): The user features. This
+            is a dictionary containing lists of features. The keys are user
+            inner ids.
+        i_features(:obj:`defaultdict` of :obj:`list`): The item features. This
+            is a dictionary containing lists of features. The keys are item
+            inner ids.
         n_users: Total number of users :math:`|U|`.
         n_items: Total number of items :math:`|I|`.
+        n_user_features: Total number of user features.
+        n_item_features: Total number of item features.
         n_ratings: Total number of ratings :math:`|R_{train}|`.
         rating_scale(tuple): The minimum and maximal rating of the rating
             scale.
         global_mean: The mean of all ratings :math:`\\mu`.
     """
 
-    def __init__(self, ur, ir, n_users, n_items, n_ratings, rating_scale,
+    def __init__(self, ur, ir, u_features, i_features, n_users, n_items,
+                 n_user_features, n_item_features, n_ratings, rating_scale,
                  offset, raw2inner_id_users, raw2inner_id_items):
 
         self.ur = ur
         self.ir = ir
+        self.u_features = u_features
+        self.i_features = i_features
         self.n_users = n_users
         self.n_items = n_items
+        self.n_user_features = n_user_features
+        self.n_item_features = n_item_features
         self.n_ratings = n_ratings
         self.rating_scale = rating_scale
         self.offset = offset
