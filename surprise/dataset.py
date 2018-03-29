@@ -195,6 +195,8 @@ class Dataset:
             self.item_features_labels = features_df.columns.values.tolist()[1:]
             self.item_features_nb = len(self.item_features_labels)
 
+        return self
+
     def read_ratings(self, file_name):
         """Return a list of ratings (user, item, rating, timestamp) read from
         file_name"""
@@ -252,7 +254,7 @@ class Dataset:
                     try:
                         u_features[uid] = self.user_features[urid]
                     except KeyError:
-                        print('user ' + urid + ' does not exist in ' +
+                        print('user ' + str(urid) + ' does not exist in ' +
                               'self.user_features')
                         raise
             try:
@@ -265,7 +267,7 @@ class Dataset:
                     try:
                         i_features[iid] = self.item_features[irid]
                     except KeyError:
-                        print('item ' + irid + ' does not exist in ' +
+                        print('item ' + str(irid) + ' does not exist in ' +
                               'self.item_features')
                         raise
 
