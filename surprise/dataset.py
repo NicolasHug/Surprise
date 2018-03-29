@@ -53,8 +53,8 @@ class Dataset:
     def __init__(self, reader):
 
         self.reader = reader
-        self.raw_user_features = None
-        self.raw_item_features = None
+        self.user_features = None
+        self.item_features = None
 
     @classmethod
     def load_builtin(cls, name='ml-100k'):
@@ -184,10 +184,16 @@ class Dataset:
 
         if user_features:
             self.user_features_df = features_df
-            self.raw_user_features = features_df.values.tolist()
+            self.user_features = {urid: features for (urid, *features) in
+                                  features_df.itertuples(index=False)}
+            self.user_features_labels = features_df.columns.values.tolist()[1:]
+            self.user_features_nb = len(self.user_features_labels)
         else:
             self.item_features_df = features_df
-            self.raw_item_features = features_df.values.tolist()
+            self.item_features = {irid: features for (irid, *features) in
+                                  features_df.itertuples(index=False)}
+            self.item_features_labels = features_df.columns.values.tolist()[1:]
+            self.item_features_nb = len(self.item_features_labels)
 
     def read_ratings(self, file_name):
         """Return a list of ratings (user, item, rating, timestamp) read from
@@ -231,6 +237,8 @@ class Dataset:
 
         ur = defaultdict(list)
         ir = defaultdict(list)
+        u_features = defaultdict(list)
+        i_features = defaultdict(list)
 
         # user raw id, item raw id, translated rating, time stamp
         for urid, irid, r, timestamp in raw_trainset:
@@ -240,12 +248,26 @@ class Dataset:
                 uid = current_u_index
                 raw2inner_id_users[urid] = current_u_index
                 current_u_index += 1
+                if self.user_features is not None:
+                    try:
+                        u_features[uid] = self.user_features[urid]
+                    except KeyError:
+                        print('user ' + urid + ' does not exist in ' +
+                              'self.user_features')
+                        raise
             try:
                 iid = raw2inner_id_items[irid]
             except KeyError:
                 iid = current_i_index
                 raw2inner_id_items[irid] = current_i_index
                 current_i_index += 1
+                if self.item_features is not None:
+                    try:
+                        i_features[iid] = self.item_features[irid]
+                    except KeyError:
+                        print('item ' + irid + ' does not exist in ' +
+                              'self.item_features')
+                        raise
 
             ur[uid].append((iid, r))
             ir[iid].append((uid, r))
