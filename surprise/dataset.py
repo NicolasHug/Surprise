@@ -53,8 +53,8 @@ class Dataset:
     def __init__(self, reader):
 
         self.reader = reader
-        self.user_features = None
-        self.item_features = None
+        self.user_features_nb = 0
+        self.item_features_nb = 0
 
     @classmethod
     def load_builtin(cls, name='ml-100k'):
@@ -250,7 +250,7 @@ class Dataset:
                 uid = current_u_index
                 raw2inner_id_users[urid] = current_u_index
                 current_u_index += 1
-                if self.user_features is not None:
+                if self.user_features_nb > 0:
                     try:
                         u_features[uid] = self.user_features[urid]
                     except KeyError:
@@ -263,7 +263,7 @@ class Dataset:
                 iid = current_i_index
                 raw2inner_id_items[irid] = current_i_index
                 current_i_index += 1
-                if self.item_features is not None:
+                if self.item_features_nb > 0:
                     try:
                         i_features[iid] = self.item_features[irid]
                     except KeyError:
@@ -276,8 +276,6 @@ class Dataset:
 
         n_users = len(ur)  # number of users
         n_items = len(ir)  # number of items
-        n_user_features = len(u_features)
-        n_item_features = len(i_features)
         n_ratings = len(raw_trainset)
 
         trainset = Trainset(ur,
@@ -286,8 +284,8 @@ class Dataset:
                             i_features,
                             n_users,
                             n_items,
-                            n_user_features,
-                            n_item_features,
+                            self.user_features_nb,
+                            self.item_features_nb,
                             n_ratings,
                             self.reader.rating_scale,
                             self.reader.offset,
