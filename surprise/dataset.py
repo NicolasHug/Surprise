@@ -184,13 +184,13 @@ class Dataset:
 
         if user_features:
             self.user_features_df = features_df
-            self.user_features = {urid: features for (urid, *features) in
+            self.user_features = {tup[0]: tup[1:] for tup in
                                   features_df.itertuples(index=False)}
             self.user_features_labels = features_df.columns.values.tolist()[1:]
             self.user_features_nb = len(self.user_features_labels)
         else:
             self.item_features_df = features_df
-            self.item_features = {irid: features for (irid, *features) in
+            self.item_features = {tup[0]: tup[1:] for tup in
                                   features_df.itertuples(index=False)}
             self.item_features_labels = features_df.columns.values.tolist()[1:]
             self.item_features_nb = len(self.item_features_labels)
