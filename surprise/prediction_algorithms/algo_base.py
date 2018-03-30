@@ -240,7 +240,7 @@ class AlgoBase(object):
         method_name = self.bsl_options.get('method', 'als')
 
         try:
-            # print('Estimating biases using', method_name + '...')
+            print('Estimating biases using', method_name + '...')
             self.bu, self.bi = method[method_name](self)
             return self.bu, self.bi
         except KeyError:
@@ -287,9 +287,9 @@ class AlgoBase(object):
             args += [self.trainset.global_mean, bx, by, shrinkage]
 
         try:
-            # print('Computing the {0} similarity matrix...'.format(name))
+            print('Computing the {0} similarity matrix...'.format(name))
             sim = construction_func[name](*args)
-            # print('Done computing similarity matrix.')
+            print('Done computing similarity matrix.')
             return sim
         except KeyError:
             raise NameError('Wrong sim name ' + name + '. Allowed values ' +
