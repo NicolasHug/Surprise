@@ -116,7 +116,7 @@ def cross_validate(algo, data, measures=['rmse', 'mae'], cv=None,
         if return_train_measures:
             train_measures[m] = np.asarray([d[m] for d in
                                             train_measures_dicts])
-            ret['train_' + m] = test_measures[m]
+            ret['train_' + m] = train_measures[m]
 
     ret['fit_time'] = fit_times
     ret['test_time'] = test_times
