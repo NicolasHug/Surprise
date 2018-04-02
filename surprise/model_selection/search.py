@@ -19,7 +19,7 @@ class BaseSearchCV(with_metaclass(ABCMeta)):
 
     @abstractmethod
     def __init__(self, algo_class, measures=['rmse', 'mae'], cv=None,
-                 refit=False, return_train_measures=False, n_jobs=-1,
+                 refit=False, return_train_measures=False, n_jobs=1,
                  pre_dispatch='2*n_jobs', joblib_verbose=0):
 
         self.algo_class = algo_class
@@ -253,7 +253,7 @@ class GridSearchCV(BaseSearchCV):
                 used.  For example, with ``n_jobs = -2`` all CPUs but one are\
                 used.
 
-            Default is ``-1``.
+            Default is ``1``.
         pre_dispatch(int or string): Controls the number of jobs that get
             dispatched during parallel execution. Reducing this number can be
             useful to avoid an explosion of memory consumption when more jobs
@@ -295,7 +295,7 @@ class GridSearchCV(BaseSearchCV):
             <cv_results_example>`).
     """
     def __init__(self, algo_class, param_grid, measures=['rmse', 'mae'],
-                 cv=None, refit=False, return_train_measures=False, n_jobs=-1,
+                 cv=None, refit=False, return_train_measures=False, n_jobs=1,
                  pre_dispatch='2*n_jobs', joblib_verbose=0):
 
         super(GridSearchCV, self).__init__(
@@ -362,7 +362,7 @@ class RandomizedSearchCV(BaseSearchCV):
                 used.  For example, with ``n_jobs = -2`` all CPUs but one are\
                 used.
 
-            Default is ``-1``.
+            Default is ``1``.
         pre_dispatch(int or string): Controls the number of jobs that get
             dispatched during parallel execution. Reducing this number can be
             useful to avoid an explosion of memory consumption when more jobs
@@ -412,7 +412,7 @@ class RandomizedSearchCV(BaseSearchCV):
     """
     def __init__(self, algo_class, param_distributions, n_iter=10,
                  measures=['rmse', 'mae'], cv=None, refit=False,
-                 return_train_measures=False, n_jobs=-1,
+                 return_train_measures=False, n_jobs=1,
                  pre_dispatch='2*n_jobs', random_state=None, joblib_verbose=0):
 
         super(RandomizedSearchCV, self).__init__(
