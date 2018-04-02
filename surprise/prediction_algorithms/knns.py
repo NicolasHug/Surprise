@@ -27,9 +27,10 @@ class SymmetricAlgo(AlgoBase):
     reversed.
     """
 
-    def __init__(self, sim_options={}, **kwargs):
+    def __init__(self, sim_options={}, verbose=True, **kwargs):
 
         AlgoBase.__init__(self, sim_options=sim_options, **kwargs)
+        self.verbose = verbose
 
     def fit(self, trainset):
 

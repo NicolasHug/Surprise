@@ -27,7 +27,8 @@ class BaselineOnly(AlgoBase):
 
     def __init__(self, bsl_options={}, verbose=True):
 
-        AlgoBase.__init__(self, bsl_options=bsl_options, verbose=verbose)
+        AlgoBase.__init__(self, bsl_options=bsl_options)
+        self.verbose = verbose
 
     def fit(self, trainset):
 

@@ -34,7 +34,6 @@ class AlgoBase(object):
         self.sim_options = kwargs.get('sim_options', {})
         if 'user_based' not in self.sim_options:
             self.sim_options['user_based'] = True
-        self.verbose = bool(kwargs.get('verbose', True))
         self.skip_train = False
 
         if (guf(self.__class__.fit) is guf(AlgoBase.fit) and
