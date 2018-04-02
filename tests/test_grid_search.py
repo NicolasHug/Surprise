@@ -101,7 +101,7 @@ def test_same_splits():
     # all RMSE should be the same (as param combinations are the same)
     param_grid = {'n_epochs': [1, 1], 'lr_all': [.5, .5]}
     with pytest.warns(UserWarning):
-        grid_search = GridSearch(SVD, param_grid, measures=['RMSE'], n_jobs=1)
+        grid_search = GridSearch(SVD, param_grid, measures=['RMSE'], n_jobs=-1)
     grid_search.evaluate(data)
 
     rmse_scores = [s['RMSE'] for s in grid_search.cv_results['scores']]
