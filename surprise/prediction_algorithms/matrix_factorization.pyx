@@ -253,7 +253,7 @@ class SVD(AlgoBase):
         self.pu = pu
         self.qi = qi
 
-    def estimate(self, u, i):
+    def estimate(self, u, i, u_features, i_features):
         # Should we cythonize this as well?
 
         known_user = self.trainset.knows_user(u)
@@ -484,7 +484,7 @@ class SVDpp(AlgoBase):
         self.qi = qi
         self.yj = yj
 
-    def estimate(self, u, i):
+    def estimate(self, u, i, u_features, i_features):
 
         est = self.trainset.global_mean
 
@@ -715,7 +715,7 @@ class NMF(AlgoBase):
         self.pu = pu
         self.qi = qi
 
-    def estimate(self, u, i):
+    def estimate(self, u, i, u_features, i_features):
         # Should we cythonize this as well?
 
         known_user = self.trainset.knows_user(u)
@@ -737,6 +737,6 @@ class NMF(AlgoBase):
             if known_user and known_item:
                 est = np.dot(self.qi[i], self.pu[u])
             else:
-                raise PredictionImpossible('User and item are unkown.')
+                raise PredictionImpossible('User and item are unknown.')
 
         return est
