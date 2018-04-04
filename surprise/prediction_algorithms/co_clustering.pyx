@@ -236,7 +236,7 @@ class CoClustering(AlgoBase):
 
         return avg_cltr_u, avg_cltr_i, avg_cocltr
 
-    def estimate(self, u, i):
+    def estimate(self, u, i, *__):
 
         if not (self.trainset.knows_user(u) and self.trainset.knows_item(i)):
             return self.trainset.global_mean

@@ -40,6 +40,6 @@ class NormalPredictor(AlgoBase):
 
         return self
 
-    def estimate(self, *_):
+    def estimate(self, *__):
 
         return np.random.normal(self.trainset.global_mean, self.sigma)
