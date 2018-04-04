@@ -59,7 +59,8 @@ class Lasso(AlgoBase):
 
         if (self.trainset.n_user_features == 0 or
                 self.trainset.n_item_features == 0):
-            raise ValueError('trainset does not contain user and/or item features.')
+            raise ValueError('trainset does not contain user and/or item '
+                             'features.')
 
         n_ratings = self.trainset.n_ratings
         n_uf = self.trainset.n_user_features
@@ -82,16 +83,14 @@ class Lasso(AlgoBase):
         self.coef = reg.coef_
         self.intercept = reg.intercept_
 
-    def estimate(self, u, i):
+    def estimate(self, u, i, u_features, i_features):
 
-        if not (self.trainset.has_user_features(u) and
-                self.trainset.has_item_features(i)):
+        features = np.concatenate([u_features, i_features])
+
+        if len(features) != len(self.coef):
             raise PredictionImpossible('User and/or item features '
-                                       'are unknown.')
+                                       'are incomplete.')
 
-        x = np.concatenate((self.trainset.u_features[u],
-                            self.trainset.i_features[i]))
-
-        est = self.intercept + np.dot(x, self.coef)
+        est = self.intercept + np.dot(features, self.coef)
 
         return est
