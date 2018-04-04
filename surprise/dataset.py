@@ -239,6 +239,7 @@ class Dataset:
 
         ur = defaultdict(list)
         ir = defaultdict(list)
+
         u_features = defaultdict(list)
         i_features = defaultdict(list)
 
@@ -297,7 +298,7 @@ class Dataset:
     def construct_testset(self, raw_testset):
 
         return [(ruid, riid, r_ui_trans)
-                for (ruid, riid, r_ui_trans, _) in raw_testset]
+                for (ruid, riid, r_ui_trans, __) in raw_testset]
 
 
 class DatasetUserFolds(Dataset):

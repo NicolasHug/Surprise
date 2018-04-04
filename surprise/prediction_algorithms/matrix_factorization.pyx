@@ -275,7 +275,7 @@ class SVD(AlgoBase):
             if known_user and known_item:
                 est = np.dot(self.qi[i], self.pu[u])
             else:
-                raise PredictionImpossible('User and item are unkown.')
+                raise PredictionImpossible('User and item are unknown.')
 
         return est
 

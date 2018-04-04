@@ -100,6 +100,30 @@ class Trainset:
 
         return iid in self.ir
 
+    def has_user_features(self, uid):
+        """Indicate if the user features are part of the trainset.
+
+        Args:
+            uid(int): The (inner) user id. See :ref:`this
+                note<raw_inner_note>`.
+        Returns:
+            ``True`` if user features are part of the trainset, else ``False``.
+        """
+
+        return uid in self.u_features
+
+    def has_item_features(self, iid):
+        """Indicate if the item features are part of the trainset.
+
+        Args:
+            iid(int): The (inner) item id. See :ref:`this
+                note<raw_inner_note>`.
+        Returns:
+            ``True`` if item features are part of the trainset, else ``False``.
+        """
+
+        return iid in self.i_features
+
     def to_inner_uid(self, ruid):
         """Convert a **user** raw id to an inner id.
 
