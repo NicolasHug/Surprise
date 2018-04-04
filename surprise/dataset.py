@@ -55,6 +55,8 @@ class Dataset:
         self.reader = reader
         self.user_features_nb = 0
         self.item_features_nb = 0
+        self.user_features = {}
+        self.item_features = {}
 
     @classmethod
     def load_builtin(cls, name='ml-100k'):
@@ -240,11 +242,11 @@ class Dataset:
         ur = defaultdict(list)
         ir = defaultdict(list)
 
-        u_features = defaultdict(list)
-        i_features = defaultdict(list)
+        u_features = {}
+        i_features = {}
 
         # user raw id, item raw id, translated rating, time stamp
-        for urid, irid, r, timestamp in raw_trainset:
+        for urid, irid, r, __ in raw_trainset:
             try:
                 uid = raw2inner_id_users[urid]
             except KeyError:
@@ -252,12 +254,8 @@ class Dataset:
                 raw2inner_id_users[urid] = current_u_index
                 current_u_index += 1
                 if self.user_features_nb > 0:
-                    try:
-                        u_features[uid] = self.user_features[urid]
-                    except KeyError:
-                        print('user ' + str(urid) + ' does not exist in ' +
-                              'self.user_features')
-                        raise
+                    u_features[uid] = self.user_features.get(urid, None)
+
             try:
                 iid = raw2inner_id_items[irid]
             except KeyError:
@@ -265,12 +263,7 @@ class Dataset:
                 raw2inner_id_items[irid] = current_i_index
                 current_i_index += 1
                 if self.item_features_nb > 0:
-                    try:
-                        i_features[iid] = self.item_features[irid]
-                    except KeyError:
-                        print('item ' + str(irid) + ' does not exist in ' +
-                              'self.item_features')
-                        raise
+                    i_features[iid] = self.item_features.get(irid, None)
 
             ur[uid].append((iid, r))
             ir[iid].append((uid, r))
@@ -297,8 +290,13 @@ class Dataset:
 
     def construct_testset(self, raw_testset):
 
-        return [(ruid, riid, r_ui_trans)
-                for (ruid, riid, r_ui_trans, __) in raw_testset]
+        testset = []
+        for (ruid, riid, r_ui_trans, __) in raw_testset:
+            u_features = self.user_features.get(ruid, None)
+            i_features = self.item_features.get(riid, None)
+            testset.append((ruid, riid, u_features, i_features, r_ui_trans))
+
+        return testset
 
 
 class DatasetUserFolds(Dataset):

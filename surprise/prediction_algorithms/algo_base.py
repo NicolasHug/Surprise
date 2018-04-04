@@ -9,7 +9,6 @@ from __future__ import (absolute_import, division, print_function,
 import warnings
 
 from six import get_unbound_function as guf
-import numpy as np
 
 from .. import similarities as sims
 from .predictions import PredictionImpossible
@@ -97,7 +96,7 @@ class AlgoBase(object):
 
         return self
 
-    def predict(self, uid, iid, u_features=[], i_features=[], r_ui=None,
+    def predict(self, uid, iid, u_features=None, i_features=None, r_ui=None,
                 clip=True, verbose=False):
         """Compute the rating prediction for given user and item.
 
@@ -111,9 +110,9 @@ class AlgoBase(object):
             uid: (Raw) id of the user. See :ref:`this note<raw_inner_note>`.
             iid: (Raw) id of the item. See :ref:`this note<raw_inner_note>`.
             u_features: List of user features in the same order as used in
-                the ``fit`` method. Optional, default is empty list.
+                the ``fit`` method. Optional, default is ``None``.
             i_features: List of item features in the same order as used in
-                the ``fit`` method. Optional, default is empty list.
+                the ``fit`` method. Optional, default is ``None``.
             r_ui(float): The true rating :math:`r_{ui}`. Optional, default is
                 ``None``.
             clip(bool): Whether to clip the estimation into the rating scale.
@@ -172,7 +171,7 @@ class AlgoBase(object):
             est = min(higher_bound, est)
             est = max(lower_bound, est)
 
-        pred = Prediction(uid, iid, r_ui, est, details)
+        pred = Prediction(uid, iid, u_features, i_features, r_ui, est, details)
 
         if verbose:
             print(pred)
@@ -213,9 +212,12 @@ class AlgoBase(object):
         # The ratings are translated back to their original scale.
         predictions = [self.predict(uid,
                                     iid,
+                                    u_features,
+                                    i_features,
                                     r_ui_trans - self.trainset.offset,
                                     verbose=verbose)
-                       for (uid, iid, r_ui_trans) in testset]
+                       for (uid, iid, u_features, i_features, r_ui_trans)
+                       in testset]
         return predictions
 
     def compute_baselines(self):

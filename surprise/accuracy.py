@@ -45,7 +45,7 @@ def rmse(predictions, verbose=True):
         raise ValueError('Prediction list is empty.')
 
     mse = np.mean([float((true_r - est)**2)
-                   for (_, _, true_r, est, _) in predictions])
+                   for (__, __, __, __, true_r, est, __) in predictions])
     rmse_ = np.sqrt(mse)
 
     if verbose:
@@ -80,7 +80,7 @@ def mae(predictions, verbose=True):
         raise ValueError('Prediction list is empty.')
 
     mae_ = np.mean([float(abs(true_r - est))
-                    for (_, _, true_r, est, _) in predictions])
+                    for (__, __, __, __, true_r, est, __) in predictions])
 
     if verbose:
         print('MAE:  {0:1.4f}'.format(mae_))
@@ -117,7 +117,7 @@ def fcp(predictions, verbose=True):
     nc_u = defaultdict(int)
     nd_u = defaultdict(int)
 
-    for u0, _, r0, est, _ in predictions:
+    for u0, __, __, __, r0, est, __ in predictions:
         predictions_u[u0].append((r0, est))
 
     for u0, preds in iteritems(predictions_u):

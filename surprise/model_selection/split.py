@@ -276,7 +276,7 @@ class ShuffleSplit():
             self.test_size, self.train_size, len(data.raw_ratings))
         rng = get_rng(self.random_state)
 
-        for _ in range(self.n_splits):
+        for __ in range(self.n_splits):
 
             if self.shuffle:
                 permutation = rng.permutation(len(data.raw_ratings))
@@ -372,7 +372,7 @@ class LeaveOneOut():
 
         Args:
             data(:obj:`Dataset<surprise.dataset.Dataset>`): The data containing
-                ratings that will be devided into trainsets and testsets.
+                ratings that will be divided into trainsets and testsets.
 
         Yields:
             tuple of (trainset, testset)

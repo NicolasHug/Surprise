@@ -21,7 +21,8 @@ class PredictionImpossible(Exception):
 
 
 class Prediction(namedtuple('Prediction',
-                            ['uid', 'iid', 'r_ui', 'est', 'details'])):
+                            ['uid', 'iid', 'u_features', 'i_features', 'r_ui',
+                             'est', 'details'])):
     """A named tuple for storing the results of a prediction.
 
     It's wrapped in a class, but only for documentation and printing purposes.
@@ -29,6 +30,8 @@ class Prediction(namedtuple('Prediction',
     Args:
         uid: The (raw) user id. See :ref:`this note<raw_inner_note>`.
         iid: The (raw) item id. See :ref:`this note<raw_inner_note>`.
+        u_features: The user features.
+        i_features: The item features.
         r_ui(float): The true rating :math:`r_{ui}`.
         est(float): The estimated rating :math:`\\hat{r}_{ui}`.
         details (dict): Stores additional details about the prediction that
@@ -40,6 +43,14 @@ class Prediction(namedtuple('Prediction',
     def __str__(self):
         s = 'user: {uid:<10} '.format(uid=self.uid)
         s += 'item: {iid:<10} '.format(iid=self.iid)
+        if self.u_features is not None:
+            pass
+        else:
+            s += 'u_features = None   '
+        if self.i_features is not None:
+            pass
+        else:
+            s += 'i_features = None   '
         if self.r_ui is not None:
             s += 'r_ui = {r_ui:1.2f}   '.format(r_ui=self.r_ui)
         else:

@@ -237,8 +237,14 @@ class Trainset:
         cases where you want to to test your algorithm on the trainset.
         """
 
-        return [(self.to_raw_uid(u), self.to_raw_iid(i), r)
-                for (u, i, r) in self.all_ratings()]
+        testset = []
+        for (u, i, r) in self.all_ratings():
+            u_features = self.u_features.get(u, None)
+            i_features = self.i_features.get(i, None)
+            testset.append((self.to_raw_uid(u), self.to_raw_iid(i), u_features,
+                            i_features, r))
+
+        return testset
 
     def build_anti_testset(self, fill=None):
         """Return a list of ratings that can be used as a testset in the
@@ -264,10 +270,14 @@ class Trainset:
 
         anti_testset = []
         for u in self.all_users():
-            user_items = set([j for (j, _) in self.ur[u]])
-            anti_testset += [(self.to_raw_uid(u), self.to_raw_iid(i), fill) for
-                             i in self.all_items() if
-                             i not in user_items]
+            user_items = set([j for (j, __) in self.ur[u]])
+            anti_testset += [(self.to_raw_uid(u),
+                              self.to_raw_iid(i),
+                              self.u_features.get(u, None),
+                              self.i_features.get(i, None),
+                              fill)
+                             for i in self.all_items()
+                             if i not in user_items]
         return anti_testset
 
     def all_users(self):
@@ -292,7 +302,7 @@ class Trainset:
 
         It's only computed once."""
         if self._global_mean is None:
-            self._global_mean = np.mean([r for (_, _, r) in
+            self._global_mean = np.mean([r for (__, __, r) in
                                          self.all_ratings()])
 
         return self._global_mean

@@ -72,8 +72,16 @@ class Lasso(AlgoBase):
         y = np.empty((n_ratings,))
         for k, (uid, iid, rating) in enumerate(self.trainset.all_ratings()):
             y[k] = rating
-            X[k, :n_uf] = u_features[uid]
-            X[k, n_uf:] = i_features[iid]
+            try:
+                X[k, :n_uf] = u_features[uid]
+            except KeyError:
+                raise KeyError('No features for user ' +
+                               str(self.trainset.to_raw_uid(uid)))
+            try:
+                X[k, n_uf:] = i_features[iid]
+            except KeyError:
+                raise KeyError('No features for item ' +
+                               str(self.trainset.to_raw_iid(iid)))
 
         reg = linear_model.Lasso(alpha=0.1)
         reg.fit(X, y)
@@ -87,9 +95,11 @@ class Lasso(AlgoBase):
 
         features = np.concatenate([u_features, i_features])
 
-        if len(features) != len(self.coef):
+        if (u_features is None or
+                i_features is None or
+                len(features) != len(self.coef)):
             raise PredictionImpossible('User and/or item features '
-                                       'are incomplete.')
+                                       'are missing.')
 
         est = self.intercept + np.dot(features, self.coef)
 
