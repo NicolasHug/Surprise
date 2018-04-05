@@ -37,7 +37,7 @@ class AlgoBase(object):
         self.skip_train = False
 
         if (guf(self.__class__.fit) is guf(AlgoBase.fit) and
-           guf(self.__class__.train) is not guf(AlgoBase.train)):
+                guf(self.__class__.train) is not guf(AlgoBase.train)):
             warnings.warn('It looks like this algorithm (' +
                           str(self.__class__) +
                           ') implements train() '
@@ -96,7 +96,8 @@ class AlgoBase(object):
 
         return self
 
-    def predict(self, uid, iid, r_ui=None, clip=True, verbose=False):
+    def predict(self, uid, iid, u_features=None, i_features=None, r_ui=None,
+                clip=True, verbose=False):
         """Compute the rating prediction for given user and item.
 
         The ``predict`` method converts raw ids to inner ids and then calls the
@@ -108,6 +109,10 @@ class AlgoBase(object):
         Args:
             uid: (Raw) id of the user. See :ref:`this note<raw_inner_note>`.
             iid: (Raw) id of the item. See :ref:`this note<raw_inner_note>`.
+            u_features: List of user features in the same order as used in
+                the ``fit`` method. Optional, default is ``None``.
+            i_features: List of item features in the same order as used in
+                the ``fit`` method. Optional, default is ``None``.
             r_ui(float): The true rating :math:`r_{ui}`. Optional, default is
                 ``None``.
             clip(bool): Whether to clip the estimation into the rating scale.
@@ -143,7 +148,7 @@ class AlgoBase(object):
 
         details = {}
         try:
-            est = self.estimate(iuid, iiid)
+            est = self.estimate(iuid, iiid, u_features, i_features)
 
             # If the details dict was also returned
             if isinstance(est, tuple):
@@ -166,7 +171,7 @@ class AlgoBase(object):
             est = min(higher_bound, est)
             est = max(lower_bound, est)
 
-        pred = Prediction(uid, iid, r_ui, est, details)
+        pred = Prediction(uid, iid, u_features, i_features, r_ui, est, details)
 
         if verbose:
             print(pred)
@@ -207,9 +212,12 @@ class AlgoBase(object):
         # The ratings are translated back to their original scale.
         predictions = [self.predict(uid,
                                     iid,
+                                    u_features,
+                                    i_features,
                                     r_ui_trans - self.trainset.offset,
                                     verbose=verbose)
-                       for (uid, iid, r_ui_trans) in testset]
+                       for (uid, iid, u_features, i_features, r_ui_trans)
+                       in testset]
         return predictions
 
     def compute_baselines(self):
@@ -240,7 +248,8 @@ class AlgoBase(object):
         method_name = self.bsl_options.get('method', 'als')
 
         try:
-            # print('Estimating biases using', method_name + '...')
+            if self.verbose:
+                print('Estimating biases using', method_name + '...')
             self.bu, self.bi = method[method_name](self)
             return self.bu, self.bi
         except KeyError:
@@ -287,9 +296,11 @@ class AlgoBase(object):
             args += [self.trainset.global_mean, bx, by, shrinkage]
 
         try:
-            # print('Computing the {0} similarity matrix...'.format(name))
+            if self.verbose:
+                print('Computing the {0} similarity matrix...'.format(name))
             sim = construction_func[name](*args)
-            # print('Done computing similarity matrix.')
+            if self.verbose:
+                print('Done computing similarity matrix.')
             return sim
         except KeyError:
             raise NameError('Wrong sim name ' + name + '. Allowed values ' +
