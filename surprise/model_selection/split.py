@@ -276,7 +276,7 @@ class ShuffleSplit():
             self.test_size, self.train_size, len(data.raw_ratings))
         rng = get_rng(self.random_state)
 
-        for __ in range(self.n_splits):
+        for _ in range(self.n_splits):
 
             if self.shuffle:
                 permutation = rng.permutation(len(data.raw_ratings))

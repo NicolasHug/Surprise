@@ -246,7 +246,7 @@ class Dataset:
         i_features = {}
 
         # user raw id, item raw id, translated rating, time stamp
-        for urid, irid, r, __ in raw_trainset:
+        for urid, irid, r, _ in raw_trainset:
             try:
                 uid = raw2inner_id_users[urid]
             except KeyError:
@@ -291,7 +291,7 @@ class Dataset:
     def construct_testset(self, raw_testset):
 
         testset = []
-        for (ruid, riid, r_ui_trans, __) in raw_testset:
+        for (ruid, riid, r_ui_trans, _) in raw_testset:
             u_features = self.user_features.get(ruid, None)
             i_features = self.item_features.get(riid, None)
             testset.append((ruid, riid, u_features, i_features, r_ui_trans))

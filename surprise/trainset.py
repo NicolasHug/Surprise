@@ -270,7 +270,7 @@ class Trainset:
 
         anti_testset = []
         for u in self.all_users():
-            user_items = set([j for (j, __) in self.ur[u]])
+            user_items = set([j for (j, _) in self.ur[u]])
             anti_testset += [(self.to_raw_uid(u),
                               self.to_raw_iid(i),
                               self.u_features.get(u, None),
@@ -302,7 +302,7 @@ class Trainset:
 
         It's only computed once."""
         if self._global_mean is None:
-            self._global_mean = np.mean([r for (__, __, r) in
+            self._global_mean = np.mean([r for (_, _, r) in
                                          self.all_ratings()])
 
         return self._global_mean

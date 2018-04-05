@@ -5,8 +5,6 @@ the :mod:`features` module includes some features-based algorithms.
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 import numpy as np
-from six import iteritems
-import heapq
 from sklearn import linear_model
 
 from .predictions import PredictionImpossible
