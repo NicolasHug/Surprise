@@ -294,6 +294,7 @@ class GridSearchCV(BaseSearchCV):
             into a pandas `DataFrame` (see :ref:`example
             <cv_results_example>`).
     """
+
     def __init__(self, algo_class, param_grid, measures=['rmse', 'mae'],
                  cv=None, refit=False, return_train_measures=False, n_jobs=-1,
                  pre_dispatch='2*n_jobs', joblib_verbose=0):
@@ -410,6 +411,7 @@ class RandomizedSearchCV(BaseSearchCV):
             into a pandas `DataFrame` (see :ref:`example
             <cv_results_example>`).
     """
+
     def __init__(self, algo_class, param_distributions, n_iter=10,
                  measures=['rmse', 'mae'], cv=None, refit=False,
                  return_train_measures=False, n_jobs=-1,
