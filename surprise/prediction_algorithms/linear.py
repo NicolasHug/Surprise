@@ -84,7 +84,7 @@ class Lasso(AlgoBase):
                                  str(self.trainset.to_raw_iid(iid)))
 
         if self.add_interactions:
-            X = self.add_interactions(X)
+            X = self.add_interactions_fn(X)
 
         reg = linear_model.Lasso(
             alpha=self.alpha, fit_intercept=self.fit_intercept,
@@ -98,7 +98,7 @@ class Lasso(AlgoBase):
         self.coef = reg.coef_
         self.intercept = reg.intercept_
 
-    def add_interactions(self, X):
+    def add_interactions_fn(self, X):
 
         n_uf = self.trainset.n_user_features
         n_if = self.trainset.n_item_features
@@ -122,7 +122,7 @@ class Lasso(AlgoBase):
         X = np.concatenate([u_features, i_features])
 
         if self.add_interactions:
-            X = self.add_interactions(X)
+            X = self.add_interactions_fn(X)
 
         est = self.intercept + np.dot(X, self.coef)
 
