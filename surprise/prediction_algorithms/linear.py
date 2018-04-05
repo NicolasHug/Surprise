@@ -114,7 +114,7 @@ class Lasso(AlgoBase):
         X = np.concatenate([u_features, i_features])
 
         if self.add_interactions:
-            temp = np.array([X[v] * X[i] for v in range(n_uf)
+            temp = np.array([X[v] * X[j] for v in range(n_uf)
                             for j in range(n_uf, n_uf + n_if)])
             X = np.concatenate([X, temp])
 
