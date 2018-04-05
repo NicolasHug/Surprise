@@ -84,7 +84,9 @@ class Lasso(AlgoBase):
                                  str(self.trainset.to_raw_iid(iid)))
 
         if self.add_interactions:
-            X = self.add_interactions_fn(X)
+            temp = np.array([X[:, v] * X[:, j] for v in range(n_uf)
+                            for j in range(n_uf, n_uf + n_if)]).T
+            X = np.concatenate([X, temp], axis=1)
 
         reg = linear_model.Lasso(
             alpha=self.alpha, fit_intercept=self.fit_intercept,
@@ -98,31 +100,23 @@ class Lasso(AlgoBase):
         self.coef = reg.coef_
         self.intercept = reg.intercept_
 
-    def add_interactions_fn(self, X):
+    def estimate(self, u, i, u_features, i_features):
 
         n_uf = self.trainset.n_user_features
         n_if = self.trainset.n_item_features
 
-        temp = np.array([X[:, u] * X[:, i] for u in range(n_uf)
-                        for i in range(n_uf, n_uf + n_if)]).T
-        X = np.concatenate([X, temp], axis=1)
-
-        return X
-
-    def estimate(self, u, i, u_features, i_features):
-
-        if (u_features is None or
-                len(u_features) != self.trainset.n_user_features):
+        if u_features is None or len(u_features) != n_uf:
             raise PredictionImpossible('User features are missing.')
 
-        if (i_features is None or
-                len(i_features) != self.trainset.n_item_features):
+        if i_features is None or len(i_features) != n_if:
             raise PredictionImpossible('Item features are missing.')
 
         X = np.concatenate([u_features, i_features])
 
         if self.add_interactions:
-            X = self.add_interactions_fn(X)
+            temp = np.array([X[v] * X[i] for v in range(n_uf)
+                            for j in range(n_uf, n_uf + n_if)])
+            X = np.concatenate([X, temp])
 
         est = self.intercept + np.dot(X, self.coef)
 
