@@ -62,7 +62,7 @@ class CoClustering(AlgoBase):
         self.n_cltr_u = n_cltr_u
         self.n_cltr_i = n_cltr_i
         self.n_epochs = n_epochs
-        self.verbose=verbose
+        self.verbose = verbose
         self.random_state = random_state
 
     def fit(self, trainset):
