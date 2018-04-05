@@ -37,6 +37,7 @@ class Lasso(AlgoBase):
                  **kwargs):
 
         AlgoBase.__init__(self, **kwargs)
+        self.add_interactions = add_interactions
         self.alpha = alpha
         self.fit_intercept = fit_intercept
         self.normalize = normalize
