@@ -44,9 +44,20 @@ class Lasso(AlgoBase):
             options.
     """
 
-    def __init__(self, **kwargs):
+    def __init__(self, alpha=1.0, fit_intercept=True, normalize=False,
+                 precompute=False, max_iter=1000, tol=0.0001, positive=False,
+                 random_state=None, selection='cyclic', **kwargs):
 
         AlgoBase.__init__(self, **kwargs)
+        self.alpha = alpha
+        self.fit_intercept = fit_intercept
+        self.normalize = normalize
+        self.precompute = precompute
+        self.max_iter = max_iter
+        self.tol = tol
+        self.positive = positive
+        self.random_state = random_state
+        self.selection = selection
 
     def fit(self, trainset):
 
@@ -83,7 +94,11 @@ class Lasso(AlgoBase):
                 raise KeyError('No features for item ' +
                                str(self.trainset.to_raw_iid(iid)))
 
-        reg = linear_model.Lasso(alpha=0.1)
+        reg = linear_model.Lasso(
+            alpha=self.alpha, fit_intercept=self.fit_intercept,
+            normalize=self.normalize, precompute=self.precompute,
+            max_iter=self.max_iter, tol=self.tol, positive=self.positive,
+            random_state=self.random_state, selection=self.selection)
         reg.fit(X, y)
 
         # self.X = X
