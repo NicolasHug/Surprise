@@ -259,6 +259,7 @@ class KNNBaseline(SymmetricAlgo):
             accepted options.
         verbose(bool): Whether to print trace messages of bias estimation,
             similarity, etc.  Default is True.
+
     """
 
     def __init__(self, k=40, min_k=1, sim_options={}, bsl_options={},
