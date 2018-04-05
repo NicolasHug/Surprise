@@ -24,9 +24,10 @@ class BaselineOnly(AlgoBase):
 
     """
 
-    def __init__(self, bsl_options={}):
+    def __init__(self, bsl_options={}, verbose=True):
 
         AlgoBase.__init__(self, bsl_options=bsl_options)
+        self.verbose = verbose
 
     def fit(self, trainset):
 
@@ -35,7 +36,7 @@ class BaselineOnly(AlgoBase):
 
         return self
 
-    def estimate(self, u, i):
+    def estimate(self, u, i, *_):
 
         est = self.trainset.global_mean
         if self.trainset.knows_user(u):
