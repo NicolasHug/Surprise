@@ -67,6 +67,8 @@ class Lasso(AlgoBase):
         n_if = self.trainset.n_item_features
         u_features = self.trainset.u_features
         i_features = self.trainset.i_features
+        uf_labels = self.trainset.user_features_labels
+        if_labels = self.trainset.item_features_labels
 
         X = np.empty((n_ratings, n_uf + n_if))
         y = np.empty((n_ratings,))
@@ -83,10 +85,14 @@ class Lasso(AlgoBase):
                 raise ValueError('No features for item ' +
                                  str(self.trainset.to_raw_iid(iid)))
 
+        coef_labels = uf_labels + if_labels
         if self.add_interactions:
             temp = np.array([X[:, v] * X[:, j] for v in range(n_uf)
                              for j in range(n_uf, n_uf + n_if)]).T
             X = np.concatenate([X, temp], axis=1)
+            temp = [coef_labels[v] + '*' + coef_labels[j] for v in range(n_uf)
+                    for j in range(n_uf, n_uf + n_if)]
+            coef_labels += temp
 
         reg = linear_model.Lasso(
             alpha=self.alpha, fit_intercept=self.fit_intercept,
@@ -98,6 +104,7 @@ class Lasso(AlgoBase):
         self.X = X
         self.y = y
         self.coef = reg.coef_
+        self.coef_labels = coef_labels
         self.intercept = reg.intercept_
 
     def estimate(self, u, i, u_features, i_features):

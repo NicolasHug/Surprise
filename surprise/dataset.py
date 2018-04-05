@@ -280,6 +280,8 @@ class Dataset:
                             n_items,
                             self.user_features_nb,
                             self.item_features_nb,
+                            self.user_features_labels,
+                            self.item_features_labels,
                             n_ratings,
                             self.reader.rating_scale,
                             self.reader.offset,
