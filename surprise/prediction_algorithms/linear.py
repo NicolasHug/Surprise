@@ -82,6 +82,11 @@ class Lasso(AlgoBase):
                 raise KeyError('No features for item ' +
                                str(self.trainset.to_raw_iid(iid)))
 
+        if self.add_interactions:
+            temp = np.array([X[:, u] * X[:, i] for u in range(n_uf)
+                             for i in range(n_uf, n_uf + n_if)]).T
+            X = np.concatenate([X, temp], axis=1)
+
         reg = linear_model.Lasso(
             alpha=self.alpha, fit_intercept=self.fit_intercept,
             normalize=self.normalize, precompute=self.precompute,
@@ -89,8 +94,8 @@ class Lasso(AlgoBase):
             random_state=self.random_state, selection=self.selection)
         reg.fit(X, y)
 
-        # self.X = X
-        # self.y = y
+        self.X = X
+        self.y = y
         self.coef = reg.coef_
         self.intercept = reg.intercept_
 
