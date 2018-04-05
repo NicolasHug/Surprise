@@ -17,11 +17,11 @@ class Lasso(AlgoBase):
     The prediction :math:`\\hat{r}_{ui}` is set as:
 
     .. math::
-        \hat{r}_{ui} = \alpha_0 + \alpha_1^\top y_u + \alpha_2^\top z_i +
-        \alpha_3^\top \text{vec}(y_u \otimes z_i)
+        \hat{r}_{ui} = \alpha_1 + \alpha_2^\top y_u + \alpha_3^\top z_i +
+        \alpha_4^\top \text{vec}(y_u \otimes z_i)
 
-    where :math:`\alpha_0 \in \mathbb{R}, \alpha_1 \in \mathbb{R}^o, \alpha_2
-    \in \mathbb{R}^p` and :math:`\alpha_3 \in \mathbb{R}^{op}` are coefficient
+    where :math:`\alpha_1 \in \mathbb{R}, \alpha_2 \in \mathbb{R}^o, \alpha_3
+    \in \mathbb{R}^p` and :math:`\alpha_4 \in \mathbb{R}^{op}` are coefficient
     vectors, and :math:`\otimes` represent the Kronecker product of two vectors
     (i.e., all possible cross-product combinations).
 
@@ -85,7 +85,7 @@ class Lasso(AlgoBase):
 
         if self.add_interactions:
             temp = np.array([X[:, v] * X[:, j] for v in range(n_uf)
-                            for j in range(n_uf, n_uf + n_if)]).T
+                             for j in range(n_uf, n_uf + n_if)]).T
             X = np.concatenate([X, temp], axis=1)
 
         reg = linear_model.Lasso(
@@ -115,7 +115,7 @@ class Lasso(AlgoBase):
 
         if self.add_interactions:
             temp = np.array([X[v] * X[j] for v in range(n_uf)
-                            for j in range(n_uf, n_uf + n_if)])
+                             for j in range(n_uf, n_uf + n_if)])
             X = np.concatenate([X, temp])
 
         est = self.intercept + np.dot(X, self.coef)
