@@ -53,10 +53,6 @@ class Dataset:
     def __init__(self, reader):
 
         self.reader = reader
-        self.user_features_nb = 0
-        self.item_features_nb = 0
-        self.user_features = {}
-        self.item_features = {}
 
     @classmethod
     def load_builtin(cls, name='ml-100k'):
@@ -169,36 +165,6 @@ class Dataset:
 
         return DatasetAutoFolds(reader=reader, df=df)
 
-    def load_features_df(self, features_df, user_features=True):
-        """Load features from a pandas dataframe into a dataset.
-
-        Use this if you want to add user or item features to a dataset. Only
-        certain prediction algorithms in the :mod:`prediction_algorithms`
-        package support this additional data.
-
-        Args:
-            features_df(`Dataframe`): The dataframe containing the features. It
-                must have two columns or more, corresponding to the user or
-                item (raw) ids, and the features, in this order.
-            user_features(:obj:`bool`): Whether the features are for the users
-                or the items. Default is ``True``.
-        """
-
-        if user_features:
-            self.user_features_df = features_df
-            self.user_features = {tup[0]: tup[1:] for tup in
-                                  features_df.itertuples(index=False)}
-            self.user_features_labels = features_df.columns.values.tolist()[1:]
-            self.user_features_nb = len(self.user_features_labels)
-        else:
-            self.item_features_df = features_df
-            self.item_features = {tup[0]: tup[1:] for tup in
-                                  features_df.itertuples(index=False)}
-            self.item_features_labels = features_df.columns.values.tolist()[1:]
-            self.item_features_nb = len(self.item_features_labels)
-
-        return self
-
     def read_ratings(self, file_name):
         """Return a list of ratings (user, item, rating, timestamp) read from
         file_name"""
@@ -242,28 +208,20 @@ class Dataset:
         ur = defaultdict(list)
         ir = defaultdict(list)
 
-        u_features = {}
-        i_features = {}
-
         # user raw id, item raw id, translated rating, time stamp
-        for urid, irid, r, _ in raw_trainset:
+        for urid, irid, r, timestamp in raw_trainset:
             try:
                 uid = raw2inner_id_users[urid]
             except KeyError:
                 uid = current_u_index
                 raw2inner_id_users[urid] = current_u_index
                 current_u_index += 1
-                if self.user_features_nb > 0:
-                    u_features[uid] = self.user_features.get(urid, None)
-
             try:
                 iid = raw2inner_id_items[irid]
             except KeyError:
                 iid = current_i_index
                 raw2inner_id_items[irid] = current_i_index
                 current_i_index += 1
-                if self.item_features_nb > 0:
-                    i_features[iid] = self.item_features.get(irid, None)
 
             ur[uid].append((iid, r))
             ir[iid].append((uid, r))
@@ -274,14 +232,8 @@ class Dataset:
 
         trainset = Trainset(ur,
                             ir,
-                            u_features,
-                            i_features,
                             n_users,
                             n_items,
-                            self.user_features_nb,
-                            self.item_features_nb,
-                            self.user_features_labels,
-                            self.item_features_labels,
                             n_ratings,
                             self.reader.rating_scale,
                             self.reader.offset,
@@ -292,13 +244,8 @@ class Dataset:
 
     def construct_testset(self, raw_testset):
 
-        testset = []
-        for (ruid, riid, r_ui_trans, _) in raw_testset:
-            u_features = self.user_features.get(ruid, None)
-            i_features = self.item_features.get(riid, None)
-            testset.append((ruid, riid, u_features, i_features, r_ui_trans))
-
-        return testset
+        return [(ruid, riid, r_ui_trans)
+                for (ruid, riid, r_ui_trans, _) in raw_testset]
 
 
 class DatasetUserFolds(Dataset):

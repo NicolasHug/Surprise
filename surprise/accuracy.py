@@ -45,7 +45,7 @@ def rmse(predictions, verbose=True):
         raise ValueError('Prediction list is empty.')
 
     mse = np.mean([float((true_r - est)**2)
-                   for (_, _, _, _, true_r, est, _) in predictions])
+                   for (_, _, true_r, est, _) in predictions])
     rmse_ = np.sqrt(mse)
 
     if verbose:
@@ -80,12 +80,87 @@ def mae(predictions, verbose=True):
         raise ValueError('Prediction list is empty.')
 
     mae_ = np.mean([float(abs(true_r - est))
-                    for (_, _, _, _, true_r, est, _) in predictions])
+                    for (_, _, true_r, est, _) in predictions])
 
     if verbose:
         print('MAE:  {0:1.4f}'.format(mae_))
 
     return mae_
+
+
+def asym_rmse(predictions, weight=0.5, verbose=True):
+    """Compute Asymmetric RMSE (Root Mean Squared Error).
+
+    .. math::
+        \\text{Asymmetric RMSE} = \\sqrt{\\frac{1}{|\\hat{R}|} 
+        \\sum_{\\hat{r}_{ui} \in \\hat{R}}(r_{ui} - \\hat{r}_{ui})^2 |\\omega 
+        - 1_{r_{ui} - \\hat{r}_{ui} < 0}|}.
+
+    Args:
+        predictions (:obj:`list` of :obj:`Prediction\
+            <surprise.prediction_algorithms.predictions.Prediction>`):
+            A list of predictions, as returned by the :meth:`test()
+            <surprise.prediction_algorithms.algo_base.AlgoBase.test>` method.
+        weight (int): Weight used to characterize asymmetry.
+        verbose: If True, will print computed value. Default is ``True``.
+
+
+    Returns:
+        The Asymmetric Root Mean Squared Error of predictions.
+
+    Raises:
+        ValueError: When ``predictions`` is empty.
+    """
+
+    if not predictions:
+        raise ValueError('Prediction list is empty.')
+
+    res = np.array([float(true_r - est)
+                    for (_, _, true_r, est, _) in predictions])
+    asym_rmse_ = np.sqrt(np.mean(res**2 * np.abs(weight - 
+                         (res<0).astype(int))))
+
+    if verbose:
+        print('Asymmetric RMSE: {0:1.4f}'.format(asym_rmse_))
+
+    return asym_rmse_
+
+
+def asym_mae(predictions, weight=0.5, verbose=True):
+    """Compute Asymmetric MAE (Mean Absolute Error).
+
+    .. math::
+        \\text{Asymmetric MAE} = \\frac{1}{|\\hat{R}|} \\sum_{\\hat{r}_{ui} \in
+        \\hat{R}}|r_{ui} - \\hat{r}_{ui}| |\\omega - 1_{r_{ui} - \\hat{r}_{ui} 
+        < 0}|.
+
+    Args:
+        predictions (:obj:`list` of :obj:`Prediction\
+            <surprise.prediction_algorithms.predictions.Prediction>`):
+            A list of predictions, as returned by the :meth:`test()
+            <surprise.prediction_algorithms.algo_base.AlgoBase.test>` method.
+        weight (int): Weight used to characterize asymmetry.
+        verbose: If True, will print computed value. Default is ``True``.
+
+
+    Returns:
+        The Asymmetric Mean Absolute Error of predictions.
+
+    Raises:
+        ValueError: When ``predictions`` is empty.
+    """
+
+    if not predictions:
+        raise ValueError('Prediction list is empty.')
+
+    res = np.array([float(true_r - est)
+                    for (_, _, true_r, est, _) in predictions])
+    asym_mae_ = np.mean(np.abs(res) * np.abs(weight - (res<0).astype(int)))
+
+    if verbose:
+        print('Asymmetric MAE: {0:1.4f}'.format(asym_mae_))
+
+    return asym_mae_
 
 
 def fcp(predictions, verbose=True):
@@ -117,7 +192,7 @@ def fcp(predictions, verbose=True):
     nc_u = defaultdict(int)
     nd_u = defaultdict(int)
 
-    for u0, _, _, _, r0, est, _ in predictions:
+    for u0, _, r0, est, _ in predictions:
         predictions_u[u0].append((r0, est))
 
     for u0, preds in iteritems(predictions_u):
