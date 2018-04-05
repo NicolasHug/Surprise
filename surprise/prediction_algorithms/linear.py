@@ -1,5 +1,5 @@
 """
-the :mod:`features` module includes some features-based algorithms.
+the :mod:`linear` module includes linear features-based algorithms.
 """
 
 from __future__ import (absolute_import, division, print_function,
@@ -12,39 +12,29 @@ from .algo_base import AlgoBase
 
 
 class Lasso(AlgoBase):
-    """A basic linear regression algorithm.
+    """A basic lasso algorithm with user-item interaction terms.
 
     The prediction :math:`\\hat{r}_{ui}` is set as:
 
     .. math::
-        \hat{r}_{ui} = \\frac{
-        \\sum\\limits_{v \in N^k_i(u)} \\text{sim}(u, v) \cdot r_{vi}}
-        {\\sum\\limits_{v \in N^k_i(u)} \\text{sim}(u, v)}
+        \hat{r}_{ui} = \alpha_0 + \alpha_1^\top y_u + \alpha_2^\top z_i +
+        \alpha_3^\top \text{vec}(y_u \otimes z_i)
 
-    or
-
-    .. math::
-        \hat{r}_{ui} = \\frac{
-        \\sum\\limits_{j \in N^k_u(i)} \\text{sim}(i, j) \cdot r_{uj}}
-        {\\sum\\limits_{j \in N^k_u(j)} \\text{sim}(i, j)}
-
-    depending on the ``user_based`` field of the ``sim_options`` parameter.
+    where :math:`\alpha_0 \in \mathbb{R}, \alpha_1 \in \mathbb{R}^o, \alpha_2
+    \in \mathbb{R}^p` and :math:`\alpha_3 \in \mathbb{R}^{op}` are coefficient
+    vectors, and :math:`\otimes` represent the Kronecker product of two vectors
+    (i.e., all possible cross-product combinations).
 
     Args:
-        k(int): The (max) number of neighbors to take into account for
-            aggregation (see :ref:`this note <actual_k_note>`). Default is
-            ``40``.
-        min_k(int): The minimum number of neighbors to take into account for
-            aggregation. If there are not enough neighbors, the prediction is
-            set the the global mean of all ratings. Default is ``1``.
-        sim_options(dict): A dictionary of options for the similarity
-            measure. See :ref:`similarity_measures_configuration` for accepted
-            options.
+        add_interactions(bool): Whether to add user-item interaction terms.
+            Optional, default is True.
+        other args: See ``sklearn`` documentation for ``linear_model.Lasso``.
     """
 
-    def __init__(self, alpha=1.0, fit_intercept=True, normalize=False,
-                 precompute=False, max_iter=1000, tol=0.0001, positive=False,
-                 random_state=None, selection='cyclic', **kwargs):
+    def __init__(self, add_interactions=True, alpha=1.0, fit_intercept=True,
+                 normalize=False, precompute=False, max_iter=1000, tol=0.0001,
+                 positive=False, random_state=None, selection='cyclic',
+                 **kwargs):
 
         AlgoBase.__init__(self, **kwargs)
         self.alpha = alpha

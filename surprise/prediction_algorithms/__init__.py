@@ -32,7 +32,7 @@ from .matrix_factorization import SVDpp
 from .matrix_factorization import NMF
 from .slope_one import SlopeOne
 from .co_clustering import CoClustering
-from .features import Lasso
+from .linear import Lasso
 
 from .predictions import PredictionImpossible
 from .predictions import Prediction
