@@ -79,7 +79,7 @@ class SlopeOne(AlgoBase):
 
         return self
 
-    def estimate(self, u, i, *_):
+    def estimate(self, u, i):
 
         if not (self.trainset.knows_user(u) and self.trainset.knows_item(i)):
             raise PredictionImpossible('User and/or item is unkown.')
