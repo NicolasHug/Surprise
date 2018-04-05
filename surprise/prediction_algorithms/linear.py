@@ -74,18 +74,16 @@ class Lasso(AlgoBase):
             try:
                 X[k, :n_uf] = u_features[uid]
             except KeyError:
-                raise KeyError('No features for user ' +
-                               str(self.trainset.to_raw_uid(uid)))
+                raise ValueError('No features for user ' +
+                                 str(self.trainset.to_raw_uid(uid)))
             try:
                 X[k, n_uf:] = i_features[iid]
             except KeyError:
-                raise KeyError('No features for item ' +
-                               str(self.trainset.to_raw_iid(iid)))
+                raise ValueError('No features for item ' +
+                                 str(self.trainset.to_raw_iid(iid)))
 
         if self.add_interactions:
-            temp = np.array([X[:, u] * X[:, i] for u in range(n_uf)
-                             for i in range(n_uf, n_uf + n_if)]).T
-            X = np.concatenate([X, temp], axis=1)
+            X = self.add_interactions(X)
 
         reg = linear_model.Lasso(
             alpha=self.alpha, fit_intercept=self.fit_intercept,
@@ -99,16 +97,32 @@ class Lasso(AlgoBase):
         self.coef = reg.coef_
         self.intercept = reg.intercept_
 
+    def add_interactions(self, X):
+
+        n_uf = self.trainset.n_user_features
+        n_if = self.trainset.n_item_features
+
+        temp = np.array([X[:, u] * X[:, i] for u in range(n_uf)
+                        for i in range(n_uf, n_uf + n_if)]).T
+        X = np.concatenate([X, temp], axis=1)
+
+        return X
+
     def estimate(self, u, i, u_features, i_features):
 
-        features = np.concatenate([u_features, i_features])
-
         if (u_features is None or
-                i_features is None or
-                len(features) != len(self.coef)):
-            raise PredictionImpossible('User and/or item features '
-                                       'are missing.')
+                len(u_features) != self.trainset.n_user_features):
+            raise PredictionImpossible('User features are missing.')
 
-        est = self.intercept + np.dot(features, self.coef)
+        if (i_features is None or
+                len(i_features) != self.trainset.n_item_features):
+            raise PredictionImpossible('Item features are missing.')
+
+        X = np.concatenate([u_features, i_features])
+
+        if self.add_interactions:
+            X = self.add_interactions(X)
+
+        est = self.intercept + np.dot(X, self.coef)
 
         return est
