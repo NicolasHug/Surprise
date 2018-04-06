@@ -150,7 +150,7 @@ class GridSearch:
                 used.  For example, with ``n_jobs = -2`` all CPUs but one are\
                 used.
 
-            Default is ``-1``.
+            Default is ``1``.
         pre_dispatch(int or string): Controls the number of jobs that get
             dispatched during parallel execution. Reducing this number can be
             useful to avoid an explosion of memory consumption when more jobs
@@ -195,7 +195,7 @@ class GridSearch:
         """
 
     def __init__(self, algo_class, param_grid, measures=['rmse', 'mae'],
-                 n_jobs=-1, pre_dispatch='2*n_jobs', seed=None, verbose=1,
+                 n_jobs=1, pre_dispatch='2*n_jobs', seed=None, verbose=1,
                  joblib_verbose=0):
         self.best_params = CaseInsensitiveDefaultDict(list)
         self.best_index = CaseInsensitiveDefaultDict(list)

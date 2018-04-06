@@ -21,7 +21,8 @@ class BaselineOnly(AlgoBase):
         bsl_options(dict): A dictionary of options for the baseline estimates
             computation. See :ref:`baseline_estimates_configuration` for
             accepted options.
-
+        verbose(bool): Whether to print trace messages of bias estimation,
+            similarity, etc.  Default is True.
     """
 
     def __init__(self, bsl_options={}, verbose=True):
