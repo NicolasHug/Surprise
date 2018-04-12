@@ -5,6 +5,7 @@ the :mod:`knns` module includes some k-NN inspired algorithms.
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 import numpy as np
+import tensorflow as tf
 import scipy.sparse as sps
 from six import iteritems
 import heapq
@@ -33,7 +34,10 @@ class FMAlgo(AlgoBase):
         self.loss_function = loss_function  # {'mse', 'loss_logistic'}
         # https://www.tensorflow.org/api_guides/python/train#Optimizers
         # tf.train.Optimizer, default: AdamOptimizer(learning_rate=0.01)
-        self.optimizer = optimizer
+        if optimizer is None:
+            self.optimizer = tf.train.AdamOptimizer(learning_rate=0.001)
+        else:
+            self.optimizer = optimizer
         self.reg_all = reg_all  # reg in `tffm`
         self.use_diag = use_diag
         self.reweight_reg = reweight_reg
@@ -75,6 +79,8 @@ class FMAlgo(AlgoBase):
 
         if self.verbose > 0:
             self.show_progress = True
+        else:
+            self.show_progress = False
 
         return self
 
@@ -119,10 +125,10 @@ class FMBasic(FMAlgo):
         n_items = self.trainset.n_items
 
         # Construct sparse X and y
-        row_ind = np.empty(n_ratings)
-        col_ind = np.empty(n_ratings)
-        data = np.ones(n_ratings)
-        y_train = np.empty(n_ratings)
+        row_ind = np.empty(2 * n_ratings, dtype=int)
+        col_ind = np.empty(2 * n_ratings, dtype=int)
+        data = np.ones(2 * n_ratings, dtype=bool)
+        y_train = np.empty(n_ratings, dtype=float)
         nonzero_counter = 0
         rating_counter = 0
         for uid, iid, rating in self.trainset.all_ratings():
@@ -137,8 +143,9 @@ class FMBasic(FMAlgo):
             # Add rating
             y_train[rating_counter] = rating
             rating_counter += 1
-        X_train = sps.csr_matrix(data, (row_ind, col_ind),
-                                 shape=(n_ratings, n_users + n_items))
+        X_train = sps.csr_matrix((data, (row_ind, col_ind)),
+                                 shape=(n_ratings, n_users + n_items),
+                                 dtype=bool)
 
         # `Dataset` and `Trainset` do not support sample_weight at the moment.
         self.tffm_model.fit(X_train, y_train, sample_weight=None,
@@ -154,18 +161,27 @@ class FMBasic(FMAlgo):
         n_users = self.trainset.n_users
         n_items = self.trainset.n_items
 
+        details = {}
         if self.trainset.knows_user(u) and self.trainset.knows_item(i):
-            X_test = sps.csr_matrix([1., 1.], ([0, 0], [u, n_users + i]),
-                                    shape=(1, n_users + n_items))
+            X_test = sps.csr_matrix(([1., 1.], ([0, 0], [u, n_users + i])),
+                                    shape=(1, n_users + n_items), dtype=bool)
+            details['knows_user'] = True
+            details['knows_item'] = True
         elif self.trainset.knows_user(u):
-            X_test = sps.csr_matrix([1.], ([0], [u]),
-                                    shape=(1, n_users + n_items))
-        elif self.trainset.knows_item(u):
-            X_test = sps.csr_matrix([1.], ([0], [n_users + i]),
-                                    shape=(1, n_users + n_items))
+            X_test = sps.csr_matrix(([1.], ([0], [u])),
+                                    shape=(1, n_users + n_items), dtype=bool)
+            details['knows_user'] = True
+            details['knows_item'] = False
+        elif self.trainset.knows_item(i):
+            X_test = sps.csr_matrix(([1.], ([0], [n_users + i])),
+                                    shape=(1, n_users + n_items), dtype=bool)
+            details['knows_user'] = False
+            details['knows_item'] = True
         else:
-            X_test = sps.csr_matrix((1, n_users + n_items))
+            X_test = sps.csr_matrix((1, n_users + n_items), dtype=bool)
+            details['knows_user'] = False
+            details['knows_item'] = False
 
         est = self.tffm_model.predict(X_test)[0]
 
-        return est
+        return est, details
