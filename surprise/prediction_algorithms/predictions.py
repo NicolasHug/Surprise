@@ -44,13 +44,13 @@ class Prediction(namedtuple('Prediction',
         s = 'user: {uid:<10} '.format(uid=self.uid)
         s += 'item: {iid:<10} '.format(iid=self.iid)
         if self.u_features is not None:
-            pass
+            s += 'u_features = True   '
         else:
-            s += 'u_features = None   '
+            s += 'u_features = False   '
         if self.i_features is not None:
-            pass
+            s += 'i_features = True   '
         else:
-            s += 'i_features = None   '
+            s += 'i_features = False   '
         if self.r_ui is not None:
             s += 'r_ui = {r_ui:1.2f}   '.format(r_ui=self.r_ui)
         else:
