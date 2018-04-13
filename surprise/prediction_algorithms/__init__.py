@@ -34,6 +34,7 @@ from .slope_one import SlopeOne
 from .co_clustering import CoClustering
 from .linear import Lasso
 from .factorization_machines import FMBasic
+from .factorization_machines import FMBasicPL
 
 from .predictions import PredictionImpossible
 from .predictions import Prediction
@@ -41,4 +42,4 @@ from .predictions import Prediction
 __all__ = ['AlgoBase', 'NormalPredictor', 'BaselineOnly', 'KNNBasic',
            'KNNBaseline', 'KNNWithMeans', 'SVD', 'SVDpp', 'NMF', 'SlopeOne',
            'CoClustering', 'PredictionImpossible', 'Prediction',
-           'KNNWithZScore', 'Lasso', FMBasic]
+           'KNNWithZScore', 'Lasso', 'FMBasic', 'FMBasicPL']
