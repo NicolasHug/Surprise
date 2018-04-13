@@ -35,7 +35,7 @@ def test_new_style_algo():
             self.bu, self.bi = 1, 1
             self.cnt += 1
 
-        def estimate(self, u, i):
+        def estimate(self, u, i, *_):
             return self.est
 
     algo = CustomAlgoFit()
@@ -91,7 +91,7 @@ def test_old_style_algo():
             self.bu, self.bi = 1, 1
             self.cnt += 1
 
-        def estimate(self, u, i):
+        def estimate(self, u, i, *_):
             return self.est
 
     with pytest.warns(UserWarning):
