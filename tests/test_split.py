@@ -299,7 +299,7 @@ def test_LeaveOneOut():
     # Make sure only one rating per user is present in the testset
     loo = LeaveOneOut()
     for _, testset in loo.split(data):
-        cnt = Counter([uid for (uid, _, _) in testset])
+        cnt = Counter([uid for (uid, _, _, _, _) in testset])
         assert all(val == 1 for val in itervalues(cnt))
 
     # test the min_n_ratings parameter

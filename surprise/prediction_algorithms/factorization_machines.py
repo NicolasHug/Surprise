@@ -7,12 +7,9 @@ from __future__ import (absolute_import, division, print_function,
 import numpy as np
 import tensorflow as tf
 import scipy.sparse as sps
-from six import iteritems
-import heapq
 from tffm import TFFMClassifier, TFFMRegressor
 from polylearn import FactorizationMachineRegressor
 
-from .predictions import PredictionImpossible
 from .algo_base import AlgoBase
 
 
