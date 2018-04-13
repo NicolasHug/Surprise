@@ -48,7 +48,7 @@ class FMAlgo(AlgoBase):
         self.verbose = verbose
 
         if self.loss_function == 'mse':
-            self.tffm_model = TFFMRegressor(
+            self.model = TFFMRegressor(
                 order=self.order, rank=self.n_factors,
                 input_type=self.input_type, optimizer=self.optimizer,
                 reg=self.reg_all, use_diag=self.use_diag,
@@ -59,7 +59,7 @@ class FMAlgo(AlgoBase):
         elif self.loss_function == 'loss_logistic':
             # See issue #157
             raise ValueError('loss_logistic is not supported at the moment')
-            self.tffm_model = TFFMClassifier(
+            self.model = TFFMClassifier(
                 order=self.order, rank=self.n_factors,
                 input_type=self.input_type, optimizer=self.optimizer,
                 reg=self.reg_all, use_diag=self.use_diag,
@@ -146,8 +146,8 @@ class FMBasic(FMAlgo):
                                  dtype=bool)
 
         # `Dataset` and `Trainset` do not support sample_weight at the moment.
-        self.tffm_model.fit(X_train, y_train, sample_weight=None,
-                            show_progress=self.show_progress)
+        self.model.fit(X_train, y_train, sample_weight=None,
+                       show_progress=self.show_progress)
         self.X_train = X_train
         self.y_train = y_train
 
@@ -180,7 +180,7 @@ class FMBasic(FMAlgo):
             details['knows_user'] = False
             details['knows_item'] = False
 
-        est = self.tffm_model.predict(X_test)[0]
+        est = self.model.predict(X_test)[0]
 
         return est, details
 
@@ -195,7 +195,8 @@ class FMBasicPL(AlgoBase):
     """
 
     def __init__(self, degree=2, n_factors=5, reg_all=1., reg_alpha=1.,
-                 reg_beta=1., tol=1e-6,
+                 reg_beta=1., tol=1e-6, fit_lower='explicit', fit_linear=True,
+                 warm_start=False, init_lambdas='ones', max_iter=10000,
                  random_state=None, verbose=False, **kwargs):
 
         self.degree = degree
@@ -204,23 +205,25 @@ class FMBasicPL(AlgoBase):
         self.reg_alpha = reg_alpha  # alpha in `polylearn`
         self.reg_beta = reg_beta  # beta in `polylearn`
         self.tol = tol
-        # ...
+        self.fit_lower = fit_lower
+        self.fit_linear = fit_linear
+        self.warm_start = warm_start
+        self.init_lambdas = init_lambdas  # what is this?
+        self.max_iter = max_iter
         self.random_state = random_state
         self.verbose = verbose
 
-        self.fm_model = FactorizationMachineRegressor(
+        self.model = FactorizationMachineRegressor(
             degree=self.degree, n_components=self.n_factors,
             alpha=self.reg_alpha, beta=self.reg_beta, tol=self.tol,
-            random_state=self.random_state, verbose=self.verbose)
+            fit_lower=self.fit_lower, fit_linear=self.fit_linear,
+            warm_start=self.warm_start, init_lambdas=self.init_lambdas,
+            max_iter=self.max_iter, random_state=self.random_state,
+            verbose=self.verbose)
 
     def fit(self, trainset):
 
-        FMAlgo.fit(self, trainset)
-        self.fm(trainset)
-
-        return self
-
-    def fm(self, trainset):
+        AlgoBase.fit(self, trainset)
 
         n_ratings = self.trainset.n_ratings
         n_users = self.trainset.n_users
@@ -249,9 +252,11 @@ class FMBasicPL(AlgoBase):
                                  shape=(n_ratings, n_users + n_items),
                                  dtype=bool)
 
-        self.tffm_model.fit(X_train, y_train)
+        self.model.fit(X_train, y_train)
         self.X_train = X_train
         self.y_train = y_train
+
+        return self
 
     def estimate(self, u, i, *_):
 
@@ -282,6 +287,6 @@ class FMBasicPL(AlgoBase):
             details['knows_user'] = False
             details['knows_item'] = False
 
-        est = self.tffm_model.predict(X_test)[0]
+        est = self.model.predict(X_test)[0]
 
         return est, details
