@@ -171,7 +171,7 @@ class AlgoBase(object):
             est = min(higher_bound, est)
             est = max(lower_bound, est)
 
-        pred = Prediction(uid, iid, u_features, i_features, r_ui, est, details)
+        pred = Prediction(uid, iid, r_ui, est, details)
 
         if verbose:
             print(pred)
