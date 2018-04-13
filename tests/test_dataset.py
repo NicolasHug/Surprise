@@ -145,12 +145,12 @@ def test_trainset_testset():
     for i in range(4):
         assert trainset.to_inner_uid('user' + str(i)) == i
     with pytest.raises(ValueError):
-        trainset.to_inner_uid('unkown_user')
+        trainset.to_inner_uid('unknown_user')
 
     for i in range(2):
         assert trainset.to_inner_iid('item' + str(i)) == i
     with pytest.raises(ValueError):
-        trainset.to_inner_iid('unkown_item')
+        trainset.to_inner_iid('unknown_item')
 
     # test inner2raw
     assert trainset._inner2raw_id_users is None
@@ -167,19 +167,19 @@ def test_trainset_testset():
     algo.fit(trainset)
     testset = trainset.build_testset()
     algo.test(testset)  # ensure an algorithm can manage the data
-    assert ('user0', 'item0', 4) in testset
-    assert ('user3', 'item1', 5) in testset
-    assert ('user3', 'item1', 0) not in testset
+    assert ('user0', 'item0', None, None, 4) in testset
+    assert ('user3', 'item1', None, None, 5) in testset
+    assert ('user3', 'item1', None, None, 0) not in testset
 
     # Test the build_anti_testset() method
     algo = BaselineOnly()
     algo.fit(trainset)
     testset = trainset.build_anti_testset()
     algo.test(testset)  # ensure an algorithm can manage the data
-    assert ('user0', 'item0', trainset.global_mean) not in testset
-    assert ('user3', 'item1', trainset.global_mean) not in testset
-    assert ('user0', 'item1', trainset.global_mean) in testset
-    assert ('user3', 'item0', trainset.global_mean) in testset
+    assert ('user0', 'item0', None, None, trainset.global_mean) not in testset
+    assert ('user3', 'item1', None, None, trainset.global_mean) not in testset
+    assert ('user0', 'item1', None, None, trainset.global_mean) in testset
+    assert ('user3', 'item0', None, None, trainset.global_mean) in testset
 
 
 def test_load_form_df():
@@ -238,11 +238,11 @@ def test_build_anti_testset():
     # fill with some specific value
     for fillvalue in (0, 42., -1):
         anti = trainset.build_anti_testset(fill=fillvalue)
-        for (u, i, r) in anti:
+        for (u, i, u_f, i_f, r) in anti:
             assert r == fillvalue
     # fill with global_mean
     anti = trainset.build_anti_testset(fill=None)
-    for (u, i, r) in anti:
+    for (u, i, u_f, i_f, r) in anti:
         assert r == trainset.global_mean
     expect = trainset.n_users * trainset.n_items
     assert trainset.n_ratings + len(anti) == expect
