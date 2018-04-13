@@ -53,10 +53,12 @@ class Dataset:
     def __init__(self, reader):
 
         self.reader = reader
-        self.user_features_nb = 0
-        self.item_features_nb = 0
         self.user_features = {}
         self.item_features = {}
+        self.user_features_nb = 0
+        self.item_features_nb = 0
+        self.user_features_labels = []
+        self.item_features_labels = []
 
     @classmethod
     def load_builtin(cls, name='ml-100k'):
