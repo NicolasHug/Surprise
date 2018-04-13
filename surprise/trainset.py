@@ -33,21 +33,37 @@ class Trainset:
         ir(:obj:`defaultdict` of :obj:`list`): The items ratings. This is a
             dictionary containing lists of tuples of the form ``(user_inner_id,
             rating)``. The keys are item inner ids.
+        u_features(:obj:`defaultdict` of :obj:`list`): The user features. This
+            is a dictionary containing lists of features. The keys are user
+            inner ids.
+        i_features(:obj:`defaultdict` of :obj:`list`): The item features. This
+            is a dictionary containing lists of features. The keys are item
+            inner ids.
         n_users: Total number of users :math:`|U|`.
         n_items: Total number of items :math:`|I|`.
+        n_user_features: Total number of user features.
+        n_item_features: Total number of item features.
         n_ratings: Total number of ratings :math:`|R_{train}|`.
         rating_scale(tuple): The minimum and maximal rating of the rating
             scale.
         global_mean: The mean of all ratings :math:`\\mu`.
     """
 
-    def __init__(self, ur, ir, n_users, n_items, n_ratings, rating_scale,
-                 offset, raw2inner_id_users, raw2inner_id_items):
+    def __init__(self, ur, ir, u_features, i_features, n_users, n_items,
+                 n_user_features, n_item_features, user_features_labels,
+                 item_features_labels, n_ratings, rating_scale, offset,
+                 raw2inner_id_users, raw2inner_id_items):
 
         self.ur = ur
         self.ir = ir
+        self.u_features = u_features
+        self.i_features = i_features
         self.n_users = n_users
         self.n_items = n_items
+        self.n_user_features = n_user_features
+        self.n_item_features = n_item_features
+        self.user_features_labels = user_features_labels
+        self.item_features_labels = item_features_labels
         self.n_ratings = n_ratings
         self.rating_scale = rating_scale
         self.offset = offset
@@ -86,6 +102,30 @@ class Trainset:
         """
 
         return iid in self.ir
+
+    def has_user_features(self, uid):
+        """Indicate if the user features are part of the trainset.
+
+        Args:
+            uid(int): The (inner) user id. See :ref:`this
+                note<raw_inner_note>`.
+        Returns:
+            ``True`` if user features are part of the trainset, else ``False``.
+        """
+
+        return uid in self.u_features
+
+    def has_item_features(self, iid):
+        """Indicate if the item features are part of the trainset.
+
+        Args:
+            iid(int): The (inner) item id. See :ref:`this
+                note<raw_inner_note>`.
+        Returns:
+            ``True`` if item features are part of the trainset, else ``False``.
+        """
+
+        return iid in self.i_features
 
     def to_inner_uid(self, ruid):
         """Convert a **user** raw id to an inner id.
@@ -200,8 +240,14 @@ class Trainset:
         cases where you want to to test your algorithm on the trainset.
         """
 
-        return [(self.to_raw_uid(u), self.to_raw_iid(i), r)
-                for (u, i, r) in self.all_ratings()]
+        testset = []
+        for (u, i, r) in self.all_ratings():
+            u_features = self.u_features.get(u, None)
+            i_features = self.i_features.get(i, None)
+            testset.append((self.to_raw_uid(u), self.to_raw_iid(i), u_features,
+                            i_features, r))
+
+        return testset
 
     def build_anti_testset(self, fill=None):
         """Return a list of ratings that can be used as a testset in the
@@ -228,9 +274,13 @@ class Trainset:
         anti_testset = []
         for u in self.all_users():
             user_items = set([j for (j, _) in self.ur[u]])
-            anti_testset += [(self.to_raw_uid(u), self.to_raw_iid(i), fill) for
-                             i in self.all_items() if
-                             i not in user_items]
+            anti_testset += [(self.to_raw_uid(u),
+                              self.to_raw_iid(i),
+                              self.u_features.get(u, None),
+                              self.i_features.get(i, None),
+                              fill)
+                             for i in self.all_items()
+                             if i not in user_items]
         return anti_testset
 
     def all_users(self):
