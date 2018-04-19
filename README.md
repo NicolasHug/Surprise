@@ -205,7 +205,7 @@ If you'd like to see some features or algorithms implemented in
 [Surprise](http://surpriselib.com), please let us know!
 
 Please feel free to contribute (see
-[guidelines](https://github.com/NicolasHug/Surprise/blob/master/.github/CONTRIBUTING.md))
+[guidelines](https://github.com/NicolasHug/Surprise/blob/master/CONTRIBUTING.md))
 and send pull requests!
 
 For bugs, issues or questions about [Surprise](http://surpriselib.com), you can
