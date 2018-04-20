@@ -39,31 +39,59 @@ def test_unknown_user_or_item():
 
     file_path = os.path.dirname(os.path.realpath(__file__)) + '/custom_dataset'
 
-    data = Dataset.load_from_file(file_path=file_path, reader=reader)
-    data_u = Dataset.load_from_file(file_path=file_path, reader=reader)
-    data_i = Dataset.load_from_file(file_path=file_path, reader=reader)
-    data_ui = Dataset.load_from_file(file_path=file_path, reader=reader)
-
+    # df with all users
     u_features_df = pd.DataFrame(
         {'urid': ['user0', 'user2', 'user3', 'user1', 'user4'],
          'isMale': [False, True, False, True, False]},
         columns=['urid', 'isMale'])
-    data_u = data_u.load_features_df(u_features_df, user_features=True)
-    data_ui = data_ui.load_features_df(u_features_df, user_features=True)
 
+    # df with all items
     i_features_df = pd.DataFrame(
         {'irid': ['item0', 'item1'],
          'isNew': [False, True],
          'webRating': [4, 3],
          'isComedy': [True, False]},
         columns=['irid', 'isNew', 'webRating', 'isComedy'])
-    data_i = data_i.load_features_df(i_features_df, user_features=False)
-    data_ui = data_ui.load_features_df(i_features_df, user_features=False)
 
+    # df with missing user
+    u_features_m_df = pd.DataFrame(
+        {'urid': ['user0', 'user2', 'user3', 'user1'],
+         'isMale': [False, True, False, True]},
+        columns=['urid', 'isMale'])
+
+    # df with missing item
+    i_features_m_df = pd.DataFrame(
+        {'irid': ['item0'],
+         'isNew': [False],
+         'webRating': [4],
+         'isComedy': [True]},
+        columns=['irid', 'isNew', 'webRating', 'isComedy'])
+
+    data = Dataset.load_from_file(file_path=file_path, reader=reader)
     trainset = data.build_full_trainset()
+
+    data_u = Dataset.load_from_file(file_path=file_path, reader=reader)
+    data_u.load_features_df(u_features_df, user_features=True)
     trainset_u = data_u.build_full_trainset()
+
+    data_i = Dataset.load_from_file(file_path=file_path, reader=reader)
+    data_i.load_features_df(i_features_df, user_features=False)
     trainset_i = data_i.build_full_trainset()
+
+    data_ui = Dataset.load_from_file(file_path=file_path, reader=reader)
+    data_ui.load_features_df(u_features_df, user_features=True)
+    data_ui.load_features_df(i_features_df, user_features=False)
     trainset_ui = data_ui.build_full_trainset()
+
+    data_ui_mu = Dataset.load_from_file(file_path=file_path, reader=reader)
+    data_ui_mu.load_features_df(u_features_m_df, user_features=True)
+    data_ui_mu.load_features_df(i_features_df, user_features=False)
+    trainset_ui_mu = data_ui_mu.build_full_trainset()
+
+    data_ui_mi = Dataset.load_from_file(file_path=file_path, reader=reader)
+    data_ui_mi.load_features_df(u_features_df, user_features=True)
+    data_ui_mi.load_features_df(i_features_m_df, user_features=False)
+    trainset_ui_mi = data_ui_mi.build_full_trainset()
 
     # algos not using features
     klasses = (NormalPredictor, BaselineOnly, KNNBasic, KNNWithMeans,
@@ -74,6 +102,8 @@ def test_unknown_user_or_item():
         algo.fit(trainset)
         algo.fit(trainset_u)
         algo.fit(trainset_i)
+        algo.fit(trainset_ui_mu)
+        algo.fit(trainset_ui_mi)
         algo.fit(trainset_ui)
         algo.predict('user0', 'unknown_item')
         algo.predict('unkown_user', 'item0')
@@ -101,6 +131,10 @@ def test_unknown_user_or_item():
             algo.fit(trainset_u)
         with pytest.raises(ValueError):
             algo.fit(trainset_i)
+        with pytest.raises(ValueError):
+            algo.fit(trainset_ui_mu)
+        with pytest.raises(ValueError):
+            algo.fit(trainset_ui_mi)
         algo.fit(trainset_ui)
         algo.predict('user0', 'unknown_item')
         algo.predict('unkown_user', 'item0')

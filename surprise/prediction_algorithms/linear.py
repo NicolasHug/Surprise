@@ -74,14 +74,18 @@ class Lasso(AlgoBase):
         y = np.empty((n_ratings,))
         for k, (uid, iid, rating) in enumerate(self.trainset.all_ratings()):
             y[k] = rating
-            try:
-                X[k, :n_uf] = u_features[uid]
-            except KeyError:
+
+            temp = u_features[uid]
+            if temp:
+                X[k, :n_uf] = temp
+            else:
                 raise ValueError('No features for user ' +
                                  str(self.trainset.to_raw_uid(uid)))
-            try:
-                X[k, n_uf:] = i_features[iid]
-            except KeyError:
+
+            temp = i_features[iid]
+            if temp:
+                X[k, n_uf:] = temp
+            else:
                 raise ValueError('No features for item ' +
                                  str(self.trainset.to_raw_iid(iid)))
 
@@ -112,11 +116,10 @@ class Lasso(AlgoBase):
         n_uf = self.trainset.n_user_features
         n_if = self.trainset.n_item_features
 
-        if u_features is None or len(u_features) != n_uf:
-            raise PredictionImpossible('User features are missing.')
-
-        if i_features is None or len(i_features) != n_if:
-            raise PredictionImpossible('Item features are missing.')
+        if (len(u_features) != n_uf or
+                len(i_features) != n_if):
+            raise PredictionImpossible(
+                'User and/or item features are missing.')
 
         X = np.concatenate([u_features, i_features])
 
