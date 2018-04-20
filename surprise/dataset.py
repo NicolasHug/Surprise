@@ -53,8 +53,8 @@ class Dataset:
     def __init__(self, reader):
 
         self.reader = reader
-        self.user_features = {}
-        self.item_features = {}
+        self.user_features = defaultdict(list)
+        self.item_features = defaultdict(list)
         self.user_features_nb = 0
         self.item_features_nb = 0
         self.user_features_labels = []
@@ -186,16 +186,22 @@ class Dataset:
                 or the items. Default is ``True``.
         """
 
+        if len(features_df.columns) < 2:
+            raise ValueError('features_df requires at least 2 columns.')
+
+        if not features_df.iloc[:, 0].is_unique:
+            raise ValueError('first column of features_df must be unique ids.')
+
         if user_features:
             self.user_features_df = features_df
-            self.user_features = {tup[0]: tup[1:] for tup in
-                                  features_df.itertuples(index=False)}
+            for tup in features_df.itertuples(index=False):
+                self.user_features[tup[0]] = list(tup[1:])
             self.user_features_labels = features_df.columns.values.tolist()[1:]
             self.user_features_nb = len(self.user_features_labels)
         else:
             self.item_features_df = features_df
-            self.item_features = {tup[0]: tup[1:] for tup in
-                                  features_df.itertuples(index=False)}
+            for tup in features_df.itertuples(index=False):
+                self.item_features[tup[0]] = list(tup[1:])
             self.item_features_labels = features_df.columns.values.tolist()[1:]
             self.item_features_nb = len(self.item_features_labels)
 
@@ -244,8 +250,8 @@ class Dataset:
         ur = defaultdict(list)
         ir = defaultdict(list)
 
-        u_features = {}
-        i_features = {}
+        u_features = defaultdict(list)
+        i_features = defaultdict(list)
 
         # user raw id, item raw id, translated rating, time stamp
         for urid, irid, r, _ in raw_trainset:
@@ -256,7 +262,7 @@ class Dataset:
                 raw2inner_id_users[urid] = current_u_index
                 current_u_index += 1
                 if self.user_features_nb > 0:
-                    u_features[uid] = self.user_features.get(urid, None)
+                    u_features[uid] = self.user_features[urid]
 
             try:
                 iid = raw2inner_id_items[irid]
@@ -265,7 +271,7 @@ class Dataset:
                 raw2inner_id_items[irid] = current_i_index
                 current_i_index += 1
                 if self.item_features_nb > 0:
-                    i_features[iid] = self.item_features.get(irid, None)
+                    i_features[iid] = self.item_features[irid]
 
             ur[uid].append((iid, r))
             ir[iid].append((uid, r))
@@ -296,8 +302,8 @@ class Dataset:
 
         testset = []
         for (ruid, riid, r_ui_trans, _) in raw_testset:
-            u_features = self.user_features.get(ruid, None)
-            i_features = self.item_features.get(riid, None)
+            u_features = self.user_features[ruid]
+            i_features = self.item_features[riid]
             testset.append((ruid, riid, u_features, i_features, r_ui_trans))
 
         return testset

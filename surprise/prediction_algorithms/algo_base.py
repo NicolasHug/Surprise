@@ -96,7 +96,7 @@ class AlgoBase(object):
 
         return self
 
-    def predict(self, uid, iid, u_features=None, i_features=None, r_ui=None,
+    def predict(self, uid, iid, u_features=[], i_features=[], r_ui=None,
                 clip=True, verbose=False):
         """Compute the rating prediction for given user and item.
 
@@ -110,9 +110,9 @@ class AlgoBase(object):
             uid: (Raw) id of the user. See :ref:`this note<raw_inner_note>`.
             iid: (Raw) id of the item. See :ref:`this note<raw_inner_note>`.
             u_features: List of user features in the same order as used in
-                the ``fit`` method. Optional, default is ``None``.
+                the ``fit`` method. Optional, default is ``[]``.
             i_features: List of item features in the same order as used in
-                the ``fit`` method. Optional, default is ``None``.
+                the ``fit`` method. Optional, default is ``[]``.
             r_ui(float): The true rating :math:`r_{ui}`. Optional, default is
                 ``None``.
             clip(bool): Whether to clip the estimation into the rating scale.

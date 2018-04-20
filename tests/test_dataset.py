@@ -23,6 +23,7 @@ reader = Reader(line_format='user item rating', sep=' ', skip_lines=3,
 
 def test_wrong_file_name():
     """Ensure file names are checked when creating a (custom) Dataset."""
+
     wrong_files = [('does_not_exist', 'does_not_either')]
 
     with pytest.raises(ValueError):
@@ -40,8 +41,77 @@ def test_build_full_trainset():
 
     assert len(trainset.ur) == 5
     assert len(trainset.ir) == 2
+    assert len(trainset.u_features) == 0
+    assert len(trainset.i_features) == 0
     assert trainset.n_users == 5
     assert trainset.n_items == 2
+    assert trainset.n_user_features == 0
+    assert trainset.n_item_features == 0
+    assert len(trainset.user_features_labels) == 0
+    assert len(trainset.item_features_labels) == 0
+
+
+def test_load_features_df_columns_number():
+    """Ensure number of columns in features DataFrame is checked."""
+
+    custom_dataset_path = (os.path.dirname(os.path.realpath(__file__)) +
+                           '/custom_dataset')
+    data = Dataset.load_from_file(file_path=custom_dataset_path, reader=reader)
+    onecol_df = pd.DataFrame({'test': [False, True]}, columns=['test'])
+
+    with pytest.raises(ValueError):
+        data.load_features_df(onecol_df)
+
+
+def test_load_features_df_unique_ids():
+    """Ensure that there is a check for unique values in the first column of
+    the features DataFrame."""
+
+    custom_dataset_path = (os.path.dirname(os.path.realpath(__file__)) +
+                           '/custom_dataset')
+    data = Dataset.load_from_file(file_path=custom_dataset_path, reader=reader)
+    nonunique_df = pd.DataFrame(
+        {'ids': ['user0', 'user1', 'user0'],
+         'feature': [True, False, True]},
+        columns=['ids', 'feature'])
+
+    with pytest.raises(ValueError):
+        data.load_features_df(nonunique_df)
+
+
+def test_build_full_trainset_ui_features():
+    """Test the build_full_trainset method with user and item features."""
+
+    custom_dataset_path = (os.path.dirname(os.path.realpath(__file__)) +
+                           '/custom_dataset')
+    data = Dataset.load_from_file(file_path=custom_dataset_path, reader=reader)
+
+    u_features_df = pd.DataFrame(
+        {'urid': ['user0', 'user2', 'user3', 'user1', 'user4'],
+         'isMale': [False, True, False, True, False]},
+        columns=['urid', 'isMale'])
+    data = data.load_features_df(u_features_df, user_features=True)
+
+    i_features_df = pd.DataFrame(
+        {'irid': ['item0', 'item1'],
+         'isNew': [False, True],
+         'webRating': [4, 3],
+         'isComedy': [True, False]},
+        columns=['irid', 'isNew', 'webRating', 'isComedy'])
+    data = data.load_features_df(i_features_df, user_features=False)
+
+    trainset = data.build_full_trainset()
+
+    assert len(trainset.ur) == 5
+    assert len(trainset.ir) == 2
+    assert len(trainset.u_features) == 5
+    assert len(trainset.i_features) == 2
+    assert trainset.n_users == 5
+    assert trainset.n_items == 2
+    assert trainset.n_user_features == 1
+    assert trainset.n_item_features == 3
+    assert len(trainset.user_features_labels) == 1
+    assert len(trainset.item_features_labels) == 3
 
 
 def test_no_call_to_split():
@@ -141,6 +211,23 @@ def test_trainset_testset():
     assert trainset.n_ratings == 6
     assert trainset.rating_scale == (1, 5)
 
+    # test user features
+    u_features = trainset.u_features
+    assert u_features[0] == []  # no u_features_df added
+    assert u_features[1] == []  # no u_features_df added
+    assert u_features[3] == []  # no u_features_df added
+    assert u_features[40] == []  # not in trainset and no u_features_df
+    assert trainset.user_features_labels == []
+    assert trainset.n_user_features == 0
+
+    # test item features
+    i_features = trainset.i_features
+    assert i_features[0] == []  # no i_features_df added
+    assert i_features[1] == []  # no i_features_df added
+    assert i_features[20000] == []  # not in trainset and no i_features_df
+    assert trainset.item_features_labels == []
+    assert trainset.n_item_features == 0
+
     # test raw2inner
     for i in range(4):
         assert trainset.to_inner_uid('user' + str(i)) == i
@@ -167,19 +254,125 @@ def test_trainset_testset():
     algo.fit(trainset)
     testset = trainset.build_testset()
     algo.test(testset)  # ensure an algorithm can manage the data
-    assert ('user0', 'item0', None, None, 4) in testset
-    assert ('user3', 'item1', None, None, 5) in testset
-    assert ('user3', 'item1', None, None, 0) not in testset
+    assert ('user0', 'item0', [], [], 4) in testset
+    assert ('user3', 'item1', [], [], 5) in testset
+    assert ('user3', 'item1', [], [], 0) not in testset
 
     # Test the build_anti_testset() method
     algo = BaselineOnly()
     algo.fit(trainset)
     testset = trainset.build_anti_testset()
     algo.test(testset)  # ensure an algorithm can manage the data
-    assert ('user0', 'item0', None, None, trainset.global_mean) not in testset
-    assert ('user3', 'item1', None, None, trainset.global_mean) not in testset
-    assert ('user0', 'item1', None, None, trainset.global_mean) in testset
-    assert ('user3', 'item0', None, None, trainset.global_mean) in testset
+    assert ('user0', 'item0', [], [], trainset.global_mean) not in testset
+    assert ('user3', 'item1', [], [], trainset.global_mean) not in testset
+    assert ('user0', 'item1', [], [], trainset.global_mean) in testset
+    assert ('user3', 'item0', [], [], trainset.global_mean) in testset
+
+
+def test_trainset_testset_ui_features():
+    """Test the construct_trainset and construct_testset methods with user and
+    item features."""
+
+    current_dir = os.path.dirname(os.path.realpath(__file__))
+    folds_files = [(current_dir + '/custom_train',
+                    current_dir + '/custom_test')]
+
+    data = Dataset.load_from_folds(folds_files=folds_files, reader=reader)
+
+    u_features_df = pd.DataFrame(
+        {'urid': ['user0', 'user2', 'user1'],  # 'user3' is missing
+         'isMale': [False, True, True]},
+        columns=['urid', 'isMale'])
+    data = data.load_features_df(u_features_df, user_features=True)
+
+    i_features_df = pd.DataFrame(
+        {'irid': ['item0'],
+         'isNew': [False],
+         'webRating': [4],
+         'isComedy': [True]},
+        columns=['irid', 'isNew', 'webRating', 'isComedy'])
+    data = data.load_features_df(i_features_df, user_features=False)
+
+    with pytest.warns(UserWarning):
+        trainset, testset = next(data.folds())
+
+    # test ur
+    ur = trainset.ur
+    assert ur[0] == [(0, 4)]
+    assert ur[1] == [(0, 4), (1, 2)]
+    assert ur[40] == []  # not in the trainset
+
+    # test ir
+    ir = trainset.ir
+    assert ir[0] == [(0, 4), (1, 4), (2, 1)]
+    assert ir[1] == [(1, 2), (2, 1), (3, 5)]
+    assert ir[20000] == []  # not in the trainset
+
+    # test n_users, n_items, n_ratings, rating_scale
+    assert trainset.n_users == 4
+    assert trainset.n_items == 2
+    assert trainset.n_ratings == 6
+    assert trainset.rating_scale == (1, 5)
+
+    # test user features
+    u_features = trainset.u_features
+    assert u_features[0] == [False]
+    assert u_features[1] == [True]
+    assert u_features[3] == []  # not in u_features_df
+    assert u_features[40] == []  # not in trainset and u_features_df
+    assert trainset.user_features_labels == ['isMale']
+    assert trainset.n_user_features == 1
+
+    # test item features
+    i_features = trainset.i_features
+    assert i_features[0] == [False, 4, True]
+    assert i_features[1] == []  # not in i_features_df
+    assert i_features[20000] == []  # not in trainset and i_features_df
+    assert trainset.item_features_labels == ['isNew', 'webRating', 'isComedy']
+    assert trainset.n_item_features == 3
+
+    # test raw2inner
+    for i in range(4):
+        assert trainset.to_inner_uid('user' + str(i)) == i
+    with pytest.raises(ValueError):
+        trainset.to_inner_uid('unknown_user')
+
+    for i in range(2):
+        assert trainset.to_inner_iid('item' + str(i)) == i
+    with pytest.raises(ValueError):
+        trainset.to_inner_iid('unknown_item')
+
+    # test inner2raw
+    assert trainset._inner2raw_id_users is None
+    assert trainset._inner2raw_id_items is None
+    for i in range(4):
+        assert trainset.to_raw_uid(i) == 'user' + str(i)
+    for i in range(2):
+        assert trainset.to_raw_iid(i) == 'item' + str(i)
+    assert trainset._inner2raw_id_users is not None
+    assert trainset._inner2raw_id_items is not None
+
+    # Test the build_testset() method
+    algo = BaselineOnly()
+    algo.fit(trainset)
+    testset = trainset.build_testset()
+    algo.test(testset)  # ensure an algorithm can manage the data
+    assert ('user0', 'item0', [False], [False, 4, True], 4) in testset
+    assert ('user2', 'item1', [True], [], 1) in testset
+    assert ('user3', 'item1', [], [], 5) in testset
+    assert ('user3', 'item1', [], [], 0) not in testset
+
+    # Test the build_anti_testset() method
+    algo = BaselineOnly()
+    algo.fit(trainset)
+    testset = trainset.build_anti_testset()
+    algo.test(testset)  # ensure an algorithm can manage the data
+    assert (('user0', 'item0', [False], [False, 4, True], trainset.global_mean)
+            not in testset)
+    assert ('user3', 'item1', [], [], trainset.global_mean) not in testset
+    assert ('user0', 'item1', [False], [], trainset.global_mean) in testset
+    assert (('user3', 'item0', [], [False, 4, True], trainset.global_mean)
+            in testset)
 
 
 def test_load_form_df():
