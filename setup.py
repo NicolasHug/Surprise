@@ -27,14 +27,14 @@ push new release tag on github (commit last changes first if needed):
 Check that RTD has updated 'stable' to the new release (may take a while).
 
 In the mean time, upload to conda:
-    Download new tar.gz from pypi, and check its sha:
-        openssl sha256 blabla.tar.gz
-    update recipe/meta.yaml on feedstock fork consequently (only version and
-    sha should be changed.  Maybe add some import tests).
-    Then open pull request on conda-forge feedstock and merge it when all
-    checks are OK.
-    Check on https://anaconda.org/conda-forge/scikit-surprise that new version
-    is available for all platforms.
+    - Compute SHA256 hash of the new .tar.gz archive (or check it up on PyPI)
+    - update recipe/meta.yaml on feedstock fork consequently (only version and
+      sha should be changed.  Maybe add some import tests).
+    - Push changes, Then open pull request on conda-forge feedstock and merge it
+      when all checks are OK. Access the conda-forge feedstock it by the link on
+      GitHub 'forked from blah blah'.
+    - Check on https://anaconda.org/conda-forge/scikit-surprise that new
+      version is available for all platforms.
 
 Then, maybe, celebrate.
 """
