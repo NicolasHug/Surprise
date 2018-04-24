@@ -7,7 +7,7 @@ from __future__ import (absolute_import, division, print_function,
 import numpy as np
 import tensorflow as tf
 import scipy.sparse as sps
-from tffm import TFFMClassifier, TFFMRegressor
+from tffm import TFFMRegressor
 from polylearn import FactorizationMachineRegressor
 
 from .algo_base import AlgoBase
@@ -18,9 +18,10 @@ class FMAlgo(AlgoBase):
     factoration machines.
     """
 
-    def __init__(self, order=2, n_factors=5, input_type='dense',
-                 loss_function='mse', optimizer=None, reg_all=1.,
-                 use_diag=False, reweight_reg=False, init_std=0.01,
+    def __init__(self, order=2, n_factors=2, input_type='dense',
+                 loss_function='mse',
+                 optimizer=tf.train.AdamOptimizer(learning_rate=0.01),
+                 reg_all=0, use_diag=False, reweight_reg=False, init_std=0.01,
                  batch_size=-1, n_epochs=100, log_dir=None,
                  session_config=None, random_state=None, verbose=False,
                  **kwargs):
@@ -31,11 +32,7 @@ class FMAlgo(AlgoBase):
         self.input_type = input_type
         self.loss_function = loss_function  # {'mse', 'loss_logistic'}
         # https://www.tensorflow.org/api_guides/python/train#Optimizers
-        # tf.train.Optimizer, default: AdamOptimizer(learning_rate=0.01)
-        if optimizer is None:
-            self.optimizer = tf.train.AdamOptimizer(learning_rate=0.001)
-        else:
-            self.optimizer = optimizer
+        self.optimizer = optimizer
         self.reg_all = reg_all  # reg in `tffm`
         self.use_diag = use_diag
         self.reweight_reg = reweight_reg
@@ -57,16 +54,8 @@ class FMAlgo(AlgoBase):
                 log_dir=self.log_dir, session_config=self.session_config,
                 seed=self.random_state, verbose=self.verbose)
         elif self.loss_function == 'loss_logistic':
-            # See issue #157
+            # See issue #157 of Surprise
             raise ValueError('loss_logistic is not supported at the moment')
-            self.model = TFFMClassifier(
-                order=self.order, rank=self.n_factors,
-                input_type=self.input_type, optimizer=self.optimizer,
-                reg=self.reg_all, use_diag=self.use_diag,
-                reweight_reg=self.reweight_reg, init_std=self.init_std,
-                batch_size=self.batch_size, n_epochs=self.n_epochs,
-                log_dir=self.log_dir, session_config=self.session_config,
-                seed=self.random_state, verbose=self.verbose)
         else:
             raise ValueError(('Unknown value {} for parameter'
                               'loss_function').format(self.loss_function))
@@ -90,13 +79,65 @@ class FMBasic(FMAlgo):
     This code is an interface to the `tffm` library.
 
     Args:
+        order : int, default: 2
+            Order of corresponding polynomial model.
+            All interaction from bias and linear to order will be included.
+        n_factors : int, default: 2
+            Number of factors in low-rank appoximation.
+            This value is shared across different orders of interaction.
+        loss_function : str, default: 'mse'
+            'mse' is the only supported loss_function at the moment.
+        optimizer : tf.train.Optimizer,
+            default: AdamOptimizer(learning_rate=0.01)
+            Optimization method used for training
+        reg_all : float, default: 0
+            Strength of L2 regularization
+        use_diag : bool, default: False
+            Use diagonal elements of weights matrix or not.
+            In the other words, should terms like x^2 be included.
+            Often reffered as a "Polynomial Network".
+            Default value (False) corresponds to FM.
+        reweight_reg : bool, default: False
+            Use frequency of features as weights for regularization or not.
+            Should be useful for very sparse data and/or small batches
+        init_std : float, default: 0.01
+            Amplitude of random initialization
+        batch_size : int, default: -1
+            Number of samples in mini-batches. Shuffled every epoch.
+            Use -1 for full gradient (whole training set in each batch).
+        n_epoch : int, default: 100
+            Default number of epoches.
+            It can be overrived by explicitly provided value in fit() method.
+        log_dir : str or None, default: None
+            Path for storing model stats during training. Used only if is not
+            None. WARNING: If such directory already exists, it will be
+            removed! You can use TensorBoard to visualize the stats:
+            `tensorboard --logdir={log_dir}`
+        session_config : tf.ConfigProto or None, default: None
+            Additional setting passed to tf.Session object.
+            Useful for CPU/GPU switching, setting number of threads and so on,
+            `tf.ConfigProto(device_count={'GPU': 0})` will disable GPU (if
+            enabled).
+            WARNING: Use the value
+            `tf.ConfigProto(intra_op_parallelism_threads=1,
+                            inter_op_parallelism_threads=1,
+                            allow_soft_placement=True,
+                            device_count={'CPU': 1, 'GPU': 0})`
+            within `GridSearchCV` and `RandomizedSearchCV`.
+        random_state : int or None, default: None
+            Random seed used at graph creating time
+        verbose : int, default: False
+            Level of verbosity.
+            Set 1 for tensorboard info only and 2 for additional stats every
+            epoch.
     """
 
-    def __init__(self, order=2, n_factors=5, loss_function='mse',
-                 optimizer=None, reg_all=1., use_diag=False,
-                 reweight_reg=False, init_std=0.01, batch_size=-1,
-                 n_epochs=100, log_dir=None, session_config=None,
-                 random_state=None, verbose=False, **kwargs):
+    def __init__(self, order=2, n_factors=2, loss_function='mse',
+                 optimizer=tf.train.AdamOptimizer(learning_rate=0.01),
+                 reg_all=0, use_diag=False, reweight_reg=False, init_std=0.01,
+                 batch_size=-1, n_epochs=100, log_dir=None,
+                 session_config=None, random_state=None, verbose=False,
+                 **kwargs):
 
         input_type = 'sparse'
 
@@ -153,9 +194,6 @@ class FMBasic(FMAlgo):
 
     def estimate(self, u, i, *_):
 
-        # what happens for new user/item in predict?
-        # if not (self.trainset.knows_user(u) and self.trainset.knows_item(i)):
-        #     raise PredictionImpossible('User and/or item is unknown.')
         n_users = self.trainset.n_users
         n_items = self.trainset.n_items
 
@@ -192,23 +230,67 @@ class FMBasicPL(AlgoBase):
     This code is an interface to the `polylearn` library.
 
     Args:
+        degree : int, default: 2
+            Degree of the polynomial. Corresponds to the order of feature
+            interactions captured by the model. Currently only supports
+            degrees up to 3.
+        n_factors : int, default: 2
+            Number of basis vectors to learn, a.k.a. the dimension of the
+            low-rank parametrization.
+        reg_alpha : float, default: 1
+            Regularization amount for linear term (if ``fit_linear=True``).
+        reg_beta : float, default: 1
+            Regularization amount for higher-order weights.
+        tol : float, default: 1e-6
+            Tolerance for the stopping condition.
+        fit_lower : {'explicit'|'augment'|None}, default: 'explicit'
+            Whether and how to fit lower-order, non-homogeneous terms.
+            - 'explicit': fits a separate P directly for each lower order.
+            - 'augment': adds the required number of dummy columns (columns
+               that are 1 everywhere) in order to capture lower-order terms.
+               Adds ``degree - 2`` columns if ``fit_linear`` is true, or
+               ``degree - 1`` columns otherwise, to account for the linear
+               term.
+            - None: only learns weights for the degree given.  If
+              ``degree == 3``, for example, the model will only have weights
+              for third-order feature interactions.
+        fit_linear : {True|False}, default: True
+            Whether to fit an explicit linear term <w, x> to the model, using
+            coordinate descent. If False, the model can still capture linear
+            effects if ``fit_lower == 'augment'``.
+        warm_start : boolean, optional, default: False
+            Whether to use the existing solution, if available. Useful for
+            computing regularization paths or pre-initializing the model.
+        init_lambdas : {'ones'|'random_signs'}, default: 'ones'
+            How to initialize the predictive weights of each learned basis. The
+            lambdas are not trained; using alternate signs can theoretically
+            improve performance if the kernel degree is even.  The default
+            value of 'ones' matches the original formulation of factorization
+            machines (Rendle, 2010).
+            To use custom values for the lambdas, ``warm_start`` may be used.
+        max_iter : int, optional, default: 10000
+            Maximum number of passes over the dataset to perform.
+        random_state : int seed, RandomState instance, or None (default)
+            The seed of the pseudo random number generator to use for
+            initializing the parameters.
+        verbose : boolean, optional, default: False
+            Whether to print debugging information.
     """
 
-    def __init__(self, degree=2, n_factors=5, reg_all=1., reg_alpha=1.,
-                 reg_beta=1., tol=1e-6, fit_lower='explicit', fit_linear=True,
+    def __init__(self, degree=2, n_factors=2, reg_alpha=1., reg_beta=1.,
+                 tol=1e-6, fit_lower='explicit', fit_linear=True,
                  warm_start=False, init_lambdas='ones', max_iter=10000,
                  random_state=None, verbose=False, **kwargs):
 
         self.degree = degree
         self.n_factors = n_factors  # n_components in `polylearn`
-        self.reg_all = reg_all  # not in `polylearn`
         self.reg_alpha = reg_alpha  # alpha in `polylearn`
         self.reg_beta = reg_beta  # beta in `polylearn`
         self.tol = tol
         self.fit_lower = fit_lower
         self.fit_linear = fit_linear
         self.warm_start = warm_start
-        self.init_lambdas = init_lambdas  # what is this?
+        self.init_lambdas = init_lambdas
         self.max_iter = max_iter
         self.random_state = random_state
         self.verbose = verbose
@@ -260,9 +342,6 @@ class FMBasicPL(AlgoBase):
 
     def estimate(self, u, i, *_):
 
-        # what happens for new user/item in predict?
-        # if not (self.trainset.knows_user(u) and self.trainset.knows_item(i)):
-        #     raise PredictionImpossible('User and/or item is unknown.')
         n_users = self.trainset.n_users
         n_items = self.trainset.n_items
 
