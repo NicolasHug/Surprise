@@ -11,6 +11,7 @@ import scipy.sparse as sps
 from tffm import TFFMRegressor
 from polylearn import FactorizationMachineRegressor
 
+from .predictions import PredictionImpossible
 from .algo_base import AlgoBase
 
 
@@ -552,6 +553,217 @@ class FMExplicit(FMAlgo):
                                     dtype=np.float32)
         else:
             X_test = sps.csr_matrix((1, n_users + 2 * n_items),
+                                    dtype=np.float32)
+
+        est = self.model.predict(X_test)[0]
+
+        return est, details
+
+
+class FMFeatures(FMAlgo):
+    """A factorization machine algorithm that uses available features.
+
+    WARNING: Features should be pre-scaled to an absolute value less or equal
+    to 1 if using a high value for `order`.
+
+    This code is an interface to the `tffm` library.
+
+    Args:
+        order : int, default: 2
+            Order of corresponding polynomial model.
+            All interaction from bias and linear to order will be included.
+        n_factors : int, default: 2
+            Number of factors in low-rank appoximation.
+            This value is shared across different orders of interaction.
+        loss_function : str, default: 'mse'
+            'mse' is the only supported loss_function at the moment.
+        optimizer : tf.train.Optimizer,
+            default: AdamOptimizer(learning_rate=0.01)
+            Optimization method used for training
+        reg_all : float, default: 0
+            Strength of L2 regularization
+        use_diag : bool, default: False
+            Use diagonal elements of weights matrix or not.
+            In the other words, should terms like x^2 be included.
+            Often reffered as a "Polynomial Network".
+            Default value (False) corresponds to FM.
+        reweight_reg : bool, default: False
+            Use frequency of features as weights for regularization or not.
+            Should be useful for very sparse data and/or small batches
+        init_std : float, default: 0.01
+            Amplitude of random initialization
+        batch_size : int, default: -1
+            Number of samples in mini-batches. Shuffled every epoch.
+            Use -1 for full gradient (whole training set in each batch).
+        n_epoch : int, default: 100
+            Default number of epoches.
+            It can be overrived by explicitly provided value in fit() method.
+        log_dir : str or None, default: None
+            Path for storing model stats during training. Used only if is not
+            None. WARNING: If such directory already exists, it will be
+            removed! You can use TensorBoard to visualize the stats:
+            `tensorboard --logdir={log_dir}`
+        session_config : tf.ConfigProto or None, default: None
+            Additional setting passed to tf.Session object.
+            Useful for CPU/GPU switching, setting number of threads and so on,
+            `tf.ConfigProto(device_count={'GPU': 0})` will disable GPU (if
+            enabled).
+        random_state : int or None, default: None
+            Random seed used at graph creating time
+        verbose : int, default: False
+            Level of verbosity.
+            Set 1 for tensorboard info only and 2 for additional stats every
+            epoch.
+    """
+
+    def __init__(self, order=2, n_factors=2, loss_function='mse',
+                 optimizer=tf.train.AdamOptimizer(learning_rate=0.01),
+                 reg_all=0, use_diag=False, reweight_reg=False, init_std=0.01,
+                 batch_size=-1, n_epochs=100, log_dir=None,
+                 session_config=None, random_state=None, verbose=False,
+                 **kwargs):
+
+        input_type = 'sparse'
+
+        FMAlgo.__init__(self, order=order, n_factors=n_factors,
+                        input_type=input_type, loss_function=loss_function,
+                        optimizer=optimizer, reg_all=reg_all,
+                        use_diag=use_diag, reweight_reg=reweight_reg,
+                        init_std=init_std, batch_size=batch_size,
+                        n_epochs=n_epochs, log_dir=log_dir,
+                        session_config=session_config,
+                        random_state=random_state, verbose=verbose, **kwargs)
+
+    def fit(self, trainset):
+
+        FMAlgo.fit(self, trainset)
+        self.fm(trainset)
+
+        return self
+
+    def fm(self, trainset):
+
+        n_ratings = self.trainset.n_ratings
+        n_users = self.trainset.n_users
+        n_items = self.trainset.n_items
+        n_user_features = self.trainset.n_user_features
+        n_item_features = self.trainset.n_item_features
+
+        # Construct sparse X and y
+        row_ind = []
+        col_ind = []
+        data = []
+        y_train = np.empty(n_ratings, dtype=np.float32)
+        rating_counter = 0
+        for uid, iid, rating in self.trainset.all_ratings():
+            # Add user
+            row_ind.append(rating_counter)
+            col_ind.append(uid)
+            data.append(1.)
+            # Add item
+            row_ind.append(rating_counter)
+            col_ind.append(n_users + iid)
+            data.append(1.)
+            # Add user features (if any)
+            if n_user_features > 0:
+                if self.trainset.has_user_features(uid):
+                    for n, value in enumerate(self.trainset.u_features[uid]):
+                        if value != 0:
+                            row_ind.append(rating_counter)
+                            col_ind.append(n_users + n_items + n)
+                            data.append(value)
+                else:
+                    raise ValueError('No features for user ' +
+                                     str(self.trainset.to_raw_uid(uid)))
+            # Add item features (if any)
+            if n_item_features > 0:
+                if self.trainset.has_item_features(iid):
+                    for n, value in enumerate(self.trainset.i_features[iid]):
+                        if value != 0:
+                            row_ind.append(rating_counter)
+                            col_ind.append(n_users + n_items +
+                                           n_user_features + n)
+                            data.append(value)
+                else:
+                    raise ValueError('No features for item ' +
+                                     str(self.trainset.to_raw_iid(iid)))
+            # Add rating
+            y_train[rating_counter] = rating
+            rating_counter += 1
+        X_train = sps.csr_matrix((data, (row_ind, col_ind)),
+                                 shape=(n_ratings, n_users + n_items +
+                                        n_user_features + n_item_features),
+                                 dtype=np.float32)
+
+        # `Dataset` and `Trainset` do not support sample_weight at the moment.
+        self.model.fit(X_train, y_train, sample_weight=None,
+                       show_progress=self.show_progress)
+        self.X_train = X_train
+        self.y_train = y_train
+
+    def estimate(self, u, i, u_features, i_features):
+
+        n_users = self.trainset.n_users
+        n_items = self.trainset.n_items
+        n_user_features = self.trainset.n_user_features
+        n_item_features = self.trainset.n_item_features
+
+        if (len(u_features) != n_user_features or
+                len(i_features) != n_item_features):
+            raise PredictionImpossible(
+                'User and/or item features are missing.')
+
+        details = {}
+        if self.trainset.knows_user(u) and self.trainset.knows_item(i):
+            data = [1., 1.]
+            row_ind = [0, 0]
+            col_ind = [u, n_users + i]
+            details['knows_user'] = True
+            details['knows_item'] = True
+        elif self.trainset.knows_user(u):
+            data = [1.]
+            row_ind = [0]
+            col_ind = [u]
+            details['knows_user'] = True
+            details['knows_item'] = False
+        elif self.trainset.knows_item(i):
+            data = [1.]
+            row_ind = [0]
+            col_ind = [n_users + i]
+            details['knows_user'] = False
+            details['knows_item'] = True
+        else:
+            data = []
+            row_ind = []
+            col_ind = []
+            details['knows_user'] = False
+            details['knows_item'] = False
+
+        # Add user features (if any)
+        if n_user_features > 0:
+            for n, value in enumerate(u_features):
+                if value != 0:
+                    row_ind.append(0)
+                    col_ind.append(n_users + n_items + n)
+                    data.append(value)
+
+        # Add item features (if any)
+        if n_item_features > 0:
+            for n, value in enumerate(i_features):
+                if value != 0:
+                    row_ind.append(0)
+                    col_ind.append(n_users + n_items +
+                                   n_user_features + n)
+                    data.append(value)
+
+        if data:
+            X_test = sps.csr_matrix((data, (row_ind, col_ind)),
+                                    shape=(1, n_users + n_items +
+                                           n_user_features + n_item_features),
+                                    dtype=np.float32)
+        else:
+            X_test = sps.csr_matrix((1, n_users + n_items + n_user_features +
+                                     n_item_features),
                                     dtype=np.float32)
 
         est = self.model.predict(X_test)[0]
