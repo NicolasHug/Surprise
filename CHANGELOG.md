@@ -1,19 +1,40 @@
 Latest version, in development
 ==============================
 
+Todo :)
+
+VERSION 1.0.6
+=============
+
+Date: 22/04/18
+
 Enhancements
 ------------
 
+* Added verbose option to algorithms using a similarity matrix or baseline
+  computation, to avoid unwanted printed messages.
 * When PredictionImpossible is raised, the prediction is now deferred to
   default_prediction() method, which can be overridden is child classes. This
   allows to not always set the default prediction to the average rating, which
-  can be useful for some algorithms (e.g. thos working with implicit positive
+  can be useful for some algorithms (e.g. those working with implicit positive
   feedback).
 * LeaveOneOut() now accepts a min_n_ratings parameter to make sure users in the
   trainset have at least min_n_ratings ratings.
+* Dumping is now done with pickle's highest protocol which allows for larger
+  files.
+
+Bug Fixes
+---------
+
+* Joblib parameter `n_jobs` now defaults to 1 (no use of multiprocessing).
+  Should fix issues with Windows users.
+* `cross_validate` now returns correct values for training measures (used to
+  return test measures instead).
 
 VERSION 1.0.5
 =============
+
+Date: 09/01/18
 
 Enhancements
 ------------
