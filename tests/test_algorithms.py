@@ -7,6 +7,7 @@ from __future__ import (absolute_import, division, print_function,
 import os
 
 import pytest
+from six import iteritems
 
 from surprise import NormalPredictor
 from surprise import BaselineOnly
@@ -23,6 +24,7 @@ from surprise import Reader
 from surprise import KNNWithZScore
 from surprise.model_selection import PredefinedKFold
 from surprise.model_selection import train_test_split
+from surprise import accuracy
 
 
 def test_unknown_user_or_item():
@@ -99,3 +101,37 @@ def test_nearest_neighbors():
     algo_ib = KNNBasic(sim_options={'user_based': False})
     algo_ib.fit(trainset)
     assert algo_ub.get_neighbors(0, k=10) != algo_ib.get_neighbors(0, k=10)
+
+
+def test_sanity_checks():
+    """
+    Basic sanity checks for all algorithms: check that RMSE stays the same.
+    """
+
+    expected_rmse = {
+        BaselineOnly: 1.0268524031297395,
+        KNNBasic: 1.1337265249554591,
+        KNNWithMeans: 1.1043129441881696,
+        KNNBaseline: 1.0700718041752253,
+        SVD: 1.0077323320656948,
+        SVDpp: 1.00284553561452,
+        NMF: 1.0865370266372372,
+        SlopeOne: 1.1559939123891685,
+        CoClustering: 1.0841941385276614,
+        KNNWithZScore: 1.11179436167853,
+    }
+    reader = Reader('ml-100k')
+    file_path = os.path.dirname(os.path.realpath(__file__))
+    train_file = file_path + '/u1_ml100k_train'
+    test_file = file_path + '/u1_ml100k_test'
+    data = Dataset.load_from_folds([(train_file, test_file)], reader)
+
+    for klass, rmse in iteritems(expected_rmse):
+        if klass in (SVD, SVDpp, NMF, CoClustering):
+            algo = klass(random_state=0)
+        else:
+            algo = klass()
+        trainset, testset = next(PredefinedKFold().split(data))
+        algo.fit(trainset)
+        predictions = algo.test(testset)
+        assert accuracy.rmse(predictions, verbose=False) == rmse
