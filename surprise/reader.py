@@ -56,7 +56,6 @@ class Reader():
             self.rating_scale = rating_scale
 
             lower_bound, higher_bound = rating_scale
-            self.offset = -lower_bound + 1 if lower_bound <= 0 else 0
 
             splitted_format = line_format.split()
 
@@ -101,4 +100,4 @@ class Reader():
             raise ValueError('Impossible to parse line. Check the line_format'
                              ' and sep parameters.')
 
-        return uid, iid, float(r) + self.offset, timestamp
+        return uid, iid, float(r), timestamp

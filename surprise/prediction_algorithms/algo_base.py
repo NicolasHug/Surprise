@@ -156,10 +156,6 @@ class AlgoBase(object):
             details['was_impossible'] = True
             details['reason'] = str(e)
 
-        # Remap the rating into its initial rating scale (because the rating
-        # scale was translated so that ratings are all >= 1)
-        est -= self.trainset.offset
-
         # clip estimate into [lower_bound, higher_bound]
         if clip:
             lower_bound, higher_bound = self.trainset.rating_scale
@@ -207,7 +203,7 @@ class AlgoBase(object):
         # The ratings are translated back to their original scale.
         predictions = [self.predict(uid,
                                     iid,
-                                    r_ui_trans - self.trainset.offset,
+                                    r_ui_trans,
                                     verbose=verbose)
                        for (uid, iid, r_ui_trans) in testset]
         return predictions
