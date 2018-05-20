@@ -1,20 +1,11 @@
 '''Testing renaming of train() into fit()'''
-import os
-
 import pytest
 
-from surprise import Dataset
-from surprise import Reader
 from surprise import AlgoBase
 from surprise.model_selection import KFold
 
 
-data_file = os.path.join(os.path.dirname(__file__), './u1_ml100k_train')
-data = Dataset.load_from_file(data_file, Reader('ml-100k'))
-kf = KFold(n_splits=2)
-
-
-def test_new_style_algo():
+def test_new_style_algo(small_ml):
     '''Test that new algorithms (i.e. algoritms that only define fit()) can
     support both calls to fit() and to train()
     - algo.fit() is the new way of doing things
@@ -39,7 +30,8 @@ def test_new_style_algo():
             return self.est
 
     algo = CustomAlgoFit()
-    for i, (trainset, testset) in enumerate(kf.split(data)):
+    kf = KFold(n_splits=2)
+    for i, (trainset, testset) in enumerate(kf.split(small_ml)):
         algo.fit(trainset)
         predictions = algo.test(testset)
 
@@ -53,7 +45,7 @@ def test_new_style_algo():
         assert algo.cnt == i
 
     algo = CustomAlgoFit()
-    for i, (trainset, testset) in enumerate(kf.split(data)):
+    for i, (trainset, testset) in enumerate(kf.split(small_ml)):
         with pytest.warns(UserWarning):
             algo.train(trainset)
         predictions = algo.test(testset)
@@ -68,7 +60,7 @@ def test_new_style_algo():
         assert algo.cnt == i
 
 
-def test_old_style_algo():
+def test_old_style_algo(small_ml):
     '''Test that old algorithms (i.e. algoritms that only define train()) can
     support both calls to fit() and to train()
     - supporting algo.fit() is needed so that custom algorithms that only
@@ -96,7 +88,9 @@ def test_old_style_algo():
 
     with pytest.warns(UserWarning):
         algo = CustomAlgoTrain()
-    for i, (trainset, testset) in enumerate(kf.split(data)):
+
+    kf = KFold(n_splits=2)
+    for i, (trainset, testset) in enumerate(kf.split(small_ml)):
         with pytest.warns(UserWarning):
             algo.fit(trainset)
         predictions = algo.test(testset)
@@ -112,7 +106,7 @@ def test_old_style_algo():
 
     with pytest.warns(UserWarning):
         algo = CustomAlgoTrain()
-    for i, (trainset, testset) in enumerate(kf.split(data)):
+    for i, (trainset, testset) in enumerate(kf.split(small_ml)):
         with pytest.warns(UserWarning):
             algo.train(trainset)
         predictions = algo.test(testset)

@@ -24,3 +24,5 @@ _site
 .coverage
 tags
 settings.json
+
+.pytest_cache

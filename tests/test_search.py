@@ -52,24 +52,19 @@ def test_gridsearchcv_parameter_combinations():
     assert len(gs.param_combinations) == 32
 
 
-def test_gridsearchcv_best_estimator():
+def test_gridsearchcv_best_estimator(u1_ml100k):
     """Ensure that the best estimator is the one giving the best score (by
     re-running it)"""
-
-    train_file = os.path.join(os.path.dirname(__file__), './u1_ml100k_train')
-    test_file = os.path.join(os.path.dirname(__file__), './u1_ml100k_test')
-    data = Dataset.load_from_folds([(train_file, test_file)],
-                                   Reader('ml-100k'))
 
     param_grid = {'n_epochs': [5], 'lr_all': [0.002, 0.005],
                   'reg_all': [0.4, 0.6], 'n_factors': [1], 'init_std_dev': [0]}
     gs = GridSearchCV(SVD, param_grid, measures=['mae'],
                       cv=PredefinedKFold(), joblib_verbose=100)
-    gs.fit(data)
+    gs.fit(u1_ml100k)
     best_estimator = gs.best_estimator['mae']
 
     # recompute MAE of best_estimator
-    mae = cross_validate(best_estimator, data, measures=['MAE'],
+    mae = cross_validate(best_estimator, u1_ml100k, measures=['MAE'],
                          cv=PredefinedKFold())['test_mae']
 
     assert mae == gs.best_score['mae']
@@ -158,7 +153,7 @@ def test_gridsearchcv_cv_results():
     assert gs.cv_results['params'][best_index] == gs.best_params['mae']
 
 
-def test_gridsearchcv_refit():
+def test_gridsearchcv_refit(u1_ml100k):
     """Test refit function of GridSearchCV."""
 
     data_file = os.path.join(os.path.dirname(__file__), './u1_ml100k_test')
@@ -198,14 +193,10 @@ def test_gridsearchcv_refit():
         gs.predict('1', '2')
 
     # test that error is raised if used with load_from_folds
-    train_file = os.path.join(os.path.dirname(__file__), './u1_ml100k_train')
-    test_file = os.path.join(os.path.dirname(__file__), './u1_ml100k_test')
-    data = Dataset.load_from_folds([(train_file, test_file)],
-                                   Reader('ml-100k'))
     gs = GridSearchCV(SVD, param_grid, measures=['mae', 'rmse'], cv=2,
                       refit=True)
     with pytest.raises(ValueError):
-        gs.fit(data)
+        gs.fit(u1_ml100k)
 
 
 # Tests for RandomizedSearchCV
@@ -238,24 +229,20 @@ def test_randomizedsearchcv_parameter_combinations_with_distribution():
     assert len(rs.param_combinations) == 10
 
 
-def test_randomizedsearchcv_best_estimator():
+def test_randomizedsearchcv_best_estimator(u1_ml100k):
     """Ensure that the best estimator is the one that gives the best score (by
     re-running it)"""
-    train_file = os.path.join(os.path.dirname(__file__), './u1_ml100k_train')
-    test_file = os.path.join(os.path.dirname(__file__), './u1_ml100k_test')
-    data = Dataset.load_from_folds([(train_file, test_file)],
-                                   Reader('ml-100k'))
 
     param_distributions = {'n_epochs': [5], 'lr_all': uniform(0.002, 0.003),
                            'reg_all': uniform(0.04, 0.02), 'n_factors': [1],
                            'init_std_dev': [0]}
     rs = RandomizedSearchCV(SVD, param_distributions, measures=['mae'],
                             cv=PredefinedKFold(), joblib_verbose=100)
-    rs.fit(data)
+    rs.fit(u1_ml100k)
     best_estimator = rs.best_estimator['mae']
 
     # recompute MAE of best_estimator
-    mae = cross_validate(best_estimator, data, measures=['MAE'],
+    mae = cross_validate(best_estimator, u1_ml100k, measures=['MAE'],
                          cv=PredefinedKFold())['test_mae']
 
     assert mae == rs.best_score['mae']
@@ -348,7 +335,7 @@ def test_randomizedsearchcv_cv_results():
     assert rs.cv_results['params'][best_index] == rs.best_params['mae']
 
 
-def test_randomizedsearchcv_refit():
+def test_randomizedsearchcv_refit(u1_ml100k):
     """Test refit method of RandomizedSearchCV class."""
 
     data_file = os.path.join(os.path.dirname(__file__), './u1_ml100k_test')
@@ -388,11 +375,7 @@ def test_randomizedsearchcv_refit():
         rs.predict('1', '2')
 
     # test that error is raised if used with load_from_folds
-    train_file = os.path.join(os.path.dirname(__file__), './u1_ml100k_train')
-    test_file = os.path.join(os.path.dirname(__file__), './u1_ml100k_test')
-    data = Dataset.load_from_folds([(train_file, test_file)],
-                                   Reader('ml-100k'))
     rs = RandomizedSearchCV(SVD, param_distributions, measures=['mae', 'rmse'],
                             cv=2, refit=True)
     with pytest.raises(ValueError):
-        rs.fit(data)
+        rs.fit(u1_ml100k)

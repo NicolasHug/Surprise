@@ -17,8 +17,6 @@ from surprise.builtin_datasets import get_dataset_dir
 
 
 random.seed(1)
-reader = Reader(line_format='user item rating', sep=' ', skip_lines=3,
-                rating_scale=(1, 5))
 
 
 def test_wrong_file_name():
@@ -26,17 +24,13 @@ def test_wrong_file_name():
     wrong_files = [('does_not_exist', 'does_not_either')]
 
     with pytest.raises(ValueError):
-        Dataset.load_from_folds(folds_files=wrong_files, reader=reader)
+        Dataset.load_from_folds(folds_files=wrong_files, reader=Reader())
 
 
-def test_build_full_trainset():
+def test_build_full_trainset(toy_data):
     """Test the build_full_trainset method."""
 
-    custom_dataset_path = (os.path.dirname(os.path.realpath(__file__)) +
-                           '/custom_dataset')
-    data = Dataset.load_from_file(file_path=custom_dataset_path, reader=reader)
-
-    trainset = data.build_full_trainset()
+    trainset = toy_data.build_full_trainset()
 
     assert len(trainset.ur) == 5
     assert len(trainset.ir) == 2
@@ -44,81 +38,76 @@ def test_build_full_trainset():
     assert trainset.n_items == 2
 
 
-def test_no_call_to_split():
+def test_no_call_to_split(toy_data):
     """Ensure, as mentioned in the split() docstring, that even if split is not
     called then the data is split with 5 folds after being shuffled."""
 
-    custom_dataset_path = (os.path.dirname(os.path.realpath(__file__)) +
-                           '/custom_dataset')
-    data = Dataset.load_from_file(file_path=custom_dataset_path, reader=reader)
-
     with pytest.warns(UserWarning):
-        assert len(list(data.folds())) == 5
+        assert len(list(toy_data.folds())) == 5
 
     # make sure data has been shuffled. If not shuffled, the users in the
     # testsets would be 0, 1, 2... 4 (in that order).
     with pytest.warns(UserWarning):
-        users = [int(testset[0][0][-1]) for (_, testset) in data.folds()]
+        users = [int(testset[0][0][-1])
+                 for (_, testset) in toy_data.folds()]
     assert users != list(range(5))
 
 
-def test_split():
+def test_split(toy_data):
     """Test the split method."""
-
-    custom_dataset_path = (os.path.dirname(os.path.realpath(__file__)) +
-                           '/custom_dataset')
-    data = Dataset.load_from_file(file_path=custom_dataset_path, reader=reader)
 
     # Test the shuffle parameter
     # Make sure data has not been shuffled. If not shuffled, the users in the
     # testsets are 0, 1, 2... 4 (in that order).
     with pytest.warns(UserWarning):
-        data.split(n_folds=5, shuffle=False)
-        users = [int(testset[0][0][-1]) for (_, testset) in data.folds()]
+        toy_data.split(n_folds=5, shuffle=False)
+        users = [int(testset[0][0][-1])
+                 for (_, testset) in toy_data.folds()]
         assert users == list(range(5))
 
     # Test the shuffle parameter
     # Make sure that when called two times without shuffling, folds are the
     # same.
     with pytest.warns(UserWarning):
-        data.split(n_folds=3, shuffle=False)
-        testsets_a = [testset for (_, testset) in data.folds()]
-        data.split(n_folds=3, shuffle=False)
-        testsets_b = [testset for (_, testset) in data.folds()]
+        toy_data.split(n_folds=3, shuffle=False)
+        testsets_a = [testset for (_, testset) in toy_data.folds()]
+        toy_data.split(n_folds=3, shuffle=False)
+        testsets_b = [testset for (_, testset) in toy_data.folds()]
         assert testsets_a == testsets_b
 
     # We'll now shuffle b and check that folds are different.
     with pytest.warns(UserWarning):
-        data.split(n_folds=3, shuffle=True)
-        testsets_b = [testset for (_, testset) in data.folds()]
+        toy_data.split(n_folds=3, shuffle=True)
+        testsets_b = [testset for (_, testset) in toy_data.folds()]
         assert testsets_a != testsets_b
 
     # Ensure that folds are the same if split is not called again
     with pytest.warns(UserWarning):
-        testsets_a = [testset for (_, testset) in data.folds()]
-        testsets_b = [testset for (_, testset) in data.folds()]
+        testsets_a = [testset for (_, testset) in toy_data.folds()]
+        testsets_b = [testset for (_, testset) in toy_data.folds()]
         assert testsets_a == testsets_b
 
     # Test n_folds parameter
     with pytest.warns(UserWarning):
-        data.split(5)
-        assert len(list(data.folds())) == 5
+        toy_data.split(5)
+        assert len(list(toy_data.folds())) == 5
 
     with pytest.raises(ValueError):
-        data.split(10)  # Too big (greater than number of ratings)
+        toy_data.split(10)  # Too big (greater than number of ratings)
 
     with pytest.raises(ValueError):
-        data.split(1)  # Too low (must be >= 2)
+        toy_data.split(1)  # Too low (must be >= 2)
 
 
-def test_trainset_testset():
+def test_trainset_testset(toy_data_reader):
     """Test the construct_trainset and construct_testset methods."""
 
     current_dir = os.path.dirname(os.path.realpath(__file__))
     folds_files = [(current_dir + '/custom_train',
                     current_dir + '/custom_test')]
 
-    data = Dataset.load_from_folds(folds_files=folds_files, reader=reader)
+    data = Dataset.load_from_folds(folds_files=folds_files,
+                                   reader=toy_data_reader)
 
     with pytest.warns(UserWarning):
         trainset, testset = next(data.folds())
