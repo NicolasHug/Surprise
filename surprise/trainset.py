@@ -42,7 +42,7 @@ class Trainset:
     """
 
     def __init__(self, ur, ir, n_users, n_items, n_ratings, rating_scale,
-                 offset, raw2inner_id_users, raw2inner_id_items):
+                 raw2inner_id_users, raw2inner_id_items):
 
         self.ur = ur
         self.ir = ir
@@ -50,7 +50,6 @@ class Trainset:
         self.n_items = n_items
         self.n_ratings = n_ratings
         self.rating_scale = rating_scale
-        self.offset = offset
         self._raw2inner_id_users = raw2inner_id_users
         self._raw2inner_id_items = raw2inner_id_items
         self._global_mean = None
