@@ -14,7 +14,8 @@ Nicolas
 -->
 
 #### Description
-<!-- Describe your issue here. -->
+<!-- Describe your issue here. Don't forget to format the code as well as the
+     error messages-->
 
 
 #### Steps/Code to Reproduce

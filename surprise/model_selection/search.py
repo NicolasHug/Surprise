@@ -1,155 +1,76 @@
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
-from itertools import product
 
+from abc import ABCMeta, abstractmethod
+from itertools import product
 import numpy as np
 from joblib import Parallel
 from joblib import delayed
-from six import string_types
+from six import moves, string_types, with_metaclass
 
 from .split import get_cv
 from .validation import fit_and_score
 from ..dataset import DatasetUserFolds
+from ..utils import get_rng
 
 
-class GridSearchCV:
-    '''The :class:`GridSearchCV` class computes accuracy metrics for an
-    algorithm on various combinations of parameters, over a cross-validation
-    procedure. This is useful for finiding the best set of parameters for a
-    prediction algorithm. It is analogous to `GridSearchCV
-    <http://scikit-learn.org/stable/modules/generated/sklearn.
-    model_selection.GridSearchCV.html>`_ from scikit-learn.
+class BaseSearchCV(with_metaclass(ABCMeta)):
+    """Base class for hyper parameter search with cross-validation."""
 
-    See an example in the :ref:`User Guide <tuning_algorithm_parameters>`.
-
-    Args:
-        algo_class(:obj:`AlgoBase \
-            <surprise.prediction_algorithms.algo_base.AlgoBase>`): The class
-            of the algorithm to evaluate.
-        param_grid(dict): Dictionary with algorithm parameters as keys and
-            list of values as keys. All combinations will be evaluated with
-            desired algorithm. Dict parameters such as ``sim_options`` require
-            special treatment, see :ref:`this note<grid_search_note>`.
-        measures(list of string): The performance measures to compute. Allowed
-            names are function names as defined in the :mod:`accuracy
-            <surprise.accuracy>` module.  Default is ``['rmse', 'mae']``.
-        cv(cross-validation iterator, int or ``None``): Determines how the
-            ``data`` parameter will be split (i.e. how trainsets and testsets
-            will be defined). If an int is passed, :class:`KFold
-            <surprise.model_selection.split.KFold>` is used with the
-            appropriate ``n_splits`` parameter. If ``None``, :class:`KFold
-            <surprise.model_selection.split.KFold>` is used with
-            ``n_splits=5``.
-        refit(bool or str): If ``True``, refit the algorithm on the whole
-            dataset using the set of parameters that gave the best average
-            performance for the first measure of ``measures``. Other measures
-            can be used by passing a string (corresponding to the measure
-            name). Then, you can use the ``test()`` and ``predict()`` methods.
-            ``refit`` can only be used if the ``data`` parameter given to
-            ``fit()`` hasn't been loaded with :meth:`load_from_folds()
-            <surprise.dataset.Dataset.load_from_folds>`. Default is ``False``.
-        return_train_measures(bool): Whether to compute performance measures on
-            the trainsets. If ``True``, the ``cv_results`` attribute will
-            also contain measures for trainsets. Default is ``False``.
-        n_jobs(int): The maximum number of parallel training procedures.
-
-            - If ``-1``, all CPUs are used.
-            - If ``1`` is given, no parallel computing code is used at all,\
-                which is useful for debugging.
-            - For ``n_jobs`` below ``-1``, ``(n_cpus + n_jobs + 1)`` are\
-                used.  For example, with ``n_jobs = -2`` all CPUs but one are\
-                used.
-
-            Default is ``-1``.
-        pre_dispatch(int or string): Controls the number of jobs that get
-            dispatched during parallel execution. Reducing this number can be
-            useful to avoid an explosion of memory consumption when more jobs
-            get dispatched than CPUs can process. This parameter can be:
-
-            - ``None``, in which case all the jobs are immediately created\
-                and spawned. Use this for lightweight and fast-running\
-                jobs, to avoid delays due to on-demand spawning of the\
-                jobs.
-            - An int, giving the exact number of total jobs that are\
-                spawned.
-            - A string, giving an expression as a function of ``n_jobs``,\
-                as in ``'2*n_jobs'``.
-
-            Default is ``'2*n_jobs'``.
-        joblib_verbose(int): Controls the verbosity of joblib: the higher, the
-            more messages.
-
-    Attributes:
-        best_estimator (dict of AlgoBase):
-            Using an accuracy measure as key, get the algorithm that gave the
-            best accuracy results for the chosen measure, averaged over all
-            splits.
-        best_score (dict of floats):
-            Using an accuracy measure as key, get the best average score
-            achieved for that measure.
-        best_params (dict of dicts):
-            Using an accuracy measure as key, get the parameters combination
-            that gave the best accuracy results for the chosen measure (on
-            average).
-        best_index  (dict of ints):
-            Using an accuracy measure as key, get the index that can be used
-            with ``cv_results`` that achieved the highest accuracy for that
-            measure (on average).
-        cv_results (dict of arrays):
-            A dict that contains accuracy measures over all splits, as well as
-            train and test time for each parameter combination. Can be imported
-            into a pandas `DataFrame` (see :ref:`example
-            <cv_results_example>`).
-    '''
-
-    def __init__(self, algo_class, param_grid, measures=['rmse', 'mae'],
-                 cv=None, refit=False, return_train_measures=False, n_jobs=-1,
+    @abstractmethod
+    def __init__(self, algo_class, measures=['rmse', 'mae'], cv=None,
+                 refit=False, return_train_measures=False, n_jobs=1,
                  pre_dispatch='2*n_jobs', joblib_verbose=0):
 
         self.algo_class = algo_class
-        self.param_grid = param_grid.copy()
         self.measures = [measure.lower() for measure in measures]
         self.cv = cv
+
         if isinstance(refit, string_types):
             if refit.lower() not in self.measures:
                 raise ValueError('It looks like the measure you want to use '
                                  'with refit ({}) is not in the measures '
                                  'parameter')
+
             self.refit = refit.lower()
+
         elif refit is True:
             self.refit = self.measures[0]
+
         else:
             self.refit = False
+
         self.return_train_measures = return_train_measures
         self.n_jobs = n_jobs
         self.pre_dispatch = pre_dispatch
         self.joblib_verbose = joblib_verbose
 
+    def _parse_options(self, params):
         # As sim_options and bsl_options are dictionaries, they require a
         # special treatment.
-        if 'sim_options' in self.param_grid:
-            sim_options = self.param_grid['sim_options']
+
+        if 'sim_options' in params:
+            sim_options = params['sim_options']
             sim_options_list = [dict(zip(sim_options, v)) for v in
                                 product(*sim_options.values())]
-            self.param_grid['sim_options'] = sim_options_list
+            params['sim_options'] = sim_options_list
 
-        if 'bsl_options' in self.param_grid:
-            bsl_options = self.param_grid['bsl_options']
+        if 'bsl_options' in params:
+            bsl_options = params['bsl_options']
             bsl_options_list = [dict(zip(bsl_options, v)) for v in
                                 product(*bsl_options.values())]
-            self.param_grid['bsl_options'] = bsl_options_list
+            params['bsl_options'] = bsl_options_list
 
-        self.param_combinations = [dict(zip(self.param_grid, v)) for v in
-                                   product(*self.param_grid.values())]
+        return params
 
     def fit(self, data):
-        '''Runs the ``fit()`` method of the algorithm for all parameter
-        combination, over different splits given by the ``cv`` parameter.
+        """Runs the ``fit()`` method of the algorithm for all parameter
+        combinations, over different splits given by the ``cv`` parameter.
 
         Args:
             data (:obj:`Dataset <surprise.dataset.Dataset>`): The dataset on
                 which to evaluate the algorithm, in parallel.
-        '''
+        """
 
         if self.refit and isinstance(data, DatasetUserFolds):
             raise ValueError('refit cannot be used when data has been '
@@ -164,7 +85,6 @@ class GridSearchCV:
             for params, (trainset, testset) in product(self.param_combinations,
                                                        cv.split(data))
         )
-
         out = Parallel(n_jobs=self.n_jobs,
                        pre_dispatch=self.pre_dispatch,
                        verbose=self.joblib_verbose)(delayed_list)
@@ -230,7 +150,7 @@ class GridSearchCV:
             # set best_index, and best_xxxx attributes
             if m in ('mae', 'rmse'):
                 best_index[m] = mean_test_measures.argmin()
-            elif m in ('fcp', ):
+            elif m in ('fcp',):
                 best_index[m] = mean_test_measures.argmax()
             best_params[m] = self.param_combinations[best_index[m]]
             best_score[m] = mean_test_measures[best_index[m]]
@@ -259,25 +179,315 @@ class GridSearchCV:
         self.cv_results = cv_results
 
     def test(self, testset, verbose=False):
-        '''Call ``test()`` on the estimator with the best found parameters
+        """Call ``test()`` on the estimator with the best found parameters
         (according the the ``refit`` parameter). See :meth:`AlgoBase.test()
         <surprise.prediction_algorithms.algo_base.AlgoBase.test>`.
 
         Only available if ``refit`` is not ``False``.
-        '''
+        """
 
         if not self.refit:
             raise ValueError('refit is False, cannot use test()')
+
         return self.best_estimator[self.refit].test(testset, verbose)
 
     def predict(self, *args):
-        '''Call ``predict()`` on the estimator with the best found parameters
+        """Call ``predict()`` on the estimator with the best found parameters
         (according the the ``refit`` parameter). See :meth:`AlgoBase.predict()
         <surprise.prediction_algorithms.algo_base.AlgoBase.predict>`.
 
         Only available if ``refit`` is not ``False``.
-        '''
+        """
 
         if not self.refit:
             raise ValueError('refit is False, cannot use predict()')
+
         return self.best_estimator[self.refit].predict(*args)
+
+
+class GridSearchCV(BaseSearchCV):
+    """The :class:`GridSearchCV` class computes accuracy metrics for an
+    algorithm on various combinations of parameters, over a cross-validation
+    procedure. This is useful for finding the best set of parameters for a
+    prediction algorithm. It is analogous to `GridSearchCV
+    <http://scikit-learn.org/stable/modules/generated/sklearn.
+    model_selection.GridSearchCV.html>`_ from scikit-learn.
+
+    See an example in the :ref:`User Guide <tuning_algorithm_parameters>`.
+
+    Args:
+        algo_class(:obj:`AlgoBase \
+            <surprise.prediction_algorithms.algo_base.AlgoBase>`): The class
+            of the algorithm to evaluate.
+        param_grid(dict): Dictionary with algorithm parameters as keys and
+            list of values as keys. All combinations will be evaluated with
+            desired algorithm. Dict parameters such as ``sim_options`` require
+            special treatment, see :ref:`this note<grid_search_note>`.
+        measures(list of string): The performance measures to compute. Allowed
+            names are function names as defined in the :mod:`accuracy
+            <surprise.accuracy>` module.  Default is ``['rmse', 'mae']``.
+        cv(cross-validation iterator, int or ``None``): Determines how the
+            ``data`` parameter will be split (i.e. how trainsets and testsets
+            will be defined). If an int is passed, :class:`KFold
+            <surprise.model_selection.split.KFold>` is used with the
+            appropriate ``n_splits`` parameter. If ``None``, :class:`KFold
+            <surprise.model_selection.split.KFold>` is used with
+            ``n_splits=5``.
+        refit(bool or str): If ``True``, refit the algorithm on the whole
+            dataset using the set of parameters that gave the best average
+            performance for the first measure of ``measures``. Other measures
+            can be used by passing a string (corresponding to the measure
+            name). Then, you can use the ``test()`` and ``predict()`` methods.
+            ``refit`` can only be used if the ``data`` parameter given to
+            ``fit()`` hasn't been loaded with :meth:`load_from_folds()
+            <surprise.dataset.Dataset.load_from_folds>`. Default is ``False``.
+        return_train_measures(bool): Whether to compute performance measures on
+            the trainsets. If ``True``, the ``cv_results`` attribute will
+            also contain measures for trainsets. Default is ``False``.
+        n_jobs(int): The maximum number of parallel training procedures.
+
+            - If ``-1``, all CPUs are used.
+            - If ``1`` is given, no parallel computing code is used at all,\
+                which is useful for debugging.
+            - For ``n_jobs`` below ``-1``, ``(n_cpus + n_jobs + 1)`` are\
+                used.  For example, with ``n_jobs = -2`` all CPUs but one are\
+                used.
+
+            Default is ``1``.
+        pre_dispatch(int or string): Controls the number of jobs that get
+            dispatched during parallel execution. Reducing this number can be
+            useful to avoid an explosion of memory consumption when more jobs
+            get dispatched than CPUs can process. This parameter can be:
+
+            - ``None``, in which case all the jobs are immediately created\
+                and spawned. Use this for lightweight and fast-running\
+                jobs, to avoid delays due to on-demand spawning of the\
+                jobs.
+            - An int, giving the exact number of total jobs that are\
+                spawned.
+            - A string, giving an expression as a function of ``n_jobs``,\
+                as in ``'2*n_jobs'``.
+
+            Default is ``'2*n_jobs'``.
+        joblib_verbose(int): Controls the verbosity of joblib: the higher, the
+            more messages.
+
+    Attributes:
+        best_estimator (dict of AlgoBase):
+            Using an accuracy measure as key, get the algorithm that gave the
+            best accuracy results for the chosen measure, averaged over all
+            splits.
+        best_score (dict of floats):
+            Using an accuracy measure as key, get the best average score
+            achieved for that measure.
+        best_params (dict of dicts):
+            Using an accuracy measure as key, get the parameters combination
+            that gave the best accuracy results for the chosen measure (on
+            average).
+        best_index  (dict of ints):
+            Using an accuracy measure as key, get the index that can be used
+            with ``cv_results`` that achieved the highest accuracy for that
+            measure (on average).
+        cv_results (dict of arrays):
+            A dict that contains accuracy measures over all splits, as well as
+            train and test time for each parameter combination. Can be imported
+            into a pandas `DataFrame` (see :ref:`example
+            <cv_results_example>`).
+    """
+    def __init__(self, algo_class, param_grid, measures=['rmse', 'mae'],
+                 cv=None, refit=False, return_train_measures=False, n_jobs=1,
+                 pre_dispatch='2*n_jobs', joblib_verbose=0):
+
+        super(GridSearchCV, self).__init__(
+            algo_class=algo_class, measures=measures, cv=cv, refit=refit,
+            return_train_measures=return_train_measures, n_jobs=n_jobs,
+            pre_dispatch=pre_dispatch, joblib_verbose=joblib_verbose)
+
+        self.param_grid = self._parse_options(param_grid.copy())
+        self.param_combinations = [dict(zip(self.param_grid, v)) for v in
+                                   product(*self.param_grid.values())]
+
+
+class RandomizedSearchCV(BaseSearchCV):
+    """The :class:`RandomizedSearchCV` class computes accuracy metrics for an
+    algorithm on various combinations of parameters, over a cross-validation
+    procedure. As opposed to GridSearchCV, which uses an exhaustive
+    combinatorial approach, RandomizedSearchCV samples randomly from the
+    parameter space. This is useful for finding the best set of parameters
+    for a prediction algorithm, especially using a coarse to fine approach.
+    It is analogous to `RandomizedSearchCV <http://scikit-learn.org/stable/
+    modules/generated/sklearn.model_selection.RandomizedSearchCV.html>`_ from
+    scikit-learn.
+
+    See an example in the :ref:`User Guide <tuning_algorithm_parameters>`.
+
+    Args:
+        algo_class(:obj:`AlgoBase \
+            <surprise.prediction_algorithms.algo_base.AlgoBase>`): The class
+            of the algorithm to evaluate.
+        param_distributions(dict): Dictionary with algorithm parameters as
+            keys and distributions or lists of parameters to try. Distributions
+            must provide a rvs method for sampling (such as those from
+            scipy.stats.distributions). If a list is given, it is sampled
+            uniformly. Parameters will be sampled n_iter times.
+        n_iter(int): Number of times parameter settings are sampled. Default is
+            ``10``.
+        measures(list of string): The performance measures to compute. Allowed
+            names are function names as defined in the :mod:`accuracy
+            <surprise.accuracy>` module.  Default is ``['rmse', 'mae']``.
+        cv(cross-validation iterator, int or ``None``): Determines how the
+            ``data`` parameter will be split (i.e. how trainsets and testsets
+            will be defined). If an int is passed, :class:`KFold
+            <surprise.model_selection.split.KFold>` is used with the
+            appropriate ``n_splits`` parameter. If ``None``, :class:`KFold
+            <surprise.model_selection.split.KFold>` is used with
+            ``n_splits=5``.
+        refit(bool or str): If ``True``, refit the algorithm on the whole
+            dataset using the set of parameters that gave the best average
+            performance for the first measure of ``measures``. Other measures
+            can be used by passing a string (corresponding to the measure
+            name). Then, you can use the ``test()`` and ``predict()`` methods.
+            ``refit`` can only be used if the ``data`` parameter given to
+            ``fit()`` hasn't been loaded with :meth:`load_from_folds()
+            <surprise.dataset.Dataset.load_from_folds>`. Default is ``False``.
+        return_train_measures(bool): Whether to compute performance measures on
+            the trainsets. If ``True``, the ``cv_results`` attribute will
+            also contain measures for trainsets. Default is ``False``.
+        n_jobs(int): The maximum number of parallel training procedures.
+
+            - If ``-1``, all CPUs are used.
+            - If ``1`` is given, no parallel computing code is used at all,\
+                which is useful for debugging.
+            - For ``n_jobs`` below ``-1``, ``(n_cpus + n_jobs + 1)`` are\
+                used.  For example, with ``n_jobs = -2`` all CPUs but one are\
+                used.
+
+            Default is ``1``.
+        pre_dispatch(int or string): Controls the number of jobs that get
+            dispatched during parallel execution. Reducing this number can be
+            useful to avoid an explosion of memory consumption when more jobs
+            get dispatched than CPUs can process. This parameter can be:
+
+            - ``None``, in which case all the jobs are immediately created\
+                and spawned. Use this for lightweight and fast-running\
+                jobs, to avoid delays due to on-demand spawning of the\
+                jobs.
+            - An int, giving the exact number of total jobs that are\
+                spawned.
+            - A string, giving an expression as a function of ``n_jobs``,\
+                as in ``'2*n_jobs'``.
+
+            Default is ``'2*n_jobs'``.
+        random_state(int, RandomState or None): Pseudo random number
+            generator seed used for random uniform sampling from lists of
+            possible values instead of scipy.stats distributions. If int,
+            ``random_state`` is the seed used by the random number generator.
+            If ``RandomState`` instance, ``random_state`` is the random number
+            generator. If ``None``, the random number generator is the
+            RandomState instance used by ``np.random``.  Default is ``None``.
+        joblib_verbose(int): Controls the verbosity of joblib: the higher, the
+            more messages.
+
+    Attributes:
+        best_estimator (dict of AlgoBase):
+            Using an accuracy measure as key, get the algorithm that gave the
+            best accuracy results for the chosen measure, averaged over all
+            splits.
+        best_score (dict of floats):
+            Using an accuracy measure as key, get the best average score
+            achieved for that measure.
+        best_params (dict of dicts):
+            Using an accuracy measure as key, get the parameters combination
+            that gave the best accuracy results for the chosen measure (on
+            average).
+        best_index  (dict of ints):
+            Using an accuracy measure as key, get the index that can be used
+            with ``cv_results`` that achieved the highest accuracy for that
+            measure (on average).
+        cv_results (dict of arrays):
+            A dict that contains accuracy measures over all splits, as well as
+            train and test time for each parameter combination. Can be imported
+            into a pandas `DataFrame` (see :ref:`example
+            <cv_results_example>`).
+    """
+    def __init__(self, algo_class, param_distributions, n_iter=10,
+                 measures=['rmse', 'mae'], cv=None, refit=False,
+                 return_train_measures=False, n_jobs=1,
+                 pre_dispatch='2*n_jobs', random_state=None, joblib_verbose=0):
+
+        super(RandomizedSearchCV, self).__init__(
+            algo_class=algo_class, measures=measures, cv=cv, refit=refit,
+            return_train_measures=return_train_measures, n_jobs=n_jobs,
+            pre_dispatch=pre_dispatch, joblib_verbose=joblib_verbose)
+
+        self.n_iter = n_iter
+        self.random_state = random_state
+        self.param_distributions = self._parse_options(
+            param_distributions.copy())
+        self.param_combinations = self._sample_parameters(
+            self.param_distributions, self.n_iter, self.random_state)
+
+    @staticmethod
+    def _sample_parameters(param_distributions, n_iter, random_state=None):
+        """Samples ``n_iter`` parameter combinations from
+        ``param_distributions`` using ``random_state`` as a seed.
+
+        Non-deterministic iterable over random candidate combinations for
+        hyper-parameter search. If all parameters are presented as a list,
+        sampling without replacement is performed. If at least one parameter
+        is given as a distribution, sampling with replacement is used.
+        It is highly recommended to use continuous distributions for continuous
+        parameters.
+
+        Note that before SciPy 0.16, the ``scipy.stats.distributions`` do not
+        accept a custom RNG instance and always use the singleton RNG from
+        ``numpy.random``. Hence setting ``random_state`` will not guarantee a
+        deterministic iteration whenever ``scipy.stats`` distributions are used
+        to define the parameter search space. Deterministic behavior is however
+        guaranteed from SciPy 0.16 onwards.
+
+        Args:
+            param_distributions(dict): Dictionary where the keys are
+                parameters and values are distributions from which a parameter
+                is to be sampled. Distributions either have to provide a
+                ``rvs`` function to sample from them, or can be given as a list
+                 of values, where a uniform distribution is assumed.
+            n_iter(int): Number of parameter settings produced.
+                Default is ``10``.
+            random_state(int, RandomState instance or None):
+                Pseudo random number generator seed used for random uniform
+                sampling from lists of possible values instead of scipy.stats
+                distributions. If ``None``, the random number generator is the
+                random state instance used by np.random.  Default is ``None``.
+
+        Returns:
+            combos(list): List of parameter dictionaries with sampled values.
+        """
+
+        # check if all distributions are given as lists
+        # if so, sample without replacement
+        all_lists = np.all([not hasattr(v, 'rvs')
+                            for v in param_distributions.values()])
+        rnd = get_rng(random_state)
+
+        # sort for reproducibility
+        items = sorted(param_distributions.items())
+
+        if all_lists:
+            # create exhaustive combinations
+            param_grid = [dict(zip(param_distributions, v)) for v in
+                          product(*param_distributions.values())]
+            combos = np.random.choice(param_grid, n_iter, replace=False)
+
+        else:
+            combos = []
+            for _ in moves.range(n_iter):
+                params = dict()
+                for k, v in items:
+                    if hasattr(v, 'rvs'):
+                        params[k] = v.rvs(random_state=rnd)
+                    else:
+                        params[k] = v[rnd.randint(len(v))]
+                combos.append(params)
+
+        return combos

@@ -27,5 +27,11 @@ Cross validation
 Parameter search
 ================
 
-.. automodule:: surprise.model_selection.search
+.. autoclass:: surprise.model_selection.search.GridSearchCV
     :members:
+    :inherited-members:
+
+.. autoclass:: surprise.model_selection.search.RandomizedSearchCV
+    :members:
+    :inherited-members:
+

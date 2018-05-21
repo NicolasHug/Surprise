@@ -7,7 +7,8 @@ from .split import PredefinedKFold
 
 from .validation import cross_validate
 
-from .search import GridSearchCV
+from .search import GridSearchCV, RandomizedSearchCV
 
 __all__ = ['KFold', 'ShuffleSplit', 'train_test_split', 'RepeatedKFold',
-           'LeaveOneOut', 'PredefinedKFold', 'cross_validate', 'GridSearchCV']
+           'LeaveOneOut', 'PredefinedKFold', 'cross_validate', 'GridSearchCV',
+           'RandomizedSearchCV']

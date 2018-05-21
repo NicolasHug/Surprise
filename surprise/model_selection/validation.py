@@ -15,7 +15,7 @@ from .. import accuracy
 
 
 def cross_validate(algo, data, measures=['rmse', 'mae'], cv=None,
-                   return_train_measures=False, n_jobs=-1,
+                   return_train_measures=False, n_jobs=1,
                    pre_dispatch='2*n_jobs', verbose=False):
     '''
     Run a cross validation procedure for a given algorithm, reporting accuracy
@@ -50,7 +50,7 @@ def cross_validate(algo, data, measures=['rmse', 'mae'], cv=None,
                 used.  For example, with ``n_jobs = -2`` all CPUs but one are\
                 used.
 
-            Default is ``-1``.
+            Default is ``1``.
         pre_dispatch(int or string): Controls the number of jobs that get
             dispatched during parallel execution. Reducing this number can be
             useful to avoid an explosion of memory consumption when more jobs
@@ -116,7 +116,7 @@ def cross_validate(algo, data, measures=['rmse', 'mae'], cv=None,
         if return_train_measures:
             train_measures[m] = np.asarray([d[m] for d in
                                             train_measures_dicts])
-            ret['train_' + m] = test_measures[m]
+            ret['train_' + m] = train_measures[m]
 
     ret['fit_time'] = fit_times
     ret['test_time'] = test_times
