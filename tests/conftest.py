@@ -15,8 +15,7 @@ from surprise.model_selection import PredefinedKFold
 
 @pytest.fixture
 def toy_data_reader():
-    return Reader(line_format='user item rating', sep=' ', skip_lines=3,
-                  rating_scale=(1, 5))
+    return Reader(line_format='user item rating', sep=' ', skip_lines=3)
 
 
 @pytest.fixture
@@ -25,7 +24,7 @@ def toy_data(toy_data_reader):
     toy_data_path = (os.path.dirname(os.path.realpath(__file__)) +
                      '/custom_dataset')
     data = Dataset.load_from_file(file_path=toy_data_path,
-                                  reader=toy_data_reader)
+                                  reader=toy_data_reader, rating_scale=(1, 5))
 
     return data
 
@@ -38,7 +37,7 @@ def u1_ml100k():
     train_file = os.path.join(os.path.dirname(__file__), './u1_ml100k_train')
     test_file = os.path.join(os.path.dirname(__file__), './u1_ml100k_test')
     data = Dataset.load_from_folds([(train_file, test_file)],
-                                   Reader('ml-100k'))
+                                   Reader('ml-100k'), rating_scale=(1, 5))
 
     return data
 
@@ -48,7 +47,8 @@ def small_ml():
     """Return a Dataset object with 2000 movielens-100k ratings.
     """
     data_file = os.path.join(os.path.dirname(__file__), './u1_ml100k_test')
-    data = Dataset.load_from_file(data_file, Reader('ml-100k'))
+    data = Dataset.load_from_file(data_file, Reader('ml-100k'),
+                                  rating_scale=(1, 5))
 
     return data
 

@@ -74,11 +74,10 @@ def test_nearest_neighbors():
     """Ensure the nearest neighbors are different when using user-user
     similarity vs item-item."""
 
-    reader = Reader(line_format='user item rating', sep=' ', skip_lines=3,
-                    rating_scale=(1, 5))
+    reader = Reader(line_format='user item rating', sep=' ', skip_lines=3)
 
     data_file = os.path.dirname(os.path.realpath(__file__)) + '/custom_train'
-    data = Dataset.load_from_file(data_file, reader)
+    data = Dataset.load_from_file(data_file, reader, rating_scale=(1, 5))
     trainset = data.build_full_trainset()
 
     algo_ub = KNNBasic(sim_options={'user_based': True})

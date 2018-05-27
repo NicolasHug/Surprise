@@ -250,10 +250,10 @@ def test_LeaveOneOut(toy_data):
         next(loo.split(toy_data))  # each user only has 1 item so trainsets fail
 
     reader = Reader('ml-100k')
-
     data_path = (os.path.dirname(os.path.realpath(__file__)) +
                  '/u1_ml100k_test')
-    data = Dataset.load_from_file(file_path=data_path, reader=reader)
+    data = Dataset.load_from_file(file_path=data_path, reader=reader,
+                                  rating_scale=(1, 5))
 
     # Test random_state parameter
     # If random_state is None, you get different split each time (conditioned
@@ -288,16 +288,14 @@ def test_LeaveOneOut(toy_data):
         next(loo.split(data))
 
 
-def test_PredifinedKFold():
-
-    reader = Reader(line_format='user item rating', sep=' ', skip_lines=3,
-                    rating_scale=(1, 5))
+def test_PredifinedKFold(toy_data_reader):
 
     current_dir = os.path.dirname(os.path.realpath(__file__))
     folds_files = [(current_dir + '/custom_train',
                     current_dir + '/custom_test')]
 
-    data = Dataset.load_from_folds(folds_files=folds_files, reader=reader)
+    data = Dataset.load_from_folds(folds_files=folds_files,
+                                   reader=toy_data_reader, rating_scale=(1, 5))
 
     # Make sure rating files are read correctly
     pkf = PredefinedKFold()

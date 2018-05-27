@@ -2,14 +2,20 @@
 Module for testing if the code is PEP8 compliant.
 """
 
+from logging import getLogger
+
 from flake8.api import legacy as flake8
+
+
+getLogger('flake8').propagate = False  # disable annoying flake8 DEBUG messages
 
 
 def test_regular_files():
 
     style_guide = flake8.get_style_guide(
         filename=['*.py'],
-        exclude=['doc', '.eggs', '*.egg', 'build', 'benchmark.py'],
+        exclude=['doc', '.eggs', '*.egg', 'build', 'benchmark.py',
+                 'run_all_examples.py'],
         select=['E', 'W', 'F'],
         max_line_length=88
     )

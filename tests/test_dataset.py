@@ -24,7 +24,8 @@ def test_wrong_file_name():
     wrong_files = [('does_not_exist', 'does_not_either')]
 
     with pytest.raises(ValueError):
-        Dataset.load_from_folds(folds_files=wrong_files, reader=Reader())
+        Dataset.load_from_folds(folds_files=wrong_files, reader=Reader(),
+                                rating_scale=(1, 5))
 
 
 def test_build_full_trainset(toy_data):
@@ -107,7 +108,7 @@ def test_trainset_testset(toy_data_reader):
                     current_dir + '/custom_test')]
 
     data = Dataset.load_from_folds(folds_files=folds_files,
-                                   reader=toy_data_reader)
+                                   reader=toy_data_reader, rating_scale=(1, 5))
 
     with pytest.warns(UserWarning):
         trainset, testset = next(data.folds())
@@ -180,8 +181,8 @@ def test_load_form_df():
                     'rating': [3, 2, 4, 3, 1]}
     df = pd.DataFrame(ratings_dict)
 
-    reader = Reader(rating_scale=(1, 5))
-    data = Dataset.load_from_df(df[['userID', 'itemID', 'rating']], reader)
+    data = Dataset.load_from_df(df[['userID', 'itemID', 'rating']],
+                                rating_scale=(1, 5))
 
     # Assert split and folds can be used without problems
     with pytest.warns(UserWarning):
@@ -201,13 +202,10 @@ def test_load_form_df():
     assert trainset.ur[uid9] == [(iid1, 3)]
     assert trainset.ur[uid2] == [(iid1, 4)]
 
-    # assert at least rating file or dataframe must be specified
-    with pytest.raises(ValueError):
-        data = Dataset.load_from_df(None, None)
-
     # mess up the column ordering and assert that users are not correctly
     # mapped
-    data = Dataset.load_from_df(df[['rating', 'itemID', 'userID']], reader)
+    data = Dataset.load_from_df(df[['rating', 'itemID', 'userID']],
+                                rating_scale=(1, 5))
     trainset = data.build_full_trainset()
     with pytest.raises(ValueError):
         trainset.to_inner_uid('10000')
@@ -219,8 +217,8 @@ def test_build_anti_testset():
                     'rating': [1, 2, 3, 4, 5, 6, 7, 8, 9]}
     df = pd.DataFrame(ratings_dict)
 
-    reader = Reader(rating_scale=(1, 5))
-    data = Dataset.load_from_df(df[['userID', 'itemID', 'rating']], reader)
+    data = Dataset.load_from_df(df[['userID', 'itemID', 'rating']],
+                                rating_scale=(1, 5))
     with pytest.warns(UserWarning):
         data.split(2)
         trainset, __testset = next(data.folds())
