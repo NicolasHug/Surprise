@@ -35,9 +35,19 @@ class Reader():
         sep(char): the separator between fields. Example : ``';'``.
         rating_scale(:obj:`tuple`, optional): The rating scale used for every
             rating.  Default is ``(1, 5)``.
+
+            .. warning::
+                Using the ``rating_scale`` parameter in a ``Reader`` object is
+                deprecated and will not be supported in future versions.
+                ``rating_scale`` should now be specified when creating the
+                dataset, e.g. using :meth:`load_from_folds
+                <surprise.dataset.Dataset.load_from_folds>`,
+                :meth:`load_from_file
+                <surprise.dataset.Dataset.load_from_file>`, or
+                :meth:`load_from_df <surprise.dataset.Dataset.load_from_df>`.
+
         skip_lines(:obj:`int`, optional): Number of lines to skip at the
             beginning of the file. Default is ``0``.
-
     """
 
     def __init__(self, name=None, line_format='user item rating', sep=None,
@@ -54,9 +64,6 @@ class Reader():
             self.sep = sep
             self.skip_lines = skip_lines
             self.rating_scale = rating_scale
-
-            lower_bound, higher_bound = rating_scale
-            self.offset = -lower_bound + 1 if lower_bound <= 0 else 0
 
             splitted_format = line_format.split()
 
@@ -101,4 +108,4 @@ class Reader():
             raise ValueError('Impossible to parse line. Check the line_format'
                              ' and sep parameters.')
 
-        return uid, iid, float(r) + self.offset, timestamp
+        return uid, iid, float(r), timestamp

@@ -110,11 +110,11 @@ class AlgoBase(object):
             iid: (Raw) id of the item. See :ref:`this note<raw_inner_note>`.
             r_ui(float): The true rating :math:`r_{ui}`. Optional, default is
                 ``None``.
-            clip(bool): Whether to clip the estimation into the rating scale.
-                For example, if :math:`\\hat{r}_{ui}` is :math:`5.5` while the
-                rating scale is :math:`[1, 5]`, then :math:`\\hat{r}_{ui}` is
-                set to :math:`5`. Same goes if :math:`\\hat{r}_{ui} < 1`.
-                Default is ``True``.
+            clip(bool): Whether to clip the estimation into the rating scale,
+                that was set during dataset creation. For example, if
+                :math:`\\hat{r}_{ui}` is :math:`5.5` while the rating scale is
+                :math:`[1, 5]`, then :math:`\\hat{r}_{ui}` is set to :math:`5`.
+                Same goes if :math:`\\hat{r}_{ui} < 1`.  Default is ``True``.
             verbose(bool): Whether to print details of the prediction.  Default
                 is False.
 
@@ -155,10 +155,6 @@ class AlgoBase(object):
             est = self.default_prediction()
             details['was_impossible'] = True
             details['reason'] = str(e)
-
-        # Remap the rating into its initial rating scale (because the rating
-        # scale was translated so that ratings are all >= 1)
-        est -= self.trainset.offset
 
         # clip estimate into [lower_bound, higher_bound]
         if clip:
@@ -207,12 +203,12 @@ class AlgoBase(object):
         # The ratings are translated back to their original scale.
         predictions = [self.predict(uid,
                                     iid,
-                                    r_ui_trans - self.trainset.offset,
+                                    r_ui_trans,
                                     verbose=verbose)
                        for (uid, iid, r_ui_trans) in testset]
         return predictions
 
-    def compute_baselines(self):
+    def compute_baselines(self, verbose=False):
         """Compute users and items baselines.
 
         The way baselines are computed depends on the ``bsl_options`` parameter
@@ -223,6 +219,10 @@ class AlgoBase(object):
         baseline similarty<surprise.similarities.pearson_baseline>` or the
         :class:`BaselineOnly
         <surprise.prediction_algorithms.baseline_only.BaselineOnly>` algorithm.
+
+        Args:
+            verbose(bool) : if ``True``, print status message. Default is
+                ``False``.
 
         Returns:
             A tuple ``(bu, bi)``, which are users and items baselines."""
@@ -240,7 +240,7 @@ class AlgoBase(object):
         method_name = self.bsl_options.get('method', 'als')
 
         try:
-            if self.verbose:
+            if verbose:
                 print('Estimating biases using', method_name + '...')
             self.bu, self.bi = method[method_name](self)
             return self.bu, self.bi
@@ -249,7 +249,7 @@ class AlgoBase(object):
                              ' for baseline computation.' +
                              ' Available methods are als and sgd.')
 
-    def compute_similarities(self):
+    def compute_similarities(self, verbose=False):
         """Build the similarity matrix.
 
         The way the similarity matrix is computed depends on the
@@ -258,6 +258,10 @@ class AlgoBase(object):
 
         This method is only relevant for algorithms using a similarity measure,
         such as the :ref:`k-NN algorithms <pred_package_knn_inpired>`.
+
+        Args:
+            verbose(bool) : if ``True``, print status message. Default is
+                ``False``.
 
         Returns:
             The similarity matrix."""
@@ -289,10 +293,10 @@ class AlgoBase(object):
             args += [self.trainset.global_mean, bx, by, shrinkage]
 
         try:
-            if self.verbose:
+            if verbose:
                 print('Computing the {0} similarity matrix...'.format(name))
             sim = construction_func[name](*args)
-            if self.verbose:
+            if verbose:
                 print('Done computing similarity matrix.')
             return sim
         except KeyError:

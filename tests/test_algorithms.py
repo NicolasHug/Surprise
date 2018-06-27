@@ -7,6 +7,7 @@ from __future__ import (absolute_import, division, print_function,
 import os
 
 import pytest
+from six import iteritems
 
 from surprise import NormalPredictor
 from surprise import BaselineOnly
@@ -21,22 +22,16 @@ from surprise import CoClustering
 from surprise import Dataset
 from surprise import Reader
 from surprise import KNNWithZScore
-from surprise.model_selection import PredefinedKFold
 from surprise.model_selection import train_test_split
+from surprise import accuracy
 
 
-def test_unknown_user_or_item():
+def test_unknown_user_or_item(toy_data):
     """Ensure that all algorithms act gracefully when asked to predict a rating
     of an unknown user, an unknown item, and when both are unknown.
     """
 
-    reader = Reader(line_format='user item rating', sep=' ', skip_lines=3,
-                    rating_scale=(1, 5))
-
-    file_path = os.path.dirname(os.path.realpath(__file__)) + '/custom_dataset'
-
-    data = Dataset.load_from_file(file_path=file_path, reader=reader)
-    trainset = data.build_full_trainset()
+    trainset = toy_data.build_full_trainset()
 
     klasses = (NormalPredictor, BaselineOnly, KNNBasic, KNNWithMeans,
                KNNBaseline, SVD, SVDpp, NMF, SlopeOne, CoClustering,
@@ -49,7 +44,7 @@ def test_unknown_user_or_item():
         algo.predict('unkown_user', 'unknown_item', None)
 
     # unrelated, but test the fit().test() one-liner:
-    trainset, testset = train_test_split(data, test_size=2)
+    trainset, testset = train_test_split(toy_data, test_size=2)
     for klass in klasses:
         algo = klass()
         algo.fit(trainset).test(testset)
@@ -57,16 +52,8 @@ def test_unknown_user_or_item():
             algo.train(trainset).test(testset)
 
 
-def test_knns():
+def test_knns(u1_ml100k, pkf):
     """Ensure the k and min_k parameters are effective for knn algorithms."""
-
-    # the test and train files are from the ml-100k dataset (10% of u1.base and
-    # 10 % of u1.test)
-    train_file = os.path.join(os.path.dirname(__file__), './u1_ml100k_train')
-    test_file = os.path.join(os.path.dirname(__file__), './u1_ml100k_test')
-    data = Dataset.load_from_folds([(train_file, test_file)],
-                                   Reader('ml-100k'))
-    pkf = PredefinedKFold()
 
     # Actually, as KNNWithMeans and KNNBaseline have back up solutions for when
     # there are not enough neighbors, we can't really test them...
@@ -75,7 +62,7 @@ def test_knns():
     k, min_k = 20, 5
     for klass in klasses:
         algo = klass(k=k, min_k=min_k)
-        for trainset, testset in pkf.split(data):
+        for trainset, testset in pkf.split(u1_ml100k):
             algo.fit(trainset)
             predictions = algo.test(testset)
             for pred in predictions:
@@ -87,11 +74,10 @@ def test_nearest_neighbors():
     """Ensure the nearest neighbors are different when using user-user
     similarity vs item-item."""
 
-    reader = Reader(line_format='user item rating', sep=' ', skip_lines=3,
-                    rating_scale=(1, 5))
+    reader = Reader(line_format='user item rating', sep=' ', skip_lines=3)
 
     data_file = os.path.dirname(os.path.realpath(__file__)) + '/custom_train'
-    data = Dataset.load_from_file(data_file, reader)
+    data = Dataset.load_from_file(data_file, reader, rating_scale=(1, 5))
     trainset = data.build_full_trainset()
 
     algo_ub = KNNBasic(sim_options={'user_based': True})
@@ -99,3 +85,32 @@ def test_nearest_neighbors():
     algo_ib = KNNBasic(sim_options={'user_based': False})
     algo_ib.fit(trainset)
     assert algo_ub.get_neighbors(0, k=10) != algo_ib.get_neighbors(0, k=10)
+
+
+def test_sanity_checks(u1_ml100k, pkf):
+    """
+    Basic sanity checks for all algorithms: check that RMSE stays the same.
+    """
+
+    expected_rmse = {
+        BaselineOnly: 1.0268524031297395,
+        KNNBasic: 1.1337265249554591,
+        KNNWithMeans: 1.1043129441881696,
+        KNNBaseline: 1.0700718041752253,
+        KNNWithZScore: 1.11179436167853,
+        SVD: 1.0077323320656948,
+        SVDpp: 1.00284553561452,
+        NMF: 1.0865370266372372,
+        SlopeOne: 1.1559939123891685,
+        CoClustering: 1.0841941385276614,
+    }
+
+    for klass, rmse in iteritems(expected_rmse):
+        if klass in (SVD, SVDpp, NMF, CoClustering):
+            algo = klass(random_state=0)
+        else:
+            algo = klass()
+        trainset, testset = next(pkf.split(u1_ml100k))
+        algo.fit(trainset)
+        predictions = algo.test(testset)
+        assert accuracy.rmse(predictions, verbose=False) == rmse

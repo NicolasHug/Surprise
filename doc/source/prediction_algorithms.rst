@@ -74,8 +74,8 @@ options may be set. For ALS:
 And for SGD:
 
 - ``'reg'``: The regularization parameter of the cost function that is
-  optimized, corresponding to :math:`\lambda_1` and then :math:`\lambda_5` in
-  :cite:`Koren:2010` Default is ``0.02``.
+  optimized, corresponding to :math:`\lambda_1` in
+  :cite:`Koren:2010`. Default is ``0.02``.
 - ``'learning_rate'``: The learning rate of SGD, corresponding to
   :math:`\gamma` in :cite:`Koren:2010`.  Default is ``0.005``.
 - ``'n_epochs'``: The number of iteration of the SGD procedure. Default is 20. 

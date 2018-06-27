@@ -11,7 +11,9 @@ make sure that:
   proposing. If you're not willing to write tests, it's best not to submit a PR
   (it's just a waste of time for everyone).
 * Your code follows [PEP 8](https://www.python.org/dev/peps/pep-0008/) as much
-  as possible. Coding style is automatically checked when tests are run.
+  as possible. Coding style is automatically checked when tests are run. About
+  line length: it's best to respect to 80 columns constraint, but tests will
+  pass as long as the length is less than 88.
 * For new prediction algorithms or similarity metrics, please submit a
   relevent benchmark outlining the performance of the new feature (in terms of
   accuracy, computation time, etc.). You can take a look at

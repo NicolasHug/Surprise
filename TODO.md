@@ -1,6 +1,21 @@
 TODO
 ====
 
+* remove offset from everywhere (Reader, Trainset, test(), predict()...). Make
+  a test to make sure that zero ratings are handled correctly. Right now we
+  store ratings as defaultdict(list) in ur and ir, so there's no problem. Maybe
+  it will change in the future, we would have to find a workaroud.
+* rating_scale should be specified on dataset creation: load_from_file,
+  load_from_folds, load_from_df. Deprecate its use from rating but fall back to
+  it if it has only been specified here.
+* Dataset.binarize should change rating_scale to something else. Maybe 'unary'?
+* about clip: don't clip if rating_scale is 'unary'?
+* test(), cross_validate() and GridSearch.fit() should probably allow a
+  'predict_params' parameter?
+* What about a 'dont_clip' attribute in algorithms that could take precedence
+  over the clipping behaviour? What about just overriding predict() in the
+  child classes?
+
 
 * Document get_dataset_dir()...
 * make some filtering dataset tools, like remove users/items with less/more

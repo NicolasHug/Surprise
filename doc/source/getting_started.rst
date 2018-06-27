@@ -175,7 +175,7 @@ dataframe.
   .. literalinclude:: ../../examples/load_from_dataframe.py
       :caption: From file ``examples/load_from_dataframe.py``
       :name: load_dom_dataframe.py
-      :lines: 8-29
+      :lines: 8-26
 
   The dataframe initially looks like this:
 
