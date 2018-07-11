@@ -156,7 +156,7 @@ def msd(n_x, yr, min_support):
         sim[xi, xi] = 1  # completely arbitrary and useless anyway
         for xj in range(xi + 1, n_x):
             if freq[xi, xj] < min_sprt:
-                sim[xi, xj] == 0
+                sim[xi, xj] = 0
             else:
                 # return inverse of (msd + 1) (+ 1 to avoid dividing by zero)
                 sim[xi, xj] = 1 / (sq_diff[xi, xj] / freq[xi, xj] + 1)
@@ -242,7 +242,7 @@ def pearson(n_x, yr, min_support):
         for xj in range(xi + 1, n_x):
 
             if freq[xi, xj] < min_sprt:
-                sim[xi, xj] == 0
+                sim[xi, xj] = 0
             else:
                 n = freq[xi, xj]
                 num = n * prods[xi, xj] - si[xi, xj] * sj[xi, xj]
