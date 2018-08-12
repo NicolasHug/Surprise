@@ -8,6 +8,10 @@ TODO
 * rating_scale should be specified on dataset creation: load_from_file,
   load_from_folds, load_from_df. Deprecate its use from rating but fall back to
   it if it has only been specified here.
+* Actually: could rating_scale be entirely removed? It's only used for clipping
+  and it's annoying. So we could specify it only in predict()? As clip is
+  True by default this would cause problem because we can't have a good default
+  for rating_scale: (1, 5), or (-10, 10)... ? 
 * Dataset.binarize should change rating_scale to something else. Maybe 'unary'?
 * about clip: don't clip if rating_scale is 'unary'?
 * test(), cross_validate() and GridSearch.fit() should probably allow a
