@@ -4,7 +4,7 @@
 [![python versions](https://img.shields.io/badge/python-2.7%2C%203.5%2C%203.6-blue.svg)](http://surpriselib.com)
 [![License](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)
 
-![logo](logo_black.svg)
+[![logo](logo_black.svg)](http://surpriselib.com)
 
 Overview
 --------
