@@ -187,10 +187,10 @@ Contributors
 
 The following persons have contributed to [Surprise](http://surpriselib.com):
 
-Олег Демиденко, Charles-Emmanuel Dias, dmamylin, franckjay, Lukas Galke,
-Pierre-François Gimenez, Nicolas Hug, Hengji Liu,  Maher Malaeb, Manoj K,
-Naturale0, nju-luke, Skywhat, David Stevens, Mike Lee Williams, Chenchen Xu,
-YaoZh1918.
+caoyi, Олег Демиденко, Charles-Emmanuel Dias, dmamylin, Lauriane Ducasse,
+franckjay, Lukas Galke, Pierre-François Gimenez, Nicolas Hug, Doruk
+Kilitcioglu, Ravi Raju Krishna, Hengji Liu,  Maher Malaeb, Manoj K, Naturale0,
+nju-luke, Skywhat, David Stevens, Mike Lee Williams, Chenchen Xu, YaoZh1918.
 
 Thanks a lot :) !
 
