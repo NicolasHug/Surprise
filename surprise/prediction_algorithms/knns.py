@@ -68,7 +68,7 @@ class KNNBasic(SymmetricAlgo):
     .. math::
         \hat{r}_{ui} = \\frac{
         \\sum\\limits_{j \in N^k_u(i)} \\text{sim}(i, j) \cdot r_{uj}}
-        {\\sum\\limits_{j \in N^k_u(j)} \\text{sim}(i, j)}
+        {\\sum\\limits_{j \in N^k_u(i)} \\text{sim}(i, j)}
 
     depending on the ``user_based`` field of the ``sim_options`` parameter.
 
@@ -233,7 +233,7 @@ class KNNBaseline(SymmetricAlgo):
     .. math::
         \hat{r}_{ui} = b_{ui} + \\frac{ \\sum\\limits_{j \in N^k_u(i)}
         \\text{sim}(i, j) \cdot (r_{uj} - b_{uj})} {\\sum\\limits_{j \in
-        N^k_u(j)} \\text{sim}(i, j)}
+        N^k_u(i)} \\text{sim}(i, j)}
 
     depending on the ``user_based`` field of the ``sim_options`` parameter. For
     the best predictions, use the :func:`pearson_baseline
