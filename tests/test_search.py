@@ -73,7 +73,7 @@ def test_gridsearchcv_best_estimator(u1_ml100k):
 def test_gridsearchcv_same_splits():
     """Ensure that all parameter combinations are tested on the same splits (we
     check their RMSE scores are the same once averaged over the splits, which
-    should be enough). We use as much parallelism as possible."""
+    should be enough)."""
 
     data_file = os.path.join(os.path.dirname(__file__), './u1_ml100k_test')
     data = Dataset.load_from_file(data_file, reader=Reader('ml-100k'),
