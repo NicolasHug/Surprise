@@ -1,4 +1,5 @@
 FROM python:3.6
+MAINTAINER Marc Feger <marc.feger@uni-duesseldorf.de>
 
 RUN apt-get update -yqq &&\
     apt-get upgrade -yqq &&\
