@@ -9,6 +9,7 @@ WORKDIR surprise
 
 RUN pip install -Uq pip &&\
     pip --quiet install -r requirements_dev.txt && \
-    pip --quiet install scikit-surprise
+    pip --quiet install scikit-surprise && \
+    pip install -e .
 
 RUN ["python", "setup.py", "install"]

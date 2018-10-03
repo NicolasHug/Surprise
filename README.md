@@ -163,6 +163,47 @@ For the latest version, you can also clone the repo and build the source
     $ git clone https://github.com/NicolasHug/surprise.git
     $ cd surprise
     $ python setup.py install
+    
+Docker
+------
+With [Docker](https://www.docker.com) it is possible to run a development environment on your local machine.
+This is similar to a so called [Virtual Machine](https://www.virtualbox.org/) or [Virtual Environment](https://virtualenv.pypa.io/en/stable/).
+
+You can download [Docker](https://www.docker.com) for any OS [here](https://www.docker.com/get-started).
+
+If you have [Docker](https://www.docker.com) installed you are ready to go.
+
+To create a image of surprise simply navigate to the directory where this project is stored and enter it.
+This should look like this::
+
+    /Surprise
+    -> /doc
+    -> /example
+    -> /surprise
+    -> /tests
+    -> Dockerfile
+    -> ...
+
+To create a image of Surprise run::
+
+    $ docker build -t surprise .
+
+This will create a image named surprise which can be used for development.
+
+To run a container use::
+
+    $  docker run -it -v "$PWD":/surprise surprise bash
+
+This will start a container and mounts every change in the project to it.
+
+You can then run every command inside the container or use the Dockerfile as a [interpreter](https://blog.jetbrains.com/pycharm/2015/12/using-docker-in-pycharm/)
+for PyCharm.
+
+Or you can simply run a test-container for testing your project by running::
+
+    $ docker run surprise pytest
+
+Or simply run any other command you wish. 
 
 License
 -------
