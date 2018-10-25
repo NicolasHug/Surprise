@@ -64,7 +64,7 @@ class Dataset:
             self.rating_scale = self.reader.rating_scale
 
     @classmethod
-    def load_builtin(cls, name='ml-100k'):
+    def load_builtin(cls, name='ml-100k', prompt=True):
         """Load a built-in dataset.
 
         If the dataset has not already been loaded, it will be downloaded and
@@ -93,7 +93,7 @@ class Dataset:
 
         # if dataset does not exist, offer to download it
         if not os.path.isfile(dataset.path):
-            answered = False
+            answered = not prompt
             while not answered:
                 print('Dataset ' + name + ' could not be found. Do you want '
                       'to download it? [Y/n] ', end='')
