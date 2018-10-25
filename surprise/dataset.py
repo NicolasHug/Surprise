@@ -76,6 +76,9 @@ class Dataset:
             name(:obj:`string`): The name of the built-in dataset to load.
                 Accepted values are 'ml-100k', 'ml-1m', and 'jester'.
                 Default is 'ml-100k'.
+            prompt(:obj:`bool`): Prompt before downloading if dataset is not
+                already on disk.
+                Default is True.
 
         Returns:
             A :obj:`Dataset` object.
