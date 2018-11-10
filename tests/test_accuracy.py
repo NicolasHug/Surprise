@@ -66,7 +66,7 @@ def test_fcp():
     """Tests for the FCP function."""
 
     predictions = [pred(0, 0, u0='u1'), pred(1, 1, u0='u1'), pred(2, 2,
-                                                                  u0='u2'), pred(100, 100, u0='u2')]
+                   u0='u2'), pred(100, 100, u0='u2')]
     assert fcp(predictions) == 1
 
     predictions = [pred(0, 0, u0='u1'), pred(0, 0, u0='u1')]
@@ -78,7 +78,7 @@ def test_fcp():
         fcp(predictions)
 
     predictions = [pred(0, 1, u0='u1'), pred(1, 0, u0='u1'), pred(2, 0.5,
-                                                                  u0='u2'), pred(0, 0.6, u0='u2')]
+                   u0='u2'), pred(0, 0.6, u0='u2')]
     assert fcp(predictions) == 0
 
     with pytest.raises(ValueError):
