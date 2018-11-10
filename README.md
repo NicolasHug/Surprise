@@ -110,22 +110,22 @@ Here are the average RMSE, MAE and total execution time of various algorithms
 (with their default parameters) on a 5-fold cross-validation procedure. The
 datasets are the [Movielens](http://grouplens.org/datasets/movielens/) 100k and
 1M datasets. The folds are the same for all the algorithms. All experiments are
-run on a notebook with a Intel Core i5 processor of the 7th generation (2.3 GHz Dual-Core) and 8GB RAM (2133 MHz LPDDR3).
-The code for generating these tables can be found in the [benchmark
+run on a notebook with Intel Core i5 7th gen (2.5 GHz) and 8Go RAM.  The code
+for generating these tables can be found in the [benchmark
 example](https://github.com/NicolasHug/Surprise/tree/master/examples/benchmark.py).
 
-| [Movielens 100k](http://grouplens.org/datasets/movielens/100k)                                                                         |   MSE |   RMSE |   MAE | Time    |
-|:---------------------------------------------------------------------------------------------------------------------------------------|------:|-------:|------:|:--------|
-| [SVD](http://surprise.readthedocs.io/en/stable/matrix_factorization.html#surprise.prediction_algorithms.matrix_factorization.SVD)      | 0.876 |  0.936 | 0.738 | 0:00:22 |
-| [SVD++](http://surprise.readthedocs.io/en/stable/matrix_factorization.html#surprise.prediction_algorithms.matrix_factorization.SVDpp)  | 0.85  |  0.922 | 0.723 | 0:14:00 |
-| [NMF](http://surprise.readthedocs.io/en/stable/matrix_factorization.html#surprise.prediction_algorithms.matrix_factorization.NMF)      | 0.929 |  0.964 | 0.758 | 0:00:32 |
-| [Slope One](http://surprise.readthedocs.io/en/stable/slope_one.html#surprise.prediction_algorithms.slope_one.SlopeOne)                 | 0.895 |  0.946 | 0.743 | 0:00:20 |
-| [k-NN](http://surprise.readthedocs.io/en/stable/knn_inspired.html#surprise.prediction_algorithms.knns.KNNBasic)                        | 0.96  |  0.98  | 0.774 | 0:00:21 |
-| [Centered k-NN](http://surprise.readthedocs.io/en/stable/knn_inspired.html#surprise.prediction_algorithms.knns.KNNWithMeans)           | 0.905 |  0.951 | 0.749 | 0:00:19 |
-| [k-NN Baseline](http://surprise.readthedocs.io/en/stable/knn_inspired.html#surprise.prediction_algorithms.knns.KNNBaseline)            | 0.866 |  0.931 | 0.733 | 0:00:23 |
-| [Co-Clustering](http://surprise.readthedocs.io/en/stable/co_clustering.html#surprise.prediction_algorithms.co_clustering.CoClustering) | 0.932 |  0.965 | 0.755 | 0:00:13 |
-| [Baseline](http://surprise.readthedocs.io/en/stable/basic_algorithms.html#surprise.prediction_algorithms.baseline_only.BaselineOnly)   | 0.891 |  0.944 | 0.748 | 0:00:04 |
-| [Random](http://surprise.readthedocs.io/en/stable/basic_algorithms.html#surprise.prediction_algorithms.random_pred.NormalPredictor)    | 2.32  |  1.523 | 1.222 | 0:00:03 |
+| [Movielens 100k](http://grouplens.org/datasets/movielens/100k)                                                                         |   RMSE |   MAE | Time    |
+|:---------------------------------------------------------------------------------------------------------------------------------------|-------:|------:|:--------|
+| [SVD](http://surprise.readthedocs.io/en/stable/matrix_factorization.html#surprise.prediction_algorithms.matrix_factorization.SVD)      |  0.934 | 0.737 | 0:00:11 |
+| [SVD++](http://surprise.readthedocs.io/en/stable/matrix_factorization.html#surprise.prediction_algorithms.matrix_factorization.SVDpp)  |  0.92  | 0.722 | 0:09:03 |
+| [NMF](http://surprise.readthedocs.io/en/stable/matrix_factorization.html#surprise.prediction_algorithms.matrix_factorization.NMF)      |  0.963 | 0.758 | 0:00:15 |
+| [Slope One](http://surprise.readthedocs.io/en/stable/slope_one.html#surprise.prediction_algorithms.slope_one.SlopeOne)                 |  0.946 | 0.743 | 0:00:08 |
+| [k-NN](http://surprise.readthedocs.io/en/stable/knn_inspired.html#surprise.prediction_algorithms.knns.KNNBasic)                        |  0.98  | 0.774 | 0:00:10 |
+| [Centered k-NN](http://surprise.readthedocs.io/en/stable/knn_inspired.html#surprise.prediction_algorithms.knns.KNNWithMeans)           |  0.951 | 0.749 | 0:00:10 |
+| [k-NN Baseline](http://surprise.readthedocs.io/en/stable/knn_inspired.html#surprise.prediction_algorithms.knns.KNNBaseline)            |  0.931 | 0.733 | 0:00:12 |
+| [Co-Clustering](http://surprise.readthedocs.io/en/stable/co_clustering.html#surprise.prediction_algorithms.co_clustering.CoClustering) |  0.963 | 0.753 | 0:00:03 |
+| [Baseline](http://surprise.readthedocs.io/en/stable/basic_algorithms.html#surprise.prediction_algorithms.baseline_only.BaselineOnly)   |  0.944 | 0.748 | 0:00:01 |
+| [Random](http://surprise.readthedocs.io/en/stable/basic_algorithms.html#surprise.prediction_algorithms.random_pred.NormalPredictor)    |  1.514 | 1.215 | 0:00:01 |
 
 
 | [Movielens 1M](http://grouplens.org/datasets/movielens/1m)                                                                             |   RMSE |   MAE | Time    |
