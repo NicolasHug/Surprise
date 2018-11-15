@@ -269,7 +269,7 @@ class AlgoBase(object):
         construction_func = {'cosine': sims.cosine,
                              'msd': sims.msd,
                              'pearson': sims.pearson,
-                             'pearson_baseline': sims.pearson_baseline
+                             'pearson_baseline': sims.pearson_baseline,
                              'spearman': sims.spearman}
 
         if self.sim_options['user_based']:

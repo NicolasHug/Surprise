@@ -447,7 +447,7 @@ def spearman(n_x, yr, min_support):
         for xj in range(xi + 1, n_x):
 
             if freq[xi, xj] < min_sprt:
-                sim[xi, xj] == 0
+                sim[xi, xj] = 0
             else:
                 n = freq[xi, xj]
                 num = n * prods[xi, xj] - si[xi, xj] * sj[xi, xj]
