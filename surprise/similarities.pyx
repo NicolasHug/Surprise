@@ -412,8 +412,8 @@ def spearman(n_x, yr, min_support):
     # the similarity matrix
     cdef np.ndarray[np.double_t, ndim=2] sim
 
-    cdef np.ndarray[np.int, ndim=1] ranks
-    cdef np.ndarray[np.int, ndim=1] rows
+    cdef np.ndarray[np.double_t, ndim=1] ranks
+    cdef np.ndarray[np.double_t, ndim=1] rows
 
     cdef int xi, xj
     cdef double ri, rj
@@ -426,8 +426,8 @@ def spearman(n_x, yr, min_support):
     si = np.zeros((n_x, n_x), np.double)
     sj = np.zeros((n_x, n_x), np.double)
     sim = np.zeros((n_x, n_x), np.double)
-    ranks = np.zeros(n_x, np.int)
-    rows = np.zeros(n_x, np.int)
+    ranks = np.zeros(n_x, np.double)
+    rows = np.zeros(n_x, np.double)
 
     for y, y_ratings in iteritems(yr):
         for xi, ri in y_ratings:
