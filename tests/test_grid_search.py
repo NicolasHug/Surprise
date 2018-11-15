@@ -85,6 +85,7 @@ def test_dict_parameters(small_ml):
     assert len(grid_search.cv_results['params']) == 32
 
 
+@pytest.mark.skip("GridSearch class will be removed in next version.")
 def test_same_splits(small_ml):
     """Ensure that all parameter combinations are tested on the same splits (we
     check that average RMSE scores are the same, which should be enough)."""
