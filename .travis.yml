@@ -16,3 +16,4 @@ script:
 branches:
   only:
   - master
+  - spearman
