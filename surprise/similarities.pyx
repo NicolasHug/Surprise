@@ -433,8 +433,8 @@ def spearman(n_x, yr, min_support):
         for xi, ri in y_ratings:
             rows[xi] = ri
         ranks = rankdata(rows)
-        for xi in range(n_x):
-            for xj in range(n_x):
+        for xi, _ in y_ratings:
+            for xj, _ in y_ratings:
                 prods[xi, xj] += ranks[xi] * ranks[xj]
                 freq[xi, xj] += 1
                 sqi[xi, xj] += ranks[xi]**2
@@ -450,9 +450,10 @@ def spearman(n_x, yr, min_support):
                 sim[xi, xj] = 0
             else:
                 n = freq[xi, xj]
-                num = n * prods[xi, xj] - si[xi, xj] * sj[xi, xj]
-                denum = np.sqrt((n * sqi[xi, xj] - si[xi, xj]**2) *
-                                (n * sqj[xi, xj] - sj[xi, xj]**2))
+                num = n * prods[xi, xj] - (si[xi, xj]*sj[xi, xj])
+                denum_l = np.sqrt(n*sqi[xi, xj] - (si[xi, xj])**2)
+                denum_r = np.sqrt(n*sqj[xi, xj] - (sj[xi, xj])**2)
+                denum = denum_l * denum_r
                 if denum == 0:
                     sim[xi, xj] = 0
                 else:
