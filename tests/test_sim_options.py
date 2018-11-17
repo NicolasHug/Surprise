@@ -34,8 +34,13 @@ def test_name_field(u1_ml100k, pkf):
     algo = KNNBasic(sim_options=sim_options, bsl_options=bsl_options)
     rmse_pearson_bsl = cross_validate(algo, u1_ml100k, ['rmse'], pkf)['test_rmse']
 
+    sim_options = {'name': 'spearman'}
+    bsl_options = {'n_epochs': 1}
+    algo = KNNBasic(sim_options=sim_options, bsl_options=bsl_options)
+    rmse_spearman = cross_validate(algo, u1_ml100k, ['rmse'], pkf)['test_rmse']
+
     for rmse_a, rmse_b in combinations((rmse_cosine, rmse_msd, rmse_pearson,
-                                        rmse_pearson_bsl), 2):
+                                        rmse_pearson_bsl, rmse_spearman), 2):
         assert (rmse_a != rmse_b)
 
     with pytest.raises(NameError):
