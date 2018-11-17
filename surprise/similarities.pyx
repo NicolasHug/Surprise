@@ -13,6 +13,7 @@ Available similarity measures:
     msd
     pearson
     pearson_baseline
+    spearman
 """
 
 from __future__ import (absolute_import, division, print_function,
@@ -372,18 +373,18 @@ def spearman(n_x, yr, min_support):
     Similarity, and is defined as:
 
     .. math ::
-        \\text{spearman_sim}(u, v) = \\frac{ \\sum\\limits_{i \in I_{uv}}
-        (k_{ui} -  \mu_u) \cdot (k_{vi} - \mu_{v})} {\\sqrt{\\sum\\limits_{i
-        \in I_{uv}} (r_{ui} -  \mu_u)^2} \cdot \\sqrt{\\sum\\limits_{i \in
-        I_{uv}} (r_{vi} -  \mu_{v})^2} }
+        \\text{spearman_sim}(u, v) = \\frac{ \\sum\\limits_{i \\in I_{uv}}
+        (rank(r_{ui}) - \\overline{rank(u)}) \\cdot (rank(r_{vi}) - \\overline{rank(v)})} {\\sqrt{\\sum\\limits_{i
+        \\in I_{uv}} (rank(r_{ui}) - \\overline{rank(u)})^2} \\cdot \\sqrt{\\sum\\limits_{i \\in
+        I_{uv}}  (rank(r_{vi}) - \\overline{rank(v)})^2} }
 
     or
 
     .. math ::
-        \\text{spearman_sim}(i, j) = \\frac{ \\sum\\limits_{u \in U_{ij}}
-        (k_{ui} -  \mu_i) \cdot (k_{uj} - \mu_{j})} {\\sqrt{\\sum\\limits_{u
-        \in U_{ij}} (k_{ui} -  \mu_i)^2} \cdot \\sqrt{\\sum\\limits_{u \in
-        U_{ij}} (k_{uj} -  \mu_{j})^2} }
+        \\text{spearman_sim}(i, j) = \\frac{ \\sum\\limits_{u \\in U_{ij}}
+        (rank(r_{ui}) - \\overline{rank(i)}) \\cdot (rank(r_{uj}) - \\overline{rank(j)})} {\\sqrt{\\sum\\limits_{u
+        \\in U_{ij}} (rank(r_{ui}) - \\overline{rank(i)})^2} \\cdot \\sqrt{\\sum\\limits_{u \\in
+        U_{ij}}  (rank(r_{uj}) - \\overline{rank(j)})^2} }
 
     depending on the ``user_based`` field of ``sim_options`` (see
     :ref:`similarity_measures_configuration`).
@@ -392,8 +393,8 @@ def spearman(n_x, yr, min_support):
     Note: if there are no common users or items, similarity will be 0 (and not
     -1).
 
-    For details on Spearman coefficient, see `Wikipedia
-    <https://en.wikipedia.org/wiki/Spearman%27s_rank_correlation_coefficient>`__.
+    For details on Spearman coefficient, see in chapter 4, page 126 of: `Recommender Systems Handbook
+    <http://www.cs.ubbcluj.ro/~gabis/DocDiplome/SistemeDeRecomandare/Recommender_systems_handbook.pdf>`__.
 
     """
 
