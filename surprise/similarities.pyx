@@ -413,7 +413,7 @@ def spearman(n_x, yr, min_support):
     cdef np.ndarray[np.double_t, ndim=2] sim
 
     cdef np.ndarray[np.double_t, ndim=1] ranks
-    cdef np.ndarray[np.double_t, ndim=1] rows
+    cdef np.ndarray[np.double_t, ndim=2] matrix
 
     cdef int xi, xj
     cdef double ri, rj
@@ -427,12 +427,20 @@ def spearman(n_x, yr, min_support):
     sj = np.zeros((n_x, n_x), np.double)
     sim = np.zeros((n_x, n_x), np.double)
     ranks = np.zeros(n_x, np.double)
-    rows = np.zeros(n_x, np.double)
+    matrix = np.zeros((len(yr), n_x), np.double)
+
+    # turn yr into a matrix
+    for y, y_ratings in iteritems(yr):
+        for x_i, r_i in y_ratings:
+            matrix[y, x_i] = r_i
+    # turn the yr matrix into a matrix which contains the ranks the elements in yr
+    for x_i in range(n_x):
+        matrix[:,x_i] = rankdata(matrix[:,x_i])
 
     for y, y_ratings in iteritems(yr):
         for xi, ri in y_ratings:
-            rows[xi] = ri
-        ranks = rankdata(rows)
+            # use the ranking matrix to get the elements row by row
+            ranks[xi] = matrix[y, xi]
         for xi, _ in y_ratings:
             for xj, _ in y_ratings:
                 prods[xi, xj] += ranks[xi] * ranks[xj]
@@ -450,10 +458,10 @@ def spearman(n_x, yr, min_support):
                 sim[xi, xj] = 0
             else:
                 n = freq[xi, xj]
-                num = n * prods[xi, xj] - (si[xi, xj]*sj[xi, xj])
-                denum_l = np.sqrt(n*sqi[xi, xj] - (si[xi, xj])**2)
-                denum_r = np.sqrt(n*sqj[xi, xj] - (sj[xi, xj])**2)
-                denum = denum_l * denum_r
+                num = n * prods[xi, xj] - si[xi, xj]*sj[xi, xj]
+                denum_l = n*sqi[xi, xj] - si[xi, xj]**2
+                denum_r = n*sqj[xi, xj] - sj[xi, xj]**2
+                denum = np.sqrt(denum_l * denum_r)
                 if denum == 0:
                     sim[xi, xj] = 0
                 else:
