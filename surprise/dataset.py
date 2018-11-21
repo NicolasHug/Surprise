@@ -3,11 +3,12 @@ The :mod:`dataset <surprise.dataset>` module defines the :class:`Dataset` class
 and other subclasses which are used for managing datasets.
 
 Users may use both *built-in* and user-defined datasets (see the
-:ref:`getting_started` page for examples). Right now, three built-in datasets
+:ref:`getting_started` page for examples). Right now, four built-in datasets
 are available:
 
 * The `movielens-100k <http://grouplens.org/datasets/movielens/>`_ dataset.
 * The `movielens-1m <http://grouplens.org/datasets/movielens/>`_ dataset.
+* The `movielens-20m <http://grouplens.org/datasets/movielens/>`_ dataset.
 * The `Jester <http://eigentaste.berkeley.edu/dataset/>`_ dataset 2.
 
 Built-in datasets can all be loaded (or downloaded if you haven't already)
@@ -74,7 +75,7 @@ class Dataset:
 
         Args:
             name(:obj:`string`): The name of the built-in dataset to load.
-                Accepted values are 'ml-100k', 'ml-1m', and 'jester'.
+                Accepted values are 'ml-100k', 'ml-1m', 'ml-20m' and 'jester'.
                 Default is 'ml-100k'.
             prompt(:obj:`bool`): Prompt before downloading if dataset is not
                 already on disk.

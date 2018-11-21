@@ -66,6 +66,8 @@ LINK = {'SVD': '[{}]({})'.format('SVD',
                                      'http://grouplens.org/datasets/movielens/100k'),
         'ml-1m': '[{}]({})'.format('Movielens 1M',
                                    'http://grouplens.org/datasets/movielens/1m'),
+        'ml-20m': '[{}]({})'.format('Movielens 20M',
+                                    'http://grouplens.org/datasets/movielens/20m'),
         }
 
 
