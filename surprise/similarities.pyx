@@ -368,9 +368,14 @@ def spearman(n_x, yr, min_support):
     """Compute the Spearman correlation coefficient between all pairs of users
     (or items).
 
-    Only **common** users (or items) are taken into account. The Spearman
-    correlation coefficient can be seen as a non parametric Pearson's
-    Similarity, and is defined as:
+    Only **common** users (or items) are taken into account.
+    The Spearman rank correlation is a variation of the Pearson correlation.
+    The ratings are replaced by their rankings.
+
+    The Spearman Rank Correlation is suitable for the investigation of random variables which
+    are not based on a normal distribution.
+
+    It is defined by:
 
     .. math ::
         \\text{spearman_sim}(u, v) = \\frac{ \\sum\\limits_{i \\in I_{uv}}
@@ -393,8 +398,7 @@ def spearman(n_x, yr, min_support):
     Note: if there are no common users or items, similarity will be 0 (and not
     -1).
 
-    For details on Spearman coefficient, see in chapter 4, page 126 of: `Recommender Systems Handbook
-    <http://www.cs.ubbcluj.ro/~gabis/DocDiplome/SistemeDeRecomandare/Recommender_systems_handbook.pdf>`__.
+    For details on Spearman coefficient, see in chapter 4, page 126 of *Recommender Systems Handbook*.
 
     """
 
