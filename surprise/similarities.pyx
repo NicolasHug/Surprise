@@ -199,7 +199,8 @@ def pearson(n_x, yr, min_support):
     -1).
 
     For details on Pearson coefficient, see `Wikipedia
-    <https://en.wikipedia.org/wiki/Pearson_product-moment_correlation_coefficient#For_a_sample>`__.
+    <https://en.wikipedia.org/wiki/Pearson_product-moment_correlation_
+    coefficient#For_a_sample>`__.
 
     """
 
@@ -372,23 +373,27 @@ def spearman(n_x, yr, min_support):
     The Spearman rank correlation is a variation of the Pearson correlation.
     The ratings are replaced by their rankings.
 
-    The Spearman Rank Correlation is suitable for the investigation of random variables which
-    are not based on a normal distribution.
+    The Spearman Rank Correlation is suitable for the investigation of random
+    variables which are not based on a normal distribution.
 
     It is defined by:
 
     .. math ::
         \\text{spearman_sim}(u, v) = \\frac{ \\sum\\limits_{i \\in I_{uv}}
-        (rank(r_{ui}) - \\overline{rank(u)}) \\cdot (rank(r_{vi}) - \\overline{rank(v)})} {\\sqrt{\\sum\\limits_{i
-        \\in I_{uv}} (rank(r_{ui}) - \\overline{rank(u)})^2} \\cdot \\sqrt{\\sum\\limits_{i \\in
+        (rank(r_{ui}) - \\overline{rank(u)}) \\cdot (rank(r_{vi}) -
+        \\overline{rank(v)})} {\\sqrt{\\sum\\limits_{i
+        \\in I_{uv}} (rank(r_{ui}) - \\overline{rank(u)})^2} \\cdot
+        \\sqrt{\\sum\\limits_{i \\in
         I_{uv}}  (rank(r_{vi}) - \\overline{rank(v)})^2} }
 
     or
 
     .. math ::
         \\text{spearman_sim}(i, j) = \\frac{ \\sum\\limits_{u \\in U_{ij}}
-        (rank(r_{ui}) - \\overline{rank(i)}) \\cdot (rank(r_{uj}) - \\overline{rank(j)})} {\\sqrt{\\sum\\limits_{u
-        \\in U_{ij}} (rank(r_{ui}) - \\overline{rank(i)})^2} \\cdot \\sqrt{\\sum\\limits_{u \\in
+        (rank(r_{ui}) - \\overline{rank(i)}) \\cdot (rank(r_{uj}) -
+        \\overline{rank(j)})} {\\sqrt{\\sum\\limits_{u
+        \\in U_{ij}} (rank(r_{ui}) - \\overline{rank(i)})^2} \\cdot
+        \\sqrt{\\sum\\limits_{u \\in
         U_{ij}}  (rank(r_{uj}) - \\overline{rank(j)})^2} }
 
     depending on the ``user_based`` field of ``sim_options`` (see
@@ -398,7 +403,8 @@ def spearman(n_x, yr, min_support):
     Note: if there are no common users or items, similarity will be 0 (and not
     -1).
 
-    For details on Spearman coefficient, see in chapter 4, page 126 of *Recommender Systems Handbook*.
+    For details on Spearman coefficient, see in chapter 4, page 126 of
+    *Recommender Systems Handbook*.
 
     """
 
@@ -438,9 +444,9 @@ def spearman(n_x, yr, min_support):
     for y, y_ratings in iteritems(yr):
         for x_i, r_i in y_ratings:
             matrix[y, x_i] = r_i
-    # turn the yr matrix into a matrix which contains the ranks the elements in yr
+    # turn the yr matrix into a matrix which contains the ranks
     for x_i in range(n_x):
-        matrix[:,x_i] = rankdata(matrix[:,x_i])
+        matrix[:, x_i] = rankdata(matrix[:, x_i])
 
     for y, y_ratings in iteritems(yr):
         for xi, ri in y_ratings:
@@ -463,9 +469,9 @@ def spearman(n_x, yr, min_support):
                 sim[xi, xj] = 0
             else:
                 n = freq[xi, xj]
-                num = n * prods[xi, xj] - si[xi, xj]*sj[xi, xj]
-                denum_l = n*sqi[xi, xj] - si[xi, xj]**2
-                denum_r = n*sqj[xi, xj] - sj[xi, xj]**2
+                num = (n * prods[xi, xj]) - (si[xi, xj] * sj[xi, xj])
+                denum_l = (n * sqi[xi, xj]) - si[xi, xj]**2
+                denum_r = (n * sqj[xi, xj]) - sj[xi, xj]**2
                 denum = np.sqrt(denum_l * denum_r)
                 if denum == 0:
                     sim[xi, xj] = 0

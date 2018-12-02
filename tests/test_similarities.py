@@ -261,5 +261,3 @@ def test_spearman_sim():
         for j in range(i + 1, n_x):
             if i != 1 and j != 2:
                 assert sim[i, j] == 0
-
-
