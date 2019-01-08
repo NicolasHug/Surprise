@@ -9,7 +9,7 @@ use-case examples that are not part of the User Guide.
 How to get the top-N recommendations for each user
 ----------------------------------------------------------
 
-Here is an example where we retrieve retrieve the top-10 items with highest
+Here is an example where we retrieve the top-10 items with highest
 rating prediction for each user in the MovieLens-100k dataset. We first train
 an SVD algorithm on the whole dataset, and then predict all the ratings for the
 pairs (user, item) that are not in the training set. We then retrieve the
