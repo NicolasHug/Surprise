@@ -38,11 +38,16 @@ class BaselineOnly(AlgoBase):
         return self
 
     def estimate(self, u, i):
+        known_user = self.trainset.knows_user(u)
+        known_item = self.trainset.knows_item(i)
+
+        if not (known_user and known_item):
+            print('Warning: User and/or item is unkown')
 
         est = self.trainset.global_mean
-        if self.trainset.knows_user(u):
+        if known_user:
             est += self.bu[u]
-        if self.trainset.knows_item(i):
+        if known_item:
             est += self.bi[i]
 
         return est

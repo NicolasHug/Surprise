@@ -260,6 +260,9 @@ class SVD(AlgoBase):
         known_item = self.trainset.knows_item(i)
 
         if self.biased:
+            if not (known_user and known_item):
+                print('Warning: User and/or item is unkown')
+
             est = self.trainset.global_mean
 
             if known_user:
@@ -485,16 +488,21 @@ class SVDpp(AlgoBase):
         self.yj = yj
 
     def estimate(self, u, i):
+        known_user = self.trainset.knows_user(u)
+        known_item = self.trainset.knows_item(i)
+
+        if not (known_user and known_item):
+            print('Warning: User and/or item is unkown')
 
         est = self.trainset.global_mean
 
-        if self.trainset.knows_user(u):
+        if known_user:
             est += self.bu[u]
 
-        if self.trainset.knows_item(i):
+        if known_item:
             est += self.bi[i]
 
-        if self.trainset.knows_user(u) and self.trainset.knows_item(i):
+        if known_user and known_item:
             Iu = len(self.trainset.ur[u])  # nb of items rated by u
             u_impl_feedback = (sum(self.yj[j] for (j, _)
                                in self.trainset.ur[u]) / np.sqrt(Iu))
@@ -722,6 +730,9 @@ class NMF(AlgoBase):
         known_item = self.trainset.knows_item(i)
 
         if self.biased:
+            if not (known_user and known_item):
+                print('Warning: User and/or item is unkown.')
+
             est = self.trainset.global_mean
 
             if known_user:
