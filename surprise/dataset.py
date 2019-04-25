@@ -59,7 +59,7 @@ class Dataset:
             if self.reader.rating_scale is None:
                 raise ValueError('Oooops')
             warnings.warn('Using rating_scale from reader, deprecated. Set '
-                          'rating_scale at dataset creationg instead '
+                          'rating_scale at dataset creation instead '
                           '(load_from_file, load_from_folds, or load_from_df).')
             self.rating_scale = self.reader.rating_scale
 
