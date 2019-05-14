@@ -107,7 +107,7 @@ build a :class:`trainset <surprise.Trainset>` object:
 We can now predict ratings by directly calling the :meth:`predict()
 <surprise.prediction_algorithms.algo_base.AlgoBase.predict>` method.  Let's say
 you're interested in user 196 and item 302 (make sure they're in the
-trainset!), and you know that the true rating :math:`r_{ui} = 4`:
+trainset!), and you know that the estimated rating is :math:`r_{ui} = 4`:
 
 .. literalinclude:: ../../examples/predict_ratings.py
     :caption: From file ``examples/predict_ratings.py``
