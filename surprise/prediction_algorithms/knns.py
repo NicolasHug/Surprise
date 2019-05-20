@@ -78,7 +78,7 @@ class KNNBasic(SymmetricAlgo):
             ``40``.
         min_k(int): The minimum number of neighbors to take into account for
             aggregation. If there are not enough neighbors, the prediction is
-            set the the global mean of all ratings. Default is ``1``.
+            set to the global mean of all ratings. Default is ``1``.
         sim_options(dict): A dictionary of options for the similarity
             measure. See :ref:`similarity_measures_configuration` for accepted
             options.
