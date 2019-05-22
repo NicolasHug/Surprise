@@ -20,9 +20,9 @@ class Trainset:
     <surprise.dataset.DatasetAutoFolds.build_full_trainset>` method.
 
     Trainsets are different from :class:`Datasets <surprise.dataset.Dataset>`.
-    You can think of a :class:`Datasets <surprise.dataset.Dataset>` as the raw
+    You can think of a :class:`Dataset <surprise.dataset.Dataset>` as the raw
     data, and Trainsets as higher-level data where useful methods are defined.
-    Also, a :class:`Datasets <surprise.dataset.Dataset>` may be comprised of
+    Also, a :class:`Dataset <surprise.dataset.Dataset>` may be comprised of
     multiple Trainsets (e.g. when doing cross validation).
 
 
