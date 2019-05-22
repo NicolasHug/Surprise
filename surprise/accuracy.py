@@ -1,5 +1,5 @@
 """
-The :mod:`surprise.accuracy` module provides with tools for computing accuracy
+The :mod:`surprise.accuracy` module provides tools for computing accuracy
 metrics on a set of predictions.
 
 Available accuracy metrics:

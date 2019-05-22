@@ -9,20 +9,20 @@ from six import iteritems
 
 
 class Trainset:
-    """A trainset contains all useful data that constitutes a training set.
+    """A trainset contains all useful data that constitute a training set.
 
     It is used by the :meth:`fit()
     <surprise.prediction_algorithms.algo_base.AlgoBase.fit>` method of every
-    prediction algorithm. You should not try to built such an object on your
+    prediction algorithm. You should not try to build such an object on your
     own but rather use the :meth:`Dataset.folds()
     <surprise.dataset.Dataset.folds>` method or the
     :meth:`DatasetAutoFolds.build_full_trainset()
     <surprise.dataset.DatasetAutoFolds.build_full_trainset>` method.
 
     Trainsets are different from :class:`Datasets <surprise.dataset.Dataset>`.
-    You can think of a :class:`Datasets <surprise.dataset.Dataset>` as the raw
+    You can think of a :class:`Dataset <surprise.dataset.Dataset>` as the raw
     data, and Trainsets as higher-level data where useful methods are defined.
-    Also, a :class:`Datasets <surprise.dataset.Dataset>` may be comprised of
+    Also, a :class:`Dataset <surprise.dataset.Dataset>` may be comprised of
     multiple Trainsets (e.g. when doing cross validation).
 
 
