@@ -13,11 +13,12 @@ from .prediction_algorithms import NMF
 from .prediction_algorithms import SlopeOne
 from .prediction_algorithms import CoClustering
 from .prediction_algorithms import Lasso
-from .prediction_algorithms import FMBasic
-from .prediction_algorithms import FMImplicit
-from .prediction_algorithms import FMExplicit
-from .prediction_algorithms import FMFeatures
-from .prediction_algorithms import FMBasicPL
+from .prediction_algorithms import FM
+# from .prediction_algorithms import FMBasic
+# from .prediction_algorithms import FMImplicit
+# from .prediction_algorithms import FMExplicit
+# from .prediction_algorithms import FMFeatures
+# from .prediction_algorithms import FMBasicPL
 
 from .prediction_algorithms import PredictionImpossible
 from .prediction_algorithms import Prediction
@@ -37,7 +38,8 @@ __all__ = ['AlgoBase', 'NormalPredictor', 'BaselineOnly', 'KNNBasic',
            'CoClustering', 'PredictionImpossible', 'Prediction', 'Dataset',
            'Reader', 'Trainset', 'evaluate', 'print_perf', 'GridSearch',
            'dump', 'KNNWithZScore', 'get_dataset_dir', 'model_selection',
-           'Lasso', 'FMBasic', 'FMImplicit', 'FMExplicit', 'FMFeatures',
-           'FMBasicPL']
+           'Lasso', 'FM']
+           # 'FMBasic', 'FMImplicit', 'FMExplicit', 'FMFeatures']
+           # 'FMBasicPL'
 
 __version__ = get_distribution('scikit-surprise').version

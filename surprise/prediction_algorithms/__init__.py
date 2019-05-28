@@ -33,11 +33,12 @@ from .matrix_factorization import NMF
 from .slope_one import SlopeOne
 from .co_clustering import CoClustering
 from .linear import Lasso
-from .factorization_machines import FMBasic
-from .factorization_machines import FMImplicit
-from .factorization_machines import FMExplicit
-from .factorization_machines import FMFeatures
-from .factorization_machines import FMBasicPL
+from .factorization_machines import FM
+# from .factorization_machines import FMBasic
+# from .factorization_machines import FMImplicit
+# from .factorization_machines import FMExplicit
+# from .factorization_machines import FMFeatures
+# from .factorization_machines import FMBasicPL
 
 from .predictions import PredictionImpossible
 from .predictions import Prediction
@@ -45,5 +46,6 @@ from .predictions import Prediction
 __all__ = ['AlgoBase', 'NormalPredictor', 'BaselineOnly', 'KNNBasic',
            'KNNBaseline', 'KNNWithMeans', 'SVD', 'SVDpp', 'NMF', 'SlopeOne',
            'CoClustering', 'PredictionImpossible', 'Prediction',
-           'KNNWithZScore', 'Lasso', 'FMBasic', 'FMImplicit', 'FMExplicit',
-           'FMFeatures', 'FMBasicPL']
+           'KNNWithZScore', 'Lasso', 'FM']
+           # 'FMBasic', 'FMImplicit', 'FMExplicit',
+           # 'FMFeatures']  #, 'FMBasicPL']
