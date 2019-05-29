@@ -53,10 +53,10 @@ class Dataset:
     def __init__(self, reader):
 
         self.reader = reader
-        self.user_features = defaultdict(list)
-        self.item_features = defaultdict(list)
         self.user_features_nb = 0
         self.item_features_nb = 0
+        self.user_features = {}
+        self.item_features = {}
         self.user_features_labels = []
         self.item_features_labels = []
 
