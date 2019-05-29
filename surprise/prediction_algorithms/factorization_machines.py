@@ -4,9 +4,11 @@ the :mod:`knns` module includes some k-NN inspired algorithms.
 
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
+import copy
 
 import numpy as np
 import pandas as pd
+from sklearn.model_selection import train_test_split
 import torch
 from torch import nn
 
@@ -92,7 +94,12 @@ class FM(AlgoBase):
         n_factors : int, default: 20
             Number of latent factors in low-rank appoximation.
         n_epochs : int, default : 30
-            Number of epochs.
+            Number of epochs. All epochs are ran but only the best model out of
+            all epochs is kept.
+        dev_ratio : float, default : 0.3
+            Ratio of `trainset` to dedicate to development data set to identify
+            best model. Should be either positive and smaller than the number
+            of samples or a float in the (0, 1) range.
         init_std: float, default : 0.01
             The standard deviation of the normal distribution for
             initialization.
@@ -111,9 +118,9 @@ class FM(AlgoBase):
     """
 
     def __init__(self, rating_lst=['userID', 'itemID'], user_lst=None,
-                 item_lst=None, n_factors=20, n_epochs=30, init_std=0.01,
-                 lr=0.001, reg=0.02, random_state=None, verbose=False,
-                 **kwargs):
+                 item_lst=None, n_factors=20, n_epochs=30, dev_ratio=0.3,
+                 init_std=0.01, lr=0.001, reg=0.02, random_state=None,
+                 verbose=False, **kwargs):
 
         AlgoBase.__init__(self, **kwargs)
         self.rating_lst = rating_lst
@@ -121,6 +128,7 @@ class FM(AlgoBase):
         self.item_lst = item_lst
         self.n_factors = n_factors
         self.n_epochs = n_epochs
+        self.dev_ratio = dev_ratio
         self.init_std = init_std
         self.lr = lr
         self.reg = reg
@@ -137,25 +145,35 @@ class FM(AlgoBase):
         # Initialization needs to be done in fit() since it depends on the
         # trainset
         if self.random_state:
-            # random.seed(random_state)  # just in case
-            np.random.seed(self.random_state)  # just in case
+            np.random.seed(self.random_state)
             torch.manual_seed(self.random_state)
         self._construct_FM_data()
         self.model = FMtorchNN(self.n_features, self.n_factors, self.init_std)
         params = FM._add_weight_decay(self.model, self.reg)
         self.optimizer = torch.optim.Adam(params, lr=self.lr)
 
-        # Define training data and sample_weights (TODO)
-        x_train = torch.Tensor(
-            self.libsvm_df.loc[:, self.libsvm_df.columns != 'rating'].values)
-        y_train = torch.Tensor(
-            self.libsvm_df.loc[:, 'rating'].values)
+        # Define data (TODO : sample_weights)
+        x = self.libsvm_df.loc[:, self.libsvm_df.columns != 'rating'].values
+        y = self.libsvm_df.loc[:, 'rating'].values
         sample_weights = None
+        if sample_weights:
+            x_train, x_dev, y_train, y_dev, w_train, w_dev = train_test_split(
+                x, y, sample_weights, test_size=self.dev_ratio,
+                random_state=self.random_state)
+            w_train = torch.Tensor(w_train)
+            w_dev = torch.Tensor(w_dev)
+        else:
+            x_train, x_dev, y_train, y_dev = train_test_split(
+                x, y, test_size=self.dev_ratio, random_state=self.random_state)
+            w_train = None
+            w_dev = None
+        x_train = torch.Tensor(x_train)
+        y_train = torch.Tensor(y_train)
+        x_dev = torch.Tensor(x_dev)
+        y_dev = torch.Tensor(y_dev)
 
-        # Define development data (TODO)
-        x_dev = torch.Tensor(x_train.shape)
-        y_dev = torch.Tensor(y_train.shape)
-
+        best_loss = np.inf
+        best_model = None
         for epoch in range(self.n_epochs):
             # Switch to training mode, clear gradient accumulators
             self.model.train()
@@ -163,22 +181,27 @@ class FM(AlgoBase):
             # Forward pass
             y_pred = self.model(x_train)
             # Compute loss
-            self.train_loss = self._compute_loss(
-                y_pred, y_train, sample_weights)
+            self.train_loss = self._compute_loss(y_pred, y_train, w_train)
             # Backward pass and update weights
             self.train_loss.backward()
             self.optimizer.step()
 
-            # Switch to eval mode and evaluate with development data (TODO)
-            # Also keep best model in memory (TODO)
+            # Switch to eval mode and evaluate with development data
             # See https://github.com/pytorch/examples/blob/master/snli/train.py
             self.model.eval()
             y_pred = self.model(x_dev)
-            # Do we need sample_weights? (TODO)
-            self.dev_loss = self._compute_loss(y_pred, y_dev)
+            self.dev_loss = self._compute_loss(y_pred, y_dev, w_dev)
 
             if self.verbose:
                 print(epoch, self.train_loss.item(), self.dev_loss.item())
+
+            if self.dev_loss.item() < best_loss:
+                best_model = copy.deepcopy(self.model)
+                best_loss = self.dev_loss.item()
+                if self.verbose:
+                    print('A new best model have been found!')
+
+        self.model = best_model
 
         return self
 
