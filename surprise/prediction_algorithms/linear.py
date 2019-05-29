@@ -75,17 +75,15 @@ class Lasso(AlgoBase):
         for k, (uid, iid, rating) in enumerate(self.trainset.all_ratings()):
             y[k] = rating
 
-            temp = u_features[uid]
-            if temp:
-                X[k, :n_uf] = temp
-            else:
+            try:
+                X[k, :n_uf] = u_features[uid]
+            except KeyError:
                 raise ValueError('No features for user ' +
                                  str(self.trainset.to_raw_uid(uid)))
 
-            temp = i_features[iid]
-            if temp:
-                X[k, n_uf:] = temp
-            else:
+            try:
+                X[k, n_uf:] = i_features[iid]
+            except KeyError:
                 raise ValueError('No features for item ' +
                                  str(self.trainset.to_raw_iid(iid)))
 
