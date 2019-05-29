@@ -22,10 +22,10 @@ class BaselineOnly(AlgoBase):
             computation. See :ref:`baseline_estimates_configuration` for
             accepted options.
         verbose(bool): Whether to print trace messages of bias estimation,
-            similarity, etc.  Default is True.
+            similarity, etc.  Default is False.
     """
 
-    def __init__(self, bsl_options={}, verbose=True):
+    def __init__(self, bsl_options={}, verbose=False):
 
         AlgoBase.__init__(self, bsl_options=bsl_options)
         self.verbose = verbose
