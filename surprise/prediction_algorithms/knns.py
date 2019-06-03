@@ -27,7 +27,7 @@ class SymmetricAlgo(AlgoBase):
     reversed.
     """
 
-    def __init__(self, sim_options={}, verbose=True, **kwargs):
+    def __init__(self, sim_options={}, verbose=False, **kwargs):
 
         AlgoBase.__init__(self, sim_options=sim_options, **kwargs)
         self.verbose = verbose
@@ -83,10 +83,10 @@ class KNNBasic(SymmetricAlgo):
             measure. See :ref:`similarity_measures_configuration` for accepted
             options.
         verbose(bool): Whether to print trace messages of bias estimation,
-            similarity, etc.  Default is True.
+            similarity, etc.  Default is False.
     """
 
-    def __init__(self, k=40, min_k=1, sim_options={}, verbose=True, **kwargs):
+    def __init__(self, k=40, min_k=1, sim_options={}, verbose=False, **kwargs):
 
         SymmetricAlgo.__init__(self, sim_options=sim_options, verbose=verbose,
                                **kwargs)
@@ -100,10 +100,10 @@ class KNNBasic(SymmetricAlgo):
 
         return self
 
-    def estimate(self, u, i):
+    def estimate(self, u, i, *_):
 
         if not (self.trainset.knows_user(u) and self.trainset.knows_item(i)):
-            raise PredictionImpossible('User and/or item is unkown.')
+            raise PredictionImpossible('User and/or item is unknown.')
 
         x, y = self.switch(u, i)
 
@@ -161,10 +161,10 @@ class KNNWithMeans(SymmetricAlgo):
             measure. See :ref:`similarity_measures_configuration` for accepted
             options.
         verbose(bool): Whether to print trace messages of bias estimation,
-            similarity, etc.  Default is True.
+            similarity, etc.  Default is False.
     """
 
-    def __init__(self, k=40, min_k=1, sim_options={}, verbose=True, **kwargs):
+    def __init__(self, k=40, min_k=1, sim_options={}, verbose=False, **kwargs):
 
         SymmetricAlgo.__init__(self, sim_options=sim_options,
                                verbose=verbose, **kwargs)
@@ -183,10 +183,10 @@ class KNNWithMeans(SymmetricAlgo):
 
         return self
 
-    def estimate(self, u, i):
+    def estimate(self, u, i, *_):
 
         if not (self.trainset.knows_user(u) and self.trainset.knows_item(i)):
-            raise PredictionImpossible('User and/or item is unkown.')
+            raise PredictionImpossible('User and/or item is unknown.')
 
         x, y = self.switch(u, i)
 
@@ -254,17 +254,15 @@ class KNNBaseline(SymmetricAlgo):
             measure. See :ref:`similarity_measures_configuration` for accepted
             options. It is recommended to use the :func:`pearson_baseline
             <surprise.similarities.pearson_baseline>` similarity measure.
-
         bsl_options(dict): A dictionary of options for the baseline estimates
             computation. See :ref:`baseline_estimates_configuration` for
             accepted options.
         verbose(bool): Whether to print trace messages of bias estimation,
-            similarity, etc.  Default is True.
-
+            similarity, etc.  Default is False.
     """
 
     def __init__(self, k=40, min_k=1, sim_options={}, bsl_options={},
-                 verbose=True, **kwargs):
+                 verbose=False, **kwargs):
 
         SymmetricAlgo.__init__(self, sim_options=sim_options,
                                bsl_options=bsl_options, verbose=verbose,
@@ -282,7 +280,7 @@ class KNNBaseline(SymmetricAlgo):
 
         return self
 
-    def estimate(self, u, i):
+    def estimate(self, u, i, *_):
 
         est = self.trainset.global_mean
         if self.trainset.knows_user(u):
@@ -354,10 +352,10 @@ class KNNWithZScore(SymmetricAlgo):
             measure. See :ref:`similarity_measures_configuration` for accepted
             options.
         verbose(bool): Whether to print trace messages of bias estimation,
-            similarity, etc.  Default is True.
+            similarity, etc.  Default is False.
     """
 
-    def __init__(self, k=40, min_k=1, sim_options={}, verbose=True, **kwargs):
+    def __init__(self, k=40, min_k=1, sim_options={}, verbose=False, **kwargs):
 
         SymmetricAlgo.__init__(self, sim_options=sim_options, verbose=verbose,
                                **kwargs)
@@ -384,10 +382,10 @@ class KNNWithZScore(SymmetricAlgo):
 
         return self
 
-    def estimate(self, u, i):
+    def estimate(self, u, i, *_):
 
         if not (self.trainset.knows_user(u) and self.trainset.knows_item(i)):
-            raise PredictionImpossible('User and/or item is unkown.')
+            raise PredictionImpossible('User and/or item is unknown.')
 
         x, y = self.switch(u, i)
 

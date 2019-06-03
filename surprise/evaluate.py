@@ -301,6 +301,7 @@ class CaseInsensitiveDefaultDict(defaultdict):
         Used for the returned dict, so that users can use perf['RMSE'] or
         perf['rmse'] indifferently.
     """
+
     def __setitem__(self, key, value):
         super(CaseInsensitiveDefaultDict, self).__setitem__(key.lower(), value)
 
@@ -333,4 +334,5 @@ def seed_and_eval(seed, *args):
     different processes."""
 
     random.seed(seed)
+
     return evaluate(*args, verbose=0)

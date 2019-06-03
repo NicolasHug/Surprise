@@ -99,15 +99,17 @@ def test_same_splits():
     data.split(3)
 
     # all RMSE should be the same (as param combinations are the same)
-    param_grid = {'n_epochs': [1, 1], 'lr_all': [.5, .5]}
+    param_grid = {'n_epochs': [1, 1], 'lr_all': [.5, .5], 'random_state': [0]}
     with pytest.warns(UserWarning):
-        grid_search = GridSearch(SVD, param_grid, measures=['RMSE'], n_jobs=-1)
-    grid_search.evaluate(data)
+        grid_search = GridSearch(SVD, param_grid, measures=['RMSE'], n_jobs=1)
+    with pytest.warns(UserWarning):
+        grid_search.evaluate(data)
 
     rmse_scores = [s['RMSE'] for s in grid_search.cv_results['scores']]
     assert len(set(rmse_scores)) == 1  # assert rmse_scores are all equal
 
     # evaluate grid search again, to make sure that splits are still the same.
-    grid_search.evaluate(data)
+    with pytest.warns(UserWarning):
+        grid_search.evaluate(data)
     rmse_scores += [s['RMSE'] for s in grid_search.cv_results['scores']]
     assert len(set(rmse_scores)) == 1

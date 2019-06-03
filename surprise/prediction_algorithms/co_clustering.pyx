@@ -62,7 +62,7 @@ class CoClustering(AlgoBase):
         self.n_cltr_u = n_cltr_u
         self.n_cltr_i = n_cltr_i
         self.n_epochs = n_epochs
-        self.verbose=verbose
+        self.verbose = verbose
         self.random_state = random_state
 
     def fit(self, trainset):
@@ -236,7 +236,7 @@ class CoClustering(AlgoBase):
 
         return avg_cltr_u, avg_cltr_i, avg_cocltr
 
-    def estimate(self, u, i):
+    def estimate(self, u, i, *_):
 
         if not (self.trainset.knows_user(u) and self.trainset.knows_item(i)):
             return self.trainset.global_mean
