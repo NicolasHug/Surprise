@@ -262,7 +262,11 @@ class Dataset:
                 raw2inner_id_users[urid] = current_u_index
                 current_u_index += 1
                 if self.user_features_nb > 0:
-                    u_features[uid] = self.user_features[urid]
+                    try:
+                        u_features[uid] = self.user_features[urid]
+                    except KeyError:
+                        raise ValueError('Features are defined for all users'
+                                         'but user {}'.format(urid))
 
             try:
                 iid = raw2inner_id_items[irid]
@@ -271,7 +275,11 @@ class Dataset:
                 raw2inner_id_items[irid] = current_i_index
                 current_i_index += 1
                 if self.item_features_nb > 0:
-                    i_features[iid] = self.item_features[irid]
+                    try:
+                        i_features[iid] = self.item_features[irid]
+                    except KeyError:
+                        raise ValueError('Features are defined for all items'
+                                         'but item {}'.format(irid))
 
             ur[uid].append((iid, r))
             ir[iid].append((uid, r))
@@ -302,8 +310,20 @@ class Dataset:
 
         testset = []
         for (ruid, riid, r_ui_trans, _) in raw_testset:
-            u_features = self.user_features[ruid]
-            i_features = self.item_features[riid]
+            if self.user_features_nb > 0:
+                try:  # add features if available
+                    u_features = self.user_features[ruid]
+                except KeyError:
+                    u_features = []
+            else:
+                u_features = []
+            if self.item_features_nb > 0:
+                try:  # add features if available
+                    i_features = self.item_features[riid]
+                except KeyError:
+                    i_features = []
+            else:
+                i_features = []
             testset.append((ruid, riid, u_features, i_features, r_ui_trans))
 
         return testset

@@ -280,16 +280,16 @@ def test_trainset_testset_ui_features():
     data = Dataset.load_from_folds(folds_files=folds_files, reader=reader)
 
     u_features_df = pd.DataFrame(
-        {'urid': ['user0', 'user2', 'user1'],  # 'user3' is missing
-         'isMale': [False, True, True]},
+        {'urid': ['user0', 'user2', 'user3', 'user1'],
+         'isMale': [False, True, False, True]},
         columns=['urid', 'isMale'])
     data = data.load_features_df(u_features_df, user_features=True)
 
     i_features_df = pd.DataFrame(
-        {'irid': ['item0'],
-         'isNew': [False],
-         'webRating': [4],
-         'isComedy': [True]},
+        {'irid': ['item0', 'item1'],
+         'isNew': [False, True],
+         'webRating': [4, 3],
+         'isComedy': [True, False]},
         columns=['irid', 'isNew', 'webRating', 'isComedy'])
     data = data.load_features_df(i_features_df, user_features=False)
 
@@ -317,8 +317,6 @@ def test_trainset_testset_ui_features():
     # test user features
     u_features = trainset.u_features
     assert u_features[0] == [False]
-    assert u_features[1] == [True]
-    assert u_features[3] == []  # not in u_features_df
     assert u_features[40] == []  # not in trainset and u_features_df
     assert trainset.user_features_labels == ['isMale']
     assert trainset.n_user_features == 1
@@ -326,7 +324,6 @@ def test_trainset_testset_ui_features():
     # test item features
     i_features = trainset.i_features
     assert i_features[0] == [False, 4, True]
-    assert i_features[1] == []  # not in i_features_df
     assert i_features[20000] == []  # not in trainset and i_features_df
     assert trainset.item_features_labels == ['isNew', 'webRating', 'isComedy']
     assert trainset.n_item_features == 3
@@ -358,9 +355,9 @@ def test_trainset_testset_ui_features():
     testset = trainset.build_testset()
     algo.test(testset)  # ensure an algorithm can manage the data
     assert ('user0', 'item0', [False], [False, 4, True], 4) in testset
-    assert ('user2', 'item1', [True], [], 1) in testset
-    assert ('user3', 'item1', [], [], 5) in testset
-    assert ('user3', 'item1', [], [], 0) not in testset
+    assert ('user2', 'item1', [True], [True, 3, False], 1) in testset
+    assert ('user3', 'item1', [False], [True, 3, False], 5) in testset
+    assert ('user3', 'item1', [False], [True, 3, False], 0) not in testset
 
     # Test the build_anti_testset() method
     algo = BaselineOnly()
@@ -369,9 +366,11 @@ def test_trainset_testset_ui_features():
     algo.test(testset)  # ensure an algorithm can manage the data
     assert (('user0', 'item0', [False], [False, 4, True], trainset.global_mean)
             not in testset)
-    assert ('user3', 'item1', [], [], trainset.global_mean) not in testset
-    assert ('user0', 'item1', [False], [], trainset.global_mean) in testset
-    assert (('user3', 'item0', [], [False, 4, True], trainset.global_mean)
+    assert (('user3', 'item1', [False], [True, 3, False], trainset.global_mean)
+            not in testset)
+    assert (('user0', 'item1', [False], [True, 3, False], trainset.global_mean)
+            in testset)
+    assert (('user3', 'item0', [False], [False, 4, True], trainset.global_mean)
             in testset)
 
 

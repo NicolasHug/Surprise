@@ -242,8 +242,8 @@ class Trainset:
 
         testset = []
         for (u, i, r) in self.all_ratings():
-            u_features = self.u_features.get(u, None)
-            i_features = self.i_features.get(i, None)
+            u_features = self.u_features.get(u, [])
+            i_features = self.i_features.get(i, [])
             testset.append((self.to_raw_uid(u), self.to_raw_iid(i), u_features,
                             i_features, r))
 
@@ -276,8 +276,8 @@ class Trainset:
             user_items = set([j for (j, _) in self.ur[u]])
             anti_testset += [(self.to_raw_uid(u),
                               self.to_raw_iid(i),
-                              self.u_features.get(u, None),
-                              self.i_features.get(i, None),
+                              self.u_features.get(u, []),
+                              self.i_features.get(i, []),
                               fill)
                              for i in self.all_items()
                              if i not in user_items]

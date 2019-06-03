@@ -27,7 +27,7 @@ class SymmetricAlgo(AlgoBase):
     reversed.
     """
 
-    def __init__(self, sim_options={}, verbose=True, **kwargs):
+    def __init__(self, sim_options={}, verbose=False, **kwargs):
 
         AlgoBase.__init__(self, sim_options=sim_options, **kwargs)
         self.verbose = verbose
@@ -83,10 +83,10 @@ class KNNBasic(SymmetricAlgo):
             measure. See :ref:`similarity_measures_configuration` for accepted
             options.
         verbose(bool): Whether to print trace messages of bias estimation,
-            similarity, etc.  Default is True.
+            similarity, etc.  Default is False.
     """
 
-    def __init__(self, k=40, min_k=1, sim_options={}, verbose=True, **kwargs):
+    def __init__(self, k=40, min_k=1, sim_options={}, verbose=False, **kwargs):
 
         SymmetricAlgo.__init__(self, sim_options=sim_options, verbose=verbose,
                                **kwargs)
@@ -161,10 +161,10 @@ class KNNWithMeans(SymmetricAlgo):
             measure. See :ref:`similarity_measures_configuration` for accepted
             options.
         verbose(bool): Whether to print trace messages of bias estimation,
-            similarity, etc.  Default is True.
+            similarity, etc.  Default is False.
     """
 
-    def __init__(self, k=40, min_k=1, sim_options={}, verbose=True, **kwargs):
+    def __init__(self, k=40, min_k=1, sim_options={}, verbose=False, **kwargs):
 
         SymmetricAlgo.__init__(self, sim_options=sim_options,
                                verbose=verbose, **kwargs)
@@ -258,11 +258,11 @@ class KNNBaseline(SymmetricAlgo):
             computation. See :ref:`baseline_estimates_configuration` for
             accepted options.
         verbose(bool): Whether to print trace messages of bias estimation,
-            similarity, etc.  Default is True.
+            similarity, etc.  Default is False.
     """
 
     def __init__(self, k=40, min_k=1, sim_options={}, bsl_options={},
-                 verbose=True, **kwargs):
+                 verbose=False, **kwargs):
 
         SymmetricAlgo.__init__(self, sim_options=sim_options,
                                bsl_options=bsl_options, verbose=verbose,
@@ -352,10 +352,10 @@ class KNNWithZScore(SymmetricAlgo):
             measure. See :ref:`similarity_measures_configuration` for accepted
             options.
         verbose(bool): Whether to print trace messages of bias estimation,
-            similarity, etc.  Default is True.
+            similarity, etc.  Default is False.
     """
 
-    def __init__(self, k=40, min_k=1, sim_options={}, verbose=True, **kwargs):
+    def __init__(self, k=40, min_k=1, sim_options={}, verbose=False, **kwargs):
 
         SymmetricAlgo.__init__(self, sim_options=sim_options, verbose=verbose,
                                **kwargs)

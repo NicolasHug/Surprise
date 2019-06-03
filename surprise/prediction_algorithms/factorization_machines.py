@@ -12,7 +12,7 @@ from sklearn.model_selection import train_test_split
 import torch
 from torch import nn
 
-from .predictions import PredictionImpossible
+# from .predictions import PredictionImpossible
 from .algo_base import AlgoBase
 
 
@@ -153,8 +153,10 @@ class FM(AlgoBase):
         self.optimizer = torch.optim.Adam(params, lr=self.lr)
 
         # Define data (TODO : sample_weights)
-        x = self.libsvm_df.loc[:, self.libsvm_df.columns != 'rating'].values
-        y = self.libsvm_df.loc[:, 'rating'].values
+        x = self.libsvm_df.loc[
+            :, self.libsvm_df.columns != 'rating'].values.astype('float64')
+        y = self.libsvm_df.loc[
+            :, 'rating'].values.astype('float64')
         sample_weights = None
         if sample_weights:
             x_train, x_dev, y_train, y_dev, w_train, w_dev = train_test_split(
@@ -253,7 +255,7 @@ class FM(AlgoBase):
                              'there are no item_features')
 
         n_ratings = self.trainset.n_ratings
-        n_users = self.trainset.n_users
+        # n_users = self.trainset.n_users
         n_items = self.trainset.n_items
 
         # Construct ratings_df from trainset
@@ -368,6 +370,15 @@ class FM(AlgoBase):
         they are all given and in the same order as in the trainset.
         """
 
+        if (self.user_lst and u_features and (
+                len(u_features) != len(self.trainset.user_features_labels))):
+            raise ValueError('If u_features are provided for predict(), they'
+                             'should all be provided as in trainset')
+        if (self.item_lst and i_features and (
+                len(i_features) != len(self.trainset.item_features_labels))):
+            raise ValueError('If i_features are provided for predict(), they'
+                             'should all be provided as in trainset')
+
         n_users = self.trainset.n_users
         n_items = self.trainset.n_items
 
@@ -428,7 +439,7 @@ class FM(AlgoBase):
         # Add item features
         if self.item_lst:
             temp = [0.] * len(self.item_lst)
-            if u_features:
+            if i_features:
                 # It is assumed that if features are given, they are all given.
                 temp_df = pd.Series(
                     i_features, index=self.trainset.item_features_labels)

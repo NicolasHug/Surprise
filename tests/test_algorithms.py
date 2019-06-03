@@ -21,6 +21,7 @@ from surprise import SlopeOne
 from surprise import CoClustering
 from surprise import KNNWithZScore
 from surprise import Lasso
+from surprise import FM
 from surprise import Dataset
 from surprise import Reader
 from surprise.model_selection import PredefinedKFold
@@ -86,12 +87,14 @@ def test_unknown_user_or_item():
     data_ui_mu = Dataset.load_from_file(file_path=file_path, reader=reader)
     data_ui_mu.load_features_df(u_features_m_df, user_features=True)
     data_ui_mu.load_features_df(i_features_df, user_features=False)
-    trainset_ui_mu = data_ui_mu.build_full_trainset()
+    with pytest.raises(ValueError):
+        data_ui_mu.build_full_trainset()
 
     data_ui_mi = Dataset.load_from_file(file_path=file_path, reader=reader)
     data_ui_mi.load_features_df(u_features_df, user_features=True)
     data_ui_mi.load_features_df(i_features_m_df, user_features=False)
-    trainset_ui_mi = data_ui_mi.build_full_trainset()
+    with pytest.raises(ValueError):
+        data_ui_mi.build_full_trainset()
 
     # algos not using features
     klasses = (NormalPredictor, BaselineOnly, KNNBasic, KNNWithMeans,
@@ -102,8 +105,6 @@ def test_unknown_user_or_item():
         algo.fit(trainset)
         algo.fit(trainset_u)
         algo.fit(trainset_i)
-        algo.fit(trainset_ui_mu)
-        algo.fit(trainset_ui_mi)
         algo.fit(trainset_ui)
         algo.predict('user0', 'unknown_item')
         algo.predict('unkown_user', 'item0')
@@ -131,10 +132,6 @@ def test_unknown_user_or_item():
             algo.fit(trainset_u)
         with pytest.raises(ValueError):
             algo.fit(trainset_i)
-        with pytest.raises(ValueError):
-            algo.fit(trainset_ui_mu)
-        with pytest.raises(ValueError):
-            algo.fit(trainset_ui_mi)
         algo.fit(trainset_ui)
         algo.predict('user0', 'unknown_item')
         algo.predict('unkown_user', 'item0')
@@ -152,9 +149,51 @@ def test_unknown_user_or_item():
         algo.predict('unkown_user', 'item0', [False], [False, 4, True])
         algo.predict('unkown_user', 'unknown_item', [False], [False, 4, True])
 
+    # FM using (optionally) user and item features
+    rating_lst_opt = ['userID', 'itemID', 'imp_u_rating', 'exp_u_rating']
+    user_lst_opt = ['isMale']
+    item_lst_opt = ['isNew', 'webRating', 'isComedy']
+    algos = (FM(rating_lst=rating_lst_opt), FM(user_lst=user_lst_opt),
+             FM(item_lst=item_lst_opt),
+             FM(rating_lst=rating_lst_opt, user_lst=user_lst_opt,
+                item_lst=item_lst_opt))
+    for algo in algos:
+        if algo.user_lst:
+            with pytest.raises(ValueError):
+                algo.fit(trainset)
+            with pytest.raises(ValueError):
+                algo.fit(trainset_i)
+        if algo.item_lst:
+            with pytest.raises(ValueError):
+                algo.fit(trainset)
+            with pytest.raises(ValueError):
+                algo.fit(trainset_u)
+        algo.fit(trainset_ui)
+        if algo.user_lst:
+            with pytest.raises(ValueError):
+                algo.predict('user0', 'item0', [False, 'AddedFeature'], [])
+        if algo.item_lst:
+            with pytest.raises(ValueError):
+                algo.predict('user0', 'item0', [], ['NotEnoughFeatures'])
+        algo.predict('user0', 'unknown_item')
+        algo.predict('unkown_user', 'item0')
+        algo.predict('unkown_user', 'unknown_item')
+        algo.predict('user0', 'unknown_item', [], [])
+        algo.predict('unkown_user', 'item0', [], [])
+        algo.predict('unkown_user', 'unknown_item', [], [])
+        algo.predict('user0', 'unknown_item', [False], [])
+        algo.predict('unkown_user', 'item0', [False], [])
+        algo.predict('unkown_user', 'unknown_item', [False], [])
+        algo.predict('user0', 'unknown_item', [], [False, 4, True])
+        algo.predict('unkown_user', 'item0', [], [False, 4, True])
+        algo.predict('unkown_user', 'unknown_item', [], [False, 4, True])
+        algo.predict('user0', 'unknown_item', [False], [False, 4, True])
+        algo.predict('unkown_user', 'item0', [False], [False, 4, True])
+        algo.predict('unkown_user', 'unknown_item', [False], [False, 4, True])
+
     # unrelated, but test the fit().test() one-liner:
-    trainset, testset = train_test_split(data, test_size=2)
-    for klass in klasses:
+    trainset, testset = train_test_split(data_ui, test_size=2)
+    for klass in (klasses + klasses_ui + (FM,)):
         algo = klass()
         algo.fit(trainset).test(testset)
         with pytest.warns(UserWarning):

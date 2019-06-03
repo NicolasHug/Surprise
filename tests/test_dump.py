@@ -34,19 +34,21 @@ def test_dump():
     algo.fit(trainset)
     predictions = algo.test(testset)
 
-    with tempfile.NamedTemporaryFile() as tmp_file:
+    with tempfile.NamedTemporaryFile(delete=False) as tmp_file:
         dump.dump(tmp_file.name, predictions, algo)
         predictions_dumped, algo_dumped = dump.load(tmp_file.name)
 
         predictions_algo_dumped = algo_dumped.test(testset)
         assert predictions == predictions_dumped
         assert predictions == predictions_algo_dumped
+    os.remove(tmp_file.name)
 
 
 def test_dump_nothing():
     """Ensure that by default None objects are dumped."""
-    with tempfile.NamedTemporaryFile() as tmp_file:
+    with tempfile.NamedTemporaryFile(delete=False) as tmp_file:
         dump.dump(tmp_file.name)
         predictions, algo = dump.load(tmp_file.name)
         assert predictions is None
         assert algo is None
+    os.remove(tmp_file.name)
