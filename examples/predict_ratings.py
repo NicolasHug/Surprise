@@ -10,7 +10,7 @@ from surprise import KNNBasic
 from surprise import Dataset
 
 # Load the movielens-100k dataset
-data = Dataset.load_builtin('ml-100k')
+data = Dataset.load_from_file('~/Documents/clients/pfizer/email_recommendation_system/surprise/ml-100k')
 
 # Retrieve the trainset.
 trainset = data.build_full_trainset()

@@ -11,7 +11,7 @@ from surprise import Dataset
 from surprise.model_selection import GridSearchCV
 
 # Use movielens-100K
-data = Dataset.load_builtin('ml-100k')
+data = Dataset.load_from_file('~/Documents/clients/pfizer/email_recommendation_system/surprise/ml-100k')
 
 param_grid = {'n_epochs': [5, 10], 'lr_all': [0.002, 0.005],
               'reg_all': [0.4, 0.6]}

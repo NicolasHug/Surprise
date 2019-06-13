@@ -35,7 +35,7 @@ class MyOwnAlgorithm(AlgoBase):
         return sum_means / div
 
 
-data = Dataset.load_builtin('ml-100k')
+data = Dataset.load_from_file('~/Documents/clients/pfizer/email_recommendation_system/surprise/ml-100k')
 algo = MyOwnAlgorithm()
 
 cross_validate(algo, data, verbose=True)

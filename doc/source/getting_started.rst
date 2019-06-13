@@ -160,7 +160,7 @@ dataframe.
   .. note::
       As you already know from the previous section, the Movielens-100k dataset
       is built-in so a much quicker way to load the dataset is to do ``data =
-      Dataset.load_builtin('ml-100k')``. We will of course ignore this here.
+      Dataset.load_from_file('~/Documents/clients/pfizer/email_recommendation_system/surprise/ml-100k')``. We will of course ignore this here.
 
 .. _load_from_df_example:
 

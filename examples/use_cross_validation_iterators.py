@@ -11,7 +11,7 @@ from surprise import accuracy
 from surprise.model_selection import KFold
 
 # Load the movielens-100k dataset
-data = Dataset.load_builtin('ml-100k')
+data = Dataset.load_from_file('~/Documents/clients/pfizer/email_recommendation_system/surprise/ml-100k')
 
 # define a cross-validation iterator
 kf = KFold(n_splits=3)

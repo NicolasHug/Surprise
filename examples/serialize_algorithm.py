@@ -13,7 +13,7 @@ from surprise import Dataset
 from surprise import dump
 
 
-data = Dataset.load_builtin('ml-100k')
+data = Dataset.load_from_file('~/Documents/clients/pfizer/email_recommendation_system/surprise/ml-100k')
 trainset = data.build_full_trainset()
 
 algo = SVD()

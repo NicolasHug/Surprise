@@ -45,7 +45,7 @@ def precision_recall_at_k(predictions, k=10, threshold=3.5):
     return precisions, recalls
 
 
-data = Dataset.load_builtin('ml-100k')
+data = Dataset.load_from_file('~/Documents/clients/pfizer/email_recommendation_system/surprise/ml-100k')
 kf = KFold(n_splits=5)
 algo = SVD()
 

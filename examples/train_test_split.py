@@ -11,7 +11,7 @@ from surprise import accuracy
 from surprise.model_selection import train_test_split
 
 # Load the movielens-100k dataset (download it if needed),
-data = Dataset.load_builtin('ml-100k')
+data = Dataset.load_from_file('~/Documents/clients/pfizer/email_recommendation_system/surprise/ml-100k')
 
 # sample random trainset and testset
 # test set is made of 25% of the ratings.

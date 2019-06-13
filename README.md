@@ -75,7 +75,7 @@ from surprise import Dataset
 from surprise.model_selection import cross_validate
 
 # Load the movielens-100k dataset (download it if needed).
-data = Dataset.load_builtin('ml-100k')
+data = Dataset.load_from_file('~/Documents/clients/pfizer/email_recommendation_system/surprise/ml-100k')
 
 # Use the famous SVD algorithm.
 algo = SVD()

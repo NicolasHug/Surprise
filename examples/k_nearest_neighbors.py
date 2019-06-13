@@ -32,7 +32,7 @@ def read_item_names():
 
 
 # First, train the algortihm to compute the similarities between items
-data = Dataset.load_builtin('ml-100k')
+data = Dataset.load_from_file('~/Documents/clients/pfizer/email_recommendation_system/surprise/ml-100k')
 trainset = data.build_full_trainset()
 sim_options = {'name': 'pearson_baseline', 'user_based': False}
 algo = KNNBaseline(sim_options=sim_options)
