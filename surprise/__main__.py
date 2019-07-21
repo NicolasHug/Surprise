@@ -22,6 +22,7 @@ from surprise.prediction_algorithms import SlopeOne
 from surprise.prediction_algorithms import CoClustering
 import surprise.dataset as dataset
 from surprise.dataset import Dataset
+from surprise.reader import Reader
 from surprise.builtin_datasets import get_dataset_dir
 from surprise.model_selection import cross_validate
 from surprise.model_selection import KFold
