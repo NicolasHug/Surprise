@@ -200,7 +200,7 @@ seed of the RNG at the beginning of your program:
 
     my_seed = 0
     random.seed(my_seed)
-    numpy.random.seed(my_seed)
+    np.random.seed(my_seed)
 
 .. _data_folder:
 
