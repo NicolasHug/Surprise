@@ -39,6 +39,9 @@ In the mean time, upload to conda:
 Then, maybe, celebrate.
 """
 
+from setuptools import dist  # Install numpy right now
+dist.Distribution().fetch_build_eggs(['numpy>=1.11.2'])
+
 try:
     import numpy as np
 except ImportError:
