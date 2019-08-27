@@ -41,6 +41,7 @@ Then, maybe, celebrate.
 
 from setuptools import dist  # Install numpy right now
 dist.Distribution().fetch_build_eggs(['numpy>=1.11.2'])
+dist.Distribution().fetch_build_eggs(['cython'])  # TODO remove this probably
 
 try:
     import numpy as np
