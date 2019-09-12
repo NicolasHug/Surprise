@@ -195,7 +195,7 @@ class AlgoBase(object):
         method_name = self.bsl_options.get('method', 'als')
 
         try:
-            if self.verbose:
+            if getattr(self, 'verbose', False):
                 print('Estimating biases using', method_name + '...')
             self.bu, self.bi = method[method_name](self)
             return self.bu, self.bi
@@ -243,10 +243,10 @@ class AlgoBase(object):
             args += [self.trainset.global_mean, bx, by, shrinkage]
 
         try:
-            if self.verbose:
+            if getattr(self, 'verbose', False):
                 print('Computing the {0} similarity matrix...'.format(name))
             sim = construction_func[name](*args)
-            if self.verbose:
+            if getattr(self, 'verbose', False):
                 print('Done computing similarity matrix.')
             return sim
         except KeyError:
