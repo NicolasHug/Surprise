@@ -14,6 +14,8 @@ from surprise import BaselineOnly
 from surprise import Dataset
 from surprise import Reader
 from surprise.builtin_datasets import get_dataset_dir
+from surprise.model_selection import PredefinedKFold
+from surprise.model_selection import KFold
 
 
 random.seed(1)
@@ -38,67 +40,6 @@ def test_build_full_trainset(toy_data):
     assert trainset.n_items == 2
 
 
-def test_no_call_to_split(toy_data):
-    """Ensure, as mentioned in the split() docstring, that even if split is not
-    called then the data is split with 5 folds after being shuffled."""
-
-    with pytest.warns(UserWarning):
-        assert len(list(toy_data.folds())) == 5
-
-    # make sure data has been shuffled. If not shuffled, the users in the
-    # testsets would be 0, 1, 2... 4 (in that order).
-    with pytest.warns(UserWarning):
-        users = [int(testset[0][0][-1])
-                 for (_, testset) in toy_data.folds()]
-    assert users != list(range(5))
-
-
-def test_split(toy_data):
-    """Test the split method."""
-
-    # Test the shuffle parameter
-    # Make sure data has not been shuffled. If not shuffled, the users in the
-    # testsets are 0, 1, 2... 4 (in that order).
-    with pytest.warns(UserWarning):
-        toy_data.split(n_folds=5, shuffle=False)
-        users = [int(testset[0][0][-1])
-                 for (_, testset) in toy_data.folds()]
-        assert users == list(range(5))
-
-    # Test the shuffle parameter
-    # Make sure that when called two times without shuffling, folds are the
-    # same.
-    with pytest.warns(UserWarning):
-        toy_data.split(n_folds=3, shuffle=False)
-        testsets_a = [testset for (_, testset) in toy_data.folds()]
-        toy_data.split(n_folds=3, shuffle=False)
-        testsets_b = [testset for (_, testset) in toy_data.folds()]
-        assert testsets_a == testsets_b
-
-    # We'll now shuffle b and check that folds are different.
-    with pytest.warns(UserWarning):
-        toy_data.split(n_folds=3, shuffle=True)
-        testsets_b = [testset for (_, testset) in toy_data.folds()]
-        assert testsets_a != testsets_b
-
-    # Ensure that folds are the same if split is not called again
-    with pytest.warns(UserWarning):
-        testsets_a = [testset for (_, testset) in toy_data.folds()]
-        testsets_b = [testset for (_, testset) in toy_data.folds()]
-        assert testsets_a == testsets_b
-
-    # Test n_folds parameter
-    with pytest.warns(UserWarning):
-        toy_data.split(5)
-        assert len(list(toy_data.folds())) == 5
-
-    with pytest.raises(ValueError):
-        toy_data.split(10)  # Too big (greater than number of ratings)
-
-    with pytest.raises(ValueError):
-        toy_data.split(1)  # Too low (must be >= 2)
-
-
 def test_trainset_testset(toy_data_reader):
     """Test the construct_trainset and construct_testset methods."""
 
@@ -109,8 +50,8 @@ def test_trainset_testset(toy_data_reader):
     data = Dataset.load_from_folds(folds_files=folds_files,
                                    reader=toy_data_reader)
 
-    with pytest.warns(UserWarning):
-        trainset, testset = next(data.folds())
+    pkf = PredefinedKFold()
+    trainset, testset = next(pkf.split(data))
 
     # test ur
     ur = trainset.ur
@@ -183,11 +124,6 @@ def test_load_form_df():
     reader = Reader(rating_scale=(1, 5))
     data = Dataset.load_from_df(df[['userID', 'itemID', 'rating']], reader)
 
-    # Assert split and folds can be used without problems
-    with pytest.warns(UserWarning):
-        data.split(2)
-        assert sum(1 for _ in data.folds()) == 2
-
     # assert users and items are correctly mapped
     trainset = data.build_full_trainset()
     assert trainset.knows_user(trainset.to_inner_uid(9))
@@ -221,9 +157,7 @@ def test_build_anti_testset():
 
     reader = Reader(rating_scale=(1, 5))
     data = Dataset.load_from_df(df[['userID', 'itemID', 'rating']], reader)
-    with pytest.warns(UserWarning):
-        data.split(2)
-        trainset, __testset = next(data.folds())
+    trainset, _ = next(KFold(n_splits=2).split(data))
     # fill with some specific value
     for fillvalue in (0, 42., -1):
         anti = trainset.build_anti_testset(fill=fillvalue)

@@ -21,7 +21,6 @@ Summary:
     Dataset.load_from_file
     Dataset.load_from_folds
     Dataset.folds
-    DatasetAutoFolds.split
 """
 
 
@@ -31,11 +30,8 @@ from collections import defaultdict
 import sys
 import os
 import itertools
-import random
-import warnings
 
 from six.moves import input
-from six.moves import range
 
 from .reader import Reader
 from .builtin_datasets import download_builtin_dataset
@@ -177,29 +173,6 @@ class Dataset:
                            itertools.islice(f, self.reader.skip_lines, None)]
         return raw_ratings
 
-    def folds(self):
-        """
-        Generator function to iterate over the folds of the Dataset.
-
-        .. warning::
-            Deprecated since version 1.05. Use :ref:`cross-validation iterators
-            <use_cross_validation_iterators>` instead. This method will be
-            removed in later versions.
-
-        Yields:
-            tuple: :class:`Trainset <surprise.Trainset>` and testset
-            of current fold.
-        """
-
-        warnings.warn('Using data.split() or using load_from_folds() '
-                      'without using a CV iterator is now deprecated. ',
-                      UserWarning)
-
-        for raw_trainset, raw_testset in self.raw_folds():
-            trainset = self.construct_trainset(raw_trainset)
-            testset = self.construct_testset(raw_testset)
-            yield trainset, testset
-
     def construct_trainset(self, raw_trainset):
 
         raw2inner_id_users = {}
@@ -265,12 +238,6 @@ class DatasetUserFolds(Dataset):
                 if not os.path.isfile(os.path.expanduser(f)):
                     raise ValueError('File ' + str(f) + ' does not exist.')
 
-    def raw_folds(self):
-        for train_file, test_file in self.folds_files:
-            raw_train_ratings = self.read_ratings(train_file)
-            raw_test_ratings = self.read_ratings(test_file)
-            yield raw_train_ratings, raw_test_ratings
-
 
 class DatasetAutoFolds(Dataset):
     """A derived class from :class:`Dataset` for which folds (for
@@ -305,56 +272,3 @@ class DatasetAutoFolds(Dataset):
         """
 
         return self.construct_trainset(self.raw_ratings)
-
-    def raw_folds(self):
-
-        if not self.has_been_split:
-            self.split()
-
-        def k_folds(seq, n_folds):
-            """Inspired from scikit learn KFold method."""
-
-            start, stop = 0, 0
-            for fold_i in range(n_folds):
-                start = stop
-                stop += len(seq) // n_folds
-                if fold_i < len(seq) % n_folds:
-                    stop += 1
-                yield seq[:start] + seq[stop:], seq[start:stop]
-
-        return k_folds(self.raw_ratings, self.n_folds)
-
-    def split(self, n_folds=5, shuffle=True):
-        """
-        Split the dataset into folds for future cross-validation.
-
-        .. warning::
-            Deprecated since version 1.05. Use :ref:`cross-validation iterators
-            <use_cross_validation_iterators>` instead. This method will be
-            removed in later versions.
-
-        If you forget to call :meth:`split`, the dataset will be automatically
-        shuffled and split for 5-fold cross-validation.
-
-        You can obtain repeatable splits over your all your experiments by
-        seeding the RNG: ::
-
-            import random
-            random.seed(my_seed)  # call this before you call split!
-
-        Args:
-            n_folds(:obj:`int`): The number of folds.
-            shuffle(:obj:`bool`): Whether to shuffle ratings before splitting.
-                If ``False``, folds will always be the same each time the
-                experiment is run. Default is ``True``.
-        """
-
-        if n_folds > len(self.raw_ratings) or n_folds < 2:
-            raise ValueError('Incorrect value for n_folds. Must be >=2 and '
-                             'less than the number or entries')
-
-        if shuffle:
-            random.shuffle(self.raw_ratings)
-
-        self.n_folds = n_folds
-        self.has_been_split = True

@@ -76,14 +76,6 @@ def test_KFold(toy_data):
     next(kf.split(toy_data))
     assert old_raw_ratings == toy_data.raw_ratings
 
-    # Make sure kf.split() and the old toy_data.split() have the same folds.
-    np.random.seed(3)
-    with pytest.warns(UserWarning):
-        toy_data.split(2, shuffle=True)
-        testsets_a = [testset for (_, testset) in toy_data.folds()]
-    kf = KFold(n_splits=2, random_state=3, shuffle=True)
-    testsets_b = [testset for (_, testset) in kf.split(toy_data)]
-
 
 def test_ShuffleSplit(toy_data):
 
@@ -304,11 +296,6 @@ def test_PredifinedKFold():
     trainset, testset = next(pkf.split(data))
     assert trainset.n_ratings == 6
     assert len(testset) == 3
-
-    # Make sure pkf returns the same folds as the deprecated data.folds()
-    with pytest.warns(UserWarning):
-        trainset_, testset_ = next(data.folds())
-    assert testset_ == testset
 
 
 def test_get_cv():
