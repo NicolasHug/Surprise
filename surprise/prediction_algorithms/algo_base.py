@@ -6,9 +6,6 @@ inherit.
 
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
-import warnings
-
-from six import get_unbound_function as guf
 
 from .. import similarities as sims
 from .predictions import PredictionImpossible
@@ -34,26 +31,6 @@ class AlgoBase(object):
         self.sim_options = kwargs.get('sim_options', {})
         if 'user_based' not in self.sim_options:
             self.sim_options['user_based'] = True
-        self.skip_train = False
-
-        if (guf(self.__class__.fit) is guf(AlgoBase.fit) and
-           guf(self.__class__.train) is not guf(AlgoBase.train)):
-            warnings.warn('It looks like this algorithm (' +
-                          str(self.__class__) +
-                          ') implements train() '
-                          'instead of fit(): train() is deprecated, '
-                          'please use fit() instead.', UserWarning)
-
-    def train(self, trainset):
-        '''Deprecated method: use :meth:`fit() <AlgoBase.fit>`
-        instead.'''
-
-        warnings.warn('train() is deprecated. Use fit() instead', UserWarning)
-
-        self.skip_train = True
-        self.fit(trainset)
-
-        return self
 
     def fit(self, trainset):
         """Train an algorithm on a given training set.
@@ -70,24 +47,6 @@ class AlgoBase(object):
         Returns:
             self
         """
-
-        # Check if train method is overridden: this means the object is an old
-        # style algo (new algo only have fit() so self.__class__.train will be
-        # AlgoBase.train). If true, there are 2 possible cases:
-        # - algo.fit() was called. In this case algo.train() was skipped which
-        #   is bad. We call it and skip this part next time we enter fit().
-        #   Then return immediatly because fit() has already been called by
-        #   AlgoBase.train() (which has been called by algo.train()).
-        # - algo.train() was called, which is the old way. In that case,
-        #   the skip flag will ignore this.
-        # This is fairly ugly and hacky but I did not find anything better so
-        # far, in order to maintain backward compatibility... See
-        # tests/test_train2fit.py for supported cases.
-        if (guf(self.__class__.train) is not guf(AlgoBase.train) and
-                not self.skip_train):
-            self.train(trainset)
-            return
-        self.skip_train = False
 
         self.trainset = trainset
 
