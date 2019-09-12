@@ -33,7 +33,7 @@ class BaselineOnly(AlgoBase):
     def fit(self, trainset):
 
         AlgoBase.fit(self, trainset)
-        self.bu, self.bi = self.compute_baselines(self.verbose)
+        self.bu, self.bi = self.compute_baselines()
 
         return self
 
