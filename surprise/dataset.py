@@ -20,7 +20,6 @@ Summary:
     Dataset.load_builtin
     Dataset.load_from_file
     Dataset.load_from_folds
-    Dataset.folds
 """
 
 

@@ -47,5 +47,4 @@ to contribute and send pull requests (see `GitHub page
    dataset
    trainset
    reader
-   evaluate
    dump
