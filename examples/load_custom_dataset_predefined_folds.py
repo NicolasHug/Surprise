@@ -28,7 +28,7 @@ train_file = files_dir + 'u%d.base'
 test_file = files_dir + 'u%d.test'
 folds_files = [(train_file % i, test_file % i) for i in (1, 2, 3, 4, 5)]
 
-data = Dataset.load_from_folds(folds_files, reader=reader, rating_scale=(1, 5))
+data = Dataset.load_from_folds(folds_files, reader=reader)
 pkf = PredefinedKFold()
 
 algo = SVD()

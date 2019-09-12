@@ -6,9 +6,6 @@ inherit.
 
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
-import warnings
-
-from six import get_unbound_function as guf
 
 from .. import similarities as sims
 from .predictions import PredictionImpossible
@@ -34,26 +31,6 @@ class AlgoBase(object):
         self.sim_options = kwargs.get('sim_options', {})
         if 'user_based' not in self.sim_options:
             self.sim_options['user_based'] = True
-        self.skip_train = False
-
-        if (guf(self.__class__.fit) is guf(AlgoBase.fit) and
-           guf(self.__class__.train) is not guf(AlgoBase.train)):
-            warnings.warn('It looks like this algorithm (' +
-                          str(self.__class__) +
-                          ') implements train() '
-                          'instead of fit(): train() is deprecated, '
-                          'please use fit() instead.', UserWarning)
-
-    def train(self, trainset):
-        '''Deprecated method: use :meth:`fit() <AlgoBase.fit>`
-        instead.'''
-
-        warnings.warn('train() is deprecated. Use fit() instead', UserWarning)
-
-        self.skip_train = True
-        self.fit(trainset)
-
-        return self
 
     def fit(self, trainset):
         """Train an algorithm on a given training set.
@@ -70,24 +47,6 @@ class AlgoBase(object):
         Returns:
             self
         """
-
-        # Check if train method is overridden: this means the object is an old
-        # style algo (new algo only have fit() so self.__class__.train will be
-        # AlgoBase.train). If true, there are 2 possible cases:
-        # - algo.fit() was called. In this case algo.train() was skipped which
-        #   is bad. We call it and skip this part next time we enter fit().
-        #   Then return immediatly because fit() has already been called by
-        #   AlgoBase.train() (which has been called by algo.train()).
-        # - algo.train() was called, which is the old way. In that case,
-        #   the skip flag will ignore this.
-        # This is fairly ugly and hacky but I did not find anything better so
-        # far, in order to maintain backward compatibility... See
-        # tests/test_train2fit.py for supported cases.
-        if (guf(self.__class__.train) is not guf(AlgoBase.train) and
-                not self.skip_train):
-            self.train(trainset)
-            return
-        self.skip_train = False
 
         self.trainset = trainset
 
@@ -110,11 +69,11 @@ class AlgoBase(object):
             iid: (Raw) id of the item. See :ref:`this note<raw_inner_note>`.
             r_ui(float): The true rating :math:`r_{ui}`. Optional, default is
                 ``None``.
-            clip(bool): Whether to clip the estimation into the rating scale,
-                that was set during dataset creation. For example, if
-                :math:`\\hat{r}_{ui}` is :math:`5.5` while the rating scale is
-                :math:`[1, 5]`, then :math:`\\hat{r}_{ui}` is set to :math:`5`.
-                Same goes if :math:`\\hat{r}_{ui} < 1`.  Default is ``True``.
+            clip(bool): Whether to clip the estimation into the rating scale.
+                For example, if :math:`\\hat{r}_{ui}` is :math:`5.5` while the
+                rating scale is :math:`[1, 5]`, then :math:`\\hat{r}_{ui}` is
+                set to :math:`5`. Same goes if :math:`\\hat{r}_{ui} < 1`.
+                Default is ``True``.
             verbose(bool): Whether to print details of the prediction.  Default
                 is False.
 
@@ -208,7 +167,7 @@ class AlgoBase(object):
                        for (uid, iid, r_ui_trans) in testset]
         return predictions
 
-    def compute_baselines(self, verbose=False):
+    def compute_baselines(self):
         """Compute users and items baselines.
 
         The way baselines are computed depends on the ``bsl_options`` parameter
@@ -219,10 +178,6 @@ class AlgoBase(object):
         baseline similarty<surprise.similarities.pearson_baseline>` or the
         :class:`BaselineOnly
         <surprise.prediction_algorithms.baseline_only.BaselineOnly>` algorithm.
-
-        Args:
-            verbose(bool) : if ``True``, print status message. Default is
-                ``False``.
 
         Returns:
             A tuple ``(bu, bi)``, which are users and items baselines."""
@@ -240,7 +195,7 @@ class AlgoBase(object):
         method_name = self.bsl_options.get('method', 'als')
 
         try:
-            if verbose:
+            if getattr(self, 'verbose', False):
                 print('Estimating biases using', method_name + '...')
             self.bu, self.bi = method[method_name](self)
             return self.bu, self.bi
@@ -249,7 +204,7 @@ class AlgoBase(object):
                              ' for baseline computation.' +
                              ' Available methods are als and sgd.')
 
-    def compute_similarities(self, verbose=False):
+    def compute_similarities(self):
         """Build the similarity matrix.
 
         The way the similarity matrix is computed depends on the
@@ -258,10 +213,6 @@ class AlgoBase(object):
 
         This method is only relevant for algorithms using a similarity measure,
         such as the :ref:`k-NN algorithms <pred_package_knn_inpired>`.
-
-        Args:
-            verbose(bool) : if ``True``, print status message. Default is
-                ``False``.
 
         Returns:
             The similarity matrix."""
@@ -292,10 +243,10 @@ class AlgoBase(object):
             args += [self.trainset.global_mean, bx, by, shrinkage]
 
         try:
-            if verbose:
+            if getattr(self, 'verbose', False):
                 print('Computing the {0} similarity matrix...'.format(name))
             sim = construction_func[name](*args)
-            if verbose:
+            if getattr(self, 'verbose', False):
                 print('Done computing similarity matrix.')
             return sim
         except KeyError:

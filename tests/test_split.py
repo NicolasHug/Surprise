@@ -76,14 +76,6 @@ def test_KFold(toy_data):
     next(kf.split(toy_data))
     assert old_raw_ratings == toy_data.raw_ratings
 
-    # Make sure kf.split() and the old toy_data.split() have the same folds.
-    np.random.seed(3)
-    with pytest.warns(UserWarning):
-        toy_data.split(2, shuffle=True)
-        testsets_a = [testset for (_, testset) in toy_data.folds()]
-    kf = KFold(n_splits=2, random_state=3, shuffle=True)
-    testsets_b = [testset for (_, testset) in kf.split(toy_data)]
-
 
 def test_ShuffleSplit(toy_data):
 
@@ -250,10 +242,10 @@ def test_LeaveOneOut(toy_data):
         next(loo.split(toy_data))  # each user only has 1 item so trainsets fail
 
     reader = Reader('ml-100k')
+
     data_path = (os.path.dirname(os.path.realpath(__file__)) +
                  '/u1_ml100k_test')
-    data = Dataset.load_from_file(file_path=data_path, reader=reader,
-                                  rating_scale=(1, 5))
+    data = Dataset.load_from_file(file_path=data_path, reader=reader)
 
     # Test random_state parameter
     # If random_state is None, you get different split each time (conditioned
@@ -288,25 +280,22 @@ def test_LeaveOneOut(toy_data):
         next(loo.split(data))
 
 
-def test_PredifinedKFold(toy_data_reader):
+def test_PredifinedKFold():
+
+    reader = Reader(line_format='user item rating', sep=' ', skip_lines=3,
+                    rating_scale=(1, 5))
 
     current_dir = os.path.dirname(os.path.realpath(__file__))
     folds_files = [(current_dir + '/custom_train',
                     current_dir + '/custom_test')]
 
-    data = Dataset.load_from_folds(folds_files=folds_files,
-                                   reader=toy_data_reader, rating_scale=(1, 5))
+    data = Dataset.load_from_folds(folds_files=folds_files, reader=reader)
 
     # Make sure rating files are read correctly
     pkf = PredefinedKFold()
     trainset, testset = next(pkf.split(data))
     assert trainset.n_ratings == 6
     assert len(testset) == 3
-
-    # Make sure pkf returns the same folds as the deprecated data.folds()
-    with pytest.warns(UserWarning):
-        trainset_, testset_ = next(data.folds())
-    assert testset_ == testset
 
 
 def test_get_cv():

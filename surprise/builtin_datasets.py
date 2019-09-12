@@ -28,34 +28,32 @@ def get_dataset_dir():
 # a builtin dataset has
 # - an url (where to download it)
 # - a path (where it is located on the filesystem)
-# - a rating scale
 # - the parameters of the corresponding reader
-BuiltinDataset = namedtuple('BuiltinDataset',
-                            ['url', 'path', 'rating_scale', 'reader_params'])
+BuiltinDataset = namedtuple('BuiltinDataset', ['url', 'path', 'reader_params'])
 
 BUILTIN_DATASETS = {
     'ml-100k':
         BuiltinDataset(
             url='http://files.grouplens.org/datasets/movielens/ml-100k.zip',
             path=join(get_dataset_dir(), 'ml-100k/ml-100k/u.data'),
-            rating_scale=(1, 5),
             reader_params=dict(line_format='user item rating timestamp',
+                               rating_scale=(1, 5),
                                sep='\t')
         ),
     'ml-1m':
         BuiltinDataset(
             url='http://files.grouplens.org/datasets/movielens/ml-1m.zip',
             path=join(get_dataset_dir(), 'ml-1m/ml-1m/ratings.dat'),
-            rating_scale=(1, 5),
             reader_params=dict(line_format='user item rating timestamp',
+                               rating_scale=(1, 5),
                                sep='::')
         ),
     'jester':
         BuiltinDataset(
             url='http://eigentaste.berkeley.edu/dataset/jester_dataset_2.zip',
             path=join(get_dataset_dir(), 'jester/jester_ratings.dat'),
-            rating_scale=(-10, 10),
-            reader_params=dict(line_format='user item rating')
+            reader_params=dict(line_format='user item rating',
+                               rating_scale=(-10, 10))
         )
 }
 

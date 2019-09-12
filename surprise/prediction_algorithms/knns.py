@@ -96,7 +96,7 @@ class KNNBasic(SymmetricAlgo):
     def fit(self, trainset):
 
         SymmetricAlgo.fit(self, trainset)
-        self.sim = self.compute_similarities(verbose=self.verbose)
+        self.sim = self.compute_similarities()
 
         return self
 
@@ -175,7 +175,7 @@ class KNNWithMeans(SymmetricAlgo):
     def fit(self, trainset):
 
         SymmetricAlgo.fit(self, trainset)
-        self.sim = self.compute_similarities(verbose=self.verbose)
+        self.sim = self.compute_similarities()
 
         self.means = np.zeros(self.n_x)
         for x, ratings in iteritems(self.xr):
@@ -276,9 +276,9 @@ class KNNBaseline(SymmetricAlgo):
     def fit(self, trainset):
 
         SymmetricAlgo.fit(self, trainset)
-        self.bu, self.bi = self.compute_baselines(verbose=self.verbose)
+        self.bu, self.bi = self.compute_baselines()
         self.bx, self.by = self.switch(self.bu, self.bi)
-        self.sim = self.compute_similarities(verbose=self.verbose)
+        self.sim = self.compute_similarities()
 
         return self
 
@@ -380,7 +380,7 @@ class KNNWithZScore(SymmetricAlgo):
             sigma = np.std([r for (_, r) in ratings])
             self.sigmas[x] = self.overall_sigma if sigma == 0.0 else sigma
 
-        self.sim = self.compute_similarities(verbose=self.verbose)
+        self.sim = self.compute_similarities()
 
         return self
 

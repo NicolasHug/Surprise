@@ -1,7 +1,28 @@
-Latest version, in development
-==============================
+VERSION 1.0.7
+=============
 
-Todo :)
+Date: TODO
+
+1.0.7 will be the last stable version. Next versions will only provide
+bug-fixes, but no new features. (And probably not support Python 2 at all).
+
+Enhancements
+------------
+
+* The prompt confirmation can now be disabled when downloading a dataset.
+* The MSE metric has been added.
+
+Bug Fixes
+---------
+
+* Fixed a bug where msd and peasron would not properly set the similarity to
+  zero when ``min_support`` wasn't reached.
+
+API Changes
+-----------
+
+* Tools that were deprecated before (data.split(), GridSearch, evaluate) are
+  now removed.
 
 VERSION 1.0.6
 =============

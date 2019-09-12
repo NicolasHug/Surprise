@@ -76,8 +76,7 @@ def test_gridsearchcv_same_splits():
     should be enough)."""
 
     data_file = os.path.join(os.path.dirname(__file__), './u1_ml100k_test')
-    data = Dataset.load_from_file(data_file, reader=Reader('ml-100k'),
-                                  rating_scale=(1, 5))
+    data = Dataset.load_from_file(data_file, reader=Reader('ml-100k'))
     kf = KFold(3, shuffle=True, random_state=4)
 
     # all RMSE should be the same (as param combinations are the same)
@@ -102,7 +101,7 @@ def test_gridsearchcv_cv_results():
     """Test the cv_results attribute"""
 
     f = os.path.join(os.path.dirname(__file__), './u1_ml100k_test')
-    data = Dataset.load_from_file(f, Reader('ml-100k'), rating_scale=(1, 5))
+    data = Dataset.load_from_file(f, Reader('ml-100k'))
     kf = KFold(3, shuffle=True, random_state=4)
     param_grid = {'n_epochs': [5], 'lr_all': [.2, .2],
                   'reg_all': [.4, .4], 'n_factors': [5], 'random_state': [0]}
@@ -158,8 +157,7 @@ def test_gridsearchcv_refit(u1_ml100k):
     """Test refit function of GridSearchCV."""
 
     data_file = os.path.join(os.path.dirname(__file__), './u1_ml100k_test')
-    data = Dataset.load_from_file(data_file, Reader('ml-100k'),
-                                  rating_scale=(1, 5))
+    data = Dataset.load_from_file(data_file, Reader('ml-100k'))
 
     param_grid = {'n_epochs': [5], 'lr_all': [0.002, 0.005],
                   'reg_all': [0.4, 0.6], 'n_factors': [2]}
@@ -256,8 +254,7 @@ def test_randomizedsearchcv_same_splits():
     should be enough). We use as much parallelism as possible."""
 
     data_file = os.path.join(os.path.dirname(__file__), './u1_ml100k_test')
-    data = Dataset.load_from_file(data_file, reader=Reader('ml-100k'),
-                                  rating_scale=(1, 5))
+    data = Dataset.load_from_file(data_file, reader=Reader('ml-100k'))
     kf = KFold(3, shuffle=True, random_state=4)
 
     # all RMSE should be the same (as param combinations are the same)
@@ -283,7 +280,7 @@ def test_randomizedsearchcv_cv_results():
     """Test the cv_results attribute"""
 
     f = os.path.join(os.path.dirname(__file__), './u1_ml100k_test')
-    data = Dataset.load_from_file(f, Reader('ml-100k'), rating_scale=(1, 5))
+    data = Dataset.load_from_file(f, Reader('ml-100k'))
     kf = KFold(3, shuffle=True, random_state=4)
     param_distributions = {'n_epochs': [5], 'lr_all': uniform(.2, .3),
                            'reg_all': uniform(.4, .3), 'n_factors': [5],
@@ -342,8 +339,7 @@ def test_randomizedsearchcv_refit(u1_ml100k):
     """Test refit method of RandomizedSearchCV class."""
 
     data_file = os.path.join(os.path.dirname(__file__), './u1_ml100k_test')
-    data = Dataset.load_from_file(data_file, Reader('ml-100k'),
-                                  rating_scale=(1, 5))
+    data = Dataset.load_from_file(data_file, Reader('ml-100k'))
 
     param_distributions = {'n_epochs': [5], 'lr_all': uniform(0.002, 0.003),
                            'reg_all': uniform(0.4, 0.2), 'n_factors': [2]}

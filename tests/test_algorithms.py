@@ -6,7 +6,6 @@ from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 import os
 
-import pytest
 from six import iteritems
 
 from surprise import NormalPredictor
@@ -48,8 +47,6 @@ def test_unknown_user_or_item(toy_data):
     for klass in klasses:
         algo = klass()
         algo.fit(trainset).test(testset)
-        with pytest.warns(UserWarning):
-            algo.train(trainset).test(testset)
 
 
 def test_knns(u1_ml100k, pkf):
@@ -74,10 +71,11 @@ def test_nearest_neighbors():
     """Ensure the nearest neighbors are different when using user-user
     similarity vs item-item."""
 
-    reader = Reader(line_format='user item rating', sep=' ', skip_lines=3)
+    reader = Reader(line_format='user item rating', sep=' ', skip_lines=3,
+                    rating_scale=(1, 5))
 
     data_file = os.path.dirname(os.path.realpath(__file__)) + '/custom_train'
-    data = Dataset.load_from_file(data_file, reader, rating_scale=(1, 5))
+    data = Dataset.load_from_file(data_file, reader)
     trainset = data.build_full_trainset()
 
     algo_ub = KNNBasic(sim_options={'user_based': True})
