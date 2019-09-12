@@ -6,7 +6,7 @@ from math import sqrt
 
 import pytest
 
-from surprise.accuracy import mae, rmse, fcp
+from surprise.accuracy import mae, rmse, fcp, mse
 
 
 def pred(true_r, est, u0=None):
@@ -67,3 +67,19 @@ def test_fcp():
 
     with pytest.raises(ValueError):
         fcp([])
+
+
+def test_mse():
+    """Tests for the MSE function."""
+
+    predictions = [pred(0, 0), pred(1, 1), pred(2, 2), pred(100, 100)]
+    assert mse(predictions) == 0
+
+    predictions = [pred(0, 0), pred(0, 2)]
+    assert mse(predictions) == ((0 - 2) ** 2) / 2
+
+    predictions = [pred(2, 0), pred(3, 4)]
+    assert mse(predictions) == ((2 - 0) ** 2 + (3 - 4) ** 2) / 2
+
+    with pytest.raises(ValueError):
+        mse([])
