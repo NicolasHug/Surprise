@@ -1,8 +1,10 @@
 Contributing to Surprise
 ========================
 
-Pull requests are always welcome! Before submitting a new pull request, please
-make sure that:
+Disclamer: please note that starting from version 1.0.7, only bugfixes and
+documentation improvements are considered. We will not accept new features.
+
+Before submitting a new pull request, please make sure that:
 
 * Your code is [clean](https://www.youtube.com/watch?v=wf-BqAjZb8M),
   [pythonic](https://www.youtube.com/watch?v=OSGv2VnC0go), well commented and
