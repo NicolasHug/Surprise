@@ -1,10 +1,11 @@
-VERSION 1.0.7
+VERSION 1.1.0
 =============
 
 Date: TODO
 
-1.0.7 will be the last stable version. Next versions will only provide
-bug-fixes, but no new features. (And probably not support Python 2 at all).
+1.1.0 will be the last stable version with new features. Next versions will
+only provide bug-fixes, but no new features. (And probably not support
+Python 2 at all).
 
 Enhancements
 ------------

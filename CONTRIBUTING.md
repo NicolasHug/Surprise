@@ -1,7 +1,7 @@
 Contributing to Surprise
 ========================
 
-Disclamer: please note that starting from version 1.0.7, only bugfixes and
+Disclamer: please note that starting from version 1.1.0, only bugfixes and
 documentation improvements are considered. We will not accept new features.
 
 Before submitting a new pull request, please make sure that:

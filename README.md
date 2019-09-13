@@ -201,7 +201,7 @@ Thanks a lot :) !
 Development Status
 ------------------
 
-Starting from version 1.0.7 (September 19), we will only maintain the
+Starting from version 1.1.0 (September 19), we will only maintain the
 package and provide bugfixes. No new features will be considered.
 
 For bugs, issues or questions about [Surprise](http://surpriselib.com),

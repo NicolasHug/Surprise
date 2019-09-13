@@ -55,7 +55,7 @@ except ImportError:
 else:
     USE_CYTHON = True
 
-__version__ = '1.0.6'
+__version__ = '1.1rc0'
 
 here = path.abspath(path.dirname(__file__))
 
