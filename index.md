@@ -9,8 +9,8 @@ Overview
 --------
 
 [Surprise](http://surpriselib.com) is a Python
-[scikit](https://www.scipy.org/scikits.html) building and analyzing recommender
-systems.
+[scikit](https://www.scipy.org/scikits.html) building and analyzing
+recommender systems that deal with explicit rating data.
 
 [Surprise](http://surpriselib.com) **was designed with the
 following purposes in mind**:
@@ -58,6 +58,9 @@ following purposes in mind**:
 The name *SurPRISE* (roughly :) ) stands for Simple Python RecommendatIon
 System Engine.
 
+Please note that surprise does not support implicit ratings or content-based
+information.
+
 
 Getting started, example
 ------------------------
@@ -86,13 +89,13 @@ cross_validate(algo, data, measures=['RMSE', 'MAE'], cv=5, verbose=True)
 **Output**:
 
 ```
-Evaluating RMSE, MAE of algorithm SVD on 5 split(s).                       
-                                                                           
-            Fold 1  Fold 2  Fold 3  Fold 4  Fold 5  Mean    Std            
-RMSE        0.9311  0.9370  0.9320  0.9317  0.9391  0.9342  0.0032         
-MAE         0.7350  0.7375  0.7341  0.7342  0.7375  0.7357  0.0015         
-Fit time    6.53    7.11    7.23    7.15    3.99    6.40    1.23           
-Test time   0.26    0.26    0.25    0.15    0.13    0.21    0.06 
+Evaluating RMSE, MAE of algorithm SVD on 5 split(s).
+
+            Fold 1  Fold 2  Fold 3  Fold 4  Fold 5  Mean    Std
+RMSE        0.9311  0.9370  0.9320  0.9317  0.9391  0.9342  0.0032
+MAE         0.7350  0.7375  0.7341  0.7342  0.7375  0.7357  0.0015
+Fit time    6.53    7.11    7.23    7.15    3.99    6.40    1.23
+Test time   0.26    0.26    0.25    0.15    0.13    0.21    0.06
 ```
 
 [Surprise](http://surpriselib.com) can do **much** more (e.g,
@@ -186,26 +189,20 @@ Contributors
 
 The following persons have contributed to [Surprise](http://surpriselib.com):
 
-Олег Демиденко, Charles-Emmanuel Dias, dmamylin, franckjay, Lukas Galke,
-Pierre-François Gimenez, Nicolas Hug, Hengji Liu,  Maher Malaeb, Manoj K,
-Naturale0, nju-luke, Skywhat, David Stevens, Mike Lee Williams, Chenchen Xu,
-YaoZh1918.
+caoyi, Олег Демиденко, Charles-Emmanuel Dias, dmamylin, Lauriane Ducasse,
+Marc Feger, franckjay, Lukas Galke, Pierre-François Gimenez, Zachary
+Glassman, Nicolas Hug, Janniks, Doruk Kilitcioglu, Ravi Raju Krishna, Hengji
+Liu, Maher Malaeb, Manoj K, Naturale0, nju-luke, Jay Qi, Skywhat, David
+Stevens, Victor Wang, Mike Lee Williams, Jay Wong, Chenchen Xu, YaoZh1918.
 
 Thanks a lot :) !
 
-Contributing, feedback, contact
--------------------------------
+Development Status
+------------------
 
-Any kind of feedback/criticism would be greatly appreciated (software design,
-documentation, improvement ideas, spelling mistakes, etc...).
+Starting from version 1.1.0 (September 19), we will only maintain the
+package and provide bugfixes. No new features will be considered.
 
-If you'd like to see some features or algorithms implemented in
-[Surprise](http://surpriselib.com), please let us know!
-
-Please feel free to contribute (see
-[guidelines](https://github.com/NicolasHug/Surprise/blob/master/CONTRIBUTING.md))
-and send pull requests!
-
-For bugs, issues or questions about [Surprise](http://surpriselib.com), you can
-use the GitHub [project page](https://github.com/NicolasHug/Surprise) (please
-don't send me emails as there would be no record for other users).
+For bugs, issues or questions about [Surprise](http://surpriselib.com),
+please use the GitHub [project page](https://github.com/NicolasHug/Surprise).
+Please don't send emails (we will not answer).
