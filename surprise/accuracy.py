@@ -59,7 +59,7 @@ def mse(predictions, verbose=True):
     """Compute MSE (Mean Squared Error).
 
     .. math::
-        \\text{RMSE} = \\frac{1}{|\\hat{R}|} \\sum_{\\hat{r}_{ui} \in
+        \\text{MSE} = \\frac{1}{|\\hat{R}|} \\sum_{\\hat{r}_{ui} \in
         \\hat{R}}(r_{ui} - \\hat{r}_{ui})^2.
 
     Args:
