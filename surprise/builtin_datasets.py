@@ -1,5 +1,5 @@
-'''This module contains built-in datasets that can be automatically
-downloaded.'''
+"""This module contains built-in datasets that can be automatically
+downloaded."""
 
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
@@ -12,10 +12,10 @@ from os.path import join
 
 
 def get_dataset_dir():
-    '''Return folder where downloaded datasets and other data are stored.
+    """Return folder where downloaded datasets and other data are stored.
     Default folder is ~/.surprise_data/, but it can also be set by the
     environment variable ``SURPRISE_DATA_FOLDER``.
-    '''
+    """
 
     folder = os.environ.get('SURPRISE_DATA_FOLDER', os.path.expanduser('~') +
                             '/.surprise_data/')

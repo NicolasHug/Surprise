@@ -1,5 +1,7 @@
-'''The validation module contains the cross_validate function, inspired from
-the mighty scikit learn.'''
+"""
+The validation module contains the cross_validate function, inspired from 
+the mighty scikit learn.
+"""
 
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
@@ -17,7 +19,7 @@ from .. import accuracy
 def cross_validate(algo, data, measures=['rmse', 'mae'], cv=None,
                    return_train_measures=False, n_jobs=1,
                    pre_dispatch='2*n_jobs', verbose=False):
-    '''
+    """
     Run a cross validation procedure for a given algorithm, reporting accuracy
     measures and computation times.
 
@@ -89,7 +91,7 @@ def cross_validate(algo, data, measures=['rmse', 'mae'], cv=None,
             - ``'test_time'``: numpy array with the testing time in seconds for
               each split.
 
-    '''
+    """
 
     measures = [m.lower() for m in measures]
 
@@ -130,7 +132,7 @@ def cross_validate(algo, data, measures=['rmse', 'mae'], cv=None,
 
 def fit_and_score(algo, trainset, testset, measures,
                   return_train_measures=False):
-    '''Helper method that trains an algorithm and compute accuracy measures on
+    """Helper method that trains an algorithm and compute accuracy measures on
     a testset. Also report train and test times.
 
     Args:
@@ -158,7 +160,7 @@ def fit_and_score(algo, trainset, testset, measures,
             - The fit time in seconds.
 
             - The testing time in seconds.
-    '''
+    """
 
     start_fit = time.time()
     algo.fit(trainset)
@@ -183,7 +185,7 @@ def fit_and_score(algo, trainset, testset, measures,
 
 def print_summary(algo, measures, test_measures, train_measures, fit_times,
                   test_times, n_splits):
-    '''Helper for printing the result of cross_validate.'''
+    """Helper for printing the result of cross_validate."""
 
     print('Evaluating {0} of algorithm {1} on {2} split(s).'.format(
           ', '.join((m.upper() for m in measures)),

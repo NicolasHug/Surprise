@@ -1,4 +1,5 @@
 """
+This class implements the baseline estimation.
 """
 
 from __future__ import (absolute_import, division, print_function,

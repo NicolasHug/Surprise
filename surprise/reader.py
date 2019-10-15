@@ -1,4 +1,4 @@
-'''This module contains the Reader class.'''
+"""This module contains the Reader class."""
 
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
@@ -74,7 +74,7 @@ class Reader():
                             entities]
 
     def parse_line(self, line):
-        '''Parse a line.
+        """Parse a line.
 
         Ratings are translated so that they are all strictly positive.
 
@@ -84,7 +84,7 @@ class Reader():
         Returns:
             tuple: User id, item id, rating and timestamp. The timestamp is set
             to ``None`` if it does no exist.
-            '''
+            """
 
         line = line.split(self.sep)
         try:
