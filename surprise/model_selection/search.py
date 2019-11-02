@@ -148,7 +148,7 @@ class BaseSearchCV(with_metaclass(ABCMeta)):
                 len(indices)) + 1  # sklearn starts rankings at 1 as well.
 
             # set best_index, and best_xxxx attributes
-            if m in ('mae', 'rmse'):
+            if m in ('mae', 'rmse', 'mse'):
                 best_index[m] = mean_test_measures.argmin()
             elif m in ('fcp',):
                 best_index[m] = mean_test_measures.argmax()
