@@ -321,7 +321,7 @@ class KNNBaseline(SymmetricAlgo):
 
 class KNNWithZScore(SymmetricAlgo):
     """A basic collaborative filtering algorithm, taking into account
-        the z-score normalization of each user.
+    the z-score normalization of each user.
 
     The prediction :math:`\\hat{r}_{ui}` is set as:
 
