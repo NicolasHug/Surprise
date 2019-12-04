@@ -285,3 +285,37 @@ class AlgoBase(object):
         k_nearest_neighbors = [j for (j, _) in others[:k]]
 
         return k_nearest_neighbors
+
+    def rank(self, uid, n=10, iid_list=None, remove_rated=True):
+        """Build a recommendation rank for a given user.
+        
+        Args:
+            uid: (Raw) id of the user. See :ref:`this note<raw_inner_note>`.
+            n(int): The desired number of recommendations.
+            iid_list(list): A list containing the (Raw) iids to be considered when
+                ranking. If None, consider all items.
+            remove_rated(bool): If True items already rated by the user wont be 
+                part of the ranking.
+                
+        Returns:
+            A list containing tuples: the (Raw) ids of the predicted item, its 
+                estimated rating and uncertainty std. The list is in decreasing 
+                order of preference.
+        """
+        if iid_list:
+            item_set = [self.trainset.to_inner_iid(i) for i in iid_list]
+        else:
+            item_set = self.trainset.all_items()
+            
+        if remove_rated:
+            item_set = [i for i in item_set if i not in 
+                        [i[0] for i in self.trainset.ur[0]]]
+        
+        iuid = self.trainset.to_inner_uid(uid)
+        preds = [[iiid, self.estimate(iuid, iiid)] for iiid in item_set]
+        est = [i[1] for i in preds]
+        sort_idx = sorted(range(len(est)), key=est.__getitem__, reverse=True)
+        rank = [[self.trainset.to_raw_iid(preds[i][0]), preds[i][1]] for i in 
+                sort_idx[:n]]
+        
+        return rank
