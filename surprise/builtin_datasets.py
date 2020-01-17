@@ -50,7 +50,7 @@ BUILTIN_DATASETS = {
         ),
     'jester':
         BuiltinDataset(
-            url='http://eigentaste.berkeley.edu/dataset/jester_dataset_2.zip',
+            url='http://eigentaste.berkeley.edu/dataset/archive/jester_dataset_2.zip',
             path=join(get_dataset_dir(), 'jester/jester_ratings.dat'),
             reader_params=dict(line_format='user item rating',
                                rating_scale=(-10, 10))
