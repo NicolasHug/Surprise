@@ -32,7 +32,7 @@ class MyOwnAlgorithm(AlgoBase):
     def estimate(self, u, i):
 
         if not (self.trainset.knows_user(u) and self.trainset.knows_item(i)):
-            raise PredictionImpossible('User and/or item is unkown.')
+            raise PredictionImpossible('User and/or item is unknown.')
 
         # Compute similarities between u and v, where v describes all other
         # users that have also rated item i.

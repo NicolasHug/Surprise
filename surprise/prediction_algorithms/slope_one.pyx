@@ -82,7 +82,7 @@ class SlopeOne(AlgoBase):
     def estimate(self, u, i):
 
         if not (self.trainset.knows_user(u) and self.trainset.knows_item(i)):
-            raise PredictionImpossible('User and/or item is unkown.')
+            raise PredictionImpossible('User and/or item is unknown.')
 
         # Ri: relevant items for i. This is the set of items j rated by u that
         # also have common users with i (i.e. at least one user has rated both

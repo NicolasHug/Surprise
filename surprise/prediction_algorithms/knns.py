@@ -103,7 +103,7 @@ class KNNBasic(SymmetricAlgo):
     def estimate(self, u, i):
 
         if not (self.trainset.knows_user(u) and self.trainset.knows_item(i)):
-            raise PredictionImpossible('User and/or item is unkown.')
+            raise PredictionImpossible('User and/or item is unknown.')
 
         x, y = self.switch(u, i)
 
@@ -186,7 +186,7 @@ class KNNWithMeans(SymmetricAlgo):
     def estimate(self, u, i):
 
         if not (self.trainset.knows_user(u) and self.trainset.knows_item(i)):
-            raise PredictionImpossible('User and/or item is unkown.')
+            raise PredictionImpossible('User and/or item is unknown.')
 
         x, y = self.switch(u, i)
 
@@ -387,7 +387,7 @@ class KNNWithZScore(SymmetricAlgo):
     def estimate(self, u, i):
 
         if not (self.trainset.knows_user(u) and self.trainset.knows_item(i)):
-            raise PredictionImpossible('User and/or item is unkown.')
+            raise PredictionImpossible('User and/or item is unknown.')
 
         x, y = self.switch(u, i)
 

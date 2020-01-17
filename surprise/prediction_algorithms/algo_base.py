@@ -61,7 +61,8 @@ class AlgoBase(object):
         The ``predict`` method converts raw ids to inner ids and then calls the
         ``estimate`` method which is defined in every derived class. If the
         prediction is impossible (e.g. because the user and/or the item is
-        unkown), the prediction is set according to :meth:`default_prediction()
+        unknown), the prediction is set according to
+        :meth:`default_prediction()
         <surprise.prediction_algorithms.algo_base.AlgoBase.default_prediction>`.
 
         Args:

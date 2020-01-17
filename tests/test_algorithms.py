@@ -39,8 +39,8 @@ def test_unknown_user_or_item(toy_data):
         algo = klass()
         algo.fit(trainset)
         algo.predict('user0', 'unknown_item', None)
-        algo.predict('unkown_user', 'item0', None)
-        algo.predict('unkown_user', 'unknown_item', None)
+        algo.predict('unknown_user', 'item0', None)
+        algo.predict('unknown_user', 'unknown_item', None)
 
     # unrelated, but test the fit().test() one-liner:
     trainset, testset = train_test_split(toy_data, test_size=2)

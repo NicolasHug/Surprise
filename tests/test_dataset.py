@@ -75,12 +75,12 @@ def test_trainset_testset(toy_data_reader):
     for i in range(4):
         assert trainset.to_inner_uid('user' + str(i)) == i
     with pytest.raises(ValueError):
-        trainset.to_inner_uid('unkown_user')
+        trainset.to_inner_uid('unknown_user')
 
     for i in range(2):
         assert trainset.to_inner_iid('item' + str(i)) == i
     with pytest.raises(ValueError):
-        trainset.to_inner_iid('unkown_item')
+        trainset.to_inner_iid('unknown_item')
 
     # test inner2raw
     assert trainset._inner2raw_id_users is None
