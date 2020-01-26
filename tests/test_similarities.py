@@ -33,7 +33,7 @@ def test_cosine_sim():
 
     sim = sims.cosine(n_x, yr, min_support=1)
 
-    # check symetry and bounds (as ratings are > 0, cosine sim must be >= 0)
+    # check symmetry and bounds (as ratings are > 0, cosine sim must be >= 0)
     for xi in range(n_x):
         assert sim[xi, xi] == 1
         for xj in range(n_x):
@@ -81,7 +81,7 @@ def test_msd_sim():
 
     sim = sims.msd(n_x, yr, min_support=1)
 
-    # check symetry and bounds. MSD sim must be in [0, 1]
+    # check symmetry and bounds. MSD sim must be in [0, 1]
     for xi in range(n_x):
         assert sim[xi, xi] == 1
         for xj in range(n_x):
@@ -120,7 +120,7 @@ def test_pearson_sim():
         random.shuffle(ratings)
 
     sim = sims.pearson(n_x, yr, min_support=1)
-    # check symetry and bounds. -1 <= pearson coeff <= 1
+    # check symmetry and bounds. -1 <= pearson coeff <= 1
     for xi in range(n_x):
         assert sim[xi, xi] == 1
         for xj in range(n_x):
@@ -182,7 +182,7 @@ def test_pearson_baseline_sim():
     x_biases = np.random.normal(0, 1, n_x)  # fake
     y_biases = np.random.normal(0, 1, 5)  # fake (there are 5 ys)
     sim = sims.pearson_baseline(n_x, yr, 1, global_mean, x_biases, y_biases)
-    # check symetry and bounds. -1 <= pearson coeff <= 1
+    # check symmetry and bounds. -1 <= pearson coeff <= 1
     for xi in range(n_x):
         assert sim[xi, xi] == 1
         for xj in range(n_x):
