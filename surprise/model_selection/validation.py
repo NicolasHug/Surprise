@@ -138,7 +138,7 @@ def fit_and_score(algo, trainset, testset, measures,
             <surprise.prediction_algorithms.algo_base.AlgoBase>`):
             The algorithm to use.
         trainset(:obj:`Trainset <surprise.trainset.Trainset>`): The trainset.
-        trainset(:obj:`testset`): The testset.
+        testset(:obj:`testset`): The testset.
         measures(list of string): The performance measures to compute. Allowed
             names are function names as defined in the :mod:`accuracy
             <surprise.accuracy>` module.
