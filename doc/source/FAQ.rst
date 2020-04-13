@@ -35,7 +35,8 @@ than a given threshold.  An item is considered recommended if its estimated
 rating :math:`\hat{r}_{ui}` is greater than the threshold, and if it is among
 the k highest estimated ratings.
 
-Note that in the edge cases where division by zero occurs, Precision@k and Recall@k values are undefined. 
+Note that in the edge cases where division by zero occurs, 
+Precision@k and Recall@k values are undefined. 
 As a convention, we set their values to 0 in such cases. 
 
 .. literalinclude:: ../../examples/precision_recall_at_k.py
