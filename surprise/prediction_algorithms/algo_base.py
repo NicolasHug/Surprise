@@ -85,7 +85,7 @@ class AlgoBase(object):
 
             - The (raw) user id ``uid``.
             - The (raw) item id ``iid``.
-            - The true rating ``r_ui`` (:math:`\\hat{r}_{ui}`).
+            - The true rating ``r_ui`` (:math:`r_{ui}`).
             - The estimated rating (:math:`\\hat{r}_{ui}`).
             - Some additional details about the prediction that might be useful
               for later analysis.
