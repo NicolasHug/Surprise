@@ -10,7 +10,7 @@ Overview
 --------
 
 [Surprise](http://surpriselib.com) is a Python
-[scikit](https://www.scipy.org/scikits.html) package for building and analyzing
+[scikit](https://www.scipy.org/scikits.html) for building and analyzing
 recommender systems that deal with explicit rating data.
 
 [Surprise](http://surpriselib.com) **was designed with the
