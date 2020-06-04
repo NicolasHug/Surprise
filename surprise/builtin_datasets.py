@@ -4,11 +4,13 @@ downloaded.'''
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 
-from six.moves.urllib.request import urlretrieve
 import zipfile
-from collections import namedtuple
 import os
+import errno
+
 from os.path import join
+from collections import namedtuple
+from six.moves.urllib.request import urlretrieve
 
 
 def get_dataset_dir():
@@ -19,8 +21,12 @@ def get_dataset_dir():
 
     folder = os.environ.get('SURPRISE_DATA_FOLDER', os.path.expanduser('~') +
                             '/.surprise_data/')
-    if not os.path.exists(folder):
+    try:
         os.makedirs(folder)
+    except OSError as e:
+        if e.errno != errno.EEXIST:
+            # reraise exception if folder exists and creation failed.
+            raise
 
     return folder
 
