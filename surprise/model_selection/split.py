@@ -86,7 +86,7 @@ class KFold():
 
         Args:
             data(:obj:`Dataset<surprise.dataset.Dataset>`): The data containing
-                ratings that will be devided into trainsets and testsets.
+                ratings that will be divided into trainsets and testsets.
 
         Yields:
             tuple of (trainset, testset)
@@ -159,7 +159,7 @@ class RepeatedKFold():
 
         Args:
             data(:obj:`Dataset<surprise.dataset.Dataset>`): The data containing
-                ratings that will be devided into trainsets and testsets.
+                ratings that will be divided into trainsets and testsets.
 
         Yields:
             tuple of (trainset, testset)
@@ -266,7 +266,7 @@ class ShuffleSplit():
 
         Args:
             data(:obj:`Dataset<surprise.dataset.Dataset>`): The data containing
-                ratings that will be devided into trainsets and testsets.
+                ratings that will be divided into trainsets and testsets.
 
         Yields:
             tuple of (trainset, testset)
@@ -372,7 +372,7 @@ class LeaveOneOut():
 
         Args:
             data(:obj:`Dataset<surprise.dataset.Dataset>`): The data containing
-                ratings that will be devided into trainsets and testsets.
+                ratings that will be divided into trainsets and testsets.
 
         Yields:
             tuple of (trainset, testset)
@@ -422,7 +422,7 @@ class PredefinedKFold():
 
         Args:
             data(:obj:`Dataset<surprise.dataset.Dataset>`): The data containing
-                ratings that will be devided into trainsets and testsets.
+                ratings that will be divided into trainsets and testsets.
 
         Yields:
             tuple of (trainset, testset)
