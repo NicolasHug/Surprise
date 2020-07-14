@@ -25,7 +25,7 @@ def get_dataset_dir():
         os.makedirs(folder)
     except OSError as e:
         if e.errno != errno.EEXIST:
-            # reraise exception if folder exists and creation failed.
+            # reraise exception if folder does not exist and creation failed.
             raise
 
     return folder
