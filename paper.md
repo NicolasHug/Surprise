@@ -18,9 +18,9 @@ bibliography: paper.bib
 # Summary
 
 Recommender systems aim at providing users with a list of recommendations of
-items that a system offers. For example, a video streaming service will
+items that a service offers. For example, a video streaming service will
 typically rely on a recommender system to propose a personalized list of
-films or series to each of its users. A typical problem in recommendation is
+movies or series to each of its users. A typical problem in recommendation is
 that of *rating prediction*: given an incomplete dataset of user-item
 interations which take the form of numerical ratings (e.g. on a scale from 1
 to 5), the goal is to predict the missing ratings for all remaining user-item
