@@ -10,7 +10,7 @@ Overview
 --------
 
 [Surprise](http://surpriselib.com) is a Python
-[scikit](https://www.scipy.org/scikits.html) building and analyzing
+[scikit](https://www.scipy.org/scikits.html) for building and analyzing
 recommender systems that deal with explicit rating data.
 
 [Surprise](http://surpriselib.com) **was designed with the
@@ -49,15 +49,15 @@ following purposes in mind**:
   [analyse](http://nbviewer.jupyter.org/github/NicolasHug/Surprise/tree/master/examples/notebooks/KNNBasic_analysis.ipynb/)
   and
   [compare](http://nbviewer.jupyter.org/github/NicolasHug/Surprise/blob/master/examples/notebooks/Compare.ipynb)
-  the algorithms performance. Cross-validation procedures can be run very
+  the algorithms' performance. Cross-validation procedures can be run very
   easily using powerful CV iterators (inspired by
   [scikit-learn](http://scikit-learn.org/) excellent tools), as well as
   [exhaustive search over a set of
   parameters](http://surprise.readthedocs.io/en/stable/getting_started.html#tune-algorithm-parameters-with-gridsearchcv).
 
 
-The name *SurPRISE* (roughly :) ) stands for Simple Python RecommendatIon
-System Engine.
+The name *SurPRISE* (roughly :) ) stands for *Simple Python RecommendatIon
+System Engine*.
 
 Please note that surprise does not support implicit ratings or content-based
 information.
