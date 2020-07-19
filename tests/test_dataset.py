@@ -172,7 +172,7 @@ def test_build_anti_testset():
 
 
 def test_get_dataset_dir():
-    '''Test the get_dataset_dir() function.'''
+    """Test the get_dataset_dir() function."""
 
     os.environ['SURPRISE_DATA_FOLDER'] = '/tmp/surprise_data'
     assert get_dataset_dir() == '/tmp/surprise_data'
