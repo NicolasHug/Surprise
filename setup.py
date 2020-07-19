@@ -5,6 +5,8 @@ from os import path
 """
 Release instruction:
 
+Upate changelog and contributors list.
+
 Check that tests run correctly for 36 and 27 and doc compiles without warning
 (make clean first).
 
@@ -55,7 +57,7 @@ except ImportError:
 else:
     USE_CYTHON = True
 
-__version__ = '1.1.0'
+__version__ = '1.1.1'
 
 here = path.abspath(path.dirname(__file__))
 

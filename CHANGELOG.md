@@ -1,7 +1,23 @@
+VERSION 1.1.1
+=============
+
+Date: 19/07/2020
+
+Mostly doc typos and some minor bug fixes. Future versions (if any)
+will not support Python 2 anymore.
+
+Bug Fixes
+---------
+
+* 'mse' is now available in GridSearCV and RandomizedSearchCV
+* The Jester dataset link was updated
+* Fixed a potential race condition when creating dataset directories
+
+
 VERSION 1.1.0
 =============
 
-Date: TODO
+Date: 13/11/2019
 
 1.1.0 will be the last stable version with new features. Next versions will
 only provide bug-fixes, but no new features. (And probably not support

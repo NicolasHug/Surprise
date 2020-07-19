@@ -250,9 +250,6 @@ class Trainset:
 
     @property
     def global_mean(self):
-        """Return the mean of all ratings.
-
-        It's only computed once."""
         if self._global_mean is None:
             self._global_mean = np.mean([r for (_, _, r) in
                                          self.all_ratings()])
