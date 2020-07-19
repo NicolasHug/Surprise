@@ -130,7 +130,7 @@ class AlgoBase(object):
         return pred
 
     def default_prediction(self):
-        '''Used when the ``PredictionImpossible`` exception is raised during a
+        """Used when the ``PredictionImpossible`` exception is raised during a
         call to :meth:`predict()
         <surprise.prediction_algorithms.algo_base.AlgoBase.predict>`. By
         default, return the global mean of all ratings (can be overridden in
@@ -138,7 +138,7 @@ class AlgoBase(object):
 
         Returns:
             (float): The mean of all ratings in the trainset.
-        '''
+        """
 
         return self.trainset.global_mean
 

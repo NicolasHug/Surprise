@@ -1,4 +1,4 @@
-'''
+"""
 The :mod:`model_selection.split<surprise.model_selection.split>` module
 contains various cross-validation iterators. Design and tools are inspired from
 the mighty scikit learn.
@@ -22,7 +22,7 @@ testset:
 
     train_test_split
 
-'''
+"""
 
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
@@ -40,7 +40,7 @@ from ..utils import get_rng
 
 
 def get_cv(cv):
-    '''Return a 'validated' CV iterator.'''
+    """Return a 'validated' CV iterator."""
 
     if cv is None:
         return KFold(n_splits=5)
@@ -54,7 +54,7 @@ def get_cv(cv):
 
 
 class KFold():
-    '''A basic cross-validation iterator.
+    """A basic cross-validation iterator.
 
     Each fold is used once as a testset while the k - 1 remaining folds are
     used for training.
@@ -73,7 +73,7 @@ class KFold():
         shuffle(bool): Whether to shuffle the ratings in the ``data`` parameter
             of the ``split()`` method. Shuffling is not done in-place. Default
             is ``True``.
-    '''
+    """
 
     def __init__(self, n_splits=5, random_state=None, shuffle=True):
 
@@ -82,7 +82,7 @@ class KFold():
         self.random_state = random_state
 
     def split(self, data):
-        '''Generator function to iterate over trainsets and testsets.
+        """Generator function to iterate over trainsets and testsets.
 
         Args:
             data(:obj:`Dataset<surprise.dataset.Dataset>`): The data containing
@@ -90,7 +90,7 @@ class KFold():
 
         Yields:
             tuple of (trainset, testset)
-        '''
+        """
 
         if self.n_splits > len(data.raw_ratings) or self.n_splits < 2:
             raise ValueError('Incorrect value for n_splits={0}. '
@@ -125,7 +125,7 @@ class KFold():
 
 
 class RepeatedKFold():
-    '''
+    """
     Repeated :class:`KFold` cross validator.
 
     Repeats :class:`KFold` n times with different randomization in each
@@ -146,7 +146,7 @@ class RepeatedKFold():
         shuffle(bool): Whether to shuffle the ratings in the ``data`` parameter
             of the ``split()`` method. Shuffling is not done in-place. Default
             is ``True``.
-    '''
+    """
 
     def __init__(self, n_splits=5, n_repeats=10, random_state=None):
 
@@ -155,7 +155,7 @@ class RepeatedKFold():
         self.n_splits = n_splits
 
     def split(self, data):
-        '''Generator function to iterate over trainsets and testsets.
+        """Generator function to iterate over trainsets and testsets.
 
         Args:
             data(:obj:`Dataset<surprise.dataset.Dataset>`): The data containing
@@ -163,7 +163,7 @@ class RepeatedKFold():
 
         Yields:
             tuple of (trainset, testset)
-        '''
+        """
 
         rng = get_rng(self.random_state)
 
@@ -178,7 +178,7 @@ class RepeatedKFold():
 
 
 class ShuffleSplit():
-    '''A basic cross-validation iterator with random trainsets and testsets.
+    """A basic cross-validation iterator with random trainsets and testsets.
 
     Contrary to other cross-validation strategies, random splits do not
     guarantee that all folds will be different, although this is still very
@@ -210,7 +210,7 @@ class ShuffleSplit():
             this to `False` defeats the purpose of this iterator, but it's
             useful for the implementation of :func:`train_test_split`. Default
             is ``True``.
-    '''
+    """
 
     def __init__(self, n_splits=5, test_size=.2, train_size=None,
                  random_state=None, shuffle=True):
@@ -262,7 +262,7 @@ class ShuffleSplit():
         return int(train_size), int(test_size)
 
     def split(self, data):
-        '''Generator function to iterate over trainsets and testsets.
+        """Generator function to iterate over trainsets and testsets.
 
         Args:
             data(:obj:`Dataset<surprise.dataset.Dataset>`): The data containing
@@ -270,7 +270,7 @@ class ShuffleSplit():
 
         Yields:
             tuple of (trainset, testset)
-        '''
+        """
 
         test_size, train_size = self.validate_train_test_sizes(
             self.test_size, self.train_size, len(data.raw_ratings))
@@ -300,7 +300,7 @@ class ShuffleSplit():
 
 def train_test_split(data, test_size=.2, train_size=None, random_state=None,
                      shuffle=True):
-    '''Split a dataset into trainset and testset.
+    """Split a dataset into trainset and testset.
 
     See an example in the :ref:`User Guide <train_test_split_example>`.
 
@@ -328,14 +328,14 @@ def train_test_split(data, test_size=.2, train_size=None, random_state=None,
             only used if ``shuffle`` is ``True``.  Default is ``None``.
         shuffle(bool): Whether to shuffle the ratings in the ``data``
             parameter. Shuffling is not done in-place. Default is ``True``.
-    '''
+    """
     ss = ShuffleSplit(n_splits=1, test_size=test_size, train_size=train_size,
                       random_state=random_state, shuffle=shuffle)
     return next(ss.split(data))
 
 
 class LeaveOneOut():
-    '''Cross-validation iterator where each user has exactly one rating in the
+    """Cross-validation iterator where each user has exactly one rating in the
     testset.
 
     Contrary to other cross-validation strategies, ``LeaveOneOut`` does not
@@ -359,7 +359,7 @@ class LeaveOneOut():
             testset). Other users are discarded. Default is ``0``, so some
             users (having only one rating) may be in the testset and not in the
             trainset.
-    '''
+    """
 
     def __init__(self, n_splits=5, random_state=None, min_n_ratings=0):
 
@@ -368,7 +368,7 @@ class LeaveOneOut():
         self.min_n_ratings = min_n_ratings
 
     def split(self, data):
-        '''Generator function to iterate over trainsets and testsets.
+        """Generator function to iterate over trainsets and testsets.
 
         Args:
             data(:obj:`Dataset<surprise.dataset.Dataset>`): The data containing
@@ -376,7 +376,7 @@ class LeaveOneOut():
 
         Yields:
             tuple of (trainset, testset)
-        '''
+        """
 
         # map ratings to the users ids
         user_ratings = defaultdict(list)
@@ -410,15 +410,15 @@ class LeaveOneOut():
 
 
 class PredefinedKFold():
-    '''A cross-validation iterator to when a dataset has been loaded with the
+    """A cross-validation iterator to when a dataset has been loaded with the
     :meth:`load_from_folds <surprise.dataset.Dataset.load_from_folds>`
     method.
 
     See an example in the :ref:`User Guide <load_from_folds_example>`.
-    '''
+    """
 
     def split(self, data):
-        '''Generator function to iterate over trainsets and testsets.
+        """Generator function to iterate over trainsets and testsets.
 
         Args:
             data(:obj:`Dataset<surprise.dataset.Dataset>`): The data containing
@@ -426,7 +426,7 @@ class PredefinedKFold():
 
         Yields:
             tuple of (trainset, testset)
-        '''
+        """
 
         self.n_splits = len(data.folds_files)
         for train_file, test_file in data.folds_files:

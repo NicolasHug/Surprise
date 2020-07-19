@@ -14,7 +14,7 @@ from surprise import Dataset
 
 
 def get_top_n(predictions, n=10):
-    '''Return the top-N recommendation for each user from a set of predictions.
+    """Return the top-N recommendation for each user from a set of predictions.
 
     Args:
         predictions(list of Prediction objects): The list of predictions, as
@@ -25,7 +25,7 @@ def get_top_n(predictions, n=10):
     Returns:
     A dict where keys are user (raw) ids and values are lists of tuples:
         [(raw item id, rating estimation), ...] of size n.
-    '''
+    """
 
     # First map the predictions to each user.
     top_n = defaultdict(list)

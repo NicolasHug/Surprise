@@ -1,4 +1,4 @@
-'''This module contains the Trainset class.'''
+"""This module contains the Trainset class."""
 
 
 from __future__ import (absolute_import, division, print_function,
