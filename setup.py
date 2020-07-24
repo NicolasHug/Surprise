@@ -21,6 +21,7 @@ First upload to test pypi:
 Check that install works on testpypi, then upload to pypi and check again.
 to install from testpypi:
 pip install --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple scikit-surprise  # noqa
+Doesn't hurt to check that the tests pass after installing from testpypi.
 
 push new release tag on github (commit last changes first if needed):
     git tag vX.Y.Z
