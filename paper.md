@@ -28,7 +28,7 @@ pairs.
 
 `Surprise` is a Python library for building and analyzing rating prediction
 algorithms. It was designed to closely follow the `scikit-learn` API
-[@scikit-learn; @sklearn_api] , which should be familiar to users acquainted
+[@scikit-learn; @sklearn_api], which should be familiar to users acquainted
 with the Python machine learning ecosystem.
 
 `Surprise` provides a collection of estimators (or prediction algorithms) for
