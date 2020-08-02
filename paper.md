@@ -8,7 +8,7 @@ authors:
     orcid: 0000-0003-1360-704X
     affiliation: 1
 affiliations:
- - name: Columbia University
+ - name: Columbia University, Data Science Institute, New York City, New York, United States of America
    index: 1
 date: 1 March 2020
 bibliography: paper.bib
