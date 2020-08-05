@@ -3,6 +3,7 @@
 [![Build Status](https://travis-ci.org/NicolasHug/Surprise.svg?branch=master)](https://travis-ci.org/NicolasHug/Surprise)
 [![python versions](https://img.shields.io/badge/python-2.7%2C%203.5%2C%203.6-blue.svg)](http://surpriselib.com)
 [![License](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)
+[![DOI](https://joss.theoj.org/papers/10.21105/joss.02174/status.svg)](https://doi.org/10.21105/joss.02174)
 
 [![logo](logo_black.svg)](http://surpriselib.com)
 
@@ -167,22 +168,29 @@ For the latest version, you can also clone the repo and build the source
     $ cd surprise
     $ python setup.py install
 
-License
--------
+License and reference
+---------------------
 
 This project is licensed under the [BSD
 3-Clause](https://opensource.org/licenses/BSD-3-Clause) license, so it can be
 used for pretty much everything, including commercial applications. Please let
 us know how [Surprise](http://surpriselib.com) is useful to you!
 
-Here is a Bibtex entry if you ever need to cite Surprise in a research paper
-(please keep us posted, we would love to know if Surprise was helpful to you):
+Please make sure to cite the
+[paper](https://joss.theoj.org/papers/10.21105/joss.02174) if you use
+Surprise for your research:
 
-    @Misc{Surprise,
-    author =   {Hug, Nicolas},
-    title =    { {S}urprise, a {P}ython library for recommender systems},
-    howpublished = {\url{http://surpriselib.com}},
-    year = {2017}
+    @article{Hug2020,
+      doi = {10.21105/joss.02174},
+      url = {https://doi.org/10.21105/joss.02174},
+      year = {2020},
+      publisher = {The Open Journal},
+      volume = {5},
+      number = {52},
+      pages = {2174},
+      author = {Nicolas Hug},
+      title = {Surprise: A Python library for recommender systems},
+      journal = {Journal of Open Source Software}
     }
 
 Contributors
