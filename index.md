@@ -9,7 +9,7 @@ Overview
 --------
 
 [Surprise](http://surpriselib.com) is a Python
-[scikit](https://www.scipy.org/scikits.html) building and analyzing
+[scikit](https://www.scipy.org/scikits.html) for building and analyzing
 recommender systems that deal with explicit rating data.
 
 [Surprise](http://surpriselib.com) **was designed with the
@@ -48,15 +48,15 @@ following purposes in mind**:
   [analyse](http://nbviewer.jupyter.org/github/NicolasHug/Surprise/tree/master/examples/notebooks/KNNBasic_analysis.ipynb/)
   and
   [compare](http://nbviewer.jupyter.org/github/NicolasHug/Surprise/blob/master/examples/notebooks/Compare.ipynb)
-  the algorithms performance. Cross-validation procedures can be run very
+  the algorithms' performance. Cross-validation procedures can be run very
   easily using powerful CV iterators (inspired by
   [scikit-learn](http://scikit-learn.org/) excellent tools), as well as
   [exhaustive search over a set of
   parameters](http://surprise.readthedocs.io/en/stable/getting_started.html#tune-algorithm-parameters-with-gridsearchcv).
 
 
-The name *SurPRISE* (roughly :) ) stands for Simple Python RecommendatIon
-System Engine.
+The name *SurPRISE* (roughly :) ) stands for *Simple Python RecommendatIon
+System Engine*.
 
 Please note that surprise does not support implicit ratings or content-based
 information.
@@ -166,22 +166,29 @@ For the latest version, you can also clone the repo and build the source
     $ cd surprise
     $ python setup.py install
 
-License
--------
+License and reference
+---------------------
 
 This project is licensed under the [BSD
 3-Clause](https://opensource.org/licenses/BSD-3-Clause) license, so it can be
 used for pretty much everything, including commercial applications. Please let
 us know how [Surprise](http://surpriselib.com) is useful to you!
 
-Here is a Bibtex entry if you ever need to cite Surprise in a research paper
-(please keep us posted, we would love to know if Surprise was helpful to you):
+Please make sure to cite the
+[paper](https://joss.theoj.org/papers/10.21105/joss.02174) if you use
+Surprise for your research:
 
-    @Misc{Surprise,
-    author =   {Hug, Nicolas},
-    title =    { {S}urprise, a {P}ython library for recommender systems},
-    howpublished = {\url{http://surpriselib.com}},
-    year = {2017}
+    @article{Hug2020,
+      doi = {10.21105/joss.02174},
+      url = {https://doi.org/10.21105/joss.02174},
+      year = {2020},
+      publisher = {The Open Journal},
+      volume = {5},
+      number = {52},
+      pages = {2174},
+      author = {Nicolas Hug},
+      title = {Surprise: A Python library for recommender systems},
+      journal = {Journal of Open Source Software}
     }
 
 Contributors
@@ -189,11 +196,13 @@ Contributors
 
 The following persons have contributed to [Surprise](http://surpriselib.com):
 
-caoyi, Олег Демиденко, Charles-Emmanuel Dias, dmamylin, Lauriane Ducasse,
-Marc Feger, franckjay, Lukas Galke, Pierre-François Gimenez, Zachary
-Glassman, Nicolas Hug, Janniks, Doruk Kilitcioglu, Ravi Raju Krishna, Hengji
-Liu, Maher Malaeb, Manoj K, Naturale0, nju-luke, Jay Qi, Skywhat, David
-Stevens, Victor Wang, Mike Lee Williams, Jay Wong, Chenchen Xu, YaoZh1918.
+ashtou, bobbyinfj, caoyi, Олег Демиденко, Charles-Emmanuel Dias, dmamylin,
+Lauriane Ducasse, Marc Feger, franckjay, Lukas Galke, Tim Gates,
+Pierre-François Gimenez, Zachary Glassman, Jeff Hale, Nicolas Hug, Janniks,
+jyesawtellrickson, Doruk Kilitcioglu, Ravi Raju Krishna, Hengji Liu, Maher
+Malaeb, Manoj K, James McNeilis, Naturale0, nju-luke, Jay Qi, Lucas Rebscher,
+Skywhat, David Stevens, TrWestdoor, Victor Wang, Mike Lee Williams, Jay Wong,
+Chenchen Xu, YaoZh1918.
 
 Thanks a lot :) !
 
