@@ -167,6 +167,9 @@ class SVD(AlgoBase):
 
         return self
 
+
+    @cython.boundscheck(False)  # Deactivate bounds checking
+    @cython.wraparound(False)
     def sgd(self, trainset):
 
         # OK, let's breath. I've seen so many different implementation of this
@@ -236,28 +239,46 @@ class SVD(AlgoBase):
         if not self.biased:
             global_mean = 0
 
+        
+        cdef vectorcpp[(int, int, double)] uir_list
+        cdef vectorcpp[(int, int, double)].iterator ui_list_it
+
+        for u, i, r in trainset.all_ratings():
+            uir_list.push_back((u, i, r))
+
+        cdef int facts = self.n_factors
+        cdef bint biased = self.biased
+
         for current_epoch in range(self.n_epochs):
             if self.verbose:
                 print("Processing epoch {}".format(current_epoch))
-            for u, i, r in trainset.all_ratings():
+
+            ui_list_it = uir_list.begin()
+            while (ui_list_it != uir_list.end()):
+                u, i, r = dereference(ui_list_it)
+                postincrement(ui_list_it)
 
                 # compute current error
                 dot = 0  # <q_i, p_u>
-                for f in range(self.n_factors):
+                f = 0
+                while f < facts:
                     dot += qi[i, f] * pu[u, f]
+                    f += 1
                 err = r - (global_mean + bu[u] + bi[i] + dot)
 
                 # update biases
-                if self.biased:
+                if biased:
                     bu[u] += lr_bu * (err - reg_bu * bu[u])
                     bi[i] += lr_bi * (err - reg_bi * bi[i])
 
                 # update factors
-                for f in range(self.n_factors):
+                f = 0
+                while f < facts:
                     puf = pu[u, f]
                     qif = qi[i, f]
                     pu[u, f] += lr_pu * (err * qif - reg_pu * puf)
                     qi[i, f] += lr_qi * (err * puf - reg_qi * qif)
+                    f += 1
 
         self.bu = bu
         self.bi = bi
