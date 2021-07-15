@@ -12,6 +12,7 @@ build
 dist/
 surprise/similarities.c
 surprise/prediction_algorithms/matrix_factorization.c
+surprise/prediction_algorithms/matrix_factorization.cpp
 surprise/prediction_algorithms/optimize_baselines.c
 surprise/prediction_algorithms/slope_one.c
 surprise/prediction_algorithms/co_clustering.c
@@ -26,3 +27,5 @@ tags
 settings.json
 
 .pytest_cache
+
+surprise/.DS_Store

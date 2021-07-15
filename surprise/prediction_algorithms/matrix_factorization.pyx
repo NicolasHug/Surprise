@@ -3,16 +3,27 @@ the :mod:`matrix_factorization` module includes some algorithms using matrix
 factorization.
 """
 
-from __future__ import (absolute_import, division, print_function,
-                        unicode_literals)
+from __future__ import absolute_import, division, print_function, unicode_literals
+
+import cython
+import numpy as np
 
 cimport numpy as np  # noqa
-import numpy as np
-from six.moves import range
 
+from ..utils import get_rng
 from .algo_base import AlgoBase
 from .predictions import PredictionImpossible
-from ..utils import get_rng
+
+from libcpp.map cimport map as mapcpp
+from libcpp.vector cimport vector as vectorcpp
+
+from cython.operator import dereference, postincrement
+
+
+cdef struct uir:
+    int uid
+    int iid
+    double r
 
 
 class SVD(AlgoBase):
@@ -398,8 +409,9 @@ class SVDpp(AlgoBase):
 
         return self
 
+    @cython.boundscheck(False)  # Deactivate bounds checking
+    @cython.wraparound(False)
     def sgd(self, trainset):
-
         # user biases
         cdef np.ndarray[np.double_t] bu
         # item biases
@@ -411,7 +423,7 @@ class SVDpp(AlgoBase):
         # item implicit factors
         cdef np.ndarray[np.double_t, ndim=2] yj
 
-        cdef int u, i, j, f
+        cdef int u, i, j, f, n
         cdef double r, err, dot, puf, qif, sqrt_Iu, _
         cdef double global_mean = self.trainset.global_mean
         cdef np.ndarray[np.double_t] u_impl_fdb
@@ -441,25 +453,60 @@ class SVDpp(AlgoBase):
                         (trainset.n_items, self.n_factors))
         u_impl_fdb = np.zeros(self.n_factors, np.double)
 
+
+        cdef mapcpp[int, vectorcpp[int]] Iu_items
+        cdef mapcpp[int, double] Iu_len_sqrts
+
+        for i in range(trainset.n_users):
+            for j, _ in trainset.ur[i]:
+                Iu_items[i].push_back(j)
+
+        cdef mapcpp[int, vectorcpp[int]].iterator it = Iu_items.begin()
+
+        while(it != Iu_items.end()):
+            Iu_len_sqrts[dereference(it).first] = 1.0 / np.sqrt(dereference(it).second.size())
+            postincrement(it)
+
+        
+        cdef vectorcpp[(int, int, double)] uir_list
+        cdef vectorcpp[(int, int, double)].iterator ui_list_it
+
+        cdef int facts = self.n_factors
+
+        for u, i, r in trainset.all_ratings():
+            uir_list.push_back((u, i, r))
+
         for current_epoch in range(self.n_epochs):
             if self.verbose:
                 print(" processing epoch {}".format(current_epoch))
-            for u, i, r in trainset.all_ratings():
 
-                # items rated by u. This is COSTLY
-                Iu = [j for (j, _) in trainset.ur[u]]
-                sqrt_Iu = np.sqrt(len(Iu))
+            ui_list_it = uir_list.begin()
+            while (ui_list_it != uir_list.end()):
+                u, i, r = dereference(ui_list_it)
+                postincrement(ui_list_it)
+
+                # items rated by u.
+                Iu = Iu_items[u]
+                sqrt_Iu = Iu_len_sqrts[u]
 
                 # compute user implicit feedback
-                u_impl_fdb = np.zeros(self.n_factors, np.double)
+                f = 0
+                while f < facts:
+                    u_impl_fdb[f] = 0
+                    f += 1
+
                 for j in Iu:
-                    for f in range(self.n_factors):
-                        u_impl_fdb[f] += yj[j, f] / sqrt_Iu
+                    f = 0
+                    while f < facts:
+                        u_impl_fdb[f] += yj[j, f] * sqrt_Iu
+                        f += 1
 
                 # compute current error
-                dot = 0  # <q_i, (p_u + sum_{j in Iu} y_j / sqrt{Iu}>
-                for f in range(self.n_factors):
+                dot = 0 
+                f = 0
+                while f < facts:
                     dot += qi[i, f] * (pu[u, f] + u_impl_fdb[f])
+                    f += 1
 
                 err = r - (global_mean + bu[u] + bi[i] + dot)
 
@@ -468,21 +515,22 @@ class SVDpp(AlgoBase):
                 bi[i] += lr_bi * (err - reg_bi * bi[i])
 
                 # update factors
-                for f in range(self.n_factors):
+                f = 0
+                while f < facts:
                     puf = pu[u, f]
                     qif = qi[i, f]
                     pu[u, f] += lr_pu * (err * qif - reg_pu * puf)
-                    qi[i, f] += lr_qi * (err * (puf + u_impl_fdb[f]) -
-                                         reg_qi * qif)
+                    qi[i, f] += lr_qi * (err * (puf + u_impl_fdb[f]) - reg_qi * qif)
                     for j in Iu:
-                        yj[j, f] += lr_yj * (err * qif / sqrt_Iu -
-                                             reg_yj * yj[j, f])
+                        yj[j, f] += lr_yj * (err * qif * sqrt_Iu - reg_yj * yj[j, f])
+                    f += 1
 
         self.bu = bu
         self.bi = bi
         self.pu = pu
         self.qi = qi
         self.yj = yj
+
 
     def estimate(self, u, i):
 
