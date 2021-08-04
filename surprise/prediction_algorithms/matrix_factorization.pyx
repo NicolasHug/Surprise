@@ -472,6 +472,7 @@ class SVDpp(AlgoBase):
                         (trainset.n_items, self.n_factors))
         yj = rng.normal(self.init_mean, self.init_std_dev,
                         (trainset.n_items, self.n_factors))
+
         u_impl_fdb = np.zeros(self.n_factors, np.double)
 
 
@@ -497,6 +498,8 @@ class SVDpp(AlgoBase):
         for u, i, r in trainset.all_ratings():
             uir_list.push_back((u, i, r))
 
+        cdef double err_qif_sqrt = 0.0
+
         for current_epoch in range(self.n_epochs):
             if self.verbose:
                 print(" processing epoch {}".format(current_epoch))
@@ -521,7 +524,7 @@ class SVDpp(AlgoBase):
                     while f < facts:
                         u_impl_fdb[f] += yj[j, f] * sqrt_Iu
                         f += 1
-
+                
                 # compute current error
                 dot = 0 
                 f = 0
@@ -542,8 +545,10 @@ class SVDpp(AlgoBase):
                     qif = qi[i, f]
                     pu[u, f] += lr_pu * (err * qif - reg_pu * puf)
                     qi[i, f] += lr_qi * (err * (puf + u_impl_fdb[f]) - reg_qi * qif)
+
+                    err_qif_sqrt = err * qif * sqrt_Iu
                     for j in Iu:
-                        yj[j, f] += lr_yj * (err * qif * sqrt_Iu - reg_yj * yj[j, f])
+                        yj[j, f] += lr_yj * (err_qif_sqrt - reg_yj * yj[j, f])
                     f += 1
 
         self.bu = bu
