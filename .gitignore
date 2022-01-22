@@ -26,3 +26,5 @@ tags
 settings.json
 
 .pytest_cache
+
+surprise/prediction_algorithms/matrix_factorization.cpp
