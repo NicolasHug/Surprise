@@ -229,28 +229,35 @@ class SVD(AlgoBase):
         if not self.biased:
             global_mean = 0
 
+        cdef int facts = self.n_factors
+        cdef bint biased = self.biased
+
         for current_epoch in range(self.n_epochs):
             if self.verbose:
                 print("Processing epoch {}".format(current_epoch))
-            for u, i, r in trainset.all_ratings():
 
+            for u, i, r in trainset.all_ratings():
                 # compute current error
                 dot = 0  # <q_i, p_u>
-                for f in range(self.n_factors):
+                f = 0
+                while f < facts:
                     dot += qi[i, f] * pu[u, f]
+                    f += 1
                 err = r - (global_mean + bu[u] + bi[i] + dot)
 
                 # update biases
-                if self.biased:
+                if biased:
                     bu[u] += lr_bu * (err - reg_bu * bu[u])
                     bi[i] += lr_bi * (err - reg_bi * bi[i])
 
                 # update factors
-                for f in range(self.n_factors):
+                f = 0
+                while f < facts:
                     puf = pu[u, f]
                     qif = qi[i, f]
                     pu[u, f] += lr_pu * (err * qif - reg_pu * puf)
                     qi[i, f] += lr_qi * (err * puf - reg_qi * qif)
+                    f += 1
 
         self.bu = bu
         self.bi = bi
