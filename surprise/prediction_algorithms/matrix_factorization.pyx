@@ -17,6 +17,7 @@ from ..utils import get_rng
 from libcpp.map cimport map as mapcpp
 from libcpp.vector cimport vector as vectorcpp
 from cython.operator import dereference, postincrement
+import cython
 
 
 class SVD(AlgoBase):
@@ -160,6 +161,8 @@ class SVD(AlgoBase):
 
         return self
 
+    @cython.boundscheck(False)  # Deactivate bounds checking
+    @cython.wraparound(False)   # Deactivate negative indexing.
     def sgd(self, trainset):
 
         # OK, let's breath. I've seen so many different implementation of this
@@ -409,6 +412,8 @@ class SVDpp(AlgoBase):
 
         return self
 
+    @cython.boundscheck(False)  # Deactivate bounds checking
+    @cython.wraparound(False)   # Deactivate negative indexing.
     def sgd(self, trainset):
 
         # user biases
