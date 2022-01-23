@@ -58,7 +58,7 @@ except ImportError:
 else:
     USE_CYTHON = True
 
-__version__ = '1.1.1'
+__version__ = '1.1.2'
 
 here = path.abspath(path.dirname(__file__))
 
@@ -87,16 +87,20 @@ extensions = [
     Extension(
         'surprise.prediction_algorithms.matrix_factorization',
         ['surprise/prediction_algorithms/matrix_factorization' + ext],
+        include_dirs=[np.get_include()],
+        language="c++"), # generate and compile C++ code
+    Extension(
+        'surprise.prediction_algorithms.optimize_baselines',
+        ['surprise/prediction_algorithms/optimize_baselines' + ext],
         include_dirs=[np.get_include()]),
-    Extension('surprise.prediction_algorithms.optimize_baselines',
-              ['surprise/prediction_algorithms/optimize_baselines' + ext],
-              include_dirs=[np.get_include()]),
-    Extension('surprise.prediction_algorithms.slope_one',
-              ['surprise/prediction_algorithms/slope_one' + ext],
-              include_dirs=[np.get_include()]),
-    Extension('surprise.prediction_algorithms.co_clustering',
-              ['surprise/prediction_algorithms/co_clustering' + ext],
-              include_dirs=[np.get_include()]),
+    Extension(
+        'surprise.prediction_algorithms.slope_one',
+        ['surprise/prediction_algorithms/slope_one' + ext],
+        include_dirs=[np.get_include()]),
+    Extension(
+        'surprise.prediction_algorithms.co_clustering',
+        ['surprise/prediction_algorithms/co_clustering' + ext],
+        include_dirs=[np.get_include()]),
 ]
 
 if USE_CYTHON:
