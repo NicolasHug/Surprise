@@ -4,7 +4,7 @@ TODO
 * remove offset from everywhere (Reader, Trainset, test(), predict()...). Make
   a test to make sure that zero ratings are handled correctly. Right now we
   store ratings as defaultdict(list) in ur and ir, so there's no problem. Maybe
-  it will change in the future, we would have to find a workaroud.
+  it will change in the future, we would have to find a workaround.
 * rating_scale should be specified on dataset creation: load_from_file,
   load_from_folds, load_from_df. Deprecate its use from rating but fall back to
   it if it has only been specified here.
