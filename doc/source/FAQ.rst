@@ -53,7 +53,7 @@ You can use the :meth:`get_neighbors()
 <surprise.prediction_algorithms.algo_base.AlgoBase.get_neighbors>` methods of
 the algorithm object. This is only relevant for algorithms that use a
 similarity measure, such as the :ref:`k-NN algorithms
-<pred_package_knn_inspired>`.
+<pred_package_knn_inpired>`.
 
 Here is an example where we retrieve the 10 nearest neighbors of the movie Toy
 Story from the MovieLens-100k dataset. The output is:
