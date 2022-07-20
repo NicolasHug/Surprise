@@ -31,7 +31,7 @@ def read_item_names():
     return rid_to_name, name_to_rid
 
 
-# First, train the algortihm to compute the similarities between items
+# First, train the algorithm to compute the similarities between items
 data = Dataset.load_builtin('ml-100k')
 trainset = data.build_full_trainset()
 sim_options = {'name': 'pearson_baseline', 'user_based': False}

@@ -176,7 +176,7 @@ class AlgoBase(object):
         :ref:`baseline_estimates_configuration`).
 
         This method is only relevant for algorithms using :func:`Pearson
-        baseline similarty<surprise.similarities.pearson_baseline>` or the
+        baseline similarity<surprise.similarities.pearson_baseline>` or the
         :class:`BaselineOnly
         <surprise.prediction_algorithms.baseline_only.BaselineOnly>` algorithm.
 

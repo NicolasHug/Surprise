@@ -196,7 +196,7 @@ Use cross-validation iterators
 
 For cross-validation, we can use the :func:`cross_validate()
 <surprise.model_selection.validation.cross_validate>` function that does all
-the hard work for us. But for a better control, we can also instanciate a
+the hard work for us. But for a better control, we can also instantiate a
 cross-validation iterator, and make predictions over each split using the
 ``split()`` method of the iterator, and the
 :meth:`test()<surprise.prediction_algorithms.algo_base.AlgoBase.test>` method

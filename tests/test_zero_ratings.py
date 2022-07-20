@@ -13,7 +13,7 @@ between 0 ratings and missing ones.
 We currently store ratings as two defaultdict of lists (trainset.ur and
 trainset.ir), so 0 ratings should be handled correctly, without needing to
 remap them. Maybe it will change in the future, we would have to find a
-workaroud.
+workaround.
 """
 
 from __future__ import (absolute_import, division, print_function,
