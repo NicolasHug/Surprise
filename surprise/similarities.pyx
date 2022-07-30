@@ -24,6 +24,8 @@ import numpy as np
 from six.moves import range
 from six import iteritems
 
+from scipy.stats import rankdata
+
 
 def cosine(n_x, yr, min_support):
     """Compute the cosine similarity between all pairs of users (or items).
@@ -355,6 +357,106 @@ def pearson_baseline(n_x, yr, min_support, global_mean, x_biases, y_biases,
                 # the shrinkage part
                 sim[xi, xj] *= (freq[xi, xj] - 1) / (freq[xi, xj] - 1 +
                                                      shrinkage)
+
+            sim[xj, xi] = sim[xi, xj]
+
+    return sim
+
+
+def spearman(n_x, yr, min_support):
+    """Compute the Spearman correlation coefficient between all pairs of users
+    (or items).
+
+    Only **common** users (or items) are taken into account. The Spearman
+    correlation coefficient can be seen as a non parametric Pearson's
+    Similarity, and is defined as:
+
+    .. math ::
+        \\text{spearman_sim}(u, v) = \\frac{ \\sum\\limits_{i \in I_{uv}}
+        (k_{ui} -  \mu_u) \cdot (k_{vi} - \mu_{v})} {\\sqrt{\\sum\\limits_{i
+        \in I_{uv}} (r_{ui} -  \mu_u)^2} \cdot \\sqrt{\\sum\\limits_{i \in
+        I_{uv}} (r_{vi} -  \mu_{v})^2} }
+
+    or
+
+    .. math ::
+        \\text{spearman_sim}(i, j) = \\frac{ \\sum\\limits_{u \in U_{ij}}
+        (k_{ui} -  \mu_i) \cdot (k_{uj} - \mu_{j})} {\\sqrt{\\sum\\limits_{u
+        \in U_{ij}} (k_{ui} -  \mu_i)^2} \cdot \\sqrt{\\sum\\limits_{u \in
+        U_{ij}} (k_{uj} -  \mu_{j})^2} }
+
+    depending on the ``user_based`` field of ``sim_options`` (see
+    :ref:`similarity_measures_configuration`).
+
+
+    Note: if there are no common users or items, similarity will be 0 (and not
+    -1).
+
+    For details on Spearman coefficient, see `Wikipedia
+    <https://en.wikipedia.org/wiki/Spearman%27s_rank_correlation_coefficient>`__.
+
+    """
+
+    # number of common ys
+    cdef np.ndarray[np.int_t, ndim=2] freq
+    # sum (rank_xy * rank_x'y) for common ys
+    cdef np.ndarray[np.double_t, ndim=2] prods
+    # sum (rank_xy ^ 2) for common ys
+    cdef np.ndarray[np.double_t, ndim=2] sqi
+    # sum (rank_x'y ^ 2) for common ys
+    cdef np.ndarray[np.double_t, ndim=2] sqj
+    # sum (rank_xy) for common ys
+    cdef np.ndarray[np.double_t, ndim=2] si
+    # sum (rank_x'y) for common ys
+    cdef np.ndarray[np.double_t, ndim=2] sj
+    # the similarity matrix
+    cdef np.ndarray[np.double_t, ndim=2] sim
+
+    cdef np.ndarray[np.int, ndim=1] ranks
+    cdef np.ndarray[np.int, ndim=1] rows
+
+    cdef int xi, xj
+    cdef double ri, rj
+    cdef int min_sprt = min_support
+
+    freq = np.zeros((n_x, n_x), np.int)
+    prods = np.zeros((n_x, n_x), np.double)
+    sqi = np.zeros((n_x, n_x), np.double)
+    sqj = np.zeros((n_x, n_x), np.double)
+    si = np.zeros((n_x, n_x), np.double)
+    sj = np.zeros((n_x, n_x), np.double)
+    sim = np.zeros((n_x, n_x), np.double)
+    ranks = np.zeros(n_x, np.int)
+    rows = np.zeros(n_x, np.int)
+
+    for y, y_ratings in iteritems(yr):
+        for xi, ri in y_ratings:
+            rows[xi] = ri
+        ranks = rankdata(rows)
+        for xi in range(n_x):
+            for xj in range(n_x):
+                prods[xi, xj] += ranks[xi] * ranks[xj]
+                freq[xi, xj] += 1
+                sqi[xi, xj] += ranks[xi]**2
+                sqj[xi, xj] += ranks[xj]**2
+                si[xi, xj] += ranks[xi]
+                sj[xi, xj] += ranks[xj]
+
+    for xi in range(n_x):
+        sim[xi, xi] = 1
+        for xj in range(xi + 1, n_x):
+
+            if freq[xi, xj] < min_sprt:
+                sim[xi, xj] == 0
+            else:
+                n = freq[xi, xj]
+                num = n * prods[xi, xj] - si[xi, xj] * sj[xi, xj]
+                denum = np.sqrt((n * sqi[xi, xj] - si[xi, xj]**2) *
+                                (n * sqj[xi, xj] - sj[xi, xj]**2))
+                if denum == 0:
+                    sim[xi, xj] = 0
+                else:
+                    sim[xi, xj] = num / denum
 
             sim[xj, xi] = sim[xi, xj]
 
