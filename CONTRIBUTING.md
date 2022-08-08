@@ -37,7 +37,7 @@ Then, you can install your local copy of the repo:
 
 Any change to the code should now be immediately reflected during execution. If
 you're modifying Cython code (`.pyx` files), you'll need to compile the code in
-order to see the chanes. This can be achieved by running `pip install -e .`
+order to see the changes. This can be achieved by running `pip install -e .`
 again.
 
 Running and writing tests
