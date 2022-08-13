@@ -103,9 +103,9 @@ def test_gridsearchcv_cv_results():
     f = os.path.join(os.path.dirname(__file__), './u1_ml100k_test')
     data = Dataset.load_from_file(f, Reader('ml-100k'))
     kf = KFold(3, shuffle=True, random_state=4)
-    param_grid = {'n_epochs': [5], 'lr_all': [.2, .2],
-                  'reg_all': [.4, .4], 'n_factors': [5], 'random_state': [0]}
-    gs = GridSearchCV(SVD, param_grid, measures=['RMSE', 'mae'], cv=kf,
+    param_grid = {'n_epochs': [5], 'lr_all': [.2, .4],
+                  'reg_all': [.4, .6], 'n_factors': [5], 'random_state': [0]}
+    gs = GridSearchCV(SVD, param_grid, measures=['RMSE', 'mae', 'fcp'], cv=kf,
                       return_train_measures=True)
     gs.fit(data)
 
@@ -151,6 +151,8 @@ def test_gridsearchcv_cv_results():
     assert gs.cv_results['params'][best_index] == gs.best_params['rmse']
     best_index = np.argmin(gs.cv_results['rank_test_mae'])
     assert gs.cv_results['params'][best_index] == gs.best_params['mae']
+    best_index = np.argmin(gs.cv_results['rank_test_fcp'])
+    assert gs.cv_results['params'][best_index] == gs.best_params['fcp']
 
 
 def test_gridsearchcv_refit(u1_ml100k):
