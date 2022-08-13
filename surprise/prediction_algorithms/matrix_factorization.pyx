@@ -700,7 +700,7 @@ class NMF(AlgoBase):
             for u in trainset.all_users():
                 n_ratings = len(trainset.ur[u])
                 for f in range(self.n_factors):
-                    if pu[u, f] != 0:
+                    if pu[u, f] != 0:  # Can happen if user only has 0 ratings
                         user_denom[u, f] += n_ratings * reg_pu * pu[u, f]
                         pu[u, f] *= user_num[u, f] / user_denom[u, f]
 

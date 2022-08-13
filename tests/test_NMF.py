@@ -5,9 +5,13 @@ Module for testing the NMF algorithm.
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 import pytest
+import pandas as pd
+
 
 from surprise import NMF
 from surprise.model_selection import cross_validate
+from surprise import Reader
+from surprise import Dataset
 
 
 def test_NMF_parameters(u1_ml100k, pkf):
@@ -75,3 +79,17 @@ def test_NMF_parameters(u1_ml100k, pkf):
     algo = NMF(n_factors=1, n_epochs=1, init_high=.5, random_state=1)
     rmse_init_high = cross_validate(algo, u1_ml100k, ['rmse'], pkf)['test_rmse']
     assert rmse_default != rmse_init_high
+
+
+def test_NMF_zero_ratings():
+    # Non-regression test for https://github.com/NicolasHug/Surprise/pull/367
+    reader = Reader(rating_scale=(-10, 10))
+
+    ratings_dict = {'itemID': [0, 0, 0, 0, 1, 1],
+                    'userID': [0, 1, 2, 3, 3, 4],
+                    'rating': [-10, 10, 0, -5, 0, 5]}
+    df = pd.DataFrame(ratings_dict)
+    data = Dataset.load_from_df(df[['userID', 'itemID', 'rating']], reader)
+    trainset = data.build_full_trainset()
+    algo = NMF(n_factors=4, n_epochs=2)
+    algo.fit(trainset)
