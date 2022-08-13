@@ -12,11 +12,11 @@ import surprise.similarities as sims
 
 n_x = 8
 yr_global = {
-    0: [(0, 3), (1, 3), (2, 3), (5, 1),                 (6, 1.5), (7, 3)],  # noqa
+    0: [(0, 3), (1, 3), (2, 3),                 (5, 1), (6, 1.5), (7, 3)],  # noqa
     1: [(0, 4), (1, 4), (2, 4),                                         ],  # noqa
     2: [                (2, 5), (3, 2), (4, 3)                          ],  # noqa
-    3: [(1, 1),         (2, 4), (3, 2), (4, 3), (5, 3), (6, 3.5), (7, 2)],  # noqa
-    4: [(1, 5),         (2, 1),                 (5, 2), (6, 2.5), (7, 2.5)], # noqa
+    3: [        (1, 1), (2, 4), (3, 2), (4, 3), (5, 3), (6, 3.5), (7, 2)],  # noqa
+    4: [        (1, 5), (2, 1),                 (5, 2), (6, 2.5), (7, 2.5)], # noqa
 }
 
 
@@ -201,6 +201,62 @@ def test_pearson_baseline_sim():
     # ensure min_support is taken into account. Only users 1 and 2 have more
     # than 4 common ratings.
     sim = sims.pearson_baseline(n_x, yr, 4, global_mean, x_biases, y_biases)
+    for i in range(n_x):
+        for j in range(i + 1, n_x):
+            if i != 1 and j != 2:
+                assert sim[i, j] == 0
+
+
+def test_spearman_sim():
+    """Test for spearman similarity"""
+
+    yr = yr_global.copy()
+
+    # shuffle every rating list, to ensure the order in which ratings are
+    # processed does not matter (it's important because it used to be error
+    # prone when we were using itertools.combinations)
+    for _, ratings in yr.items():
+        random.shuffle(ratings)
+
+    sim = sims.spearman(n_x, yr, min_support=1)
+    # check symetry and bounds. -1 <= pearson coeff <= 1
+    for xi in range(n_x):
+        assert sim[xi, xi] == 1
+        for xj in range(n_x):
+            assert sim[xi, xj] == sim[xj, xi]
+            assert -1 <= sim[xi, xj] <= 1
+
+    # on common items, users 0, 1 and 2 have the same ratings
+    assert sim[0, 1] == 1
+    assert sim[0, 2] == 1
+
+    # for vectors with constant ratings, pearson sim is necessarily zero (as
+    # ratings are centered)
+    assert sim[3, 4] == 0
+    assert sim[2, 3] == 0
+    assert sim[2, 4] == 0
+
+    # pairs of users (0, 3), have no common items
+    assert sim[0, 3] == 0
+    assert sim[0, 4] == 0
+
+    # ratings have same rankings
+    assert sim[5, 6] == 1
+
+    # check for float point support and computation correctness
+    mean6 = (1 + 2 + 3) / 3
+    var6 = (3 - mean6) ** 2 + (1 - mean6) ** 2 + (2 - mean6) ** 2
+    mean7 = (1 + 2 + 3) / 3
+    var7 = (1 - mean7) ** 2 + (3 - mean7) ** 2 + (2 - mean7) ** 2
+    num = sum([((3 - mean6) * (1 - mean7)),
+               ((1 - mean6) * (3 - mean7)),
+               ((2 - mean6) * (2 - mean7))
+               ])
+    assert sim[6, 7] == num / (var6 * var7) ** 0.5
+
+    # ensure min_support is taken into account. Only users 1 and 2 have more
+    # than 4 common ratings.
+    sim = sims.spearman(n_x, yr, min_support=4)
     for i in range(n_x):
         for j in range(i + 1, n_x):
             if i != 1 and j != 2:

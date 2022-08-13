@@ -13,6 +13,7 @@ Available similarity measures:
     msd
     pearson
     pearson_baseline
+    spearman
 """
 
 from __future__ import (absolute_import, division, print_function,
@@ -23,6 +24,8 @@ import numpy as np
 
 from six.moves import range
 from six import iteritems
+
+from scipy.stats import rankdata
 
 
 def cosine(n_x, yr, min_support):
@@ -196,7 +199,8 @@ def pearson(n_x, yr, min_support):
     -1).
 
     For details on Pearson coefficient, see `Wikipedia
-    <https://en.wikipedia.org/wiki/Pearson_product-moment_correlation_coefficient#For_a_sample>`__.
+    <https://en.wikipedia.org/wiki/Pearson_product-moment_correlation_
+    coefficient#For_a_sample>`__.
 
     """
 
@@ -355,6 +359,124 @@ def pearson_baseline(n_x, yr, min_support, global_mean, x_biases, y_biases,
                 # the shrinkage part
                 sim[xi, xj] *= (freq[xi, xj] - 1) / (freq[xi, xj] - 1 +
                                                      shrinkage)
+
+            sim[xj, xi] = sim[xi, xj]
+
+    return sim
+
+
+def spearman(n_x, yr, min_support):
+    """Compute the Spearman correlation coefficient between all pairs of users
+    (or items).
+
+    Only **common** users (or items) are taken into account.
+    The Spearman rank correlation is a variation of the Pearson correlation.
+    The ratings are replaced by their rankings.
+
+    The Spearman Rank Correlation is suitable for the investigation of random
+    variables which are not based on a normal distribution.
+
+    It is defined by:
+
+    .. math ::
+        \\text{spearman_sim}(u, v) = \\frac{ \\sum\\limits_{i \\in I_{uv}}
+        (rank(r_{ui}) - \\overline{rank(u)}) \\cdot (rank(r_{vi}) -
+        \\overline{rank(v)})} {\\sqrt{\\sum\\limits_{i
+        \\in I_{uv}} (rank(r_{ui}) - \\overline{rank(u)})^2} \\cdot
+        \\sqrt{\\sum\\limits_{i \\in
+        I_{uv}}  (rank(r_{vi}) - \\overline{rank(v)})^2} }
+
+    or
+
+    .. math ::
+        \\text{spearman_sim}(i, j) = \\frac{ \\sum\\limits_{u \\in U_{ij}}
+        (rank(r_{ui}) - \\overline{rank(i)}) \\cdot (rank(r_{uj}) -
+        \\overline{rank(j)})} {\\sqrt{\\sum\\limits_{u
+        \\in U_{ij}} (rank(r_{ui}) - \\overline{rank(i)})^2} \\cdot
+        \\sqrt{\\sum\\limits_{u \\in
+        U_{ij}}  (rank(r_{uj}) - \\overline{rank(j)})^2} }
+
+    depending on the ``user_based`` field of ``sim_options`` (see
+    :ref:`similarity_measures_configuration`).
+
+
+    Note: if there are no common users or items, similarity will be 0 (and not
+    -1).
+
+    For details on Spearman coefficient, see in chapter 4, page 126 of
+    *Recommender Systems Handbook*.
+
+    """
+
+    # number of common ys
+    cdef np.ndarray[np.int_t, ndim=2] freq
+    # sum (rank_xy * rank_x'y) for common ys
+    cdef np.ndarray[np.double_t, ndim=2] prods
+    # sum (rank_xy ^ 2) for common ys
+    cdef np.ndarray[np.double_t, ndim=2] sqi
+    # sum (rank_x'y ^ 2) for common ys
+    cdef np.ndarray[np.double_t, ndim=2] sqj
+    # sum (rank_xy) for common ys
+    cdef np.ndarray[np.double_t, ndim=2] si
+    # sum (rank_x'y) for common ys
+    cdef np.ndarray[np.double_t, ndim=2] sj
+    # the similarity matrix
+    cdef np.ndarray[np.double_t, ndim=2] sim
+
+    cdef np.ndarray[np.double_t, ndim=1] ranks
+    cdef np.ndarray[np.double_t, ndim=2] matrix
+
+    cdef int xi, xj
+    cdef double ri, rj
+    cdef int min_sprt = min_support
+
+    freq = np.zeros((n_x, n_x), np.int)
+    prods = np.zeros((n_x, n_x), np.double)
+    sqi = np.zeros((n_x, n_x), np.double)
+    sqj = np.zeros((n_x, n_x), np.double)
+    si = np.zeros((n_x, n_x), np.double)
+    sj = np.zeros((n_x, n_x), np.double)
+    sim = np.zeros((n_x, n_x), np.double)
+    ranks = np.zeros(n_x, np.double)
+    matrix = np.zeros((len(yr), n_x), np.double)
+
+    # turn yr into a matrix
+    for y, y_ratings in iteritems(yr):
+        for x_i, r_i in y_ratings:
+            matrix[y, x_i] = r_i
+    # turn the yr matrix into a matrix which contains the ranks
+    for x_i in range(n_x):
+        matrix[:, x_i] = rankdata(matrix[:, x_i])
+
+    for y, y_ratings in iteritems(yr):
+        for xi, ri in y_ratings:
+            # use the ranking matrix to get the elements row by row
+            ranks[xi] = matrix[y, xi]
+        for xi, _ in y_ratings:
+            for xj, _ in y_ratings:
+                prods[xi, xj] += ranks[xi] * ranks[xj]
+                freq[xi, xj] += 1
+                sqi[xi, xj] += ranks[xi]**2
+                sqj[xi, xj] += ranks[xj]**2
+                si[xi, xj] += ranks[xi]
+                sj[xi, xj] += ranks[xj]
+
+    for xi in range(n_x):
+        sim[xi, xi] = 1
+        for xj in range(xi + 1, n_x):
+
+            if freq[xi, xj] < min_sprt:
+                sim[xi, xj] = 0
+            else:
+                n = freq[xi, xj]
+                num = (n * prods[xi, xj]) - (si[xi, xj] * sj[xi, xj])
+                denum_l = (n * sqi[xi, xj]) - si[xi, xj]**2
+                denum_r = (n * sqj[xi, xj]) - sj[xi, xj]**2
+                denum = np.sqrt(denum_l * denum_r)
+                if denum == 0:
+                    sim[xi, xj] = 0
+                else:
+                    sim[xi, xj] = num / denum
 
             sim[xj, xi] = sim[xi, xj]
 
