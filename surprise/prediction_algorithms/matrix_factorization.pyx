@@ -700,15 +700,17 @@ class NMF(AlgoBase):
             for u in trainset.all_users():
                 n_ratings = len(trainset.ur[u])
                 for f in range(self.n_factors):
-                    user_denom[u, f] += n_ratings * reg_pu * pu[u, f]
-                    pu[u, f] *= user_num[u, f] / user_denom[u, f]
+                    if pu[u, f] != 0:  # Can happen if user only has 0 ratings
+                        user_denom[u, f] += n_ratings * reg_pu * pu[u, f]
+                        pu[u, f] *= user_num[u, f] / user_denom[u, f]
 
             # Update item factors
             for i in trainset.all_items():
                 n_ratings = len(trainset.ir[i])
                 for f in range(self.n_factors):
-                    item_denom[i, f] += n_ratings * reg_qi * qi[i, f]
-                    qi[i, f] *= item_num[i, f] / item_denom[i, f]
+                    if qi[i, f] != 0:
+                        item_denom[i, f] += n_ratings * reg_qi * qi[i, f]
+                        qi[i, f] *= item_num[i, f] / item_denom[i, f]
 
         self.bu = bu
         self.bi = bi
