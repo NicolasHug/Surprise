@@ -142,18 +142,16 @@ class BaseSearchCV(with_metaclass(ABCMeta)):
                     train_measures[m].std(axis=1)
 
             # cv_results: set rank of each param comb
+            # also set best_index, and best_xxxx attributes
             indices = cv_results['mean_test_{}'.format(m)].argsort()
             cv_results['rank_test_{}'.format(m)] = np.empty_like(indices)
             if m in ('mae', 'rmse', 'mse'):
-              cv_results['rank_test_{}'.format(m)][indices] = np.arange(
-                  len(indices)) + 1  # sklearn starts rankings at 1 as well.
-            elif m in ('fcp',):
-              cv_results['rank_test_{}'.format(m)][indices] = np.arange(len(indices), 0, -1)
-
-            # set best_index, and best_xxxx attributes
-            if m in ('mae', 'rmse', 'mse'):
+                cv_results['rank_test_{}'.format(m)][indices] = \
+                    np.arange(len(indices)) + 1  # sklearn starts at 1 as well
                 best_index[m] = mean_test_measures.argmin()
             elif m in ('fcp',):
+                cv_results['rank_test_{}'.format(m)][indices] = \
+                    np.arange(len(indices), 0, -1)
                 best_index[m] = mean_test_measures.argmax()
             best_params[m] = self.param_combinations[best_index[m]]
             best_score[m] = mean_test_measures[best_index[m]]
