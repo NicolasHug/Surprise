@@ -25,11 +25,10 @@ from six.moves import range
 from six import iteritems
 
 
-def cosine(n_x, yr, min_support):
+def cosine(n_x, yr, min_support, common_ratings_only=True):
     """Compute the cosine similarity between all pairs of users (or items).
 
-    Only **common** users (or items) are taken into account. The cosine
-    similarity is defined as:
+    The cosine similarity is defined as:
 
     .. math::
         \\text{cosine_sim}(u, v) = \\frac{
@@ -52,7 +51,19 @@ def cosine(n_x, yr, min_support):
 
     For details on cosine similarity, see on `Wikipedia
     <https://en.wikipedia.org/wiki/Cosine_similarity#Definition>`__.
+
+    Depending on ``common_ratings_only`` field of ``sim_options``
+    only common users (or items) are taken into account, or full rating
+    vectors (default: ``True``).
     """
+
+    if common_ratings_only:
+        return cosine_common_ratings_only(n_x, yr, min_support)
+    else:
+        return cosine_full_rating_vectors(n_x, yr, min_support)
+
+
+def cosine_common_ratings_only(n_x, yr, min_support):
 
     # sum (r_xy * r_x'y) for common ys
     cdef np.ndarray[np.double_t, ndim=2] prods
@@ -78,6 +89,90 @@ def cosine(n_x, yr, min_support):
     for y, y_ratings in iteritems(yr):
         for xi, ri in y_ratings:
             for xj, rj in y_ratings:
+                freq[xi, xj] += 1
+                prods[xi, xj] += ri * rj
+                sqi[xi, xj] += ri ** 2
+                sqj[xi, xj] += rj ** 2
+
+    for xi in range(n_x):
+        sim[xi, xi] = 1
+        for xj in range(xi + 1, n_x):
+            if freq[xi, xj] < min_sprt:
+                sim[xi, xj] = 0
+            else:
+                denum = np.sqrt(sqi[xi, xj] * sqj[xi, xj])
+                sim[xi, xj] = prods[xi, xj] / denum
+
+            sim[xj, xi] = sim[xi, xj]
+
+    return sim
+
+
+def cosine_full_rating_vectors(n_x, yr, min_support):
+
+    # sum (r_xy * r_x'y) for common ys
+    cdef np.ndarray[np.double_t, ndim=2] prods
+    # number of common ys
+    cdef np.ndarray[np.int_t, ndim=2] freq
+    # sum (r_xy ^ 2) for common ys
+    cdef np.ndarray[np.double_t, ndim=2] sqi
+    # sum (r_x'y ^ 2) for common ys
+    cdef np.ndarray[np.double_t, ndim=2] sqj
+    # the similarity matrix
+    cdef np.ndarray[np.double_t, ndim=2] sim
+
+    cdef int xi, xj
+    cdef double ri, rj
+    cdef int min_sprt = min_support
+
+    prods = np.zeros((n_x, n_x), np.double)
+    freq = np.zeros((n_x, n_x), np.int)
+    sqi = np.zeros((n_x, n_x), np.double)
+    sqj = np.zeros((n_x, n_x), np.double)
+    sim = np.zeros((n_x, n_x), np.double)
+
+    for y, y_ratings in iteritems(yr):
+
+        # yr_ratings data structure is sparse. But for cosine similarity it is
+        # necessary to obtain all pairs, substituting missing ratings for 0.
+        # Implementation:
+        # Iterate through the range of x-indexes, taking 0-rating for each
+        # index unless this index is actually present in the iter
+        sorted_y_ratings = sorted(y_ratings, key=lambda x: x[0])
+        xi_iter = iter(sorted_y_ratings)
+        try:
+            xi_non_missing, ri_non_missing = next(xi_iter)
+        except StopIteration:
+            xi_non_missing = n_x
+        for xi_all in range(n_x):
+            if xi_all < xi_non_missing:
+                xi = xi_all
+                ri = 0
+            else:
+                xi = xi_non_missing
+                ri = ri_non_missing
+                try:
+                    xi_non_missing, ri_non_missing = next(xi_iter)
+                except StopIteration:
+                    xi_non_missing = n_x
+
+            xj_iter = iter(sorted_y_ratings)
+            try:
+                xj_non_missing, rj_non_missing = next(xj_iter)
+            except StopIteration:
+                xj_non_missing = n_x
+            for xj_all in range(n_x):
+                if xj_all < xj_non_missing:
+                    xj = xj_all
+                    rj = 0
+                else:
+                    xj = xj_non_missing
+                    rj = rj_non_missing
+                    try:
+                        xj_non_missing, rj_non_missing = next(xj_iter)
+                    except StopIteration:
+                        xj_non_missing = n_x
+
                 freq[xi, xj] += 1
                 prods[xi, xj] += ri * rj
                 sqi[xi, xj] += ri**2

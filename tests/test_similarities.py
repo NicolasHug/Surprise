@@ -12,11 +12,11 @@ import surprise.similarities as sims
 
 n_x = 8
 yr_global = {
-    0: [(0, 3), (1, 3), (2, 3), (5, 1),                 (6, 1.5), (7, 3)],  # noqa
+    0: [(0, 3), (1, 3), (2, 3),                 (5, 1), (6, 1.5), (7, 3)],  # noqa
     1: [(0, 4), (1, 4), (2, 4),                                         ],  # noqa
     2: [                (2, 5), (3, 2), (4, 3)                          ],  # noqa
-    3: [(1, 1),         (2, 4), (3, 2), (4, 3), (5, 3), (6, 3.5), (7, 2)],  # noqa
-    4: [(1, 5),         (2, 1),                 (5, 2), (6, 2.5), (7, 2.5)], # noqa
+    3: [        (1, 1), (2, 4), (3, 2), (4, 3), (5, 3), (6, 3.5), (7, 2)],  # noqa
+    4: [        (1, 5), (2, 1),                 (5, 2), (6, 2.5), (7, 2.5)], # noqa
 }
 
 
@@ -48,7 +48,51 @@ def test_cosine_sim():
     # cosine sim is necessarily 1
     assert sim[3, 4] == 1
 
-    # pairs of users (0, 3)  have no common items
+    # pairs of users (0, 3) have no common items
+    assert sim[0, 3] == 0
+    assert sim[0, 4] == 0
+
+    # check for float point support and computation correctness
+    dot_product56 = 1 * 1.5 + 3 * 3.5 + 2 * 2.5
+    assert sim[5, 6] == (dot_product56 /
+                         ((1 ** 2 + 3 ** 2 + 2 ** 2) *
+                          (1.5 ** 2 + 3.5 ** 2 + 2.5 ** 2)) ** 0.5
+                         )
+
+    # ensure min_support is taken into account. Only users 1 and 2 have more
+    # than 4 common ratings.
+    sim = sims.cosine(n_x, yr, min_support=4)
+    for i in range(n_x):
+        for j in range(i + 1, n_x):
+            if i != 1 and j != 2:
+                assert sim[i, j] == 0
+
+
+def test_cosine_full_vectors_sim():
+    """Tests for the cosine similarity."""
+
+    yr = yr_global.copy()
+
+    # # shuffle every rating list, to ensure the order in which ratings are
+    # # processed does not matter (it's important because it used to be error
+    # # prone when we were using itertools.combinations)
+    # for _, ratings in yr.items():
+    #     random.shuffle(ratings)
+
+    sim = sims.cosine(n_x, yr, min_support=1, common_ratings_only=False)
+
+    # check symetry and bounds (as ratings are > 0, cosine sim must be >= 0)
+    for xi in range(n_x):
+        assert sim[xi, xi] == 1
+        for xj in range(n_x):
+            assert sim[xi, xj] == sim[xj, xi]
+            assert 0 <= sim[xi, xj] <= 1
+
+    # users 0, 1 and 2 have different ratings when non-common items considered
+    assert sim[0, 1] < 1
+    assert sim[0, 2] < 1
+
+    # pairs of users (0, 3) and (0,4) have no common items
     assert sim[0, 3] == 0
     assert sim[0, 4] == 0
 
