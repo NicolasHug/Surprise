@@ -203,6 +203,9 @@ class SVD(AlgoBase):
         cdef double [:, ::1] qi = rng.normal(self.init_mean, self.init_std_dev, size=(trainset.n_items, self.n_factors))
 
         cdef int u, i, f
+        cdef int n_factors = self.n_factors
+        cdef bint biased = self.biased
+
         cdef double r, err, dot, puf, qif
         cdef double global_mean = self.trainset.global_mean
 
@@ -216,11 +219,8 @@ class SVD(AlgoBase):
         cdef double reg_pu = self.reg_pu
         cdef double reg_qi = self.reg_qi
 
-        if not self.biased:
+        if not biased:
             global_mean = 0
-
-        cdef int facts = self.n_factors
-        cdef bint biased = self.biased
 
         for current_epoch in range(self.n_epochs):
             if self.verbose:
@@ -229,10 +229,8 @@ class SVD(AlgoBase):
             for u, i, r in trainset.all_ratings():
                 # compute current error
                 dot = 0  # <q_i, p_u>
-                f = 0
-                while f < facts:
+                for f in range(n_factors):
                     dot += qi[i, f] * pu[u, f]
-                    f += 1
                 err = r - (global_mean + bu[u] + bi[i] + dot)
 
                 # update biases
@@ -241,13 +239,11 @@ class SVD(AlgoBase):
                     bi[i] += lr_bi * (err - reg_bi * bi[i])
 
                 # update factors
-                f = 0
-                while f < facts:
+                for f in range(n_factors):
                     puf = pu[u, f]
                     qif = qi[i, f]
                     pu[u, f] += lr_pu * (err * qif - reg_pu * puf)
                     qi[i, f] += lr_qi * (err * puf - reg_qi * qif)
-                    f += 1
 
         self.bu = bu
         self.bi = bi
@@ -417,6 +413,7 @@ class SVDpp(AlgoBase):
         cdef double [::1] u_impl_fdb = np.zeros(self.n_factors, dtype=np.double)
 
         cdef int u, i, j, f
+        cdef int n_factors = self.n_factors
         cdef double r, err, dot, puf, qif, sqrt_Iu, _
         cdef double global_mean = self.trainset.global_mean
 
@@ -445,8 +442,6 @@ class SVDpp(AlgoBase):
             Iu_len_sqrts[dereference(it).first] = 1.0 / np.sqrt(dereference(it).second.size())
             postincrement(it)
 
-        cdef int facts = self.n_factors
-
         cdef double err_qif_sqrt = 0.0
 
         for current_epoch in range(self.n_epochs):
@@ -460,23 +455,17 @@ class SVDpp(AlgoBase):
                 sqrt_Iu = Iu_len_sqrts[u]
 
                 # compute user implicit feedback
-                f = 0
-                while f < facts:
+                for f in range(n_factors):
                     u_impl_fdb[f] = 0
-                    f += 1
 
                 for j in Iu:
-                    f = 0
-                    while f < facts:
+                    for f in range(n_factors):
                         u_impl_fdb[f] += yj[j, f] * sqrt_Iu
-                        f += 1
                 
                 # compute current error
                 dot = 0 
-                f = 0
-                while f < facts:
+                for f in range(n_factors):
                     dot += qi[i, f] * (pu[u, f] + u_impl_fdb[f])
-                    f += 1
 
                 err = r - (global_mean + bu[u] + bi[i] + dot)
 
@@ -485,8 +474,7 @@ class SVDpp(AlgoBase):
                 bi[i] += lr_bi * (err - reg_bi * bi[i])
 
                 # update factors
-                f = 0
-                while f < facts:
+                for f in range(n_factors):
                     puf = pu[u, f]
                     qif = qi[i, f]
                     pu[u, f] += lr_pu * (err * qif - reg_pu * puf)
@@ -494,7 +482,6 @@ class SVDpp(AlgoBase):
                     err_qif_sqrt = err * qif * sqrt_Iu
                     for j in Iu:
                         yj[j, f] += lr_yj * (err_qif_sqrt - reg_yj * yj[j, f])
-                    f += 1
 
         self.bu = bu
         self.bi = bi
@@ -661,6 +648,7 @@ class NMF(AlgoBase):
         cdef double [:, ::1] item_denom
 
         cdef int u, i, f
+        cdef int n_factors = self.n_factors
         cdef double r, est, l, dot, err
         cdef double reg_pu = self.reg_pu
         cdef double reg_qi = self.reg_qi
@@ -679,17 +667,18 @@ class NMF(AlgoBase):
                 print("Processing epoch {}".format(current_epoch))
 
             # (re)initialize nums and denoms to zero
-            user_num = np.zeros((trainset.n_users, self.n_factors))
-            user_denom = np.zeros((trainset.n_users, self.n_factors))
-            item_num = np.zeros((trainset.n_items, self.n_factors))
-            item_denom = np.zeros((trainset.n_items, self.n_factors))
+            # TODO: Use fill or memset??
+            user_num = np.zeros((trainset.n_users, n_factors))
+            user_denom = np.zeros((trainset.n_users, n_factors))
+            item_num = np.zeros((trainset.n_items, n_factors))
+            item_denom = np.zeros((trainset.n_items, n_factors))
 
             # Compute numerators and denominators for users and items factors
             for u, i, r in trainset.all_ratings():
 
                 # compute current estimation and error
                 dot = 0  # <q_i, p_u>
-                for f in range(self.n_factors):
+                for f in range(n_factors):
                     dot += qi[i, f] * pu[u, f]
                 est = global_mean + bu[u] + bi[i] + dot
                 err = r - est
@@ -700,7 +689,7 @@ class NMF(AlgoBase):
                     bi[i] += lr_bi * (err - reg_bi * bi[i])
 
                 # compute numerators and denominators
-                for f in range(self.n_factors):
+                for f in range(n_factors):
                     user_num[u, f] += qi[i, f] * r
                     user_denom[u, f] += qi[i, f] * est
                     item_num[i, f] += pu[u, f] * r
@@ -709,7 +698,7 @@ class NMF(AlgoBase):
             # Update user factors
             for u in trainset.all_users():
                 n_ratings = len(trainset.ur[u])
-                for f in range(self.n_factors):
+                for f in range(n_factors):
                     if pu[u, f] != 0:  # Can happen if user only has 0 ratings
                         user_denom[u, f] += n_ratings * reg_pu * pu[u, f]
                         pu[u, f] *= user_num[u, f] / user_denom[u, f]
@@ -717,7 +706,7 @@ class NMF(AlgoBase):
             # Update item factors
             for i in trainset.all_items():
                 n_ratings = len(trainset.ir[i])
-                for f in range(self.n_factors):
+                for f in range(n_factors):
                     if qi[i, f] != 0:
                         item_denom[i, f] += n_ratings * reg_qi * qi[i, f]
                         qi[i, f] *= item_num[i, f] / item_denom[i, f]
