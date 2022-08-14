@@ -4,8 +4,8 @@ class :class:`AlgoBase` from which every single prediction algorithm has to
 inherit.
 """
 
-from __future__ import (absolute_import, division, print_function,
-                        unicode_literals)
+
+
 
 from .. import similarities as sims
 from .predictions import PredictionImpossible

@@ -24,8 +24,6 @@ testset:
 
 """
 
-from __future__ import (absolute_import, division, print_function,
-                        unicode_literals)
 from itertools import chain
 from math import ceil, floor
 import numbers

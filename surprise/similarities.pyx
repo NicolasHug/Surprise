@@ -15,8 +15,8 @@ Available similarity measures:
     pearson_baseline
 """
 
-from __future__ import (absolute_import, division, print_function,
-                        unicode_literals)
+
+
 
 cimport numpy as np  # noqa
 import numpy as np

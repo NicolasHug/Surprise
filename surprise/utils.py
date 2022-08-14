@@ -1,7 +1,7 @@
 """The utils module contains the get_rng function."""
 
-from __future__ import (absolute_import, division, print_function,
-                        unicode_literals)
+
+
 import numbers
 
 import numpy as np

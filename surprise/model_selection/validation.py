@@ -3,8 +3,6 @@ The validation module contains the cross_validate function, inspired from
 the mighty scikit learn.
 """
 
-from __future__ import (absolute_import, division, print_function,
-                        unicode_literals)
 import time
 
 import numpy as np
