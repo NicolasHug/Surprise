@@ -641,12 +641,6 @@ class NMF(AlgoBase):
         cdef double [::1] bu = np.zeros(trainset.n_users, dtype=np.double)
         cdef double [::1] bi = np.zeros(trainset.n_items, dtype=np.double)
 
-        # auxiliary matrices used in optimization process
-        cdef double [:, ::1] user_num
-        cdef double [:, ::1] user_denom
-        cdef double [:, ::1] item_num
-        cdef double [:, ::1] item_denom
-
         cdef int u, i, f
         cdef int n_factors = self.n_factors
         cdef double r, est, l, dot, err
@@ -658,6 +652,13 @@ class NMF(AlgoBase):
         cdef double lr_bi = self.lr_bi
         cdef double global_mean = self.trainset.global_mean
 
+        # auxiliary matrices used in optimization process
+        cdef double [:, ::1] user_num = np.zeros((trainset.n_users, n_factors))
+        cdef double [:, ::1] user_denom = np.zeros((trainset.n_users, n_factors))
+        cdef double [:, ::1] item_num = np.zeros((trainset.n_items, n_factors))
+        cdef double [:, ::1] item_denom = np.zeros((trainset.n_items, n_factors))
+
+
         if not self.biased:
             global_mean = 0
 
@@ -668,10 +669,10 @@ class NMF(AlgoBase):
 
             # (re)initialize nums and denoms to zero
             # TODO: Use fill or memset??
-            user_num = np.zeros((trainset.n_users, n_factors))
-            user_denom = np.zeros((trainset.n_users, n_factors))
-            item_num = np.zeros((trainset.n_items, n_factors))
-            item_denom = np.zeros((trainset.n_items, n_factors))
+            user_num[:, :] = 0
+            user_denom[:, :] = 0
+            item_num[:, :] = 0
+            item_denom[:, :] = 0
 
             # Compute numerators and denominators for users and items factors
             for u, i, r in trainset.all_ratings():
