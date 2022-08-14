@@ -20,10 +20,6 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
-    - uses: actions/upload-artifact@v3
-      with:
-        name: my-artifact
-        path: doc/build/html
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v3
       with:
@@ -40,3 +36,7 @@ jobs:
         cd doc
         make clean
         make html
+    - uses: actions/upload-artifact@v3
+      with:
+        name: my-artifact
+        path: doc/build/html
