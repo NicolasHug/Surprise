@@ -11,7 +11,6 @@ from .algo_base import AlgoBase
 from .predictions import PredictionImpossible
 from ..utils import get_rng
 
-from libcpp.vector cimport vector
 import cython
 from libc.stdlib cimport malloc, free
 
@@ -277,7 +276,7 @@ class SVD(AlgoBase):
         return est
 
 
-# @cython.cdivision(True)
+@cython.cdivision(True)
 class SVDpp(AlgoBase):
     """The *SVD++* algorithm, an extension of :class:`SVD` taking into account
     implicit ratings.
@@ -500,7 +499,7 @@ class SVDpp(AlgoBase):
                     for k in range(Iu_length):
                         j = Iu[k]
                         yj[j, f] += lr_yj * (err_qif_sqrt - reg_yj * yj[j, f])
-        
+
         if precompute:
             for u in range(trainset.n_users):
                 free(Iu_precomputed[u])

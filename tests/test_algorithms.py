@@ -5,6 +5,8 @@ Module for testing prediction algorithms.
 
 import os
 
+import pytest
+
 from surprise import (
     accuracy,
     BaselineOnly,
@@ -95,30 +97,26 @@ def test_nearest_neighbors():
     assert algo_ub.get_neighbors(0, k=10) != algo_ib.get_neighbors(0, k=10)
 
 
-def test_sanity_checks(u1_ml100k, pkf):
-    """
-    Basic sanity checks for all algorithms: check that RMSE stays the same.
-    """
+@pytest.mark.parametrize(
+    "algo, expected_rmse",
+    [
+        (BaselineOnly(), 1.0268524031297395),
+        (KNNBasic(), 1.1337265249554591),
+        (KNNWithMeans(), 1.1043129441881696),
+        (KNNBaseline(), 1.0700718041752253),
+        (KNNWithZScore(), 1.11179436167853),
+        (SVD(random_state=0), 1.0077323320656948),
+        (SVDpp(random_state=0), 1.00284553561452),
+        (SVDpp(precompute=True, random_state=0), 1.00284553561452),
+        (NMF(random_state=0), 1.0865370266372372),
+        (SlopeOne(), 1.1559939123891685),
+        (CoClustering(random_state=0), 1.0841941385276614),
+    ],
+)
+def test_sanity_checks(u1_ml100k, pkf, algo, expected_rmse):
+    """Basic sanity checks for all algorithms: check that RMSE stays the same."""
 
-    expected_rmse = {
-        BaselineOnly: 1.0268524031297395,
-        KNNBasic: 1.1337265249554591,
-        KNNWithMeans: 1.1043129441881696,
-        KNNBaseline: 1.0700718041752253,
-        KNNWithZScore: 1.11179436167853,
-        SVD: 1.0077323320656948,
-        SVDpp: 1.00284553561452,
-        NMF: 1.0865370266372372,
-        SlopeOne: 1.1559939123891685,
-        CoClustering: 1.0841941385276614,
-    }
-
-    for klass, rmse in expected_rmse.items():
-        if klass in (SVD, SVDpp, NMF, CoClustering):
-            algo = klass(random_state=0)
-        else:
-            algo = klass()
-        trainset, testset = next(pkf.split(u1_ml100k))
-        algo.fit(trainset)
-        predictions = algo.test(testset)
-        assert accuracy.rmse(predictions, verbose=False) == rmse
+    trainset, testset = next(pkf.split(u1_ml100k))
+    algo.fit(trainset)
+    predictions = algo.test(testset)
+    assert accuracy.rmse(predictions, verbose=False) == expected_rmse
