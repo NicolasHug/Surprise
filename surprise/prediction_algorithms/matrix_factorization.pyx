@@ -3,9 +3,6 @@ the :mod:`matrix_factorization` module includes some algorithms using matrix
 factorization.
 """
 
-
-
-
 cimport numpy as np  # noqa
 import numpy as np
 
@@ -160,8 +157,6 @@ class SVD(AlgoBase):
 
         return self
 
-    @cython.boundscheck(False)  # Deactivate bounds checking
-    @cython.wraparound(False)   # Deactivate negative indexing.
     def sgd(self, trainset):
 
         # OK, let's breath. I've seen so many different implementation of this
@@ -411,8 +406,6 @@ class SVDpp(AlgoBase):
 
         return self
 
-    @cython.boundscheck(False)  # Deactivate bounds checking
-    @cython.wraparound(False)   # Deactivate negative indexing.
     def sgd(self, trainset):
 
         # user biases
