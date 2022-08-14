@@ -5,12 +5,9 @@ predict all the ratings for the pairs (user, item) that are not in the training
 set. We then retrieve the top-10 prediction for each user.
 """
 
-from __future__ import (absolute_import, division, print_function,
-                        unicode_literals)
 from collections import defaultdict
 
-from surprise import SVD
-from surprise import Dataset
+from surprise import Dataset, SVD
 
 
 def get_top_n(predictions, n=10):
@@ -41,7 +38,7 @@ def get_top_n(predictions, n=10):
 
 
 # First train an SVD algorithm on the movielens dataset.
-data = Dataset.load_builtin('ml-100k')
+data = Dataset.load_builtin("ml-100k")
 trainset = data.build_full_trainset()
 algo = SVD()
 algo.fit(trainset)

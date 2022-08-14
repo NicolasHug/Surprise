@@ -24,7 +24,7 @@ class SVD(AlgoBase):
     The prediction :math:`\\hat{r}_{ui}` is set as:
 
     .. math::
-        \hat{r}_{ui} = \mu + b_u + b_i + q_i^Tp_u
+        \\hat{r}_{ui} = \\mu + b_u + b_i + q_i^Tp_u
 
     If user :math:`u` is unknown, then the bias :math:`b_u` and the factors
     :math:`p_u` are assumed to be zero. The same applies for item :math:`i`
@@ -37,18 +37,18 @@ class SVD(AlgoBase):
     error:
 
     .. math::
-        \sum_{r_{ui} \in R_{train}} \left(r_{ui} - \hat{r}_{ui} \\right)^2 +
-        \lambda\\left(b_i^2 + b_u^2 + ||q_i||^2 + ||p_u||^2\\right)
+        \\sum_{r_{ui} \\in R_{train}} \\left(r_{ui} - \\hat{r}_{ui} \\right)^2 +
+        \\lambda\\left(b_i^2 + b_u^2 + ||q_i||^2 + ||p_u||^2\\right)
 
 
     The minimization is performed by a very straightforward stochastic gradient
     descent:
 
     .. math::
-        b_u &\\leftarrow b_u &+ \gamma (e_{ui} - \lambda b_u)\\\\
-        b_i &\\leftarrow b_i &+ \gamma (e_{ui} - \lambda b_i)\\\\
-        p_u &\\leftarrow p_u &+ \gamma (e_{ui} \\cdot q_i - \lambda p_u)\\\\
-        q_i &\\leftarrow q_i &+ \gamma (e_{ui} \\cdot p_u - \lambda q_i)
+        b_u &\\leftarrow b_u &+ \\gamma (e_{ui} - \\lambda b_u)\\\\
+        b_i &\\leftarrow b_i &+ \\gamma (e_{ui} - \\lambda b_i)\\\\
+        p_u &\\leftarrow p_u &+ \\gamma (e_{ui} \\cdot q_i - \\lambda p_u)\\\\
+        q_i &\\leftarrow q_i &+ \\gamma (e_{ui} \\cdot p_u - \\lambda q_i)
 
     where :math:`e_{ui} = r_{ui} - \\hat{r}_{ui}`. These steps are performed
     over all the ratings of the trainset and repeated ``n_epochs`` times.
@@ -56,8 +56,8 @@ class SVD(AlgoBase):
     initialized according to a normal distribution, which can be tuned using
     the ``init_mean`` and ``init_std_dev`` parameters.
 
-    You also have control over the learning rate :math:`\gamma` and the
-    regularization term :math:`\lambda`. Both can be different for each
+    You also have control over the learning rate :math:`\\gamma` and the
+    regularization term :math:`\\lambda`. Both can be different for each
     kind of parameter (see below). By default, learning rates are set to
     ``0.005`` and regularization terms are set to ``0.02``.
 
@@ -68,7 +68,7 @@ class SVD(AlgoBase):
         predicting:
 
         .. math::
-            \hat{r}_{ui} = q_i^Tp_u
+            \\hat{r}_{ui} = q_i^Tp_u
 
         This is equivalent to Probabilistic Matrix Factorization
         (:cite:`salakhutdinov2008a`, section 2) and can be achieved by setting
@@ -286,8 +286,8 @@ class SVDpp(AlgoBase):
     The prediction :math:`\\hat{r}_{ui}` is set as:
 
     .. math::
-        \hat{r}_{ui} = \mu + b_u + b_i + q_i^T\\left(p_u +
-        |I_u|^{-\\frac{1}{2}} \sum_{j \\in I_u}y_j\\right)
+        \\hat{r}_{ui} = \\mu + b_u + b_i + q_i^T\\left(p_u +
+        |I_u|^{-\\frac{1}{2}} \\sum_{j \\in I_u}y_j\\right)
 
     Where the :math:`y_j` terms are a new set of item factors that capture
     implicit ratings. Here, an implicit rating describes the fact that a user
@@ -308,8 +308,8 @@ class SVDpp(AlgoBase):
     initialized according to a normal distribution, which can be tuned using
     the ``init_mean`` and ``init_std_dev`` parameters.
 
-    You have control over the learning rate :math:`\gamma` and the
-    regularization term :math:`\lambda`. Both can be different for each
+    You have control over the learning rate :math:`\\gamma` and the
+    regularization term :math:`\\lambda`. Both can be different for each
     kind of parameter (see below). By default, learning rates are set to
     ``0.005`` and regularization terms are set to ``0.02``.
 
@@ -510,7 +510,7 @@ class NMF(AlgoBase):
     :math:`\\hat{r}_{ui}` is set as:
 
     .. math::
-        \hat{r}_{ui} = q_i^Tp_u,
+        \\hat{r}_{ui} = q_i^Tp_u,
 
     where user and item factors are kept **positive**. Our implementation
     follows that suggested in :cite:`NMF:2014`, which is equivalent to
@@ -525,14 +525,14 @@ class NMF(AlgoBase):
     and item :math:`i` are updated as follows:
 
     .. math::
-        p_{uf} &\\leftarrow p_{uf} &\cdot \\frac{\\sum_{i \in I_u} q_{if}
-        \\cdot r_{ui}}{\\sum_{i \in I_u} q_{if} \\cdot \\hat{r_{ui}} +
+        p_{uf} &\\leftarrow p_{uf} &\\cdot \\frac{\\sum_{i \\in I_u} q_{if}
+        \\cdot r_{ui}}{\\sum_{i \\in I_u} q_{if} \\cdot \\hat{r_{ui}} +
         \\lambda_u |I_u| p_{uf}}\\\\
-        q_{if} &\\leftarrow q_{if} &\cdot \\frac{\\sum_{u \in U_i} p_{uf}
-        \\cdot r_{ui}}{\\sum_{u \in U_i} p_{uf} \\cdot \\hat{r_{ui}} +
-        \lambda_i |U_i| q_{if}}\\\\
+        q_{if} &\\leftarrow q_{if} &\\cdot \\frac{\\sum_{u \\in U_i} p_{uf}
+        \\cdot r_{ui}}{\\sum_{u \\in U_i} p_{uf} \\cdot \\hat{r_{ui}} +
+        \\lambda_i |U_i| q_{if}}\\\\
 
-    where :math:`\lambda_u` and :math:`\lambda_i` are regularization
+    where :math:`\\lambda_u` and :math:`\\lambda_i` are regularization
     parameters.
 
     This algorithm is highly dependent on initial values. User and item factors
@@ -543,7 +543,7 @@ class NMF(AlgoBase):
     ``True``. In this case, the prediction is set as
 
     .. math::
-        \hat{r}_{ui} = \mu + b_u + b_i + q_i^Tp_u,
+        \\hat{r}_{ui} = \\mu + b_u + b_i + q_i^Tp_u,
 
     still ensuring positive factors. Baselines are optimized in the same way as
     in the :class:`SVD` algorithm. While yielding better accuracy, the biased
@@ -556,9 +556,9 @@ class NMF(AlgoBase):
             ``50``.
         biased(bool): Whether to use baselines (or biases). Default is
             ``False``.
-        reg_pu: The regularization term for users :math:`\lambda_u`. Default is
+        reg_pu: The regularization term for users :math:`\\lambda_u`. Default is
             ``0.06``.
-        reg_qi: The regularization term for items :math:`\lambda_i`. Default is
+        reg_qi: The regularization term for items :math:`\\lambda_i`. Default is
             ``0.06``.
         reg_bu: The regularization term for :math:`b_u`. Only relevant for
             biased version. Default is ``0.02``.

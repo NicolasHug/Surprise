@@ -14,6 +14,7 @@ Available accuracy metrics:
 """
 
 from collections import defaultdict
+
 import numpy as np
 
 
@@ -21,7 +22,7 @@ def rmse(predictions, verbose=True):
     """Compute RMSE (Root Mean Squared Error).
 
     .. math::
-        \\text{RMSE} = \\sqrt{\\frac{1}{|\\hat{R}|} \\sum_{\\hat{r}_{ui} \in
+        \\text{RMSE} = \\sqrt{\\frac{1}{|\\hat{R}|} \\sum_{\\hat{r}_{ui} \\in
         \\hat{R}}(r_{ui} - \\hat{r}_{ui})^2}.
 
     Args:
@@ -40,14 +41,15 @@ def rmse(predictions, verbose=True):
     """
 
     if not predictions:
-        raise ValueError('Prediction list is empty.')
+        raise ValueError("Prediction list is empty.")
 
-    mse = np.mean([float((true_r - est)**2)
-                   for (_, _, true_r, est, _) in predictions])
+    mse = np.mean(
+        [float((true_r - est) ** 2) for (_, _, true_r, est, _) in predictions]
+    )
     rmse_ = np.sqrt(mse)
 
     if verbose:
-        print('RMSE: {0:1.4f}'.format(rmse_))
+        print(f"RMSE: {rmse_:1.4f}")
 
     return rmse_
 
@@ -56,7 +58,7 @@ def mse(predictions, verbose=True):
     """Compute MSE (Mean Squared Error).
 
     .. math::
-        \\text{MSE} = \\frac{1}{|\\hat{R}|} \\sum_{\\hat{r}_{ui} \in
+        \\text{MSE} = \\frac{1}{|\\hat{R}|} \\sum_{\\hat{r}_{ui} \\in
         \\hat{R}}(r_{ui} - \\hat{r}_{ui})^2.
 
     Args:
@@ -75,13 +77,14 @@ def mse(predictions, verbose=True):
     """
 
     if not predictions:
-        raise ValueError('Prediction list is empty.')
+        raise ValueError("Prediction list is empty.")
 
-    mse_ = np.mean([float((true_r - est)**2)
-                    for (_, _, true_r, est, _) in predictions])
+    mse_ = np.mean(
+        [float((true_r - est) ** 2) for (_, _, true_r, est, _) in predictions]
+    )
 
     if verbose:
-        print('MSE: {0:1.4f}'.format(mse_))
+        print(f"MSE: {mse_:1.4f}")
 
     return mse_
 
@@ -90,7 +93,7 @@ def mae(predictions, verbose=True):
     """Compute MAE (Mean Absolute Error).
 
     .. math::
-        \\text{MAE} = \\frac{1}{|\\hat{R}|} \\sum_{\\hat{r}_{ui} \in
+        \\text{MAE} = \\frac{1}{|\\hat{R}|} \\sum_{\\hat{r}_{ui} \\in
         \\hat{R}}|r_{ui} - \\hat{r}_{ui}|
 
     Args:
@@ -109,13 +112,12 @@ def mae(predictions, verbose=True):
     """
 
     if not predictions:
-        raise ValueError('Prediction list is empty.')
+        raise ValueError("Prediction list is empty.")
 
-    mae_ = np.mean([float(abs(true_r - est))
-                    for (_, _, true_r, est, _) in predictions])
+    mae_ = np.mean([float(abs(true_r - est)) for (_, _, true_r, est, _) in predictions])
 
     if verbose:
-        print('MAE:  {0:1.4f}'.format(mae_))
+        print(f"MAE:  {mae_:1.4f}")
 
     return mae_
 
@@ -143,7 +145,7 @@ def fcp(predictions, verbose=True):
     """
 
     if not predictions:
-        raise ValueError('Prediction list is empty.')
+        raise ValueError("Prediction list is empty.")
 
     predictions_u = defaultdict(list)
     nc_u = defaultdict(int)
@@ -166,10 +168,12 @@ def fcp(predictions, verbose=True):
     try:
         fcp = nc / (nc + nd)
     except ZeroDivisionError:
-        raise ValueError('cannot compute fcp on this list of prediction. ' +
-                         'Does every user have at least two predictions?')
+        raise ValueError(
+            "cannot compute fcp on this list of prediction. "
+            + "Does every user have at least two predictions?"
+        )
 
     if verbose:
-        print('FCP:  {0:1.4f}'.format(fcp))
+        print(f"FCP:  {fcp:1.4f}")
 
     return fcp

@@ -5,16 +5,12 @@ inherit.
 """
 
 
-
-
 from .. import similarities as sims
-from .predictions import PredictionImpossible
-from .predictions import Prediction
-from .optimize_baselines import baseline_als
-from .optimize_baselines import baseline_sgd
+from .optimize_baselines import baseline_als, baseline_sgd
+from .predictions import Prediction, PredictionImpossible
 
 
-class AlgoBase(object):
+class AlgoBase:
     """Abstract class where is defined the basic behavior of a prediction
     algorithm.
 
@@ -27,10 +23,10 @@ class AlgoBase(object):
 
     def __init__(self, **kwargs):
 
-        self.bsl_options = kwargs.get('bsl_options', {})
-        self.sim_options = kwargs.get('sim_options', {})
-        if 'user_based' not in self.sim_options:
-            self.sim_options['user_based'] = True
+        self.bsl_options = kwargs.get("bsl_options", {})
+        self.sim_options = kwargs.get("sim_options", {})
+        if "user_based" not in self.sim_options:
+            self.sim_options["user_based"] = True
 
     def fit(self, trainset):
         """Train an algorithm on a given training set.
@@ -95,11 +91,11 @@ class AlgoBase(object):
         try:
             iuid = self.trainset.to_inner_uid(uid)
         except ValueError:
-            iuid = 'UKN__' + str(uid)
+            iuid = "UKN__" + str(uid)
         try:
             iiid = self.trainset.to_inner_iid(iid)
         except ValueError:
-            iiid = 'UKN__' + str(iid)
+            iiid = "UKN__" + str(iid)
 
         details = {}
         try:
@@ -109,12 +105,12 @@ class AlgoBase(object):
             if isinstance(est, tuple):
                 est, details = est
 
-            details['was_impossible'] = False
+            details["was_impossible"] = False
 
         except PredictionImpossible as e:
             est = self.default_prediction()
-            details['was_impossible'] = True
-            details['reason'] = str(e)
+            details["was_impossible"] = True
+            details["reason"] = str(e)
 
         # clip estimate into [lower_bound, higher_bound]
         if clip:
@@ -161,11 +157,10 @@ class AlgoBase(object):
         """
 
         # The ratings are translated back to their original scale.
-        predictions = [self.predict(uid,
-                                    iid,
-                                    r_ui_trans,
-                                    verbose=verbose)
-                       for (uid, iid, r_ui_trans) in testset]
+        predictions = [
+            self.predict(uid, iid, r_ui_trans, verbose=verbose)
+            for (uid, iid, r_ui_trans) in testset
+        ]
         return predictions
 
     def compute_baselines(self):
@@ -190,20 +185,22 @@ class AlgoBase(object):
         if self.bu is not None:
             return self.bu, self.bi
 
-        method = dict(als=baseline_als,
-                      sgd=baseline_sgd)
+        method = dict(als=baseline_als, sgd=baseline_sgd)
 
-        method_name = self.bsl_options.get('method', 'als')
+        method_name = self.bsl_options.get("method", "als")
 
         try:
-            if getattr(self, 'verbose', False):
-                print('Estimating biases using', method_name + '...')
+            if getattr(self, "verbose", False):
+                print("Estimating biases using", method_name + "...")
             self.bu, self.bi = method[method_name](self)
             return self.bu, self.bi
         except KeyError:
-            raise ValueError('Invalid method ' + method_name +
-                             ' for baseline computation.' +
-                             ' Available methods are als and sgd.')
+            raise ValueError(
+                "Invalid method "
+                + method_name
+                + " for baseline computation."
+                + " Available methods are als and sgd."
+            )
 
     def compute_similarities(self):
         """Build the similarity matrix.
@@ -218,25 +215,27 @@ class AlgoBase(object):
         Returns:
             The similarity matrix."""
 
-        construction_func = {'cosine': sims.cosine,
-                             'msd': sims.msd,
-                             'pearson': sims.pearson,
-                             'pearson_baseline': sims.pearson_baseline}
+        construction_func = {
+            "cosine": sims.cosine,
+            "msd": sims.msd,
+            "pearson": sims.pearson,
+            "pearson_baseline": sims.pearson_baseline,
+        }
 
-        if self.sim_options['user_based']:
+        if self.sim_options["user_based"]:
             n_x, yr = self.trainset.n_users, self.trainset.ir
         else:
             n_x, yr = self.trainset.n_items, self.trainset.ur
 
-        min_support = self.sim_options.get('min_support', 1)
+        min_support = self.sim_options.get("min_support", 1)
 
         args = [n_x, yr, min_support]
 
-        name = self.sim_options.get('name', 'msd').lower()
-        if name == 'pearson_baseline':
-            shrinkage = self.sim_options.get('shrinkage', 100)
+        name = self.sim_options.get("name", "msd").lower()
+        if name == "pearson_baseline":
+            shrinkage = self.sim_options.get("shrinkage", 100)
             bu, bi = self.compute_baselines()
-            if self.sim_options['user_based']:
+            if self.sim_options["user_based"]:
                 bx, by = bu, bi
             else:
                 bx, by = bi, bu
@@ -244,15 +243,21 @@ class AlgoBase(object):
             args += [self.trainset.global_mean, bx, by, shrinkage]
 
         try:
-            if getattr(self, 'verbose', False):
-                print('Computing the {0} similarity matrix...'.format(name))
+            if getattr(self, "verbose", False):
+                print(f"Computing the {name} similarity matrix...")
             sim = construction_func[name](*args)
-            if getattr(self, 'verbose', False):
-                print('Done computing similarity matrix.')
+            if getattr(self, "verbose", False):
+                print("Done computing similarity matrix.")
             return sim
         except KeyError:
-            raise NameError('Wrong sim name ' + name + '. Allowed values ' +
-                            'are ' + ', '.join(construction_func.keys()) + '.')
+            raise NameError(
+                "Wrong sim name "
+                + name
+                + ". Allowed values "
+                + "are "
+                + ", ".join(construction_func.keys())
+                + "."
+            )
 
     def get_neighbors(self, iid, k):
         """Return the ``k`` nearest neighbors of ``iid``, which is the inner id
@@ -276,7 +281,7 @@ class AlgoBase(object):
             to ``iid``.
         """
 
-        if self.sim_options['user_based']:
+        if self.sim_options["user_based"]:
             all_instances = self.trainset.all_users
         else:
             all_instances = self.trainset.all_items
