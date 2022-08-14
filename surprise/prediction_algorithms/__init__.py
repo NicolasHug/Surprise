@@ -21,28 +21,22 @@ The available prediction algorithms are:
 """
 
 from .algo_base import AlgoBase
-from .baseline_only import BaselineOnly
-from .co_clustering import CoClustering
-from .knns import KNNBaseline, KNNBasic, KNNWithMeans, KNNWithZScore
-from .matrix_factorization import NMF, SVD, SVDpp
-
-from .predictions import Prediction, PredictionImpossible
 from .random_pred import NormalPredictor
+from .baseline_only import BaselineOnly
+from .knns import KNNBasic
+from .knns import KNNBaseline
+from .knns import KNNWithMeans
+from .knns import KNNWithZScore
+from .matrix_factorization import SVD
+from .matrix_factorization import SVDpp
+from .matrix_factorization import NMF
 from .slope_one import SlopeOne
+from .co_clustering import CoClustering
 
-__all__ = [
-    "AlgoBase",
-    "NormalPredictor",
-    "BaselineOnly",
-    "KNNBasic",
-    "KNNBaseline",
-    "KNNWithMeans",
-    "SVD",
-    "SVDpp",
-    "NMF",
-    "SlopeOne",
-    "CoClustering",
-    "PredictionImpossible",
-    "Prediction",
-    "KNNWithZScore",
-]
+from .predictions import PredictionImpossible
+from .predictions import Prediction
+
+__all__ = ['AlgoBase', 'NormalPredictor', 'BaselineOnly', 'KNNBasic',
+           'KNNBaseline', 'KNNWithMeans', 'SVD', 'SVDpp', 'NMF', 'SlopeOne',
+           'CoClustering', 'PredictionImpossible', 'Prediction',
+           'KNNWithZScore']

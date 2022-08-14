@@ -6,7 +6,7 @@ from .algo_base import AlgoBase
 
 
 class BaselineOnly(AlgoBase):
-    r"""Algorithm predicting the baseline estimate for given user and item.
+    """Algorithm predicting the baseline estimate for given user and item.
 
     :math:`\hat{r}_{ui} = b_{ui} = \mu + b_u + b_i`
 

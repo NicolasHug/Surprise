@@ -2,20 +2,17 @@
 the :mod:`knns` module includes some k-NN inspired algorithms.
 """
 
+import numpy as np
 import heapq
 
-import numpy as np
-
-from .algo_base import AlgoBase
-
 from .predictions import PredictionImpossible
+from .algo_base import AlgoBase
 
 
 # Important note: as soon as an algorithm uses a similarity measure, it should
 # also allow the bsl_options parameter because of the pearson_baseline
 # similarity. It can be done explicitly (e.g. KNNBaseline), or implicetely
 # using kwargs (e.g. KNNBasic).
-
 
 class SymmetricAlgo(AlgoBase):
     """This is an abstract class aimed to ease the use of symmetric algorithms.
@@ -36,7 +33,7 @@ class SymmetricAlgo(AlgoBase):
 
         AlgoBase.fit(self, trainset)
 
-        ub = self.sim_options["user_based"]
+        ub = self.sim_options['user_based']
         self.n_x = self.trainset.n_users if ub else self.trainset.n_items
         self.n_y = self.trainset.n_items if ub else self.trainset.n_users
         self.xr = self.trainset.ur if ub else self.trainset.ir
@@ -47,7 +44,7 @@ class SymmetricAlgo(AlgoBase):
     def switch(self, u_stuff, i_stuff):
         """Return x_stuff and y_stuff depending on the user_based field."""
 
-        if self.sim_options["user_based"]:
+        if self.sim_options['user_based']:
             return u_stuff, i_stuff
         else:
             return i_stuff, u_stuff
@@ -59,16 +56,16 @@ class KNNBasic(SymmetricAlgo):
     The prediction :math:`\\hat{r}_{ui}` is set as:
 
     .. math::
-        \\hat{r}_{ui} = \\frac{
-        \\sum\\limits_{v \\in N^k_i(u)} \\text{sim}(u, v) \\cdot r_{vi}}
-        {\\sum\\limits_{v \\in N^k_i(u)} \\text{sim}(u, v)}
+        \hat{r}_{ui} = \\frac{
+        \\sum\\limits_{v \in N^k_i(u)} \\text{sim}(u, v) \cdot r_{vi}}
+        {\\sum\\limits_{v \in N^k_i(u)} \\text{sim}(u, v)}
 
     or
 
     .. math::
-        \\hat{r}_{ui} = \\frac{
-        \\sum\\limits_{j \\in N^k_u(i)} \\text{sim}(i, j) \\cdot r_{uj}}
-        {\\sum\\limits_{j \\in N^k_u(i)} \\text{sim}(i, j)}
+        \hat{r}_{ui} = \\frac{
+        \\sum\\limits_{j \in N^k_u(i)} \\text{sim}(i, j) \cdot r_{uj}}
+        {\\sum\\limits_{j \in N^k_u(i)} \\text{sim}(i, j)}
 
     depending on the ``user_based`` field of the ``sim_options`` parameter.
 
@@ -88,7 +85,8 @@ class KNNBasic(SymmetricAlgo):
 
     def __init__(self, k=40, min_k=1, sim_options={}, verbose=True, **kwargs):
 
-        SymmetricAlgo.__init__(self, sim_options=sim_options, verbose=verbose, **kwargs)
+        SymmetricAlgo.__init__(self, sim_options=sim_options, verbose=verbose,
+                               **kwargs)
         self.k = k
         self.min_k = min_k
 
@@ -102,7 +100,7 @@ class KNNBasic(SymmetricAlgo):
     def estimate(self, u, i):
 
         if not (self.trainset.knows_user(u) and self.trainset.knows_item(i)):
-            raise PredictionImpossible("User and/or item is unknown.")
+            raise PredictionImpossible('User and/or item is unknown.')
 
         x, y = self.switch(u, i)
 
@@ -118,11 +116,11 @@ class KNNBasic(SymmetricAlgo):
                 actual_k += 1
 
         if actual_k < self.min_k:
-            raise PredictionImpossible("Not enough neighbors.")
+            raise PredictionImpossible('Not enough neighbors.')
 
         est = sum_ratings / sum_sim
 
-        details = {"actual_k": actual_k}
+        details = {'actual_k': actual_k}
         return est, details
 
 
@@ -133,15 +131,15 @@ class KNNWithMeans(SymmetricAlgo):
     The prediction :math:`\\hat{r}_{ui}` is set as:
 
     .. math::
-        \\hat{r}_{ui} = \\mu_u + \\frac{ \\sum\\limits_{v \\in N^k_i(u)}
-        \\text{sim}(u, v) \\cdot (r_{vi} - \\mu_v)} {\\sum\\limits_{v \\in
+        \hat{r}_{ui} = \mu_u + \\frac{ \\sum\\limits_{v \in N^k_i(u)}
+        \\text{sim}(u, v) \cdot (r_{vi} - \mu_v)} {\\sum\\limits_{v \in
         N^k_i(u)} \\text{sim}(u, v)}
 
     or
 
     .. math::
-        \\hat{r}_{ui} = \\mu_i + \\frac{ \\sum\\limits_{j \\in N^k_u(i)}
-        \\text{sim}(i, j) \\cdot (r_{uj} - \\mu_j)} {\\sum\\limits_{j \\in
+        \hat{r}_{ui} = \mu_i + \\frac{ \\sum\\limits_{j \in N^k_u(i)}
+        \\text{sim}(i, j) \cdot (r_{uj} - \mu_j)} {\\sum\\limits_{j \in
         N^k_u(i)} \\text{sim}(i, j)}
 
     depending on the ``user_based`` field of the ``sim_options`` parameter.
@@ -154,7 +152,7 @@ class KNNWithMeans(SymmetricAlgo):
         min_k(int): The minimum number of neighbors to take into account for
             aggregation. If there are not enough neighbors, the neighbor
             aggregation is set to zero (so the prediction ends up being
-            equivalent to the mean :math:`\\mu_u` or :math:`\\mu_i`). Default is
+            equivalent to the mean :math:`\mu_u` or :math:`\mu_i`). Default is
             ``1``.
         sim_options(dict): A dictionary of options for the similarity
             measure. See :ref:`similarity_measures_configuration` for accepted
@@ -165,7 +163,8 @@ class KNNWithMeans(SymmetricAlgo):
 
     def __init__(self, k=40, min_k=1, sim_options={}, verbose=True, **kwargs):
 
-        SymmetricAlgo.__init__(self, sim_options=sim_options, verbose=verbose, **kwargs)
+        SymmetricAlgo.__init__(self, sim_options=sim_options,
+                               verbose=verbose, **kwargs)
 
         self.k = k
         self.min_k = min_k
@@ -184,7 +183,7 @@ class KNNWithMeans(SymmetricAlgo):
     def estimate(self, u, i):
 
         if not (self.trainset.knows_user(u) and self.trainset.knows_item(i)):
-            raise PredictionImpossible("User and/or item is unknown.")
+            raise PredictionImpossible('User and/or item is unknown.')
 
         x, y = self.switch(u, i)
 
@@ -209,7 +208,7 @@ class KNNWithMeans(SymmetricAlgo):
         except ZeroDivisionError:
             pass  # return mean
 
-        details = {"actual_k": actual_k}
+        details = {'actual_k': actual_k}
         return est, details
 
 
@@ -221,16 +220,16 @@ class KNNBaseline(SymmetricAlgo):
     The prediction :math:`\\hat{r}_{ui}` is set as:
 
     .. math::
-        \\hat{r}_{ui} = b_{ui} + \\frac{ \\sum\\limits_{v \\in N^k_i(u)}
-        \\text{sim}(u, v) \\cdot (r_{vi} - b_{vi})} {\\sum\\limits_{v \\in
+        \hat{r}_{ui} = b_{ui} + \\frac{ \\sum\\limits_{v \in N^k_i(u)}
+        \\text{sim}(u, v) \cdot (r_{vi} - b_{vi})} {\\sum\\limits_{v \in
         N^k_i(u)} \\text{sim}(u, v)}
 
     or
 
 
     .. math::
-        \\hat{r}_{ui} = b_{ui} + \\frac{ \\sum\\limits_{j \\in N^k_u(i)}
-        \\text{sim}(i, j) \\cdot (r_{uj} - b_{uj})} {\\sum\\limits_{j \\in
+        \hat{r}_{ui} = b_{ui} + \\frac{ \\sum\\limits_{j \in N^k_u(i)}
+        \\text{sim}(i, j) \cdot (r_{uj} - b_{uj})} {\\sum\\limits_{j \in
         N^k_u(i)} \\text{sim}(i, j)}
 
     depending on the ``user_based`` field of the ``sim_options`` parameter. For
@@ -261,17 +260,12 @@ class KNNBaseline(SymmetricAlgo):
 
     """
 
-    def __init__(
-        self, k=40, min_k=1, sim_options={}, bsl_options={}, verbose=True, **kwargs
-    ):
+    def __init__(self, k=40, min_k=1, sim_options={}, bsl_options={},
+                 verbose=True, **kwargs):
 
-        SymmetricAlgo.__init__(
-            self,
-            sim_options=sim_options,
-            bsl_options=bsl_options,
-            verbose=verbose,
-            **kwargs
-        )
+        SymmetricAlgo.__init__(self, sim_options=sim_options,
+                               bsl_options=bsl_options, verbose=verbose,
+                               **kwargs)
 
         self.k = k
         self.min_k = min_k
@@ -318,7 +312,7 @@ class KNNBaseline(SymmetricAlgo):
         except ZeroDivisionError:
             pass  # just baseline again
 
-        details = {"actual_k": actual_k}
+        details = {'actual_k': actual_k}
         return est, details
 
 
@@ -329,20 +323,20 @@ class KNNWithZScore(SymmetricAlgo):
     The prediction :math:`\\hat{r}_{ui}` is set as:
 
     .. math::
-        \\hat{r}_{ui} = \\mu_u + \\sigma_u \\frac{ \\sum\\limits_{v \\in N^k_i(u)}
-        \\text{sim}(u, v) \\cdot (r_{vi} - \\mu_v) / \\sigma_v} {\\sum\\limits_{v
-        \\in N^k_i(u)} \\text{sim}(u, v)}
+        \hat{r}_{ui} = \mu_u + \sigma_u \\frac{ \\sum\\limits_{v \in N^k_i(u)}
+        \\text{sim}(u, v) \cdot (r_{vi} - \mu_v) / \sigma_v} {\\sum\\limits_{v
+        \in N^k_i(u)} \\text{sim}(u, v)}
 
     or
 
     .. math::
-        \\hat{r}_{ui} = \\mu_i + \\sigma_i \\frac{ \\sum\\limits_{j \\in N^k_u(i)}
-        \\text{sim}(i, j) \\cdot (r_{uj} - \\mu_j) / \\sigma_j} {\\sum\\limits_{j
-        \\in N^k_u(i)} \\text{sim}(i, j)}
+        \hat{r}_{ui} = \mu_i + \sigma_i \\frac{ \\sum\\limits_{j \in N^k_u(i)}
+        \\text{sim}(i, j) \cdot (r_{uj} - \mu_j) / \sigma_j} {\\sum\\limits_{j
+        \in N^k_u(i)} \\text{sim}(i, j)}
 
     depending on the ``user_based`` field of the ``sim_options`` parameter.
 
-    If :math:`\\sigma` is 0, than the overall sigma is used in that case.
+    If :math:`\sigma` is 0, than the overall sigma is used in that case.
 
     Args:
         k(int): The (max) number of neighbors to take into account for
@@ -351,7 +345,7 @@ class KNNWithZScore(SymmetricAlgo):
         min_k(int): The minimum number of neighbors to take into account for
             aggregation. If there are not enough neighbors, the neighbor
             aggregation is set to zero (so the prediction ends up being
-            equivalent to the mean :math:`\\mu_u` or :math:`\\mu_i`). Default is
+            equivalent to the mean :math:`\mu_u` or :math:`\mu_i`). Default is
             ``1``.
         sim_options(dict): A dictionary of options for the similarity
             measure. See :ref:`similarity_measures_configuration` for accepted
@@ -362,7 +356,8 @@ class KNNWithZScore(SymmetricAlgo):
 
     def __init__(self, k=40, min_k=1, sim_options={}, verbose=True, **kwargs):
 
-        SymmetricAlgo.__init__(self, sim_options=sim_options, verbose=verbose, **kwargs)
+        SymmetricAlgo.__init__(self, sim_options=sim_options, verbose=verbose,
+                               **kwargs)
 
         self.k = k
         self.min_k = min_k
@@ -374,7 +369,8 @@ class KNNWithZScore(SymmetricAlgo):
         self.means = np.zeros(self.n_x)
         self.sigmas = np.zeros(self.n_x)
         # when certain sigma is 0, use overall sigma
-        self.overall_sigma = np.std([r for (_, _, r) in self.trainset.all_ratings()])
+        self.overall_sigma = np.std([r for (_, _, r)
+                                     in self.trainset.all_ratings()])
 
         for x, ratings in self.xr.items():
             self.means[x] = np.mean([r for (_, r) in ratings])
@@ -388,7 +384,7 @@ class KNNWithZScore(SymmetricAlgo):
     def estimate(self, u, i):
 
         if not (self.trainset.knows_user(u) and self.trainset.knows_item(i)):
-            raise PredictionImpossible("User and/or item is unknown.")
+            raise PredictionImpossible('User and/or item is unknown.')
 
         x, y = self.switch(u, i)
 
@@ -413,5 +409,5 @@ class KNNWithZScore(SymmetricAlgo):
         except ZeroDivisionError:
             pass  # return mean
 
-        details = {"actual_k": actual_k}
+        details = {'actual_k': actual_k}
         return est, details

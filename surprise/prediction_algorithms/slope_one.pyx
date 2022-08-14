@@ -21,9 +21,9 @@ class SlopeOne(AlgoBase):
     The prediction :math:`\\hat{r}_{ui}` is set as:
 
     .. math::
-        \\hat{r}_{ui} = \\mu_u + \\frac{1}{
+        \hat{r}_{ui} = \\mu_u + \\frac{1}{
         |R_i(u)|}
-        \\sum\\limits_{j \\in R_i(u)} \\text{dev}(i, j),
+        \\sum\\limits_{j \in R_i(u)} \\text{dev}(i, j),
 
     where :math:`R_i(u)` is the set of relevant items, i.e. the set of items
     :math:`j` rated by :math:`u` that also have at least one common user with
@@ -32,7 +32,7 @@ class SlopeOne(AlgoBase):
 
     .. math::
         \\text{dev}(i, j) = \\frac{1}{
-        |U_{ij}|}\\sum\\limits_{u \\in U_{ij}} r_{ui} - r_{uj}
+        |U_{ij}|}\\sum\\limits_{u \in U_{ij}} r_{ui} - r_{uj}
     """
 
     def __init__(self):

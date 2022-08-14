@@ -3,25 +3,25 @@ Module for testing prediction algorithms.
 """
 
 
+
 import os
 
-from surprise import (
-    accuracy,
-    BaselineOnly,
-    CoClustering,
-    Dataset,
-    KNNBaseline,
-    KNNBasic,
-    KNNWithMeans,
-    KNNWithZScore,
-    NMF,
-    NormalPredictor,
-    Reader,
-    SlopeOne,
-    SVD,
-    SVDpp,
-)
+
+from surprise import NormalPredictor
+from surprise import BaselineOnly
+from surprise import KNNBasic
+from surprise import KNNWithMeans
+from surprise import KNNBaseline
+from surprise import SVD
+from surprise import SVDpp
+from surprise import NMF
+from surprise import SlopeOne
+from surprise import CoClustering
+from surprise import Dataset
+from surprise import Reader
+from surprise import KNNWithZScore
 from surprise.model_selection import train_test_split
+from surprise import accuracy
 
 
 def test_unknown_user_or_item(toy_data):
@@ -31,25 +31,15 @@ def test_unknown_user_or_item(toy_data):
 
     trainset = toy_data.build_full_trainset()
 
-    klasses = (
-        NormalPredictor,
-        BaselineOnly,
-        KNNBasic,
-        KNNWithMeans,
-        KNNBaseline,
-        SVD,
-        SVDpp,
-        NMF,
-        SlopeOne,
-        CoClustering,
-        KNNWithZScore,
-    )
+    klasses = (NormalPredictor, BaselineOnly, KNNBasic, KNNWithMeans,
+               KNNBaseline, SVD, SVDpp, NMF, SlopeOne, CoClustering,
+               KNNWithZScore)
     for klass in klasses:
         algo = klass()
         algo.fit(trainset)
-        algo.predict("user0", "unknown_item", None)
-        algo.predict("unknown_user", "item0", None)
-        algo.predict("unknown_user", "unknown_item", None)
+        algo.predict('user0', 'unknown_item', None)
+        algo.predict('unknown_user', 'item0', None)
+        algo.predict('unknown_user', 'unknown_item', None)
 
     # unrelated, but test the fit().test() one-liner:
     trainset, testset = train_test_split(toy_data, test_size=2)
@@ -63,7 +53,7 @@ def test_knns(u1_ml100k, pkf):
 
     # Actually, as KNNWithMeans and KNNBaseline have back up solutions for when
     # there are not enough neighbors, we can't really test them...
-    klasses = (KNNBasic,)  # KNNWithMeans, KNNBaseline)
+    klasses = (KNNBasic, )  # KNNWithMeans, KNNBaseline)
 
     k, min_k = 20, 5
     for klass in klasses:
@@ -72,25 +62,24 @@ def test_knns(u1_ml100k, pkf):
             algo.fit(trainset)
             predictions = algo.test(testset)
             for pred in predictions:
-                if not pred.details["was_impossible"]:
-                    assert min_k <= pred.details["actual_k"] <= k
+                if not pred.details['was_impossible']:
+                    assert min_k <= pred.details['actual_k'] <= k
 
 
 def test_nearest_neighbors():
     """Ensure the nearest neighbors are different when using user-user
     similarity vs item-item."""
 
-    reader = Reader(
-        line_format="user item rating", sep=" ", skip_lines=3, rating_scale=(1, 5)
-    )
+    reader = Reader(line_format='user item rating', sep=' ', skip_lines=3,
+                    rating_scale=(1, 5))
 
-    data_file = os.path.dirname(os.path.realpath(__file__)) + "/custom_train"
+    data_file = os.path.dirname(os.path.realpath(__file__)) + '/custom_train'
     data = Dataset.load_from_file(data_file, reader)
     trainset = data.build_full_trainset()
 
-    algo_ub = KNNBasic(sim_options={"user_based": True})
+    algo_ub = KNNBasic(sim_options={'user_based': True})
     algo_ub.fit(trainset)
-    algo_ib = KNNBasic(sim_options={"user_based": False})
+    algo_ib = KNNBasic(sim_options={'user_based': False})
     algo_ib.fit(trainset)
     assert algo_ub.get_neighbors(0, k=10) != algo_ib.get_neighbors(0, k=10)
 

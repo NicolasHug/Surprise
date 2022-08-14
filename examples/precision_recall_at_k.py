@@ -2,9 +2,12 @@
 This module illustrates how to compute Precision at k and Recall at k metrics.
 """
 
+from __future__ import (absolute_import, division, print_function,
+                        unicode_literals)
 from collections import defaultdict
 
-from surprise import Dataset, SVD
+from surprise import Dataset
+from surprise import SVD
 from surprise.model_selection import KFold
 
 
@@ -30,10 +33,8 @@ def precision_recall_at_k(predictions, k=10, threshold=3.5):
         n_rec_k = sum((est >= threshold) for (est, _) in user_ratings[:k])
 
         # Number of relevant and recommended items in top k
-        n_rel_and_rec_k = sum(
-            ((true_r >= threshold) and (est >= threshold))
-            for (est, true_r) in user_ratings[:k]
-        )
+        n_rel_and_rec_k = sum(((true_r >= threshold) and (est >= threshold))
+                              for (est, true_r) in user_ratings[:k])
 
         # Precision@K: Proportion of recommended items that are relevant
         # When n_rec_k is 0, Precision is undefined. We here set it to 0.
@@ -48,7 +49,7 @@ def precision_recall_at_k(predictions, k=10, threshold=3.5):
     return precisions, recalls
 
 
-data = Dataset.load_builtin("ml-100k")
+data = Dataset.load_builtin('ml-100k')
 kf = KFold(n_splits=5)
 algo = SVD()
 

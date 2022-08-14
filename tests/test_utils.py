@@ -1,3 +1,6 @@
+
+
+
 import numpy as np
 import pytest
 
@@ -27,4 +30,4 @@ def test_get_rng():
     with pytest.raises(ValueError):
         get_rng(23.2)
     with pytest.raises(ValueError):
-        get_rng("bad")
+        get_rng('bad')
