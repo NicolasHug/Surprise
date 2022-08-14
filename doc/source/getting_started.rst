@@ -20,7 +20,7 @@ run a cross-validation procedure:
 .. literalinclude:: ../../examples/basic_usage.py
     :caption: From file ``examples/basic_usage.py``
     :name: basic_usage.py
-    :lines: 9-
+    :lines: 7-
 
 The result should be as follows (actual values may vary due to randomization):
 
@@ -69,7 +69,7 @@ return the predictions made from the testset:
 .. literalinclude:: ../../examples/train_test_split.py
     :caption: From file ``examples/train_test_split.py``
     :name: train_test_split.py
-    :lines: 8-
+    :lines: 6-
 
 Result:
 
@@ -102,7 +102,7 @@ build a :class:`trainset <surprise.Trainset>` object:
 .. literalinclude:: ../../examples/predict_ratings.py
     :caption: From file ``examples/predict_ratings.py``
     :name: predict_ratings.py
-    :lines: 9-20
+    :lines: 7-17
 
 We can now predict ratings by directly calling the :meth:`predict()
 <surprise.prediction_algorithms.algo_base.AlgoBase.predict>` method.  Let's say
@@ -112,7 +112,7 @@ trainset!), and you know that the true rating :math:`r_{ui} = 4`:
 .. literalinclude:: ../../examples/predict_ratings.py
     :caption: From file ``examples/predict_ratings.py``
     :name: predict_ratings2.py
-    :lines: 23-27
+    :lines: 20-24
 
 The result should be:
 
@@ -152,7 +152,7 @@ dataframe.
   .. literalinclude:: ../../examples/load_custom_dataset.py
       :caption: From file ``examples/load_custom_dataset.py``
       :name: load_custom_dataset.py
-      :lines: 12-28
+      :lines: 8-24
 
   For more details about readers and how to use them, see the :class:`Reader
   class <surprise.reader.Reader>` documentation.
@@ -175,7 +175,7 @@ dataframe.
   .. literalinclude:: ../../examples/load_from_dataframe.py
       :caption: From file ``examples/load_from_dataframe.py``
       :name: load_dom_dataframe.py
-      :lines: 8-29
+      :lines: 6-27
 
   The dataframe initially looks like this:
 
@@ -206,7 +206,7 @@ cross-validation procedure with 3 splits:
 .. literalinclude:: ../../examples/use_cross_validation_iterators.py
     :caption: From file ``examples/use_cross_validation_iterators.py``
     :name: use_cross_validation_iterators.py
-    :lines: 8-
+    :lines: 6-
 
 Result could be, e.g.:
 
@@ -233,7 +233,7 @@ object:
 .. literalinclude:: ../../examples/load_custom_dataset_predefined_folds.py
     :caption: From file ``examples/load_custom_dataset_predefined_folds.py``
     :name: load_custom_dataset_predefined_folds.py
-    :lines: 13-
+    :lines: 9-
 
 Of course, nothing prevents you from only loading a single file for training
 and a single file for testing. However, the ``folds_files`` parameter still
@@ -263,7 +263,7 @@ Here is an example where we try different values for parameters ``n_epochs``,
 .. literalinclude:: ../../examples/grid_search_usage.py
     :caption: From file ``examples/grid_search_usage.py``
     :name: grid_search_usage.py
-    :lines: 9-26
+    :lines: 7-22
 
 Result:
 
@@ -283,7 +283,7 @@ please:
 .. literalinclude:: ../../examples/grid_search_usage.py
     :caption: From file ``examples/grid_search_usage.py``
     :name: grid_search_usage2.py
-    :lines: 28-30
+    :lines: 24-26
 
 .. _grid_search_note:
 .. note::
@@ -293,24 +293,32 @@ please:
 
     .. parsed-literal::
 
-        param_grid = {'k': [10, 20],
-                      'sim_options': {'name': ['msd', 'cosine'],
-                                      'min_support': [1, 5],
-                                      'user_based': [False]}
-                      }
+        param_grid = {
+            'k': [10, 20],
+            'sim_options': {
+                'name': ['msd', 'cosine'],
+                'min_support': [1, 5],
+                'user_based': [False],
+            },
+        }
 
     Naturally, both can be combined, for example for the
     :class:`KNNBaseline <surprise.prediction_algorithms.knns.KNNBaseline>`
     algorithm:
 
     .. parsed-literal::
-        param_grid = {'bsl_options': {'method': ['als', 'sgd'],
-                                      'reg': [1, 2]},
-                      'k': [2, 3],
-                      'sim_options': {'name': ['msd', 'cosine'],
-                                      'min_support': [1, 5],
-                                      'user_based': [False]}
-                      }
+        param_grid = {
+            'bsl_options': {
+                'method': ['als', 'sgd'],
+                'reg': [1, 2],
+            },
+            'k': [2, 3],
+            'sim_options': {
+                'name': ['msd', 'cosine'],
+                'min_support': [1, 5],
+                'user_based': [False],
+            },
+        }
 
 .. _cv_results_example:
 
@@ -320,7 +328,7 @@ information and can be imported in a pandas dataframe:
 .. literalinclude:: ../../examples/grid_search_usage.py
     :caption: From file ``examples/grid_search_usage.py``
     :name: grid_search_usage3.py
-    :lines: 33
+    :lines: 30
 
 In our example, the ``cv_results`` attribute looks like this (floats are
 formatted):

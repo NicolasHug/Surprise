@@ -21,7 +21,7 @@ in an **inner** user id, an **inner** item id (see :ref:`this note
 .. literalinclude:: ../../examples/building_custom_algorithms/most_basic_algorithm.py
     :caption: From file ``examples/building_custom_algorithms/most_basic_algorithm.py``
     :name: most_basic_algorithm.py
-    :lines: 9-
+    :lines: 7-
 
 This algorithm is the dumbest we could have thought of: it just predicts a
 rating of 3, regardless of users and items.
@@ -31,8 +31,10 @@ return a dictionary with given details: ::
 
     def estimate(self, u, i):
 
-        details = {'info1' : 'That was',
-                   'info2' : 'easy stuff :)'}
+        details = {
+            'info1' : 'That was',
+            'info2' : 'easy stuff :)'
+        }
         return 3, details
 
 This dictionary will be stored in the :class:`prediction
@@ -52,7 +54,7 @@ be done by defining the ``fit`` method:
 .. literalinclude:: ../../examples/building_custom_algorithms/most_basic_algorithm2.py
     :caption: From file ``examples/building_custom_algorithms/most_basic_algorithm2.py``
     :name: most_basic_algorithm2.py
-    :lines: 16-37
+    :lines: 13-32
 
 
 The ``fit`` method is called e.g. by the :func:`cross_validate
@@ -82,7 +84,7 @@ rating for the item:
 .. literalinclude:: ../../examples/building_custom_algorithms/mean_rating_user_item.py
     :caption: From file ``examples/building_custom_algorithms/mean_rating_user_item.py``
     :name: mean_rating_user_item.py
-    :lines: 23-35
+    :lines: 19-31
 
 Note that it would have been a better idea to compute all the user means in the
 ``fit`` method, thus avoiding the same computations multiple times.
@@ -125,7 +127,7 @@ be called in the ``fit`` method (or anywhere else).
 .. literalinclude:: ../../examples/building_custom_algorithms/with_baselines_or_sim.py
     :caption: From file ``examples/building_custom_algorithms/.with_baselines_or_sim.py``
     :name: with_baselines_or_sim.py
-    :lines: 15-47
+    :lines: 11-43
 
 
 Feel free to explore the prediction_algorithms package `source
