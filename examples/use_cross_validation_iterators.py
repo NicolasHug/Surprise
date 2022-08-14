@@ -3,13 +3,11 @@ This module descibes how to use cross-validation iterators.
 """
 
 
-from surprise import SVD
-from surprise import Dataset
-from surprise import accuracy
+from surprise import accuracy, Dataset, SVD
 from surprise.model_selection import KFold
 
 # Load the movielens-100k dataset
-data = Dataset.load_builtin('ml-100k')
+data = Dataset.load_builtin("ml-100k")
 
 # define a cross-validation iterator
 kf = KFold(n_splits=3)

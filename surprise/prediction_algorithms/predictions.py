@@ -5,8 +5,6 @@ exception.
 """
 
 
-
-
 from collections import namedtuple
 
 
@@ -20,8 +18,7 @@ class PredictionImpossible(Exception):
     pass
 
 
-class Prediction(namedtuple('Prediction',
-                            ['uid', 'iid', 'r_ui', 'est', 'details'])):
+class Prediction(namedtuple("Prediction", ["uid", "iid", "r_ui", "est", "details"])):
     """A named tuple for storing the results of a prediction.
 
     It's wrapped in a class, but only for documentation and printing purposes.
@@ -38,13 +35,13 @@ class Prediction(namedtuple('Prediction',
     __slots__ = ()  # for memory saving purpose.
 
     def __str__(self):
-        s = f'user: {self.uid:<10} '
-        s += f'item: {self.iid:<10} '
+        s = f"user: {self.uid:<10} "
+        s += f"item: {self.iid:<10} "
         if self.r_ui is not None:
-            s += f'r_ui = {self.r_ui:1.2f}   '
+            s += f"r_ui = {self.r_ui:1.2f}   "
         else:
-            s += 'r_ui = None   '
-        s += f'est = {self.est:1.2f}   '
+            s += "r_ui = None   "
+        s += f"est = {self.est:1.2f}   "
         s += str(self.details)
 
         return s

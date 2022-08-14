@@ -4,11 +4,10 @@ built/specified) and how to use the predict() method.
 """
 
 
-from surprise import KNNBasic
-from surprise import Dataset
+from surprise import Dataset, KNNBasic
 
 # Load the movielens-100k dataset
-data = Dataset.load_builtin('ml-100k')
+data = Dataset.load_builtin("ml-100k")
 
 # Retrieve the trainset.
 trainset = data.build_full_trainset()

@@ -2,17 +2,20 @@
 the :mod:`knns` module includes some k-NN inspired algorithms.
 """
 
-import numpy as np
 import heapq
 
-from .predictions import PredictionImpossible
+import numpy as np
+
 from .algo_base import AlgoBase
+
+from .predictions import PredictionImpossible
 
 
 # Important note: as soon as an algorithm uses a similarity measure, it should
 # also allow the bsl_options parameter because of the pearson_baseline
 # similarity. It can be done explicitly (e.g. KNNBaseline), or implicetely
 # using kwargs (e.g. KNNBasic).
+
 
 class SymmetricAlgo(AlgoBase):
     """This is an abstract class aimed to ease the use of symmetric algorithms.
@@ -33,7 +36,7 @@ class SymmetricAlgo(AlgoBase):
 
         AlgoBase.fit(self, trainset)
 
-        ub = self.sim_options['user_based']
+        ub = self.sim_options["user_based"]
         self.n_x = self.trainset.n_users if ub else self.trainset.n_items
         self.n_y = self.trainset.n_items if ub else self.trainset.n_users
         self.xr = self.trainset.ur if ub else self.trainset.ir
@@ -44,7 +47,7 @@ class SymmetricAlgo(AlgoBase):
     def switch(self, u_stuff, i_stuff):
         """Return x_stuff and y_stuff depending on the user_based field."""
 
-        if self.sim_options['user_based']:
+        if self.sim_options["user_based"]:
             return u_stuff, i_stuff
         else:
             return i_stuff, u_stuff
@@ -85,8 +88,7 @@ class KNNBasic(SymmetricAlgo):
 
     def __init__(self, k=40, min_k=1, sim_options={}, verbose=True, **kwargs):
 
-        SymmetricAlgo.__init__(self, sim_options=sim_options, verbose=verbose,
-                               **kwargs)
+        SymmetricAlgo.__init__(self, sim_options=sim_options, verbose=verbose, **kwargs)
         self.k = k
         self.min_k = min_k
 
@@ -100,7 +102,7 @@ class KNNBasic(SymmetricAlgo):
     def estimate(self, u, i):
 
         if not (self.trainset.knows_user(u) and self.trainset.knows_item(i)):
-            raise PredictionImpossible('User and/or item is unknown.')
+            raise PredictionImpossible("User and/or item is unknown.")
 
         x, y = self.switch(u, i)
 
@@ -116,11 +118,11 @@ class KNNBasic(SymmetricAlgo):
                 actual_k += 1
 
         if actual_k < self.min_k:
-            raise PredictionImpossible('Not enough neighbors.')
+            raise PredictionImpossible("Not enough neighbors.")
 
         est = sum_ratings / sum_sim
 
-        details = {'actual_k': actual_k}
+        details = {"actual_k": actual_k}
         return est, details
 
 
@@ -163,8 +165,7 @@ class KNNWithMeans(SymmetricAlgo):
 
     def __init__(self, k=40, min_k=1, sim_options={}, verbose=True, **kwargs):
 
-        SymmetricAlgo.__init__(self, sim_options=sim_options,
-                               verbose=verbose, **kwargs)
+        SymmetricAlgo.__init__(self, sim_options=sim_options, verbose=verbose, **kwargs)
 
         self.k = k
         self.min_k = min_k
@@ -183,7 +184,7 @@ class KNNWithMeans(SymmetricAlgo):
     def estimate(self, u, i):
 
         if not (self.trainset.knows_user(u) and self.trainset.knows_item(i)):
-            raise PredictionImpossible('User and/or item is unknown.')
+            raise PredictionImpossible("User and/or item is unknown.")
 
         x, y = self.switch(u, i)
 
@@ -208,7 +209,7 @@ class KNNWithMeans(SymmetricAlgo):
         except ZeroDivisionError:
             pass  # return mean
 
-        details = {'actual_k': actual_k}
+        details = {"actual_k": actual_k}
         return est, details
 
 
@@ -260,12 +261,17 @@ class KNNBaseline(SymmetricAlgo):
 
     """
 
-    def __init__(self, k=40, min_k=1, sim_options={}, bsl_options={},
-                 verbose=True, **kwargs):
+    def __init__(
+        self, k=40, min_k=1, sim_options={}, bsl_options={}, verbose=True, **kwargs
+    ):
 
-        SymmetricAlgo.__init__(self, sim_options=sim_options,
-                               bsl_options=bsl_options, verbose=verbose,
-                               **kwargs)
+        SymmetricAlgo.__init__(
+            self,
+            sim_options=sim_options,
+            bsl_options=bsl_options,
+            verbose=verbose,
+            **kwargs
+        )
 
         self.k = k
         self.min_k = min_k
@@ -312,7 +318,7 @@ class KNNBaseline(SymmetricAlgo):
         except ZeroDivisionError:
             pass  # just baseline again
 
-        details = {'actual_k': actual_k}
+        details = {"actual_k": actual_k}
         return est, details
 
 
@@ -356,8 +362,7 @@ class KNNWithZScore(SymmetricAlgo):
 
     def __init__(self, k=40, min_k=1, sim_options={}, verbose=True, **kwargs):
 
-        SymmetricAlgo.__init__(self, sim_options=sim_options, verbose=verbose,
-                               **kwargs)
+        SymmetricAlgo.__init__(self, sim_options=sim_options, verbose=verbose, **kwargs)
 
         self.k = k
         self.min_k = min_k
@@ -369,8 +374,7 @@ class KNNWithZScore(SymmetricAlgo):
         self.means = np.zeros(self.n_x)
         self.sigmas = np.zeros(self.n_x)
         # when certain sigma is 0, use overall sigma
-        self.overall_sigma = np.std([r for (_, _, r)
-                                     in self.trainset.all_ratings()])
+        self.overall_sigma = np.std([r for (_, _, r) in self.trainset.all_ratings()])
 
         for x, ratings in self.xr.items():
             self.means[x] = np.mean([r for (_, r) in ratings])
@@ -384,7 +388,7 @@ class KNNWithZScore(SymmetricAlgo):
     def estimate(self, u, i):
 
         if not (self.trainset.knows_user(u) and self.trainset.knows_item(i)):
-            raise PredictionImpossible('User and/or item is unknown.')
+            raise PredictionImpossible("User and/or item is unknown.")
 
         x, y = self.switch(u, i)
 
@@ -409,5 +413,5 @@ class KNNWithZScore(SymmetricAlgo):
         except ZeroDivisionError:
             pass  # return mean
 
-        details = {'actual_k': actual_k}
+        details = {"actual_k": actual_k}
         return est, details
