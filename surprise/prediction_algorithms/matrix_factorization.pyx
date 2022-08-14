@@ -191,14 +191,16 @@ class SVD(AlgoBase):
         # anymore, we need to compute the dot products by hand, and update
         # user and items factors by iterating over all factors...
 
+        rng = get_rng(self.random_state)
+
         # user biases
-        cdef np.ndarray[np.double_t] bu
+        cdef double [::1] bu = np.zeros(trainset.n_users, dtype=np.double)
         # item biases
-        cdef np.ndarray[np.double_t] bi
+        cdef double [::1] bi = np.zeros(trainset.n_items, dtype=np.double)
         # user factors
-        cdef np.ndarray[np.double_t, ndim=2] pu
+        cdef double [:, ::1] pu = rng.normal(self.init_mean, self.init_std_dev, size=(trainset.n_users, self.n_factors))
         # item factors
-        cdef np.ndarray[np.double_t, ndim=2] qi
+        cdef double [:, ::1] qi = rng.normal(self.init_mean, self.init_std_dev, size=(trainset.n_items, self.n_factors))
 
         cdef int u, i, f
         cdef double r, err, dot, puf, qif
@@ -213,15 +215,6 @@ class SVD(AlgoBase):
         cdef double reg_bi = self.reg_bi
         cdef double reg_pu = self.reg_pu
         cdef double reg_qi = self.reg_qi
-
-        rng = get_rng(self.random_state)
-
-        bu = np.zeros(trainset.n_users, np.double)
-        bi = np.zeros(trainset.n_items, np.double)
-        pu = rng.normal(self.init_mean, self.init_std_dev,
-                        (trainset.n_users, self.n_factors))
-        qi = rng.normal(self.init_mean, self.init_std_dev,
-                        (trainset.n_items, self.n_factors))
 
         if not self.biased:
             global_mean = 0
@@ -408,21 +401,24 @@ class SVDpp(AlgoBase):
 
     def sgd(self, trainset):
 
+        rng = get_rng(self.random_state)
+
         # user biases
-        cdef np.ndarray[np.double_t] bu
+        cdef double [::1] bu = np.zeros(trainset.n_users, dtype=np.double)
         # item biases
-        cdef np.ndarray[np.double_t] bi
+        cdef double [::1] bi = np.zeros(trainset.n_items, dtype=np.double)
         # user factors
-        cdef np.ndarray[np.double_t, ndim=2] pu
+        cdef double [:, ::1] pu = rng.normal(self.init_mean, self.init_std_dev, size=(trainset.n_users, self.n_factors))
         # item factors
-        cdef np.ndarray[np.double_t, ndim=2] qi
+        cdef double [:, ::1] qi = rng.normal(self.init_mean, self.init_std_dev, size=(trainset.n_items, self.n_factors))
         # item implicit factors
-        cdef np.ndarray[np.double_t, ndim=2] yj
+        cdef np.ndarray[np.double_t, ndim=2] yj = rng.normal(self.init_mean, self.init_std_dev, size=(trainset.n_items, self.n_factors))
+
+        cdef double [::1] u_impl_fdb = np.zeros(self.n_factors, dtype=np.double)
 
         cdef int u, i, j, f
         cdef double r, err, dot, puf, qif, sqrt_Iu, _
         cdef double global_mean = self.trainset.global_mean
-        cdef np.ndarray[np.double_t] u_impl_fdb
 
         cdef double lr_bu = self.lr_bu
         cdef double lr_bi = self.lr_bi
@@ -435,19 +431,6 @@ class SVDpp(AlgoBase):
         cdef double reg_pu = self.reg_pu
         cdef double reg_qi = self.reg_qi
         cdef double reg_yj = self.reg_yj
-
-        bu = np.zeros(trainset.n_users, np.double)
-        bi = np.zeros(trainset.n_items, np.double)
-
-        rng = get_rng(self.random_state)
-
-        pu = rng.normal(self.init_mean, self.init_std_dev,
-                        (trainset.n_users, self.n_factors))
-        qi = rng.normal(self.init_mean, self.init_std_dev,
-                        (trainset.n_items, self.n_factors))
-        yj = rng.normal(self.init_mean, self.init_std_dev,
-                        (trainset.n_items, self.n_factors))
-        u_impl_fdb = np.zeros(self.n_factors, np.double)
 
         cdef mapcpp[int, vectorcpp[int]] Iu_items
         cdef mapcpp[int, double] Iu_len_sqrts
@@ -661,19 +644,21 @@ class NMF(AlgoBase):
 
     def sgd(self, trainset):
 
+        rng = get_rng(self.random_state)
+
         # user and item factors
-        cdef np.ndarray[np.double_t, ndim=2] pu
-        cdef np.ndarray[np.double_t, ndim=2] qi
+        cdef double [:, ::1] pu = rng.uniform(self.init_low, self.init_high, size=(trainset.n_users, self.n_factors))
+        cdef double [:, ::1] qi = rng.uniform(self.init_low, self.init_high, size=(trainset.n_items, self.n_factors))
 
         # user and item biases
-        cdef np.ndarray[np.double_t] bu
-        cdef np.ndarray[np.double_t] bi
+        cdef double [::1] bu = np.zeros(trainset.n_users, dtype=np.double)
+        cdef double [::1] bi = np.zeros(trainset.n_items, dtype=np.double)
 
         # auxiliary matrices used in optimization process
-        cdef np.ndarray[np.double_t, ndim=2] user_num
-        cdef np.ndarray[np.double_t, ndim=2] user_denom
-        cdef np.ndarray[np.double_t, ndim=2] item_num
-        cdef np.ndarray[np.double_t, ndim=2] item_denom
+        cdef double [:, ::1] user_num
+        cdef double [:, ::1] user_denom
+        cdef double [:, ::1] item_num
+        cdef double [:, ::1] item_denom
 
         cdef int u, i, f
         cdef double r, est, l, dot, err
@@ -684,16 +669,6 @@ class NMF(AlgoBase):
         cdef double lr_bu = self.lr_bu
         cdef double lr_bi = self.lr_bi
         cdef double global_mean = self.trainset.global_mean
-
-        # Randomly initialize user and item factors
-        rng = get_rng(self.random_state)
-        pu = rng.uniform(self.init_low, self.init_high,
-                         size=(trainset.n_users, self.n_factors))
-        qi = rng.uniform(self.init_low, self.init_high,
-                         size=(trainset.n_items, self.n_factors))
-
-        bu = np.zeros(trainset.n_users, np.double)
-        bi = np.zeros(trainset.n_items, np.double)
 
         if not self.biased:
             global_mean = 0
