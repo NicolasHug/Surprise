@@ -27,6 +27,7 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         python -m pip install "black==22.6.0" "flake8==5.0.4" "usort==1.0.4"
+        pip install -r requirements_dev.txt
     - name: Install Surprise
       run: |
         python -m pip install -e .  # Not sure it's needed but whatevs
