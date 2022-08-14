@@ -1,7 +1,7 @@
-# This workflow will install Python dependencies and run tests with a variety of Python versions
+# This workflow will install Python dependencies, run tests and lint with a variety of Python versions
 # For more information see: https://help.github.com/actions/language-and-framework-guides/using-python-with-github-actions
 
-name: Unit tests
+name: Python package
 
 on:
   push:
@@ -27,11 +27,11 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        python -m pip install pytest
-        pip install -r requirements_dev.txt
+        python -m pip install flake8 pytest
+        pip install -r requirements_travis.txt
     - name: Install Surprise
       run: |
         python -m pip install -e .
     - name: Test with pytest
       run: |
-        pytest -v
+        pytest

@@ -1,0 +1,18 @@
+language: python
+python:
+  - "2.7"
+  - "3.5"
+
+# command to install dependencies
+install:
+  - "pip install -r requirements_travis.txt"
+  - "pip install ."
+
+# command to run tests
+script:
+  - pytest
+
+# safelist
+branches:
+  only:
+  - master
