@@ -315,6 +315,9 @@ class SVDpp(AlgoBase):
         n_factors: The number of factors. Default is ``20``.
         n_epochs: The number of iteration of the SGD procedure. Default is
             ``20``.
+        precompute: Whether or not to cache ratings in an efficient
+            data-structure. This should speed-up the training, and has a higher
+            memory footprint. Default is False.
         init_mean: The mean of the normal distribution for factor vectors
             initialization. Default is ``0``.
         init_std_dev: The standard deviation of the normal distribution for
@@ -367,7 +370,8 @@ class SVDpp(AlgoBase):
     def __init__(self, n_factors=20, n_epochs=20, init_mean=0, init_std_dev=.1,
                  lr_all=.007, reg_all=.02, lr_bu=None, lr_bi=None, lr_pu=None,
                  lr_qi=None, lr_yj=None, reg_bu=None, reg_bi=None, reg_pu=None,
-                 reg_qi=None, reg_yj=None, random_state=None, verbose=False, precompute=False):
+                 reg_qi=None, reg_yj=None, random_state=None, verbose=False,
+                 precompute=False):
 
         self.n_factors = n_factors
         self.n_epochs = n_epochs
