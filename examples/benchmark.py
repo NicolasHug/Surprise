@@ -27,17 +27,17 @@ from surprise.model_selection import cross_validate, KFold
 from tabulate import tabulate
 
 # The algorithms to cross-validate
-algos = (
-    SVD(),
-    SVDpp(),
-    NMF(),
-    SlopeOne(),
-    KNNBasic(),
-    KNNWithMeans(),
-    KNNBaseline(),
-    CoClustering(),
-    BaselineOnly(),
-    NormalPredictor(),
+classes = (
+    SVD,
+    SVDpp,
+    NMF,
+    SlopeOne,
+    KNNBasic,
+    KNNWithMeans,
+    KNNBaseline,
+    CoClustering,
+    BaselineOnly,
+    NormalPredictor,
 )
 
 # ugly dict to map algo names and datasets to their markdown links in the table
@@ -102,16 +102,16 @@ LINK = {
 np.random.seed(0)
 random.seed(0)
 
-dataset = "ml-100k"
+dataset = "ml-1m"
 data = Dataset.load_builtin(dataset)
 kf = KFold(random_state=0)  # folds will be the same for all algorithms.
 
 table = []
-for algo in algos:
+for klass in classes:
     start = time.time()
-    out = cross_validate(algo, data, ["rmse", "mae"], kf)
+    out = cross_validate(klass(), data, ["rmse", "mae"], kf)
     cv_time = str(datetime.timedelta(seconds=int(time.time() - start)))
-    link = LINK[algo.__class__.__name__]
+    link = LINK[klass.__name__]
     mean_rmse = "{:.3f}".format(np.mean(out["test_rmse"]))
     mean_mae = "{:.3f}".format(np.mean(out["test_mae"]))
 
