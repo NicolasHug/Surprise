@@ -17,7 +17,6 @@ from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 from collections import defaultdict
 import numpy as np
-from six import iteritems
 
 
 def rmse(predictions, verbose=True):
@@ -155,7 +154,7 @@ def fcp(predictions, verbose=True):
     for u0, _, r0, est, _ in predictions:
         predictions_u[u0].append((r0, est))
 
-    for u0, preds in iteritems(predictions_u):
+    for u0, preds in predictions_u.items():
         for r0i, esti in preds:
             for r0j, estj in preds:
                 if esti > estj and r0i > r0j:

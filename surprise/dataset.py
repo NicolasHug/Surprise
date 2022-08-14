@@ -30,8 +30,6 @@ import sys
 import os
 import itertools
 
-from six.moves import input
-
 from .reader import Reader
 from .builtin_datasets import download_builtin_dataset
 from .builtin_datasets import BUILTIN_DATASETS

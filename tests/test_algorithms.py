@@ -6,7 +6,6 @@ from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 import os
 
-from six import iteritems
 
 from surprise import NormalPredictor
 from surprise import BaselineOnly
@@ -103,7 +102,7 @@ def test_sanity_checks(u1_ml100k, pkf):
         CoClustering: 1.0841941385276614,
     }
 
-    for klass, rmse in iteritems(expected_rmse):
+    for klass, rmse in expected_rmse.items():
         if klass in (SVD, SVDpp, NMF, CoClustering):
             algo = klass(random_state=0)
         else:

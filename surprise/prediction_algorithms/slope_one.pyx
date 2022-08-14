@@ -7,8 +7,6 @@ from __future__ import (absolute_import, division, print_function,
 
 cimport numpy as np  # noqa
 import numpy as np
-from six.moves import range
-from six import iteritems
 
 from .algo_base import AlgoBase
 from .predictions import PredictionImpossible
@@ -58,7 +56,7 @@ class SlopeOne(AlgoBase):
         dev = np.zeros((trainset.n_items, trainset.n_items), np.double)
 
         # Computation of freq and dev arrays.
-        for u, u_ratings in iteritems(trainset.ur):
+        for u, u_ratings in trainset.ur.items():
             for i, r_ui in u_ratings:
                 for j, r_uj in u_ratings:
                     freq[i, j] += 1

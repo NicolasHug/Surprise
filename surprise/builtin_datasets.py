@@ -1,16 +1,13 @@
 """This module contains built-in datasets that can be automatically
 downloaded."""
 
-from __future__ import (absolute_import, division, print_function,
-                        unicode_literals)
-
 import zipfile
 import os
 import errno
 
 from os.path import join
 from collections import namedtuple
-from six.moves.urllib.request import urlretrieve
+from urllib.request import urlretrieve
 
 
 def get_dataset_dir():
