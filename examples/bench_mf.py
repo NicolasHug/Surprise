@@ -3,19 +3,16 @@ the movielens datasets, and reports average RMSE, MAE, and total computation
 time.  It is used for making tables in the README.md file"""
 
 from __future__ import absolute_import, division, print_function, unicode_literals
-import time
+
 import datetime
 import random
+import time
 
 import numpy as np
-from tabulate import tabulate
 
-from surprise import Dataset
-from surprise.model_selection import cross_validate
-from surprise.model_selection import KFold
-from surprise import SVD
-from surprise import SVDpp
-from surprise import NMF
+from surprise import Dataset, NMF, SVD, SVDpp
+from surprise.model_selection import cross_validate, KFold
+from tabulate import tabulate
 
 # The algorithms to cross-validate
 classes = (SVD, SVDpp, NMF)

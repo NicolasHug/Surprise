@@ -13,6 +13,7 @@ from ..utils import get_rng
 
 from libcpp.vector cimport vector
 import cython
+from libc.stdlib cimport malloc, free
 
 
 class SVD(AlgoBase):
@@ -413,7 +414,8 @@ class SVDpp(AlgoBase):
 
         cdef double [::1] u_impl_fdb = np.zeros(self.n_factors, dtype=np.double)
 
-        cdef int u, i, j, f
+        cdef int u, i, j, f, k, Iu_length
+        cdef int max_Iu_length = 0
         cdef int n_factors = self.n_factors
         cdef bint precompute = self.precompute
         cdef double r, err, dot, puf, qif, sqrt_Iu, _
@@ -432,14 +434,24 @@ class SVDpp(AlgoBase):
         cdef double reg_yj = self.reg_yj
         cdef double err_qif_sqrt = 0.0
 
-        cdef vector[vector[int]] Iu_precomputed
-        cdef vector[int] Iu
+        cdef int ** Iu_precomputed = NULL
+        cdef int * Iu = NULL
+        cdef int * Iu_lengths = NULL
 
         if precompute:
+            Iu_precomputed = <int **>malloc(trainset.n_users * sizeof(int *))
+            Iu_lengths = <int *>malloc(trainset.n_users * sizeof(int))
             for u in range(trainset.n_users):
-                Iu_precomputed.push_back(vector[int]())
-                for j, _ in trainset.ur[u]:
-                    Iu_precomputed[u].push_back(j)
+                Iu_lengths[u] = len(trainset.ur[u])
+                Iu_precomputed[u] = <int *>malloc(Iu_lengths[u] * sizeof(int))
+                for k, (j, _) in enumerate(trainset.ur[u]):
+                    Iu_precomputed[u][k] = j
+        else:
+            for u in range(trainset.n_users):
+                # Might as well allocate the max size once and for all
+                # instead of allocating the exact size each time
+                max_Iu_length = max(max_Iu_length, len(trainset.ur[u]))
+                Iu = <int *>malloc(max_Iu_length * sizeof(int))
 
         for current_epoch in range(self.n_epochs):
             if self.verbose:
@@ -450,15 +462,20 @@ class SVDpp(AlgoBase):
                 # items rated by u.
                 if precompute:
                     Iu = Iu_precomputed[u]
+                    Iu_length = Iu_lengths[u]
                 else:
-                    Iu = [j for (j, _) in trainset.ur[u]]
-                sqrt_Iu = sqrt(Iu.size())
+                    for k, (j, _) in enumerate(trainset.ur[u]):
+                        Iu[k] = j
+                    Iu_length = k + 1
+
+                sqrt_Iu = sqrt(Iu_length)
 
                 # compute user implicit feedback
                 # for f in range(n_factors):
                 u_impl_fdb[:] = 0
 
-                for j in Iu:
+                for k in range(Iu_length):
+                    j = Iu[k]
                     for f in range(n_factors):
                         u_impl_fdb[f] += yj[j, f] / sqrt_Iu
                 
@@ -480,8 +497,17 @@ class SVDpp(AlgoBase):
                     pu[u, f] += lr_pu * (err * qif - reg_pu * puf)
                     qi[i, f] += lr_qi * (err * (puf + u_impl_fdb[f]) - reg_qi * qif)
                     err_qif_sqrt = err * qif / sqrt_Iu
-                    for j in Iu:
+                    for k in range(Iu_length):
+                        j = Iu[k]
                         yj[j, f] += lr_yj * (err_qif_sqrt - reg_yj * yj[j, f])
+        
+        if precompute:
+            for u in range(trainset.n_users):
+                free(Iu_precomputed[u])
+            free(Iu_precomputed)
+            free(Iu_lengths)
+        else:
+            free(Iu)
 
         self.bu = bu
         self.bi = bi
