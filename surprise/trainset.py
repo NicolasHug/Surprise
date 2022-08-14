@@ -1,11 +1,10 @@
 """This module contains the Trainset class."""
 
 
-from __future__ import (absolute_import, division, print_function,
-                        unicode_literals)
+
+
 
 import numpy as np
-from six import iteritems
 
 
 class Trainset:
@@ -124,7 +123,7 @@ class Trainset:
 
         if self._inner2raw_id_users is None:
             self._inner2raw_id_users = {inner: raw for (raw, inner) in
-                                        iteritems(self._raw2inner_id_users)}
+                                        self._raw2inner_id_users.items()}
 
         try:
             return self._inner2raw_id_users[iuid]
@@ -169,7 +168,7 @@ class Trainset:
 
         if self._inner2raw_id_items is None:
             self._inner2raw_id_items = {inner: raw for (raw, inner) in
-                                        iteritems(self._raw2inner_id_items)}
+                                        self._raw2inner_id_items.items()}
 
         try:
             return self._inner2raw_id_items[iiid]
@@ -184,7 +183,7 @@ class Trainset:
             :ref:`this note <raw_inner_note>`).
         """
 
-        for u, u_ratings in iteritems(self.ur):
+        for u, u_ratings in self.ur.items():
             for i, r in u_ratings:
                 yield u, i, r
 

@@ -2,8 +2,8 @@
 Module for testing the validation module.
 """
 
-from __future__ import (absolute_import, division, print_function,
-                        unicode_literals)
+
+
 import os
 
 from surprise import NormalPredictor

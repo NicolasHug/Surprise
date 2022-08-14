@@ -1,12 +1,9 @@
-from __future__ import (absolute_import, division, print_function,
-                        unicode_literals)
 
-from abc import ABCMeta, abstractmethod
+from abc import ABC, abstractmethod
 from itertools import product
 import numpy as np
 from joblib import Parallel
 from joblib import delayed
-from six import moves, string_types, with_metaclass
 
 from .split import get_cv
 from .validation import fit_and_score
@@ -14,7 +11,7 @@ from ..dataset import DatasetUserFolds
 from ..utils import get_rng
 
 
-class BaseSearchCV(with_metaclass(ABCMeta)):
+class BaseSearchCV(ABC):
     """Base class for hyper parameter search with cross-validation."""
 
     @abstractmethod
@@ -26,7 +23,7 @@ class BaseSearchCV(with_metaclass(ABCMeta)):
         self.measures = [measure.lower() for measure in measures]
         self.cv = cv
 
-        if isinstance(refit, string_types):
+        if isinstance(refit, str):
             if refit.lower() not in self.measures:
                 raise ValueError('It looks like the measure you want to use '
                                  'with refit ({}) is not in the measures '
@@ -482,7 +479,7 @@ class RandomizedSearchCV(BaseSearchCV):
 
         else:
             combos = []
-            for _ in moves.range(n_iter):
+            for _ in range(n_iter):
                 params = dict()
                 for k, v in items:
                     if hasattr(v, 'rvs'):
