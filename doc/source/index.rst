@@ -9,7 +9,7 @@ Welcome to Surprise' documentation!
 ===================================
 
 `Surprise <http://surpriselib.com>`_  is an easy-to-use Python `scikit
-<https://www.scipy.org/scikits.html>`_ for recommender systems.
+<https://projects.scipy.org/scikits.html>`_ for recommender systems.
 
 If you're new to `Surprise <http://surpriselib.com>`_, we invite you to take a
 look at the :ref:`getting_started` guide, where you'll find a series of
