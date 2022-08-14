@@ -87,7 +87,7 @@ And for SGD:
 
 .. literalinclude:: ../../examples/baselines_conf.py
     :caption: From file ``examples/baselines_conf.py``
-    :name: baselines_als
+    :name: baselines_sgd
     :lines: 22-26
 
 .. note::
