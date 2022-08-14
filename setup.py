@@ -100,7 +100,16 @@ extensions = [
 ]
 
 if USE_CYTHON:
-    ext_modules = cythonize(extensions)
+    ext_modules = cythonize(
+        extensions,
+        compiler_directives={
+            "language_level": 3,
+            "boundscheck": False,
+            "wraparound": False,
+            "initializedcheck": False,
+            "nonecheck": False,
+        },
+    )
     cmdclass.update({'build_ext': build_ext})
 else:
     ext_modules = extensions
