@@ -2,14 +2,11 @@
 This class implements the baseline estimation.
 """
 
-from __future__ import (absolute_import, division, print_function,
-                        unicode_literals)
-
 from .algo_base import AlgoBase
 
 
 class BaselineOnly(AlgoBase):
-    """Algorithm predicting the baseline estimate for given user and item.
+    r"""Algorithm predicting the baseline estimate for given user and item.
 
     :math:`\hat{r}_{ui} = b_{ui} = \mu + b_u + b_i`
 

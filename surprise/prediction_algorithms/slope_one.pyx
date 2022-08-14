@@ -2,13 +2,11 @@
 the :mod:`slope_one` module includes the :class:`SlopeOne` algorithm.
 """
 
-from __future__ import (absolute_import, division, print_function,
-                        unicode_literals)
+
+
 
 cimport numpy as np  # noqa
 import numpy as np
-from six.moves import range
-from six import iteritems
 
 from .algo_base import AlgoBase
 from .predictions import PredictionImpossible
@@ -23,9 +21,9 @@ class SlopeOne(AlgoBase):
     The prediction :math:`\\hat{r}_{ui}` is set as:
 
     .. math::
-        \hat{r}_{ui} = \\mu_u + \\frac{1}{
+        \\hat{r}_{ui} = \\mu_u + \\frac{1}{
         |R_i(u)|}
-        \\sum\\limits_{j \in R_i(u)} \\text{dev}(i, j),
+        \\sum\\limits_{j \\in R_i(u)} \\text{dev}(i, j),
 
     where :math:`R_i(u)` is the set of relevant items, i.e. the set of items
     :math:`j` rated by :math:`u` that also have at least one common user with
@@ -34,7 +32,7 @@ class SlopeOne(AlgoBase):
 
     .. math::
         \\text{dev}(i, j) = \\frac{1}{
-        |U_{ij}|}\\sum\\limits_{u \in U_{ij}} r_{ui} - r_{uj}
+        |U_{ij}|}\\sum\\limits_{u \\in U_{ij}} r_{ui} - r_{uj}
     """
 
     def __init__(self):
@@ -58,7 +56,7 @@ class SlopeOne(AlgoBase):
         dev = np.zeros((trainset.n_items, trainset.n_items), np.double)
 
         # Computation of freq and dev arrays.
-        for u, u_ratings in iteritems(trainset.ur):
+        for u, u_ratings in trainset.ur.items():
             for i, r_ui in u_ratings:
                 for j, r_uj in u_ratings:
                     freq[i, j] += 1

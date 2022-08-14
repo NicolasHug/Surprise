@@ -13,27 +13,26 @@ between 0 ratings and missing ones.
 We currently store ratings as two defaultdict of lists (trainset.ur and
 trainset.ir), so 0 ratings should be handled correctly, without needing to
 remap them. Maybe it will change in the future, we would have to find a
-workaroud.
+workaround.
 """
 
-from __future__ import (absolute_import, division, print_function,
-                        unicode_literals)
 
 import pandas as pd
 
-from surprise import Reader
-from surprise import Dataset
+from surprise import Dataset, Reader
 
 
 def test_zero_rating_canary():
 
     reader = Reader(rating_scale=(-10, 10))
 
-    ratings_dict = {'itemID': [0, 0, 0, 0, 1, 1],
-                    'userID': [0, 1, 2, 3, 3, 4],
-                    'rating': [-10, 10, 0, -5, 0, 5]}
+    ratings_dict = {
+        "itemID": [0, 0, 0, 0, 1, 1],
+        "userID": [0, 1, 2, 3, 3, 4],
+        "rating": [-10, 10, 0, -5, 0, 5],
+    }
     df = pd.DataFrame(ratings_dict)
-    data = Dataset.load_from_df(df[['userID', 'itemID', 'rating']], reader)
+    data = Dataset.load_from_df(df[["userID", "itemID", "rating"]], reader)
     trainset = data.build_full_trainset()
 
     # test ur and ir fields. Kind of OK, but the purpose of the test is

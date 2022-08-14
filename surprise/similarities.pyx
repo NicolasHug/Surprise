@@ -15,14 +15,11 @@ Available similarity measures:
     pearson_baseline
 """
 
-from __future__ import (absolute_import, division, print_function,
-                        unicode_literals)
+
+
 
 cimport numpy as np  # noqa
 import numpy as np
-
-from six.moves import range
-from six import iteritems
 
 
 def cosine(n_x, yr, min_support):
@@ -33,18 +30,18 @@ def cosine(n_x, yr, min_support):
 
     .. math::
         \\text{cosine_sim}(u, v) = \\frac{
-        \\sum\\limits_{i \in I_{uv}} r_{ui} \cdot r_{vi}}
-        {\\sqrt{\\sum\\limits_{i \in I_{uv}} r_{ui}^2} \cdot
-        \\sqrt{\\sum\\limits_{i \in I_{uv}} r_{vi}^2}
+        \\sum\\limits_{i \\in I_{uv}} r_{ui} \\cdot r_{vi}}
+        {\\sqrt{\\sum\\limits_{i \\in I_{uv}} r_{ui}^2} \\cdot
+        \\sqrt{\\sum\\limits_{i \\in I_{uv}} r_{vi}^2}
         }
 
     or
 
     .. math::
         \\text{cosine_sim}(i, j) = \\frac{
-        \\sum\\limits_{u \in U_{ij}} r_{ui} \cdot r_{uj}}
-        {\\sqrt{\\sum\\limits_{u \in U_{ij}} r_{ui}^2} \cdot
-        \\sqrt{\\sum\\limits_{u \in U_{ij}} r_{uj}^2}
+        \\sum\\limits_{u \\in U_{ij}} r_{ui} \\cdot r_{uj}}
+        {\\sqrt{\\sum\\limits_{u \\in U_{ij}} r_{ui}^2} \\cdot
+        \\sqrt{\\sum\\limits_{u \\in U_{ij}} r_{uj}^2}
         }
 
     depending on the ``user_based`` field of ``sim_options`` (see
@@ -75,7 +72,7 @@ def cosine(n_x, yr, min_support):
     sqj = np.zeros((n_x, n_x), np.double)
     sim = np.zeros((n_x, n_x), np.double)
 
-    for y, y_ratings in iteritems(yr):
+    for y, y_ratings in yr.items():
         for xi, ri in y_ratings:
             for xj, rj in y_ratings:
                 freq[xi, xj] += 1
@@ -105,14 +102,14 @@ def msd(n_x, yr, min_support):
     Difference is defined as:
 
     .. math ::
-        \\text{msd}(u, v) = \\frac{1}{|I_{uv}|} \cdot
-        \\sum\\limits_{i \in I_{uv}} (r_{ui} - r_{vi})^2
+        \\text{msd}(u, v) = \\frac{1}{|I_{uv}|} \\cdot
+        \\sum\\limits_{i \\in I_{uv}} (r_{ui} - r_{vi})^2
 
     or
 
     .. math ::
-        \\text{msd}(i, j) = \\frac{1}{|U_{ij}|} \cdot
-        \\sum\\limits_{u \in U_{ij}} (r_{ui} - r_{uj})^2
+        \\text{msd}(i, j) = \\frac{1}{|U_{ij}|} \\cdot
+        \\sum\\limits_{u \\in U_{ij}} (r_{ui} - r_{uj})^2
 
     depending on the ``user_based`` field of ``sim_options`` (see
     :ref:`similarity_measures_configuration`).
@@ -146,7 +143,7 @@ def msd(n_x, yr, min_support):
     freq = np.zeros((n_x, n_x), np.int)
     sim = np.zeros((n_x, n_x), np.double)
 
-    for y, y_ratings in iteritems(yr):
+    for y, y_ratings in yr.items():
         for xi, ri in y_ratings:
             for xj, rj in y_ratings:
                 sq_diff[xi, xj] += (ri - rj)**2
@@ -175,18 +172,18 @@ def pearson(n_x, yr, min_support):
     and is defined as:
 
     .. math ::
-        \\text{pearson_sim}(u, v) = \\frac{ \\sum\\limits_{i \in I_{uv}}
-        (r_{ui} -  \mu_u) \cdot (r_{vi} - \mu_{v})} {\\sqrt{\\sum\\limits_{i
-        \in I_{uv}} (r_{ui} -  \mu_u)^2} \cdot \\sqrt{\\sum\\limits_{i \in
-        I_{uv}} (r_{vi} -  \mu_{v})^2} }
+        \\text{pearson_sim}(u, v) = \\frac{ \\sum\\limits_{i \\in I_{uv}}
+        (r_{ui} -  \\mu_u) \\cdot (r_{vi} - \\mu_{v})} {\\sqrt{\\sum\\limits_{i
+        \\in I_{uv}} (r_{ui} -  \\mu_u)^2} \\cdot \\sqrt{\\sum\\limits_{i \\in
+        I_{uv}} (r_{vi} -  \\mu_{v})^2} }
 
     or
 
     .. math ::
-        \\text{pearson_sim}(i, j) = \\frac{ \\sum\\limits_{u \in U_{ij}}
-        (r_{ui} -  \mu_i) \cdot (r_{uj} - \mu_{j})} {\\sqrt{\\sum\\limits_{u
-        \in U_{ij}} (r_{ui} -  \mu_i)^2} \cdot \\sqrt{\\sum\\limits_{u \in
-        U_{ij}} (r_{uj} -  \mu_{j})^2} }
+        \\text{pearson_sim}(i, j) = \\frac{ \\sum\\limits_{u \\in U_{ij}}
+        (r_{ui} -  \\mu_i) \\cdot (r_{uj} - \\mu_{j})} {\\sqrt{\\sum\\limits_{u
+        \\in U_{ij}} (r_{ui} -  \\mu_i)^2} \\cdot \\sqrt{\\sum\\limits_{u \\in
+        U_{ij}} (r_{uj} -  \\mu_{j})^2} }
 
     depending on the ``user_based`` field of ``sim_options`` (see
     :ref:`similarity_measures_configuration`).
@@ -227,7 +224,7 @@ def pearson(n_x, yr, min_support):
     sj = np.zeros((n_x, n_x), np.double)
     sim = np.zeros((n_x, n_x), np.double)
 
-    for y, y_ratings in iteritems(yr):
+    for y, y_ratings in yr.items():
         for xi, ri in y_ratings:
             for xj, rj in y_ratings:
                 prods[xi, xj] += ri * rj
@@ -269,27 +266,27 @@ def pearson_baseline(n_x, yr, min_support, global_mean, x_biases, y_biases,
     The Pearson-baseline correlation coefficient is defined as:
 
     .. math::
-        \\text{pearson_baseline_sim}(u, v) = \hat{\\rho}_{uv} = \\frac{
-            \\sum\\limits_{i \in I_{uv}} (r_{ui} -  b_{ui}) \cdot (r_{vi} -
-            b_{vi})} {\\sqrt{\\sum\\limits_{i \in I_{uv}} (r_{ui} -  b_{ui})^2}
-            \cdot \\sqrt{\\sum\\limits_{i \in I_{uv}} (r_{vi} -  b_{vi})^2}}
+        \\text{pearson_baseline_sim}(u, v) = \\hat{\\rho}_{uv} = \\frac{
+            \\sum\\limits_{i \\in I_{uv}} (r_{ui} -  b_{ui}) \\cdot (r_{vi} -
+            b_{vi})} {\\sqrt{\\sum\\limits_{i \\in I_{uv}} (r_{ui} -  b_{ui})^2}
+            \\cdot \\sqrt{\\sum\\limits_{i \\in I_{uv}} (r_{vi} -  b_{vi})^2}}
 
     or
 
     .. math::
-        \\text{pearson_baseline_sim}(i, j) = \hat{\\rho}_{ij} = \\frac{
-            \\sum\\limits_{u \in U_{ij}} (r_{ui} -  b_{ui}) \cdot (r_{uj} -
-            b_{uj})} {\\sqrt{\\sum\\limits_{u \in U_{ij}} (r_{ui} -  b_{ui})^2}
-            \cdot \\sqrt{\\sum\\limits_{u \in U_{ij}} (r_{uj} -  b_{uj})^2}}
+        \\text{pearson_baseline_sim}(i, j) = \\hat{\\rho}_{ij} = \\frac{
+            \\sum\\limits_{u \\in U_{ij}} (r_{ui} -  b_{ui}) \\cdot (r_{uj} -
+            b_{uj})} {\\sqrt{\\sum\\limits_{u \\in U_{ij}} (r_{ui} -  b_{ui})^2}
+            \\cdot \\sqrt{\\sum\\limits_{u \\in U_{ij}} (r_{uj} -  b_{uj})^2}}
 
     The shrunk Pearson-baseline correlation coefficient is then defined as:
 
     .. math::
         \\text{pearson_baseline_shrunk_sim}(u, v) &= \\frac{|I_{uv}| - 1}
-        {|I_{uv}| - 1 + \\text{shrinkage}} \\cdot \hat{\\rho}_{uv}
+        {|I_{uv}| - 1 + \\text{shrinkage}} \\cdot \\hat{\\rho}_{uv}
 
         \\text{pearson_baseline_shrunk_sim}(i, j) &= \\frac{|U_{ij}| - 1}
-        {|U_{ij}| - 1 + \\text{shrinkage}} \\cdot \hat{\\rho}_{ij}
+        {|U_{ij}| - 1 + \\text{shrinkage}} \\cdot \\hat{\\rho}_{ij}
 
 
     Obviously, a shrinkage parameter of 0 amounts to no shrinkage at all.
@@ -333,7 +330,7 @@ def pearson_baseline(n_x, yr, min_support, global_mean, x_biases, y_biases,
     # is 1, so that's OK.
     min_sprt = max(2, min_sprt)
 
-    for y, y_ratings in iteritems(yr):
+    for y, y_ratings in yr.items():
         partial_bias = global_mean_ + y_biases_[y]
         for xi, ri in y_ratings:
             for xj, rj in y_ratings:

@@ -1,11 +1,7 @@
 """This module contains the Trainset class."""
 
 
-from __future__ import (absolute_import, division, print_function,
-                        unicode_literals)
-
 import numpy as np
-from six import iteritems
 
 
 class Trainset:
@@ -41,8 +37,17 @@ class Trainset:
         global_mean: The mean of all ratings :math:`\\mu`.
     """
 
-    def __init__(self, ur, ir, n_users, n_items, n_ratings, rating_scale,
-                 raw2inner_id_users, raw2inner_id_items):
+    def __init__(
+        self,
+        ur,
+        ir,
+        n_users,
+        n_items,
+        n_ratings,
+        rating_scale,
+        raw2inner_id_users,
+        raw2inner_id_items,
+    ):
 
         self.ur = ur
         self.ir = ir
@@ -104,8 +109,7 @@ class Trainset:
         try:
             return self._raw2inner_id_users[ruid]
         except KeyError:
-            raise ValueError('User ' + str(ruid) +
-                             ' is not part of the trainset.')
+            raise ValueError("User " + str(ruid) + " is not part of the trainset.")
 
     def to_raw_uid(self, iuid):
         """Convert a **user** inner id to a raw id.
@@ -123,13 +127,14 @@ class Trainset:
         """
 
         if self._inner2raw_id_users is None:
-            self._inner2raw_id_users = {inner: raw for (raw, inner) in
-                                        iteritems(self._raw2inner_id_users)}
+            self._inner2raw_id_users = {
+                inner: raw for (raw, inner) in self._raw2inner_id_users.items()
+            }
 
         try:
             return self._inner2raw_id_users[iuid]
         except KeyError:
-            raise ValueError(str(iuid) + ' is not a valid inner id.')
+            raise ValueError(str(iuid) + " is not a valid inner id.")
 
     def to_inner_iid(self, riid):
         """Convert an **item** raw id to an inner id.
@@ -149,8 +154,7 @@ class Trainset:
         try:
             return self._raw2inner_id_items[riid]
         except KeyError:
-            raise ValueError('Item ' + str(riid) +
-                             ' is not part of the trainset.')
+            raise ValueError("Item " + str(riid) + " is not part of the trainset.")
 
     def to_raw_iid(self, iiid):
         """Convert an **item** inner id to a raw id.
@@ -168,13 +172,14 @@ class Trainset:
         """
 
         if self._inner2raw_id_items is None:
-            self._inner2raw_id_items = {inner: raw for (raw, inner) in
-                                        iteritems(self._raw2inner_id_items)}
+            self._inner2raw_id_items = {
+                inner: raw for (raw, inner) in self._raw2inner_id_items.items()
+            }
 
         try:
             return self._inner2raw_id_items[iiid]
         except KeyError:
-            raise ValueError(str(iiid) + ' is not a valid inner id.')
+            raise ValueError(str(iiid) + " is not a valid inner id.")
 
     def all_ratings(self):
         """Generator function to iterate over all ratings.
@@ -184,7 +189,7 @@ class Trainset:
             :ref:`this note <raw_inner_note>`).
         """
 
-        for u, u_ratings in iteritems(self.ur):
+        for u, u_ratings in self.ur.items():
             for i, r in u_ratings:
                 yield u, i, r
 
@@ -199,8 +204,10 @@ class Trainset:
         cases where you want to to test your algorithm on the trainset.
         """
 
-        return [(self.to_raw_uid(u), self.to_raw_iid(i), r)
-                for (u, i, r) in self.all_ratings()]
+        return [
+            (self.to_raw_uid(u), self.to_raw_iid(i), r)
+            for (u, i, r) in self.all_ratings()
+        ]
 
     def build_anti_testset(self, fill=None):
         """Return a list of ratings that can be used as a testset in the
@@ -226,10 +233,12 @@ class Trainset:
 
         anti_testset = []
         for u in self.all_users():
-            user_items = set([j for (j, _) in self.ur[u]])
-            anti_testset += [(self.to_raw_uid(u), self.to_raw_iid(i), fill) for
-                             i in self.all_items() if
-                             i not in user_items]
+            user_items = {j for (j, _) in self.ur[u]}
+            anti_testset += [
+                (self.to_raw_uid(u), self.to_raw_iid(i), fill)
+                for i in self.all_items()
+                if i not in user_items
+            ]
         return anti_testset
 
     def all_users(self):
@@ -251,7 +260,6 @@ class Trainset:
     @property
     def global_mean(self):
         if self._global_mean is None:
-            self._global_mean = np.mean([r for (_, _, r) in
-                                         self.all_ratings()])
+            self._global_mean = np.mean([r for (_, _, r) in self.all_ratings()])
 
         return self._global_mean

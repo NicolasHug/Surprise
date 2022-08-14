@@ -1,24 +1,28 @@
 """
-The validation module contains the cross_validate function, inspired from 
+The validation module contains the cross_validate function, inspired from
 the mighty scikit learn.
 """
 
-from __future__ import (absolute_import, division, print_function,
-                        unicode_literals)
 import time
 
 import numpy as np
-from joblib import Parallel
-from joblib import delayed
-from six import iteritems
+from joblib import delayed, Parallel
 
-from .split import get_cv
 from .. import accuracy
 
+from .split import get_cv
 
-def cross_validate(algo, data, measures=['rmse', 'mae'], cv=None,
-                   return_train_measures=False, n_jobs=1,
-                   pre_dispatch='2*n_jobs', verbose=False):
+
+def cross_validate(
+    algo,
+    data,
+    measures=["rmse", "mae"],
+    cv=None,
+    return_train_measures=False,
+    n_jobs=1,
+    pre_dispatch="2*n_jobs",
+    verbose=False,
+):
     """
     Run a cross validation procedure for a given algorithm, reporting accuracy
     measures and computation times.
@@ -97,15 +101,13 @@ def cross_validate(algo, data, measures=['rmse', 'mae'], cv=None,
 
     cv = get_cv(cv)
 
-    delayed_list = (delayed(fit_and_score)(algo, trainset, testset, measures,
-                                           return_train_measures)
-                    for (trainset, testset) in cv.split(data))
+    delayed_list = (
+        delayed(fit_and_score)(algo, trainset, testset, measures, return_train_measures)
+        for (trainset, testset) in cv.split(data)
+    )
     out = Parallel(n_jobs=n_jobs, pre_dispatch=pre_dispatch)(delayed_list)
 
-    (test_measures_dicts,
-     train_measures_dicts,
-     fit_times,
-     test_times) = zip(*out)
+    (test_measures_dicts, train_measures_dicts, fit_times, test_times) = zip(*out)
 
     test_measures = dict()
     train_measures = dict()
@@ -114,24 +116,29 @@ def cross_validate(algo, data, measures=['rmse', 'mae'], cv=None,
         # transform list of dicts into dict of lists
         # Same as in GridSearchCV.fit()
         test_measures[m] = np.asarray([d[m] for d in test_measures_dicts])
-        ret['test_' + m] = test_measures[m]
+        ret["test_" + m] = test_measures[m]
         if return_train_measures:
-            train_measures[m] = np.asarray([d[m] for d in
-                                            train_measures_dicts])
-            ret['train_' + m] = train_measures[m]
+            train_measures[m] = np.asarray([d[m] for d in train_measures_dicts])
+            ret["train_" + m] = train_measures[m]
 
-    ret['fit_time'] = fit_times
-    ret['test_time'] = test_times
+    ret["fit_time"] = fit_times
+    ret["test_time"] = test_times
 
     if verbose:
-        print_summary(algo, measures, test_measures, train_measures, fit_times,
-                      test_times, cv.n_splits)
+        print_summary(
+            algo,
+            measures,
+            test_measures,
+            train_measures,
+            fit_times,
+            test_times,
+            cv.n_splits,
+        )
 
     return ret
 
 
-def fit_and_score(algo, trainset, testset, measures,
-                  return_train_measures=False):
+def fit_and_score(algo, trainset, testset, measures, return_train_measures=False):
     """Helper method that trains an algorithm and compute accuracy measures on
     a testset. Also report train and test times.
 
@@ -183,43 +190,55 @@ def fit_and_score(algo, trainset, testset, measures,
     return test_measures, train_measures, fit_time, test_time
 
 
-def print_summary(algo, measures, test_measures, train_measures, fit_times,
-                  test_times, n_splits):
+def print_summary(
+    algo, measures, test_measures, train_measures, fit_times, test_times, n_splits
+):
     """Helper for printing the result of cross_validate."""
 
-    print('Evaluating {0} of algorithm {1} on {2} split(s).'.format(
-          ', '.join((m.upper() for m in measures)),
-          algo.__class__.__name__, n_splits))
+    print(
+        "Evaluating {} of algorithm {} on {} split(s).".format(
+            ", ".join(m.upper() for m in measures), algo.__class__.__name__, n_splits
+        )
+    )
     print()
 
-    row_format = '{:<18}' + '{:<8}' * (n_splits + 2)
+    row_format = "{:<18}" + "{:<8}" * (n_splits + 2)
     s = row_format.format(
-        '',
-        *['Fold {0}'.format(i + 1) for i in range(n_splits)] + ['Mean'] +
-        ['Std'])
-    s += '\n'
-    s += '\n'.join(row_format.format(
-        key.upper() + ' (testset)',
-        *['{:1.4f}'.format(v) for v in vals] +
-        ['{:1.4f}'.format(np.mean(vals))] +
-        ['{:1.4f}'.format(np.std(vals))])
-        for (key, vals) in iteritems(test_measures))
+        "", *[f"Fold {i + 1}" for i in range(n_splits)] + ["Mean"] + ["Std"]
+    )
+    s += "\n"
+    s += "\n".join(
+        row_format.format(
+            key.upper() + " (testset)",
+            *[f"{v:1.4f}" for v in vals]
+            + [f"{np.mean(vals):1.4f}"]
+            + [f"{np.std(vals):1.4f}"],
+        )
+        for (key, vals) in test_measures.items()
+    )
     if train_measures:
-        s += '\n'
-        s += '\n'.join(row_format.format(
-            key.upper() + ' (trainset)',
-            *['{:1.4f}'.format(v) for v in vals] +
-            ['{:1.4f}'.format(np.mean(vals))] +
-            ['{:1.4f}'.format(np.std(vals))])
-            for (key, vals) in iteritems(train_measures))
-    s += '\n'
-    s += row_format.format('Fit time',
-                           *['{:.2f}'.format(t) for t in fit_times] +
-                           ['{:.2f}'.format(np.mean(fit_times))] +
-                           ['{:.2f}'.format(np.std(fit_times))])
-    s += '\n'
-    s += row_format.format('Test time',
-                           *['{:.2f}'.format(t) for t in test_times] +
-                           ['{:.2f}'.format(np.mean(test_times))] +
-                           ['{:.2f}'.format(np.std(test_times))])
+        s += "\n"
+        s += "\n".join(
+            row_format.format(
+                key.upper() + " (trainset)",
+                *[f"{v:1.4f}" for v in vals]
+                + [f"{np.mean(vals):1.4f}"]
+                + [f"{np.std(vals):1.4f}"],
+            )
+            for (key, vals) in train_measures.items()
+        )
+    s += "\n"
+    s += row_format.format(
+        "Fit time",
+        *[f"{t:.2f}" for t in fit_times]
+        + [f"{np.mean(fit_times):.2f}"]
+        + [f"{np.std(fit_times):.2f}"],
+    )
+    s += "\n"
+    s += row_format.format(
+        "Test time",
+        *[f"{t:.2f}" for t in test_times]
+        + [f"{np.mean(test_times):.2f}"]
+        + [f"{np.std(test_times):.2f}"],
+    )
     print(s)

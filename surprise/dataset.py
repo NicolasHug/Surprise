@@ -23,18 +23,14 @@ Summary:
 """
 
 
-from __future__ import (absolute_import, division, print_function,
-                        unicode_literals)
-from collections import defaultdict
-import sys
-import os
 import itertools
+import os
+import sys
+from collections import defaultdict
 
-from six.moves import input
+from .builtin_datasets import BUILTIN_DATASETS, download_builtin_dataset
 
 from .reader import Reader
-from .builtin_datasets import download_builtin_dataset
-from .builtin_datasets import BUILTIN_DATASETS
 from .trainset import Trainset
 
 
@@ -50,7 +46,7 @@ class Dataset:
         self.reader = reader
 
     @classmethod
-    def load_builtin(cls, name='ml-100k', prompt=True):
+    def load_builtin(cls, name="ml-100k", prompt=True):
         """Load a built-in dataset.
 
         If the dataset has not already been loaded, it will be downloaded and
@@ -76,21 +72,28 @@ class Dataset:
         try:
             dataset = BUILTIN_DATASETS[name]
         except KeyError:
-            raise ValueError('unknown dataset ' + name +
-                             '. Accepted values are ' +
-                             ', '.join(BUILTIN_DATASETS.keys()) + '.')
+            raise ValueError(
+                "unknown dataset "
+                + name
+                + ". Accepted values are "
+                + ", ".join(BUILTIN_DATASETS.keys())
+                + "."
+            )
 
         # if dataset does not exist, offer to download it
         if not os.path.isfile(dataset.path):
             answered = not prompt
             while not answered:
-                print('Dataset ' + name + ' could not be found. Do you want '
-                      'to download it? [Y/n] ', end='')
+                print(
+                    "Dataset " + name + " could not be found. Do you want "
+                    "to download it? [Y/n] ",
+                    end="",
+                )
                 choice = input().lower()
 
-                if choice in ['yes', 'y', '', 'omg this is so nice of you!!']:
+                if choice in ["yes", "y", "", "omg this is so nice of you!!"]:
                     answered = True
-                elif choice in ['no', 'n', 'hell no why would i want that?!']:
+                elif choice in ["no", "n", "hell no why would i want that?!"]:
                     answered = True
                     print("Ok then, I'm out!")
                     sys.exit()
@@ -168,8 +171,10 @@ class Dataset:
         file_name"""
 
         with open(os.path.expanduser(file_name)) as f:
-            raw_ratings = [self.reader.parse_line(line) for line in
-                           itertools.islice(f, self.reader.skip_lines, None)]
+            raw_ratings = [
+                self.reader.parse_line(line)
+                for line in itertools.islice(f, self.reader.skip_lines, None)
+            ]
         return raw_ratings
 
     def construct_trainset(self, raw_trainset):
@@ -205,21 +210,22 @@ class Dataset:
         n_items = len(ir)  # number of items
         n_ratings = len(raw_trainset)
 
-        trainset = Trainset(ur,
-                            ir,
-                            n_users,
-                            n_items,
-                            n_ratings,
-                            self.reader.rating_scale,
-                            raw2inner_id_users,
-                            raw2inner_id_items)
+        trainset = Trainset(
+            ur,
+            ir,
+            n_users,
+            n_items,
+            n_ratings,
+            self.reader.rating_scale,
+            raw2inner_id_users,
+            raw2inner_id_items,
+        )
 
         return trainset
 
     def construct_testset(self, raw_testset):
 
-        return [(ruid, riid, r_ui_trans)
-                for (ruid, riid, r_ui_trans, _) in raw_testset]
+        return [(ruid, riid, r_ui_trans) for (ruid, riid, r_ui_trans, _) in raw_testset]
 
 
 class DatasetUserFolds(Dataset):
@@ -235,7 +241,7 @@ class DatasetUserFolds(Dataset):
         for train_test_files in self.folds_files:
             for f in train_test_files:
                 if not os.path.isfile(os.path.expanduser(f)):
-                    raise ValueError('File ' + str(f) + ' does not exist.')
+                    raise ValueError("File " + str(f) + " does not exist.")
 
 
 class DatasetAutoFolds(Dataset):
@@ -253,11 +259,12 @@ class DatasetAutoFolds(Dataset):
             self.raw_ratings = self.read_ratings(self.ratings_file)
         elif df is not None:
             self.df = df
-            self.raw_ratings = [(uid, iid, float(r), None)
-                                for (uid, iid, r) in
-                                self.df.itertuples(index=False)]
+            self.raw_ratings = [
+                (uid, iid, float(r), None)
+                for (uid, iid, r) in self.df.itertuples(index=False)
+            ]
         else:
-            raise ValueError('Must specify ratings file or dataframe.')
+            raise ValueError("Must specify ratings file or dataframe.")
 
     def build_full_trainset(self):
         """Do not split the dataset into folds and just return a trainset as

@@ -1,12 +1,10 @@
 """Module for testing the dump module."""
 
-from __future__ import (absolute_import, division, print_function,
-                        unicode_literals)
-import tempfile
-import random
 
-from surprise import BaselineOnly
-from surprise import dump
+import random
+import tempfile
+
+from surprise import BaselineOnly, dump
 from surprise.model_selection import PredefinedKFold
 
 

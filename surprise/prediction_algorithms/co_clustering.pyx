@@ -2,8 +2,8 @@
 the :mod:`co_clustering` module includes the :class:`CoClustering` algorithm.
 """
 
-from __future__ import (absolute_import, division, print_function,
-                        unicode_literals)
+
+
 
 cimport numpy as np  # noqa
 import numpy as np
@@ -23,16 +23,16 @@ class CoClustering(AlgoBase):
     The prediction :math:`\\hat{r}_{ui}` is set as:
 
     .. math::
-        \hat{r}_{ui} = \\overline{C_{ui}} + (\\mu_u - \\overline{C_u}) + (\mu_i
+        \\hat{r}_{ui} = \\overline{C_{ui}} + (\\mu_u - \\overline{C_u}) + (\\mu_i
         - \\overline{C_i}),
 
     where :math:`\\overline{C_{ui}}` is the average rating of co-cluster
     :math:`C_{ui}`, :math:`\\overline{C_u}` is the average rating of
     :math:`u`'s cluster, and :math:`\\overline{C_i}` is the average rating of
     :math:`i`'s cluster. If the user is unknown, the prediction is
-    :math:`\hat{r}_{ui} = \\mu_i`. If the item is unknown, the prediction is
-    :math:`\hat{r}_{ui} = \\mu_u`. If both the user and the item are unknown,
-    the prediction is :math:`\hat{r}_{ui} = \\mu`.
+    :math:`\\hat{r}_{ui} = \\mu_i`. If the item is unknown, the prediction is
+    :math:`\\hat{r}_{ui} = \\mu_u`. If both the user and the item are unknown,
+    the prediction is :math:`\\hat{r}_{ui} = \\mu`.
 
     Clusters are assigned using a straightforward optimization method, much
     like k-means.

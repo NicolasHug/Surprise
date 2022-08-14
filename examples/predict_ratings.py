@@ -3,14 +3,11 @@ This module descibes how to train on a full dataset (when no testset is
 built/specified) and how to use the predict() method.
 """
 
-from __future__ import (absolute_import, division, print_function,
-                        unicode_literals)
 
-from surprise import KNNBasic
-from surprise import Dataset
+from surprise import Dataset, KNNBasic
 
 # Load the movielens-100k dataset
-data = Dataset.load_builtin('ml-100k')
+data = Dataset.load_builtin("ml-100k")
 
 # Retrieve the trainset.
 trainset = data.build_full_trainset()

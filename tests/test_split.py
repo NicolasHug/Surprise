@@ -1,21 +1,20 @@
-from __future__ import (absolute_import, division, print_function,
-                        unicode_literals)
 import os
-from copy import copy
-import numpy as np
 from collections import Counter
+from copy import copy
+
+import numpy as np
 
 import pytest
-from six import itervalues
 
-from surprise import Dataset
-from surprise import Reader
-from surprise.model_selection import KFold
-from surprise.model_selection import ShuffleSplit
-from surprise.model_selection import RepeatedKFold
-from surprise.model_selection import train_test_split
-from surprise.model_selection import LeaveOneOut
-from surprise.model_selection import PredefinedKFold
+from surprise import Dataset, Reader
+from surprise.model_selection import (
+    KFold,
+    LeaveOneOut,
+    PredefinedKFold,
+    RepeatedKFold,
+    ShuffleSplit,
+    train_test_split,
+)
 from surprise.model_selection.split import get_cv
 
 
@@ -112,7 +111,7 @@ def test_ShuffleSplit(toy_data):
     assert all(trainset.n_ratings == 4 for (trainset, _) in ss.split(toy_data))
 
     # test test_size to float and train_size to None (complement)
-    ss = ShuffleSplit(test_size=.2)  # 20% of 5 = 1
+    ss = ShuffleSplit(test_size=0.2)  # 20% of 5 = 1
     assert all(len(testset) == 1 for (_, testset) in ss.split(toy_data))
     assert all(trainset.n_ratings == 4 for (trainset, _) in ss.split(toy_data))
 
@@ -127,7 +126,7 @@ def test_ShuffleSplit(toy_data):
     assert all(trainset.n_ratings == 2 for (trainset, _) in ss.split(toy_data))
 
     # test test_size to None (complement) and train_size to float
-    ss = ShuffleSplit(test_size=None, train_size=.2)
+    ss = ShuffleSplit(test_size=None, train_size=0.2)
     assert all(len(testset) == 4 for (_, testset) in ss.split(toy_data))
     assert all(trainset.n_ratings == 1 for (trainset, _) in ss.split(toy_data))
 
@@ -166,7 +165,7 @@ def test_train_test_split(toy_data):
     assert trainset.n_ratings == 3
 
     # test test_size to float and train_size to None (complement)
-    trainset, testset = train_test_split(toy_data, test_size=.2, train_size=None)
+    trainset, testset = train_test_split(toy_data, test_size=0.2, train_size=None)
     assert len(testset) == 1
     assert trainset.n_ratings == 4
 
@@ -181,7 +180,7 @@ def test_train_test_split(toy_data):
     assert trainset.n_ratings == 2
 
     # test test_size to None (complement) and train_size to float
-    trainset, testset = train_test_split(toy_data, test_size=None, train_size=.2)
+    trainset, testset = train_test_split(toy_data, test_size=None, train_size=0.2)
     assert len(testset) == 4
     assert trainset.n_ratings == 1
 
@@ -241,10 +240,9 @@ def test_LeaveOneOut(toy_data):
     with pytest.raises(ValueError):
         next(loo.split(toy_data))  # each user only has 1 item so trainsets fail
 
-    reader = Reader('ml-100k')
+    reader = Reader("ml-100k")
 
-    data_path = (os.path.dirname(os.path.realpath(__file__)) +
-                 '/u1_ml100k_test')
+    data_path = os.path.dirname(os.path.realpath(__file__)) + "/u1_ml100k_test"
     data = Dataset.load_from_file(file_path=data_path, reader=reader)
 
     # Test random_state parameter
@@ -264,16 +262,16 @@ def test_LeaveOneOut(toy_data):
     loo = LeaveOneOut()
     for _, testset in loo.split(data):
         cnt = Counter([uid for (uid, _, _) in testset])
-        assert all(val == 1 for val in itervalues(cnt))
+        assert all(val == 1 for val in cnt.values())
 
     # test the min_n_ratings parameter
     loo = LeaveOneOut(min_n_ratings=5)
     for trainset, _ in loo.split(data):
-        assert all(len(ratings) >= 5 for ratings in itervalues(trainset.ur))
+        assert all(len(ratings) >= 5 for ratings in trainset.ur.values())
 
     loo = LeaveOneOut(min_n_ratings=10)
     for trainset, _ in loo.split(data):
-        assert all(len(ratings) >= 10 for ratings in itervalues(trainset.ur))
+        assert all(len(ratings) >= 10 for ratings in trainset.ur.values())
 
     loo = LeaveOneOut(min_n_ratings=10000)  # too high
     with pytest.raises(ValueError):
@@ -282,12 +280,12 @@ def test_LeaveOneOut(toy_data):
 
 def test_PredifinedKFold():
 
-    reader = Reader(line_format='user item rating', sep=' ', skip_lines=3,
-                    rating_scale=(1, 5))
+    reader = Reader(
+        line_format="user item rating", sep=" ", skip_lines=3, rating_scale=(1, 5)
+    )
 
     current_dir = os.path.dirname(os.path.realpath(__file__))
-    folds_files = [(current_dir + '/custom_train',
-                    current_dir + '/custom_test')]
+    folds_files = [(current_dir + "/custom_train", current_dir + "/custom_test")]
 
     data = Dataset.load_from_folds(folds_files=folds_files, reader=reader)
 
@@ -307,4 +305,4 @@ def test_get_cv():
     with pytest.raises(ValueError):
         get_cv(23.2)
     with pytest.raises(ValueError):
-        get_cv('bad')
+        get_cv("bad")
