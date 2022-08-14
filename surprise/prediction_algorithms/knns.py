@@ -2,7 +2,10 @@
 the :mod:`knns` module includes some k-NN inspired algorithms.
 """
 
+from __future__ import (absolute_import, division, print_function,
+                        unicode_literals)
 import numpy as np
+from six import iteritems
 import heapq
 
 from .predictions import PredictionImpossible
@@ -175,7 +178,7 @@ class KNNWithMeans(SymmetricAlgo):
         self.sim = self.compute_similarities()
 
         self.means = np.zeros(self.n_x)
-        for x, ratings in self.xr.items():
+        for x, ratings in iteritems(self.xr):
             self.means[x] = np.mean([r for (_, r) in ratings])
 
         return self
@@ -372,7 +375,7 @@ class KNNWithZScore(SymmetricAlgo):
         self.overall_sigma = np.std([r for (_, _, r)
                                      in self.trainset.all_ratings()])
 
-        for x, ratings in self.xr.items():
+        for x, ratings in iteritems(self.xr):
             self.means[x] = np.mean([r for (_, r) in ratings])
             sigma = np.std([r for (_, r) in ratings])
             self.sigmas[x] = self.overall_sigma if sigma == 0.0 else sigma

@@ -2,8 +2,8 @@
 Module for testing the SVD and SVD++ algorithms.
 """
 
-
-
+from __future__ import (absolute_import, division, print_function,
+                        unicode_literals)
 
 from surprise import SVD
 from surprise import SVDpp

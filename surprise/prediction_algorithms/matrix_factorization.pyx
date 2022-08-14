@@ -3,11 +3,12 @@ the :mod:`matrix_factorization` module includes some algorithms using matrix
 factorization.
 """
 
-
-
+from __future__ import (absolute_import, division, print_function,
+                        unicode_literals)
 
 cimport numpy as np  # noqa
 import numpy as np
+from six.moves import range
 
 from .algo_base import AlgoBase
 from .predictions import PredictionImpossible

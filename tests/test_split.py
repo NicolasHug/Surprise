@@ -1,11 +1,12 @@
-
-
+from __future__ import (absolute_import, division, print_function,
+                        unicode_literals)
 import os
 from copy import copy
 import numpy as np
 from collections import Counter
 
 import pytest
+from six import itervalues
 
 from surprise import Dataset
 from surprise import Reader
@@ -263,16 +264,16 @@ def test_LeaveOneOut(toy_data):
     loo = LeaveOneOut()
     for _, testset in loo.split(data):
         cnt = Counter([uid for (uid, _, _) in testset])
-        assert all(val == 1 for val in cnt.values())
+        assert all(val == 1 for val in itervalues(cnt))
 
     # test the min_n_ratings parameter
     loo = LeaveOneOut(min_n_ratings=5)
     for trainset, _ in loo.split(data):
-        assert all(len(ratings) >= 5 for ratings in trainset.ur.values())
+        assert all(len(ratings) >= 5 for ratings in itervalues(trainset.ur))
 
     loo = LeaveOneOut(min_n_ratings=10)
     for trainset, _ in loo.split(data):
-        assert all(len(ratings) >= 10 for ratings in trainset.ur.values())
+        assert all(len(ratings) >= 10 for ratings in itervalues(trainset.ur))
 
     loo = LeaveOneOut(min_n_ratings=10000)  # too high
     with pytest.raises(ValueError):

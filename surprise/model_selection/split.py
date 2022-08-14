@@ -24,10 +24,15 @@ testset:
 
 """
 
+from __future__ import (absolute_import, division, print_function,
+                        unicode_literals)
 from itertools import chain
 from math import ceil, floor
 import numbers
 from collections import defaultdict
+
+from six import iteritems
+from six import string_types
 
 import numpy as np
 
@@ -41,7 +46,7 @@ def get_cv(cv):
         return KFold(n_splits=5)
     if isinstance(cv, numbers.Integral):
         return KFold(n_splits=cv)
-    if hasattr(cv, 'split') and not isinstance(cv, str):
+    if hasattr(cv, 'split') and not isinstance(cv, string_types):
         return cv  # str have split
 
     raise ValueError('Wrong CV object. Expecting None, an int or CV iterator, '
@@ -384,7 +389,7 @@ class LeaveOneOut():
             # for each user, randomly choose a rating and put it in the
             # testset.
             raw_trainset, raw_testset = [], []
-            for uid, ratings in user_ratings.items():
+            for uid, ratings in iteritems(user_ratings):
                 if len(ratings) > self.min_n_ratings:
                     i = rng.randint(0, len(ratings))
                     raw_testset.append(ratings[i])

@@ -9,6 +9,7 @@ import datetime
 import random
 
 import numpy as np
+import six
 from tabulate import tabulate
 
 from surprise import Dataset

@@ -3,11 +3,14 @@ The validation module contains the cross_validate function, inspired from
 the mighty scikit learn.
 """
 
+from __future__ import (absolute_import, division, print_function,
+                        unicode_literals)
 import time
 
 import numpy as np
 from joblib import Parallel
 from joblib import delayed
+from six import iteritems
 
 from .split import get_cv
 from .. import accuracy
@@ -200,7 +203,7 @@ def print_summary(algo, measures, test_measures, train_measures, fit_times,
         *['{:1.4f}'.format(v) for v in vals] +
         ['{:1.4f}'.format(np.mean(vals))] +
         ['{:1.4f}'.format(np.std(vals))])
-        for (key, vals) in test_measures.items())
+        for (key, vals) in iteritems(test_measures))
     if train_measures:
         s += '\n'
         s += '\n'.join(row_format.format(
@@ -208,7 +211,7 @@ def print_summary(algo, measures, test_measures, train_measures, fit_times,
             *['{:1.4f}'.format(v) for v in vals] +
             ['{:1.4f}'.format(np.mean(vals))] +
             ['{:1.4f}'.format(np.std(vals))])
-            for (key, vals) in train_measures.items())
+            for (key, vals) in iteritems(train_measures))
     s += '\n'
     s += row_format.format('Fit time',
                            *['{:.2f}'.format(t) for t in fit_times] +

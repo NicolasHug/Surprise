@@ -7,6 +7,7 @@ from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 
 from tabulate import tabulate
+from six import iteritems
 
 from surprise import SVD
 from surprise import Dataset
@@ -31,7 +32,7 @@ print(tabulate(table, header, tablefmt="rst"))
 
 print()
 
-for key, val in gs.cv_results.items():
+for key, val in iteritems(gs.cv_results):
     print('{:<20}'.format("'" + key + "':"), end='')
     if isinstance(val[0], float):
         print([float('{:.2f}'.format(f)) for f in val])

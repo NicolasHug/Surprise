@@ -100,16 +100,7 @@ extensions = [
 ]
 
 if USE_CYTHON:
-    ext_modules = cythonize(
-        extensions,
-        compiler_directives={
-            "language_level": 3,
-            "boundscheck": False,
-            "wraparound": False,
-            "initializedcheck": False,
-            "nonecheck": False,
-        },
-    )
+    ext_modules = cythonize(extensions)
     cmdclass.update({'build_ext': build_ext})
 else:
     ext_modules = extensions
@@ -134,14 +125,12 @@ setup(
         'Intended Audience :: Science/Research',
         'Topic :: Scientific/Engineering',
         'License :: OSI Approved :: BSD License',
-        'Programming Language :: Python :: 3.7',
-        'Programming Language :: Python :: 3.9',
-        'Programming Language :: Python :: 3.10',
+        'Programming Language :: Python :: 3',
+        'Programming Language :: Python :: 2.7',
     ],
     keywords='recommender recommendation system',
 
     packages=find_packages(exclude=['tests*']),
-    python_requires=">=3.7",
     include_package_data=True,
     ext_modules=ext_modules,
     cmdclass=cmdclass,

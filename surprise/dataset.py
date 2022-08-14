@@ -23,10 +23,14 @@ Summary:
 """
 
 
+from __future__ import (absolute_import, division, print_function,
+                        unicode_literals)
 from collections import defaultdict
 import sys
 import os
 import itertools
+
+from six.moves import input
 
 from .reader import Reader
 from .builtin_datasets import download_builtin_dataset

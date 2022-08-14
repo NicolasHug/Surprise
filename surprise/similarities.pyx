@@ -15,11 +15,14 @@ Available similarity measures:
     pearson_baseline
 """
 
-
-
+from __future__ import (absolute_import, division, print_function,
+                        unicode_literals)
 
 cimport numpy as np  # noqa
 import numpy as np
+
+from six.moves import range
+from six import iteritems
 
 
 def cosine(n_x, yr, min_support):
@@ -72,7 +75,7 @@ def cosine(n_x, yr, min_support):
     sqj = np.zeros((n_x, n_x), np.double)
     sim = np.zeros((n_x, n_x), np.double)
 
-    for y, y_ratings in yr.items():
+    for y, y_ratings in iteritems(yr):
         for xi, ri in y_ratings:
             for xj, rj in y_ratings:
                 freq[xi, xj] += 1
@@ -143,7 +146,7 @@ def msd(n_x, yr, min_support):
     freq = np.zeros((n_x, n_x), np.int)
     sim = np.zeros((n_x, n_x), np.double)
 
-    for y, y_ratings in yr.items():
+    for y, y_ratings in iteritems(yr):
         for xi, ri in y_ratings:
             for xj, rj in y_ratings:
                 sq_diff[xi, xj] += (ri - rj)**2
@@ -224,7 +227,7 @@ def pearson(n_x, yr, min_support):
     sj = np.zeros((n_x, n_x), np.double)
     sim = np.zeros((n_x, n_x), np.double)
 
-    for y, y_ratings in yr.items():
+    for y, y_ratings in iteritems(yr):
         for xi, ri in y_ratings:
             for xj, rj in y_ratings:
                 prods[xi, xj] += ri * rj
@@ -330,7 +333,7 @@ def pearson_baseline(n_x, yr, min_support, global_mean, x_biases, y_biases,
     # is 1, so that's OK.
     min_sprt = max(2, min_sprt)
 
-    for y, y_ratings in yr.items():
+    for y, y_ratings in iteritems(yr):
         partial_bias = global_mean_ + y_biases_[y]
         for xi, ri in y_ratings:
             for xj, rj in y_ratings:

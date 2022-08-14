@@ -1,7 +1,7 @@
 """Module for testing accuracy evaluation measures (RMSE, MAE...)"""
 
-
-
+from __future__ import (absolute_import, division, print_function,
+                        unicode_literals)
 from math import sqrt
 
 import pytest
