@@ -5,14 +5,13 @@ factorization.
 
 cimport numpy as np  # noqa
 import numpy as np
+from libc.math cimport sqrt
 
 from .algo_base import AlgoBase
 from .predictions import PredictionImpossible
 from ..utils import get_rng
 
-from libcpp.map cimport map as mapcpp
-from libcpp.vector cimport vector as vectorcpp
-from cython.operator import dereference, postincrement
+from libcpp.vector cimport vector
 import cython
 
 
@@ -277,6 +276,7 @@ class SVD(AlgoBase):
         return est
 
 
+# @cython.cdivision(True)
 class SVDpp(AlgoBase):
     """The *SVD++* algorithm, an extension of :class:`SVD` taking into account
     implicit ratings.
@@ -367,7 +367,7 @@ class SVDpp(AlgoBase):
     def __init__(self, n_factors=20, n_epochs=20, init_mean=0, init_std_dev=.1,
                  lr_all=.007, reg_all=.02, lr_bu=None, lr_bi=None, lr_pu=None,
                  lr_qi=None, lr_yj=None, reg_bu=None, reg_bi=None, reg_pu=None,
-                 reg_qi=None, reg_yj=None, random_state=None, verbose=False):
+                 reg_qi=None, reg_yj=None, random_state=None, verbose=False, precompute=False):
 
         self.n_factors = n_factors
         self.n_epochs = n_epochs
@@ -385,6 +385,7 @@ class SVDpp(AlgoBase):
         self.reg_yj = reg_yj if reg_yj is not None else reg_all
         self.random_state = random_state
         self.verbose = verbose
+        self.precompute = precompute
 
         AlgoBase.__init__(self)
 
@@ -414,6 +415,7 @@ class SVDpp(AlgoBase):
 
         cdef int u, i, j, f
         cdef int n_factors = self.n_factors
+        cdef bint precompute = self.precompute
         cdef double r, err, dot, puf, qif, sqrt_Iu, _
         cdef double global_mean = self.trainset.global_mean
 
@@ -428,21 +430,16 @@ class SVDpp(AlgoBase):
         cdef double reg_pu = self.reg_pu
         cdef double reg_qi = self.reg_qi
         cdef double reg_yj = self.reg_yj
-
-        cdef mapcpp[int, vectorcpp[int]] Iu_items
-        cdef mapcpp[int, double] Iu_len_sqrts
-
-        for i in range(trainset.n_users):
-            for j, _ in trainset.ur[i]:
-                Iu_items[i].push_back(j)
-
-        cdef mapcpp[int, vectorcpp[int]].iterator it = Iu_items.begin()
-
-        while(it != Iu_items.end()):
-            Iu_len_sqrts[dereference(it).first] = 1.0 / np.sqrt(dereference(it).second.size())
-            postincrement(it)
-
         cdef double err_qif_sqrt = 0.0
+
+        cdef vector[vector[int]] Iu_precomputed
+        cdef vector[int] Iu
+
+        if precompute:
+            for u in range(trainset.n_users):
+                Iu_precomputed.push_back(vector[int]())
+                for j, _ in trainset.ur[u]:
+                    Iu_precomputed[u].push_back(j)
 
         for current_epoch in range(self.n_epochs):
             if self.verbose:
@@ -451,16 +448,19 @@ class SVDpp(AlgoBase):
             for u, i, r in trainset.all_ratings():
 
                 # items rated by u.
-                Iu = Iu_items[u]
-                sqrt_Iu = Iu_len_sqrts[u]
+                if precompute:
+                    Iu = Iu_precomputed[u]
+                else:
+                    Iu = [j for (j, _) in trainset.ur[u]]
+                sqrt_Iu = sqrt(Iu.size())
 
                 # compute user implicit feedback
-                for f in range(n_factors):
-                    u_impl_fdb[f] = 0
+                # for f in range(n_factors):
+                u_impl_fdb[:] = 0
 
                 for j in Iu:
                     for f in range(n_factors):
-                        u_impl_fdb[f] += yj[j, f] * sqrt_Iu
+                        u_impl_fdb[f] += yj[j, f] / sqrt_Iu
                 
                 # compute current error
                 dot = 0 
@@ -479,7 +479,7 @@ class SVDpp(AlgoBase):
                     qif = qi[i, f]
                     pu[u, f] += lr_pu * (err * qif - reg_pu * puf)
                     qi[i, f] += lr_qi * (err * (puf + u_impl_fdb[f]) - reg_qi * qif)
-                    err_qif_sqrt = err * qif * sqrt_Iu
+                    err_qif_sqrt = err * qif / sqrt_Iu
                     for j in Iu:
                         yj[j, f] += lr_yj * (err_qif_sqrt - reg_yj * yj[j, f])
 
