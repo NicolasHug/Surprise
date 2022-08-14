@@ -3,15 +3,16 @@ the :mod:`matrix_factorization` module includes some algorithms using matrix
 factorization.
 """
 
-
-
-
 cimport numpy as np  # noqa
 import numpy as np
+from libc.math cimport sqrt
 
 from .algo_base import AlgoBase
 from .predictions import PredictionImpossible
 from ..utils import get_rng
+
+import cython
+from libc.stdlib cimport malloc, free
 
 
 class SVD(AlgoBase):
@@ -189,16 +190,21 @@ class SVD(AlgoBase):
         # anymore, we need to compute the dot products by hand, and update
         # user and items factors by iterating over all factors...
 
+        rng = get_rng(self.random_state)
+
         # user biases
-        cdef np.ndarray[np.double_t] bu
+        cdef double [::1] bu = np.zeros(trainset.n_users, dtype=np.double)
         # item biases
-        cdef np.ndarray[np.double_t] bi
+        cdef double [::1] bi = np.zeros(trainset.n_items, dtype=np.double)
         # user factors
-        cdef np.ndarray[np.double_t, ndim=2] pu
+        cdef double [:, ::1] pu = rng.normal(self.init_mean, self.init_std_dev, size=(trainset.n_users, self.n_factors))
         # item factors
-        cdef np.ndarray[np.double_t, ndim=2] qi
+        cdef double [:, ::1] qi = rng.normal(self.init_mean, self.init_std_dev, size=(trainset.n_items, self.n_factors))
 
         cdef int u, i, f
+        cdef int n_factors = self.n_factors
+        cdef bint biased = self.biased
+
         cdef double r, err, dot, puf, qif
         cdef double global_mean = self.trainset.global_mean
 
@@ -212,36 +218,27 @@ class SVD(AlgoBase):
         cdef double reg_pu = self.reg_pu
         cdef double reg_qi = self.reg_qi
 
-        rng = get_rng(self.random_state)
-
-        bu = np.zeros(trainset.n_users, np.double)
-        bi = np.zeros(trainset.n_items, np.double)
-        pu = rng.normal(self.init_mean, self.init_std_dev,
-                        (trainset.n_users, self.n_factors))
-        qi = rng.normal(self.init_mean, self.init_std_dev,
-                        (trainset.n_items, self.n_factors))
-
-        if not self.biased:
+        if not biased:
             global_mean = 0
 
         for current_epoch in range(self.n_epochs):
             if self.verbose:
                 print("Processing epoch {}".format(current_epoch))
-            for u, i, r in trainset.all_ratings():
 
+            for u, i, r in trainset.all_ratings():
                 # compute current error
                 dot = 0  # <q_i, p_u>
-                for f in range(self.n_factors):
+                for f in range(n_factors):
                     dot += qi[i, f] * pu[u, f]
                 err = r - (global_mean + bu[u] + bi[i] + dot)
 
                 # update biases
-                if self.biased:
+                if biased:
                     bu[u] += lr_bu * (err - reg_bu * bu[u])
                     bi[i] += lr_bi * (err - reg_bi * bi[i])
 
                 # update factors
-                for f in range(self.n_factors):
+                for f in range(n_factors):
                     puf = pu[u, f]
                     qif = qi[i, f]
                     pu[u, f] += lr_pu * (err * qif - reg_pu * puf)
@@ -279,6 +276,7 @@ class SVD(AlgoBase):
         return est
 
 
+@cython.cdivision(True)
 class SVDpp(AlgoBase):
     """The *SVD++* algorithm, an extension of :class:`SVD` taking into account
     implicit ratings.
@@ -317,6 +315,9 @@ class SVDpp(AlgoBase):
         n_factors: The number of factors. Default is ``20``.
         n_epochs: The number of iteration of the SGD procedure. Default is
             ``20``.
+        cache_ratings: Whether or not to cache ratings during `fit()`.
+            This should speed-up the training, and has a higher
+            memory footprint. Default is False.
         init_mean: The mean of the normal distribution for factor vectors
             initialization. Default is ``0``.
         init_std_dev: The standard deviation of the normal distribution for
@@ -369,7 +370,8 @@ class SVDpp(AlgoBase):
     def __init__(self, n_factors=20, n_epochs=20, init_mean=0, init_std_dev=.1,
                  lr_all=.007, reg_all=.02, lr_bu=None, lr_bi=None, lr_pu=None,
                  lr_qi=None, lr_yj=None, reg_bu=None, reg_bi=None, reg_pu=None,
-                 reg_qi=None, reg_yj=None, random_state=None, verbose=False):
+                 reg_qi=None, reg_yj=None, random_state=None, verbose=False,
+                 cache_ratings=False):
 
         self.n_factors = n_factors
         self.n_epochs = n_epochs
@@ -387,6 +389,7 @@ class SVDpp(AlgoBase):
         self.reg_yj = reg_yj if reg_yj is not None else reg_all
         self.random_state = random_state
         self.verbose = verbose
+        self.cache_ratings = cache_ratings
 
         AlgoBase.__init__(self)
 
@@ -399,21 +402,27 @@ class SVDpp(AlgoBase):
 
     def sgd(self, trainset):
 
-        # user biases
-        cdef np.ndarray[np.double_t] bu
-        # item biases
-        cdef np.ndarray[np.double_t] bi
-        # user factors
-        cdef np.ndarray[np.double_t, ndim=2] pu
-        # item factors
-        cdef np.ndarray[np.double_t, ndim=2] qi
-        # item implicit factors
-        cdef np.ndarray[np.double_t, ndim=2] yj
+        rng = get_rng(self.random_state)
 
-        cdef int u, i, j, f
+        # user biases
+        cdef double [::1] bu = np.zeros(trainset.n_users, dtype=np.double)
+        # item biases
+        cdef double [::1] bi = np.zeros(trainset.n_items, dtype=np.double)
+        # user factors
+        cdef double [:, ::1] pu = rng.normal(self.init_mean, self.init_std_dev, size=(trainset.n_users, self.n_factors))
+        # item factors
+        cdef double [:, ::1] qi = rng.normal(self.init_mean, self.init_std_dev, size=(trainset.n_items, self.n_factors))
+        # item implicit factors
+        cdef np.ndarray[np.double_t, ndim=2] yj = rng.normal(self.init_mean, self.init_std_dev, size=(trainset.n_items, self.n_factors))
+
+        cdef double [::1] u_impl_fdb = np.zeros(self.n_factors, dtype=np.double)
+
+        cdef int u, i, j, f, k, Iu_length
+        cdef int max_Iu_length = 0
+        cdef int n_factors = self.n_factors
+        cdef bint cache_ratings = self.cache_ratings
         cdef double r, err, dot, puf, qif, sqrt_Iu, _
         cdef double global_mean = self.trainset.global_mean
-        cdef np.ndarray[np.double_t] u_impl_fdb
 
         cdef double lr_bu = self.lr_bu
         cdef double lr_bi = self.lr_bi
@@ -426,38 +435,56 @@ class SVDpp(AlgoBase):
         cdef double reg_pu = self.reg_pu
         cdef double reg_qi = self.reg_qi
         cdef double reg_yj = self.reg_yj
+        cdef double err_qif_sqrt = 0.0
 
-        bu = np.zeros(trainset.n_users, np.double)
-        bi = np.zeros(trainset.n_items, np.double)
+        cdef int ** Iu_cached = NULL
+        cdef int * Iu = NULL
+        cdef int * Iu_lengths = NULL
 
-        rng = get_rng(self.random_state)
-
-        pu = rng.normal(self.init_mean, self.init_std_dev,
-                        (trainset.n_users, self.n_factors))
-        qi = rng.normal(self.init_mean, self.init_std_dev,
-                        (trainset.n_items, self.n_factors))
-        yj = rng.normal(self.init_mean, self.init_std_dev,
-                        (trainset.n_items, self.n_factors))
-        u_impl_fdb = np.zeros(self.n_factors, np.double)
+        if cache_ratings:
+            Iu_cached = <int **>malloc(trainset.n_users * sizeof(int *))
+            Iu_lengths = <int *>malloc(trainset.n_users * sizeof(int))
+            for u in range(trainset.n_users):
+                Iu_lengths[u] = len(trainset.ur[u])
+                Iu_cached[u] = <int *>malloc(Iu_lengths[u] * sizeof(int))
+                for k, (j, _) in enumerate(trainset.ur[u]):
+                    Iu_cached[u][k] = j
+        else:
+            for u in range(trainset.n_users):
+                # Might as well allocate the max size once and for all
+                # instead of allocating the exact size each time
+                max_Iu_length = max(max_Iu_length, len(trainset.ur[u]))
+                Iu = <int *>malloc(max_Iu_length * sizeof(int))
 
         for current_epoch in range(self.n_epochs):
             if self.verbose:
                 print(" processing epoch {}".format(current_epoch))
+
             for u, i, r in trainset.all_ratings():
 
-                # items rated by u. This is COSTLY
-                Iu = [j for (j, _) in trainset.ur[u]]
-                sqrt_Iu = np.sqrt(len(Iu))
+                # items rated by u.
+                if cache_ratings:
+                    Iu = Iu_cached[u]
+                    Iu_length = Iu_lengths[u]
+                else:
+                    for k, (j, _) in enumerate(trainset.ur[u]):
+                        Iu[k] = j
+                    Iu_length = k + 1
+
+                sqrt_Iu = sqrt(Iu_length)
 
                 # compute user implicit feedback
-                u_impl_fdb = np.zeros(self.n_factors, np.double)
-                for j in Iu:
-                    for f in range(self.n_factors):
-                        u_impl_fdb[f] += yj[j, f] / sqrt_Iu
+                # for f in range(n_factors):
+                u_impl_fdb[:] = 0
 
+                for k in range(Iu_length):
+                    j = Iu[k]
+                    for f in range(n_factors):
+                        u_impl_fdb[f] += yj[j, f] / sqrt_Iu
+                
                 # compute current error
-                dot = 0  # <q_i, (p_u + sum_{j in Iu} y_j / sqrt{Iu}>
-                for f in range(self.n_factors):
+                dot = 0 
+                for f in range(n_factors):
                     dot += qi[i, f] * (pu[u, f] + u_impl_fdb[f])
 
                 err = r - (global_mean + bu[u] + bi[i] + dot)
@@ -467,15 +494,23 @@ class SVDpp(AlgoBase):
                 bi[i] += lr_bi * (err - reg_bi * bi[i])
 
                 # update factors
-                for f in range(self.n_factors):
+                for f in range(n_factors):
                     puf = pu[u, f]
                     qif = qi[i, f]
                     pu[u, f] += lr_pu * (err * qif - reg_pu * puf)
-                    qi[i, f] += lr_qi * (err * (puf + u_impl_fdb[f]) -
-                                         reg_qi * qif)
-                    for j in Iu:
-                        yj[j, f] += lr_yj * (err * qif / sqrt_Iu -
-                                             reg_yj * yj[j, f])
+                    qi[i, f] += lr_qi * (err * (puf + u_impl_fdb[f]) - reg_qi * qif)
+                    err_qif_sqrt = err * qif / sqrt_Iu
+                    for k in range(Iu_length):
+                        j = Iu[k]
+                        yj[j, f] += lr_yj * (err_qif_sqrt - reg_yj * yj[j, f])
+
+        if cache_ratings:
+            for u in range(trainset.n_users):
+                free(Iu_cached[u])
+            free(Iu_cached)
+            free(Iu_lengths)
+        else:
+            free(Iu)
 
         self.bu = bu
         self.bi = bi
@@ -625,21 +660,18 @@ class NMF(AlgoBase):
 
     def sgd(self, trainset):
 
+        rng = get_rng(self.random_state)
+
         # user and item factors
-        cdef np.ndarray[np.double_t, ndim=2] pu
-        cdef np.ndarray[np.double_t, ndim=2] qi
+        cdef double [:, ::1] pu = rng.uniform(self.init_low, self.init_high, size=(trainset.n_users, self.n_factors))
+        cdef double [:, ::1] qi = rng.uniform(self.init_low, self.init_high, size=(trainset.n_items, self.n_factors))
 
         # user and item biases
-        cdef np.ndarray[np.double_t] bu
-        cdef np.ndarray[np.double_t] bi
-
-        # auxiliary matrices used in optimization process
-        cdef np.ndarray[np.double_t, ndim=2] user_num
-        cdef np.ndarray[np.double_t, ndim=2] user_denom
-        cdef np.ndarray[np.double_t, ndim=2] item_num
-        cdef np.ndarray[np.double_t, ndim=2] item_denom
+        cdef double [::1] bu = np.zeros(trainset.n_users, dtype=np.double)
+        cdef double [::1] bi = np.zeros(trainset.n_items, dtype=np.double)
 
         cdef int u, i, f
+        cdef int n_factors = self.n_factors
         cdef double r, est, l, dot, err
         cdef double reg_pu = self.reg_pu
         cdef double reg_qi = self.reg_qi
@@ -649,15 +681,12 @@ class NMF(AlgoBase):
         cdef double lr_bi = self.lr_bi
         cdef double global_mean = self.trainset.global_mean
 
-        # Randomly initialize user and item factors
-        rng = get_rng(self.random_state)
-        pu = rng.uniform(self.init_low, self.init_high,
-                         size=(trainset.n_users, self.n_factors))
-        qi = rng.uniform(self.init_low, self.init_high,
-                         size=(trainset.n_items, self.n_factors))
+        # auxiliary matrices used in optimization process
+        cdef double [:, ::1] user_num = np.zeros((trainset.n_users, n_factors))
+        cdef double [:, ::1] user_denom = np.zeros((trainset.n_users, n_factors))
+        cdef double [:, ::1] item_num = np.zeros((trainset.n_items, n_factors))
+        cdef double [:, ::1] item_denom = np.zeros((trainset.n_items, n_factors))
 
-        bu = np.zeros(trainset.n_users, np.double)
-        bi = np.zeros(trainset.n_items, np.double)
 
         if not self.biased:
             global_mean = 0
@@ -668,17 +697,18 @@ class NMF(AlgoBase):
                 print("Processing epoch {}".format(current_epoch))
 
             # (re)initialize nums and denoms to zero
-            user_num = np.zeros((trainset.n_users, self.n_factors))
-            user_denom = np.zeros((trainset.n_users, self.n_factors))
-            item_num = np.zeros((trainset.n_items, self.n_factors))
-            item_denom = np.zeros((trainset.n_items, self.n_factors))
+            # TODO: Use fill or memset??
+            user_num[:, :] = 0
+            user_denom[:, :] = 0
+            item_num[:, :] = 0
+            item_denom[:, :] = 0
 
             # Compute numerators and denominators for users and items factors
             for u, i, r in trainset.all_ratings():
 
                 # compute current estimation and error
                 dot = 0  # <q_i, p_u>
-                for f in range(self.n_factors):
+                for f in range(n_factors):
                     dot += qi[i, f] * pu[u, f]
                 est = global_mean + bu[u] + bi[i] + dot
                 err = r - est
@@ -689,7 +719,7 @@ class NMF(AlgoBase):
                     bi[i] += lr_bi * (err - reg_bi * bi[i])
 
                 # compute numerators and denominators
-                for f in range(self.n_factors):
+                for f in range(n_factors):
                     user_num[u, f] += qi[i, f] * r
                     user_denom[u, f] += qi[i, f] * est
                     item_num[i, f] += pu[u, f] * r
@@ -698,7 +728,7 @@ class NMF(AlgoBase):
             # Update user factors
             for u in trainset.all_users():
                 n_ratings = len(trainset.ur[u])
-                for f in range(self.n_factors):
+                for f in range(n_factors):
                     if pu[u, f] != 0:  # Can happen if user only has 0 ratings
                         user_denom[u, f] += n_ratings * reg_pu * pu[u, f]
                         pu[u, f] *= user_num[u, f] / user_denom[u, f]
@@ -706,7 +736,7 @@ class NMF(AlgoBase):
             # Update item factors
             for i in trainset.all_items():
                 n_ratings = len(trainset.ir[i])
-                for f in range(self.n_factors):
+                for f in range(n_factors):
                     if qi[i, f] != 0:
                         item_denom[i, f] += n_ratings * reg_qi * qi[i, f]
                         qi[i, f] *= item_num[i, f] / item_denom[i, f]
