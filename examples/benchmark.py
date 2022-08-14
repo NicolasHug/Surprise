@@ -29,8 +29,8 @@ from tabulate import tabulate
 # The algorithms to cross-validate
 algos = (
     SVD(random_state=0),
-    SVDpp(random_state=0, precompute=False),
-    SVDpp(random_state=0, precompute=True),
+    SVDpp(random_state=0, cache_ratings=False),
+    SVDpp(random_state=0, cache_ratings=True),
     NMF(random_state=0),
     SlopeOne(),
     KNNBasic(),

@@ -315,8 +315,8 @@ class SVDpp(AlgoBase):
         n_factors: The number of factors. Default is ``20``.
         n_epochs: The number of iteration of the SGD procedure. Default is
             ``20``.
-        precompute: Whether or not to cache ratings in an efficient
-            data-structure. This should speed-up the training, and has a higher
+        cache_ratings: Whether or not to cache ratings during `fit()`.
+            This should speed-up the training, and has a higher
             memory footprint. Default is False.
         init_mean: The mean of the normal distribution for factor vectors
             initialization. Default is ``0``.
@@ -371,7 +371,7 @@ class SVDpp(AlgoBase):
                  lr_all=.007, reg_all=.02, lr_bu=None, lr_bi=None, lr_pu=None,
                  lr_qi=None, lr_yj=None, reg_bu=None, reg_bi=None, reg_pu=None,
                  reg_qi=None, reg_yj=None, random_state=None, verbose=False,
-                 precompute=False):
+                 cache_ratings=False):
 
         self.n_factors = n_factors
         self.n_epochs = n_epochs
@@ -389,7 +389,7 @@ class SVDpp(AlgoBase):
         self.reg_yj = reg_yj if reg_yj is not None else reg_all
         self.random_state = random_state
         self.verbose = verbose
-        self.precompute = precompute
+        self.cache_ratings = cache_ratings
 
         AlgoBase.__init__(self)
 
@@ -420,7 +420,7 @@ class SVDpp(AlgoBase):
         cdef int u, i, j, f, k, Iu_length
         cdef int max_Iu_length = 0
         cdef int n_factors = self.n_factors
-        cdef bint precompute = self.precompute
+        cdef bint cache_ratings = self.cache_ratings
         cdef double r, err, dot, puf, qif, sqrt_Iu, _
         cdef double global_mean = self.trainset.global_mean
 
@@ -437,18 +437,18 @@ class SVDpp(AlgoBase):
         cdef double reg_yj = self.reg_yj
         cdef double err_qif_sqrt = 0.0
 
-        cdef int ** Iu_precomputed = NULL
+        cdef int ** Iu_cached = NULL
         cdef int * Iu = NULL
         cdef int * Iu_lengths = NULL
 
-        if precompute:
-            Iu_precomputed = <int **>malloc(trainset.n_users * sizeof(int *))
+        if cache_ratings:
+            Iu_cached = <int **>malloc(trainset.n_users * sizeof(int *))
             Iu_lengths = <int *>malloc(trainset.n_users * sizeof(int))
             for u in range(trainset.n_users):
                 Iu_lengths[u] = len(trainset.ur[u])
-                Iu_precomputed[u] = <int *>malloc(Iu_lengths[u] * sizeof(int))
+                Iu_cached[u] = <int *>malloc(Iu_lengths[u] * sizeof(int))
                 for k, (j, _) in enumerate(trainset.ur[u]):
-                    Iu_precomputed[u][k] = j
+                    Iu_cached[u][k] = j
         else:
             for u in range(trainset.n_users):
                 # Might as well allocate the max size once and for all
@@ -463,8 +463,8 @@ class SVDpp(AlgoBase):
             for u, i, r in trainset.all_ratings():
 
                 # items rated by u.
-                if precompute:
-                    Iu = Iu_precomputed[u]
+                if cache_ratings:
+                    Iu = Iu_cached[u]
                     Iu_length = Iu_lengths[u]
                 else:
                     for k, (j, _) in enumerate(trainset.ur[u]):
@@ -504,10 +504,10 @@ class SVDpp(AlgoBase):
                         j = Iu[k]
                         yj[j, f] += lr_yj * (err_qif_sqrt - reg_yj * yj[j, f])
 
-        if precompute:
+        if cache_ratings:
             for u in range(trainset.n_users):
-                free(Iu_precomputed[u])
-            free(Iu_precomputed)
+                free(Iu_cached[u])
+            free(Iu_cached)
             free(Iu_lengths)
         else:
             free(Iu)
