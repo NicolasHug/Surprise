@@ -28,15 +28,15 @@ from tabulate import tabulate
 
 # The algorithms to cross-validate
 algos = (
-    SVD(),
-    SVDpp(precompute=False),
-    SVDpp(precompute=True),
-    NMF(),
+    SVD(random_state=0),
+    SVDpp(random_state=0, precompute=False),
+    SVDpp(random_state=0, precompute=True),
+    NMF(random_state=0),
     SlopeOne(),
     KNNBasic(),
     KNNWithMeans(),
     KNNBaseline(),
-    CoClustering(),
+    CoClustering(random_state=0),
     BaselineOnly(),
     NormalPredictor(),
 )
