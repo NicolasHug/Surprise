@@ -1,6 +1,6 @@
 #!/bin/sh
 
-set -e
+set -ex
 
 black --version  # 22.6.0 (on Python 3.9)
 usort --version  # 1.0.4
