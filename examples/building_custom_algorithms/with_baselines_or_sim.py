@@ -3,8 +3,6 @@ This module descibes how to build your own prediction algorithm. Please refer
 to User Guide for more insight.
 """
 
-from __future__ import (absolute_import, division, print_function,
-                        unicode_literals)
 
 from surprise import AlgoBase
 from surprise import Dataset
@@ -42,7 +40,7 @@ class MyOwnAlgorithm(AlgoBase):
 
         print('The 3 nearest neighbors of user', str(u), 'are:')
         for v, sim_uv in neighbors[:3]:
-            print('user {0:} with sim {1:1.2f}'.format(v, sim_uv))
+            print(f'user {v} with sim {sim_uv:1.2f}')
 
         # ... Aaaaand return the baseline estimate anyway ;)
         bsl = self.trainset.global_mean + self.bu[u] + self.bi[i]

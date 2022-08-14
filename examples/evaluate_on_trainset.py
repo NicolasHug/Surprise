@@ -3,8 +3,6 @@ This module descibes how to test the performances of an algorithm on the
 trainset.
 """
 
-from __future__ import (absolute_import, division, print_function,
-                        unicode_literals)
 
 from surprise import Dataset
 from surprise import SVD

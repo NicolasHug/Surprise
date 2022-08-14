@@ -14,7 +14,7 @@ from .optimize_baselines import baseline_als
 from .optimize_baselines import baseline_sgd
 
 
-class AlgoBase(object):
+class AlgoBase:
     """Abstract class where is defined the basic behavior of a prediction
     algorithm.
 
@@ -245,7 +245,7 @@ class AlgoBase(object):
 
         try:
             if getattr(self, 'verbose', False):
-                print('Computing the {0} similarity matrix...'.format(name))
+                print(f'Computing the {name} similarity matrix...')
             sim = construction_func[name](*args)
             if getattr(self, 'verbose', False):
                 print('Done computing similarity matrix.')

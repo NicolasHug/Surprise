@@ -11,7 +11,7 @@ from collections import namedtuple
 
 
 class PredictionImpossible(Exception):
-    """Exception raised when a prediction is impossible.
+    r"""Exception raised when a prediction is impossible.
 
     When raised, the estimation :math:`\hat{r}_{ui}` is set to the global mean
     of all ratings :math:`\mu`.
@@ -38,13 +38,13 @@ class Prediction(namedtuple('Prediction',
     __slots__ = ()  # for memory saving purpose.
 
     def __str__(self):
-        s = 'user: {uid:<10} '.format(uid=self.uid)
-        s += 'item: {iid:<10} '.format(iid=self.iid)
+        s = f'user: {self.uid:<10} '
+        s += f'item: {self.iid:<10} '
         if self.r_ui is not None:
-            s += 'r_ui = {r_ui:1.2f}   '.format(r_ui=self.r_ui)
+            s += f'r_ui = {self.r_ui:1.2f}   '
         else:
             s += 'r_ui = None   '
-        s += 'est = {est:1.2f}   '.format(est=self.est)
+        s += f'est = {self.est:1.2f}   '
         s += str(self.details)
 
         return s

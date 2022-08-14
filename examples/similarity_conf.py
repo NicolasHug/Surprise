@@ -3,8 +3,6 @@ This module gives an example of how to configure similarity measures
 computation.
 """
 
-from __future__ import (absolute_import, division, print_function,
-                        unicode_literals)
 
 from surprise import KNNBasic
 from surprise import Dataset

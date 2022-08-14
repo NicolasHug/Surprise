@@ -2,8 +2,6 @@
 This module illustrates how to compute Precision at k and Recall at k metrics.
 """
 
-from __future__ import (absolute_import, division, print_function,
-                        unicode_literals)
 from collections import defaultdict
 
 from surprise import Dataset

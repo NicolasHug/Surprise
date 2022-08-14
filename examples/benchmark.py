@@ -2,8 +2,6 @@
 the movielens datasets, and reports average RMSE, MAE, and total computation
 time.  It is used for making tables in the README.md file"""
 
-from __future__ import (absolute_import, division, print_function,
-                        unicode_literals)
 import time
 import datetime
 import random

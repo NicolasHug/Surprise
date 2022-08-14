@@ -5,8 +5,6 @@ predict all the ratings for the pairs (user, item) that are not in the training
 set. We then retrieve the top-10 prediction for each user.
 """
 
-from __future__ import (absolute_import, division, print_function,
-                        unicode_literals)
 from collections import defaultdict
 
 from surprise import SVD

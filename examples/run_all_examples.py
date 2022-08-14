@@ -2,8 +2,6 @@
 functional test... If no warning / errors is output, it should be fine.
 """
 
-from __future__ import (absolute_import, division, print_function,
-                        unicode_literals)
 import sys
 import os
 import warnings

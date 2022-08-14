@@ -2,8 +2,6 @@
 This module describes how to use the train_test_split() function.
 """
 
-from __future__ import (absolute_import, division, print_function,
-                        unicode_literals)
 
 from surprise import SVD
 from surprise import Dataset

@@ -2,8 +2,6 @@
 This module descibes how to use cross-validation iterators.
 """
 
-from __future__ import (absolute_import, division, print_function,
-                        unicode_literals)
 
 from surprise import SVD
 from surprise import Dataset

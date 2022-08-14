@@ -4,8 +4,6 @@ algorithm. The SVD algorithm is trained on a dataset and then serialized. It is
 then reloaded and can be used again for making predictions.
 """
 
-from __future__ import (absolute_import, division, print_function,
-                        unicode_literals)
 import os
 
 from surprise import SVD

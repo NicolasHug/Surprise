@@ -2,8 +2,6 @@
 This module descibes how to load a dataset from a pandas dataframe.
 """
 
-from __future__ import (absolute_import, division, print_function,
-                        unicode_literals)
 
 import pandas as pd
 

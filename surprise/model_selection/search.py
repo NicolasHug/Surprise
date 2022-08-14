@@ -1,4 +1,3 @@
-
 from abc import ABC, abstractmethod
 from itertools import product
 import numpy as np
@@ -121,33 +120,33 @@ class BaseSearchCV(ABC):
         for m in self.measures:
             # cv_results: set measures for each split and each param comb
             for split in range(cv.get_n_folds()):
-                cv_results['split{0}_test_{1}'.format(split, m)] = \
+                cv_results[f'split{split}_test_{m}'] = \
                     test_measures[m][:, split]
                 if self.return_train_measures:
-                    cv_results['split{0}_train_{1}'.format(split, m)] = \
+                    cv_results[f'split{split}_train_{m}'] = \
                         train_measures[m][:, split]
 
             # cv_results: set mean and std over all splits (testset and
             # trainset) for each param comb
             mean_test_measures = test_measures[m].mean(axis=1)
-            cv_results['mean_test_{}'.format(m)] = mean_test_measures
-            cv_results['std_test_{}'.format(m)] = test_measures[m].std(axis=1)
+            cv_results[f'mean_test_{m}'] = mean_test_measures
+            cv_results[f'std_test_{m}'] = test_measures[m].std(axis=1)
             if self.return_train_measures:
                 mean_train_measures = train_measures[m].mean(axis=1)
-                cv_results['mean_train_{}'.format(m)] = mean_train_measures
-                cv_results['std_train_{}'.format(m)] = \
+                cv_results[f'mean_train_{m}'] = mean_train_measures
+                cv_results[f'std_train_{m}'] = \
                     train_measures[m].std(axis=1)
 
             # cv_results: set rank of each param comb
             # also set best_index, and best_xxxx attributes
-            indices = cv_results['mean_test_{}'.format(m)].argsort()
-            cv_results['rank_test_{}'.format(m)] = np.empty_like(indices)
+            indices = cv_results[f'mean_test_{m}'].argsort()
+            cv_results[f'rank_test_{m}'] = np.empty_like(indices)
             if m in ('mae', 'rmse', 'mse'):
-                cv_results['rank_test_{}'.format(m)][indices] = \
+                cv_results[f'rank_test_{m}'][indices] = \
                     np.arange(len(indices)) + 1  # sklearn starts at 1 as well
                 best_index[m] = mean_test_measures.argmin()
             elif m in ('fcp',):
-                cv_results['rank_test_{}'.format(m)][indices] = \
+                cv_results[f'rank_test_{m}'][indices] = \
                     np.arange(len(indices), 0, -1)
                 best_index[m] = mean_test_measures.argmax()
             best_params[m] = self.param_combinations[best_index[m]]
@@ -158,8 +157,8 @@ class BaseSearchCV(ABC):
         fit_times = np.array(fit_times).reshape(new_shape)
         test_times = np.array(test_times).reshape(new_shape)
         for s, times in zip(('fit', 'test'), (fit_times, test_times)):
-            cv_results['mean_{}_time'.format(s)] = times.mean(axis=1)
-            cv_results['std_{}_time'.format(s)] = times.std(axis=1)
+            cv_results[f'mean_{s}_time'] = times.mean(axis=1)
+            cv_results[f'std_{s}_time'] = times.std(axis=1)
 
         # cv_results: set params key and each param_* values
         cv_results['params'] = self.param_combinations
@@ -296,7 +295,7 @@ class GridSearchCV(BaseSearchCV):
                  cv=None, refit=False, return_train_measures=False, n_jobs=1,
                  pre_dispatch='2*n_jobs', joblib_verbose=0):
 
-        super(GridSearchCV, self).__init__(
+        super().__init__(
             algo_class=algo_class, measures=measures, cv=cv, refit=refit,
             return_train_measures=return_train_measures, n_jobs=n_jobs,
             pre_dispatch=pre_dispatch, joblib_verbose=joblib_verbose)
@@ -413,7 +412,7 @@ class RandomizedSearchCV(BaseSearchCV):
                  return_train_measures=False, n_jobs=1,
                  pre_dispatch='2*n_jobs', random_state=None, joblib_verbose=0):
 
-        super(RandomizedSearchCV, self).__init__(
+        super().__init__(
             algo_class=algo_class, measures=measures, cv=cv, refit=refit,
             return_train_measures=return_train_measures, n_jobs=n_jobs,
             pre_dispatch=pre_dispatch, joblib_verbose=joblib_verbose)

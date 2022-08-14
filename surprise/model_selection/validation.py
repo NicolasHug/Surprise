@@ -184,39 +184,39 @@ def print_summary(algo, measures, test_measures, train_measures, fit_times,
                   test_times, n_splits):
     """Helper for printing the result of cross_validate."""
 
-    print('Evaluating {0} of algorithm {1} on {2} split(s).'.format(
-          ', '.join((m.upper() for m in measures)),
+    print('Evaluating {} of algorithm {} on {} split(s).'.format(
+          ', '.join(m.upper() for m in measures),
           algo.__class__.__name__, n_splits))
     print()
 
     row_format = '{:<18}' + '{:<8}' * (n_splits + 2)
     s = row_format.format(
         '',
-        *['Fold {0}'.format(i + 1) for i in range(n_splits)] + ['Mean'] +
+        *[f'Fold {i + 1}' for i in range(n_splits)] + ['Mean'] +
         ['Std'])
     s += '\n'
     s += '\n'.join(row_format.format(
         key.upper() + ' (testset)',
-        *['{:1.4f}'.format(v) for v in vals] +
-        ['{:1.4f}'.format(np.mean(vals))] +
-        ['{:1.4f}'.format(np.std(vals))])
+        *[f'{v:1.4f}' for v in vals] +
+        [f'{np.mean(vals):1.4f}'] +
+        [f'{np.std(vals):1.4f}'])
         for (key, vals) in test_measures.items())
     if train_measures:
         s += '\n'
         s += '\n'.join(row_format.format(
             key.upper() + ' (trainset)',
-            *['{:1.4f}'.format(v) for v in vals] +
-            ['{:1.4f}'.format(np.mean(vals))] +
-            ['{:1.4f}'.format(np.std(vals))])
+            *[f'{v:1.4f}' for v in vals] +
+            [f'{np.mean(vals):1.4f}'] +
+            [f'{np.std(vals):1.4f}'])
             for (key, vals) in train_measures.items())
     s += '\n'
     s += row_format.format('Fit time',
-                           *['{:.2f}'.format(t) for t in fit_times] +
-                           ['{:.2f}'.format(np.mean(fit_times))] +
-                           ['{:.2f}'.format(np.std(fit_times))])
+                           *[f'{t:.2f}' for t in fit_times] +
+                           [f'{np.mean(fit_times):.2f}'] +
+                           [f'{np.std(fit_times):.2f}'])
     s += '\n'
     s += row_format.format('Test time',
-                           *['{:.2f}'.format(t) for t in test_times] +
-                           ['{:.2f}'.format(np.mean(test_times))] +
-                           ['{:.2f}'.format(np.std(test_times))])
+                           *[f'{t:.2f}' for t in test_times] +
+                           [f'{np.mean(test_times):.2f}'] +
+                           [f'{np.std(test_times):.2f}'])
     print(s)

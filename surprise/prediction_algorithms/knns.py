@@ -56,16 +56,16 @@ class KNNBasic(SymmetricAlgo):
     The prediction :math:`\\hat{r}_{ui}` is set as:
 
     .. math::
-        \hat{r}_{ui} = \\frac{
-        \\sum\\limits_{v \in N^k_i(u)} \\text{sim}(u, v) \cdot r_{vi}}
-        {\\sum\\limits_{v \in N^k_i(u)} \\text{sim}(u, v)}
+        \\hat{r}_{ui} = \\frac{
+        \\sum\\limits_{v \\in N^k_i(u)} \\text{sim}(u, v) \\cdot r_{vi}}
+        {\\sum\\limits_{v \\in N^k_i(u)} \\text{sim}(u, v)}
 
     or
 
     .. math::
-        \hat{r}_{ui} = \\frac{
-        \\sum\\limits_{j \in N^k_u(i)} \\text{sim}(i, j) \cdot r_{uj}}
-        {\\sum\\limits_{j \in N^k_u(i)} \\text{sim}(i, j)}
+        \\hat{r}_{ui} = \\frac{
+        \\sum\\limits_{j \\in N^k_u(i)} \\text{sim}(i, j) \\cdot r_{uj}}
+        {\\sum\\limits_{j \\in N^k_u(i)} \\text{sim}(i, j)}
 
     depending on the ``user_based`` field of the ``sim_options`` parameter.
 
@@ -131,15 +131,15 @@ class KNNWithMeans(SymmetricAlgo):
     The prediction :math:`\\hat{r}_{ui}` is set as:
 
     .. math::
-        \hat{r}_{ui} = \mu_u + \\frac{ \\sum\\limits_{v \in N^k_i(u)}
-        \\text{sim}(u, v) \cdot (r_{vi} - \mu_v)} {\\sum\\limits_{v \in
+        \\hat{r}_{ui} = \\mu_u + \\frac{ \\sum\\limits_{v \\in N^k_i(u)}
+        \\text{sim}(u, v) \\cdot (r_{vi} - \\mu_v)} {\\sum\\limits_{v \\in
         N^k_i(u)} \\text{sim}(u, v)}
 
     or
 
     .. math::
-        \hat{r}_{ui} = \mu_i + \\frac{ \\sum\\limits_{j \in N^k_u(i)}
-        \\text{sim}(i, j) \cdot (r_{uj} - \mu_j)} {\\sum\\limits_{j \in
+        \\hat{r}_{ui} = \\mu_i + \\frac{ \\sum\\limits_{j \\in N^k_u(i)}
+        \\text{sim}(i, j) \\cdot (r_{uj} - \\mu_j)} {\\sum\\limits_{j \\in
         N^k_u(i)} \\text{sim}(i, j)}
 
     depending on the ``user_based`` field of the ``sim_options`` parameter.
@@ -152,7 +152,7 @@ class KNNWithMeans(SymmetricAlgo):
         min_k(int): The minimum number of neighbors to take into account for
             aggregation. If there are not enough neighbors, the neighbor
             aggregation is set to zero (so the prediction ends up being
-            equivalent to the mean :math:`\mu_u` or :math:`\mu_i`). Default is
+            equivalent to the mean :math:`\\mu_u` or :math:`\\mu_i`). Default is
             ``1``.
         sim_options(dict): A dictionary of options for the similarity
             measure. See :ref:`similarity_measures_configuration` for accepted
@@ -220,16 +220,16 @@ class KNNBaseline(SymmetricAlgo):
     The prediction :math:`\\hat{r}_{ui}` is set as:
 
     .. math::
-        \hat{r}_{ui} = b_{ui} + \\frac{ \\sum\\limits_{v \in N^k_i(u)}
-        \\text{sim}(u, v) \cdot (r_{vi} - b_{vi})} {\\sum\\limits_{v \in
+        \\hat{r}_{ui} = b_{ui} + \\frac{ \\sum\\limits_{v \\in N^k_i(u)}
+        \\text{sim}(u, v) \\cdot (r_{vi} - b_{vi})} {\\sum\\limits_{v \\in
         N^k_i(u)} \\text{sim}(u, v)}
 
     or
 
 
     .. math::
-        \hat{r}_{ui} = b_{ui} + \\frac{ \\sum\\limits_{j \in N^k_u(i)}
-        \\text{sim}(i, j) \cdot (r_{uj} - b_{uj})} {\\sum\\limits_{j \in
+        \\hat{r}_{ui} = b_{ui} + \\frac{ \\sum\\limits_{j \\in N^k_u(i)}
+        \\text{sim}(i, j) \\cdot (r_{uj} - b_{uj})} {\\sum\\limits_{j \\in
         N^k_u(i)} \\text{sim}(i, j)}
 
     depending on the ``user_based`` field of the ``sim_options`` parameter. For
@@ -323,20 +323,20 @@ class KNNWithZScore(SymmetricAlgo):
     The prediction :math:`\\hat{r}_{ui}` is set as:
 
     .. math::
-        \hat{r}_{ui} = \mu_u + \sigma_u \\frac{ \\sum\\limits_{v \in N^k_i(u)}
-        \\text{sim}(u, v) \cdot (r_{vi} - \mu_v) / \sigma_v} {\\sum\\limits_{v
-        \in N^k_i(u)} \\text{sim}(u, v)}
+        \\hat{r}_{ui} = \\mu_u + \\sigma_u \\frac{ \\sum\\limits_{v \\in N^k_i(u)}
+        \\text{sim}(u, v) \\cdot (r_{vi} - \\mu_v) / \\sigma_v} {\\sum\\limits_{v
+        \\in N^k_i(u)} \\text{sim}(u, v)}
 
     or
 
     .. math::
-        \hat{r}_{ui} = \mu_i + \sigma_i \\frac{ \\sum\\limits_{j \in N^k_u(i)}
-        \\text{sim}(i, j) \cdot (r_{uj} - \mu_j) / \sigma_j} {\\sum\\limits_{j
-        \in N^k_u(i)} \\text{sim}(i, j)}
+        \\hat{r}_{ui} = \\mu_i + \\sigma_i \\frac{ \\sum\\limits_{j \\in N^k_u(i)}
+        \\text{sim}(i, j) \\cdot (r_{uj} - \\mu_j) / \\sigma_j} {\\sum\\limits_{j
+        \\in N^k_u(i)} \\text{sim}(i, j)}
 
     depending on the ``user_based`` field of the ``sim_options`` parameter.
 
-    If :math:`\sigma` is 0, than the overall sigma is used in that case.
+    If :math:`\\sigma` is 0, than the overall sigma is used in that case.
 
     Args:
         k(int): The (max) number of neighbors to take into account for
@@ -345,7 +345,7 @@ class KNNWithZScore(SymmetricAlgo):
         min_k(int): The minimum number of neighbors to take into account for
             aggregation. If there are not enough neighbors, the neighbor
             aggregation is set to zero (so the prediction ends up being
-            equivalent to the mean :math:`\mu_u` or :math:`\mu_i`). Default is
+            equivalent to the mean :math:`\\mu_u` or :math:`\\mu_i`). Default is
             ``1``.
         sim_options(dict): A dictionary of options for the similarity
             measure. See :ref:`similarity_measures_configuration` for accepted

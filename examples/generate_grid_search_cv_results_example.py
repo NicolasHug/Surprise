@@ -3,8 +3,6 @@ This module is used for generating the doc tables about the
 GridSearchCV.cv_results attribute.
 """
 
-from __future__ import (absolute_import, division, print_function,
-                        unicode_literals)
 
 from tabulate import tabulate
 
@@ -34,6 +32,6 @@ print()
 for key, val in gs.cv_results.items():
     print('{:<20}'.format("'" + key + "':"), end='')
     if isinstance(val[0], float):
-        print([float('{:.2f}'.format(f)) for f in val])
+        print([float(f'{f:.2f}') for f in val])
     else:
         print(val)

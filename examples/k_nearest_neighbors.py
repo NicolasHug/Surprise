@@ -5,8 +5,6 @@ because of the id conversions, but it all boils down to the use of
 algo.get_neighbors().
 """
 
-from __future__ import (absolute_import, division, print_function,
-                        unicode_literals)
 import io  # needed because of weird encoding of u.item file
 
 from surprise import KNNBaseline
@@ -22,7 +20,7 @@ def read_item_names():
     file_name = get_dataset_dir() + '/ml-100k/ml-100k/u.item'
     rid_to_name = {}
     name_to_rid = {}
-    with io.open(file_name, 'r', encoding='ISO-8859-1') as f:
+    with open(file_name, encoding='ISO-8859-1') as f:
         for line in f:
             line = line.split('|')
             rid_to_name[line[0]] = line[1]

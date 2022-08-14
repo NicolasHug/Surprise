@@ -88,7 +88,7 @@ class KFold():
         """
 
         if self.n_splits > len(data.raw_ratings) or self.n_splits < 2:
-            raise ValueError('Incorrect value for n_splits={0}. '
+            raise ValueError('Incorrect value for n_splits={}. '
                              'Must be >=2 and less than the number '
                              'of ratings'.format(len(data.raw_ratings)))
 
@@ -164,8 +164,7 @@ class RepeatedKFold():
 
         for _ in range(self.n_repeats):
             cv = KFold(n_splits=self.n_splits, random_state=rng, shuffle=True)
-            for trainset, testset in cv.split(data):
-                yield trainset, testset
+            yield from cv.split(data)
 
     def get_n_folds(self):
 
@@ -211,14 +210,14 @@ class ShuffleSplit():
                  random_state=None, shuffle=True):
 
         if n_splits <= 0:
-            raise ValueError('n_splits = {0} should be strictly greater than '
+            raise ValueError('n_splits = {} should be strictly greater than '
                              '0.'.format(n_splits))
         if test_size is not None and test_size <= 0:
-            raise ValueError('test_size={0} should be strictly greater than '
+            raise ValueError('test_size={} should be strictly greater than '
                              '0'.format(test_size))
 
         if train_size is not None and train_size <= 0:
-            raise ValueError('train_size={0} should be strictly greater than '
+            raise ValueError('train_size={} should be strictly greater than '
                              '0'.format(train_size))
 
         self.n_splits = n_splits
@@ -230,12 +229,12 @@ class ShuffleSplit():
     def validate_train_test_sizes(self, test_size, train_size, n_ratings):
 
         if test_size is not None and test_size >= n_ratings:
-            raise ValueError('test_size={0} should be less than the number of '
-                             'ratings {1}'.format(test_size, n_ratings))
+            raise ValueError('test_size={} should be less than the number of '
+                             'ratings {}'.format(test_size, n_ratings))
 
         if train_size is not None and train_size >= n_ratings:
-            raise ValueError('train_size={0} should be less than the number of'
-                             ' ratings {1}'.format(train_size, n_ratings))
+            raise ValueError('train_size={} should be less than the number of'
+                             ' ratings {}'.format(train_size, n_ratings))
 
         if np.asarray(test_size).dtype.kind == 'f':
             test_size = ceil(test_size * n_ratings)
@@ -249,9 +248,9 @@ class ShuffleSplit():
             test_size = n_ratings - train_size
 
         if train_size + test_size > n_ratings:
-            raise ValueError('The sum of train_size and test_size ({0}) '
+            raise ValueError('The sum of train_size and test_size ({}) '
                              'should be smaller than the number of '
-                             'ratings {1}.'.format(train_size + test_size,
+                             'ratings {}.'.format(train_size + test_size,
                                                    n_ratings))
 
         return int(train_size), int(test_size)

@@ -21,7 +21,7 @@ def rmse(predictions, verbose=True):
     """Compute RMSE (Root Mean Squared Error).
 
     .. math::
-        \\text{RMSE} = \\sqrt{\\frac{1}{|\\hat{R}|} \\sum_{\\hat{r}_{ui} \in
+        \\text{RMSE} = \\sqrt{\\frac{1}{|\\hat{R}|} \\sum_{\\hat{r}_{ui} \\in
         \\hat{R}}(r_{ui} - \\hat{r}_{ui})^2}.
 
     Args:
@@ -47,7 +47,7 @@ def rmse(predictions, verbose=True):
     rmse_ = np.sqrt(mse)
 
     if verbose:
-        print('RMSE: {0:1.4f}'.format(rmse_))
+        print(f'RMSE: {rmse_:1.4f}')
 
     return rmse_
 
@@ -56,7 +56,7 @@ def mse(predictions, verbose=True):
     """Compute MSE (Mean Squared Error).
 
     .. math::
-        \\text{MSE} = \\frac{1}{|\\hat{R}|} \\sum_{\\hat{r}_{ui} \in
+        \\text{MSE} = \\frac{1}{|\\hat{R}|} \\sum_{\\hat{r}_{ui} \\in
         \\hat{R}}(r_{ui} - \\hat{r}_{ui})^2.
 
     Args:
@@ -81,7 +81,7 @@ def mse(predictions, verbose=True):
                     for (_, _, true_r, est, _) in predictions])
 
     if verbose:
-        print('MSE: {0:1.4f}'.format(mse_))
+        print(f'MSE: {mse_:1.4f}')
 
     return mse_
 
@@ -90,7 +90,7 @@ def mae(predictions, verbose=True):
     """Compute MAE (Mean Absolute Error).
 
     .. math::
-        \\text{MAE} = \\frac{1}{|\\hat{R}|} \\sum_{\\hat{r}_{ui} \in
+        \\text{MAE} = \\frac{1}{|\\hat{R}|} \\sum_{\\hat{r}_{ui} \\in
         \\hat{R}}|r_{ui} - \\hat{r}_{ui}|
 
     Args:
@@ -115,7 +115,7 @@ def mae(predictions, verbose=True):
                     for (_, _, true_r, est, _) in predictions])
 
     if verbose:
-        print('MAE:  {0:1.4f}'.format(mae_))
+        print(f'MAE:  {mae_:1.4f}')
 
     return mae_
 
@@ -170,6 +170,6 @@ def fcp(predictions, verbose=True):
                          'Does every user have at least two predictions?')
 
     if verbose:
-        print('FCP:  {0:1.4f}'.format(fcp))
+        print(f'FCP:  {fcp:1.4f}')
 
     return fcp
