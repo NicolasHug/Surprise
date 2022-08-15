@@ -280,7 +280,6 @@ class AlgoBase(object):
             all_instances = self.trainset.all_users
         else:
             all_instances = self.trainset.all_items
-            
         others = [(x, self.sim[iid, x]) for x in all_instances() if x != iid]
         largest_tuples = heapq.nlargest(k, others, key=lambda tple: tple[1])
         k_nearest_neighbors = [j for (j, _) in largest_tuples]
