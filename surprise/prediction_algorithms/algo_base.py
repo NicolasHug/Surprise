@@ -3,6 +3,7 @@ The :mod:`surprise.prediction_algorithms.algo_base` module defines the base
 class :class:`AlgoBase` from which every single prediction algorithm has to
 inherit.
 """
+import heapq
 
 
 from .. import similarities as sims
@@ -285,9 +286,8 @@ class AlgoBase:
             all_instances = self.trainset.all_users
         else:
             all_instances = self.trainset.all_items
-
         others = [(x, self.sim[iid, x]) for x in all_instances() if x != iid]
-        others.sort(key=lambda tple: tple[1], reverse=True)
-        k_nearest_neighbors = [j for (j, _) in others[:k]]
+        others = heapq.nlargest(k, others, key=lambda tple: tple[1])
+        k_nearest_neighbors = [j for (j, _) in others]
 
         return k_nearest_neighbors
