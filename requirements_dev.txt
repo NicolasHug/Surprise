@@ -1,7 +1,7 @@
 # Lower bound for deps is as in scikit-learn in Aug 22, 1.2.dev
 Cython>=0.29.24
 joblib>=1.0.0
-numpy>=1.17.3  # also hardcoded in setup.py
+numpy>=1.18.5  # also hardcoded in setup.py
 scipy>=1.3.2
 pandas
 pytest

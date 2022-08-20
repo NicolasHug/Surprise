@@ -6,7 +6,7 @@ from setuptools import Extension, find_packages, setup
 """
 Release instruction:
 
-Upate changelog and contributors list. If you ever change the
+Update changelog and contributors list. If you ever change the
 `requirements[_dev].txt`, also update the hardcoded numpy version here down
 below. Or find a way to always keep both consistent.
 
@@ -52,12 +52,12 @@ Then, maybe, celebrate.
 
 from setuptools import dist  # Install numpy right now
 
-dist.Distribution().fetch_build_eggs(["numpy>=1.17.3"])
+dist.Distribution().fetch_build_eggs(["numpy>=1.18.5"])
 
 try:
     import numpy as np
 except ImportError:
-    exit("Please install numpy>=1.17.3 first.")
+    exit("Please install numpy>=1.18.5 first.")
 
 try:
     from Cython.Build import cythonize
