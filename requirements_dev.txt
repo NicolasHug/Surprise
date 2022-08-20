@@ -1,11 +1,12 @@
 # Requirements file for development
-Cython>=0.24.1
-joblib>=0.11
+
+Cython>=0.29.24  # as scikit-learn in Aug 22, 1.2.dev
+joblib>=1.0.0  # as scikit-learn in Aug 22, 1.2.dev
 numpy>=1.11.2
+scipy>=1.3.2  # as scikit-learn in Aug 22, 1.2.dev
 pandas
-pytest>=3.0.3
-scipy>=1.0.0
-sphinx>=1.4.9
+pytest
+sphinx
 sphinx_rtd_theme
 sphinxcontrib-bibtex
 sphinxcontrib-spelling

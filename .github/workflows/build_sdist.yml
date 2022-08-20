@@ -1,0 +1,44 @@
+# This workflow will install Python dependencies and run tests with a variety of Python versions
+# For more information see: https://help.github.com/actions/language-and-framework-guides/using-python-with-github-actions
+
+name: Build sdist
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.7"]
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v3
+      with:
+        python-version: ${{ matrix.python-version }}
+    - name: Add conda to system path
+      run: |
+        # $CONDA is an environment variable pointing to the root of the miniconda directory
+        echo $CONDA/bin >> $GITHUB_PATH
+
+    - name: Install dependencies
+      run: |
+        conda create -n p37 python=3.7 pip
+        conda activate p37
+        pip install numpy cython pytest pandas
+
+        rm -r build; rm -r dist; find surprise | grep "\.c\$" | xargs rm; find surprise | grep "\.so\$" | xargs rm
+        python setup.py sdist
+        pip install dist/scikit-surprise-1.1.1.tar.gz
+
+    - name: Test with pytest
+      run: |
+        pytest -v

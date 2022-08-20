@@ -6,17 +6,24 @@ from setuptools import Extension, find_packages, setup
 """
 Release instruction:
 
-Upate changelog and contributors list.
+Upate changelog and contributors list. If you ever change the
+`requirements[_dev].txt`, also update the hardcoded numpy version here down
+below. Or find a way to always keep both consistent.
 
 Check that tests run correctly for 36 and 27 and doc compiles without warning
 (make clean first).
 
 change __version__ in setup.py to new version name.
 
-First upload to test pypi:
+Clean up. Ideally this should be part of setup.py clean but whatever
+    rm -r build; rm -r dist; find surprise | grep "\.c\$" | xargs rm; find surprise | grep "\.so\$" | xargs rm
+
+Then upload to test pypi:
     mktmpenv (Python version should not matter)
     pip install numpy cython twine
     python setup.py sdist
+    # Then check the content of the sdist, it should include the `.c` files
+    # Also check that it installs locally on other clean envs.
     twine upload dist/blabla.tar.gz -r testpypi
 
 Check that install works on testpypi, then upload to pypi and check again.
@@ -70,12 +77,7 @@ with open(path.join(here, "README.md"), encoding="utf-8") as f:
 
 # get the dependencies and installs
 with open(path.join(here, "requirements.txt"), encoding="utf-8") as f:
-    all_reqs = f.read().split("\n")
-
-install_requires = [x.strip() for x in all_reqs if "git+" not in x]
-dependency_links = [
-    x.strip().replace("git+", "") for x in all_reqs if x.startswith("git+")
-]
+    install_requires = [line.strip() for line in f.read().split("\n")]
 
 cmdclass = {}
 
@@ -110,7 +112,8 @@ extensions = [
 ]
 
 if USE_CYTHON:
-    ext_modules = cythonize(
+    # See https://cython.readthedocs.io/en/latest/src/userguide/source_files_and_compilation.html#distributing-cython-modules
+    extensions = cythonize(
         extensions,
         compiler_directives={
             "language_level": 3,
@@ -121,8 +124,6 @@ if USE_CYTHON:
         },
     )
     cmdclass.update({"build_ext": build_ext})
-else:
-    ext_modules = extensions
 
 setup(
     name="scikit-surprise",
@@ -150,9 +151,8 @@ setup(
     packages=find_packages(exclude=["tests*"]),
     python_requires=">=3.7",
     include_package_data=True,
-    ext_modules=ext_modules,
+    ext_modules=extensions,
     cmdclass=cmdclass,
     install_requires=install_requires,
-    dependency_links=dependency_links,
     entry_points={"console_scripts": ["surprise = surprise.__main__:main"]},
 )
