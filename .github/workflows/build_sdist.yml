@@ -3,7 +3,7 @@
 # TODO: find a way to trigger parallel jobs instead of doing them all
 # sequentially here
 
-name: Build sdist
+name: Build sdist and test
 
 on:
   push:
