@@ -70,6 +70,7 @@ jobs:
     - name: Install sdist
       run: |
         set -x
+        find surprise | grep "\.c\$"
 
         rm -rf build; find surprise | grep "\.c\$" | xargs rm -f; find surprise | grep "\.so\$" | xargs rm -f
         python -m pip install --upgrade pip
