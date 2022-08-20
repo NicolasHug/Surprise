@@ -40,7 +40,4 @@ jobs:
         rm -rf build; rm -rf dist; find surprise | grep "\.c\$" | xargs rm -f; find surprise | grep "\.so\$" | xargs rm -f
         python setup.py sdist
         pip install dist/scikit-surprise-1.1.1.tar.gz
-
-    - name: Test with pytest
-      run: |
         python -m pytest -v
