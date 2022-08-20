@@ -53,6 +53,4 @@ jobs:
         pip install dist/scikit-surprise-1.1.1.tar.gz
         pip install pytest pandas
 
-        python setup.py sdist
-        pip install dist/scikit-surprise-1.1.1.tar.gz
         pytest -v
