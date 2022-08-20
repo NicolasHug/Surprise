@@ -52,12 +52,12 @@ Then, maybe, celebrate.
 
 from setuptools import dist  # Install numpy right now
 
-dist.Distribution().fetch_build_eggs(["numpy>=1.11.2"])
+dist.Distribution().fetch_build_eggs(["numpy>=1.13.3"])
 
 try:
     import numpy as np
 except ImportError:
-    exit("Please install numpy>=1.11.2 first.")
+    exit("Please install numpy>=1.13.3 first.")
 
 try:
     from Cython.Build import cythonize
