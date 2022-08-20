@@ -1,7 +1,5 @@
 # This workflow builds the sdist on 3.7 and then installs that same sdist on
-# clean envs from all python versions.
-# TODO: find a way to trigger parallel jobs instead of doing them all
-# sequentially here
+# clean envs from all python versions, then runs tests.
 
 name: Build sdist and test
 
@@ -26,25 +24,16 @@ jobs:
       uses: actions/setup-python@v3
       with:
         python-version: ${{ matrix.python-version }}
-    - name: Add conda to system path
-      run: |
-        # $CONDA is an environment variable pointing to the root of the miniconda directory
-        echo $CONDA/bin >> $GITHUB_PATH
 
     - name: Build sdist
       run: |
         set -x
-        pwd
-        conda create -n build_env python=3.7 pip -y
-        . $CONDA/etc/profile.d/conda.sh  # can't do conda activate otherwise. Adapted from pytorch's workflows.
-        conda activate build_env
+        python -m pip install --upgrade pip
         pip install -r requirements_dev.txt
         pip freeze
 
-        rm -rf build; rm -rf dist; find surprise | grep "\.c\$" | xargs rm -f; find surprise | grep "\.so\$" | xargs rm -f
         python setup.py sdist
 
-        conda deactivate
     - uses: actions/upload-artifact@v3
       with:
         name: the-sdist
@@ -72,7 +61,6 @@ jobs:
         set -x
         ls surprise
 
-        rm -rf build; find surprise | grep "\.c\$" | xargs rm -f; find surprise | grep "\.so\$" | xargs rm -f
         python -m pip install --upgrade pip
         pip install scikit-surprise-1.1.1.tar.gz -v
     - name: Pip freeze
