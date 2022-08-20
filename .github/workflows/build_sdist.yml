@@ -50,70 +50,13 @@ jobs:
         name: the-sdist
         path: dist/scikit-surprise-1.1.1.tar.gz
 
-
-    # - name: Test Python 3.7
-    #   run: |
-    #     set -x
-    #     conda create -n p37 python=3.7 pip -y
-    #     . $CONDA/etc/profile.d/conda.sh  # can't do conda activate otherwise. Adapted from pytorch's workflows.
-    #     conda activate p37
-
-    #     rm -rf build; find surprise | grep "\.c\$" | xargs rm -f; find surprise | grep "\.so\$" | xargs rm -f
-    #     pip install dist/scikit-surprise-1.1.1.tar.gz
-    #     pip install pytest pandas
-
-    #     pytest -v
-    #     conda deactivate
-
-    # - name: Test Python 3.8
-    #   run: |
-    #     set -x
-    #     conda create -n p38 python=3.8 pip -y
-    #     . $CONDA/etc/profile.d/conda.sh  # can't do conda activate otherwise. Adapted from pytorch's workflows.
-    #     conda activate p38
-
-    #     rm -rf build; find surprise | grep "\.c\$" | xargs rm -f; find surprise | grep "\.so\$" | xargs rm -f
-    #     pip install dist/scikit-surprise-1.1.1.tar.gz
-    #     pip install pytest pandas
-
-    #     pytest -v
-    #     conda deactivate
-
-    # - name: Test Python 3.9
-    #   run: |
-    #     set -x
-    #     conda create -n p39 python=3.9 pip -y
-    #     . $CONDA/etc/profile.d/conda.sh  # can't do conda activate otherwise. Adapted from pytorch's workflows.
-    #     conda activate p39
-
-    #     rm -rf build; find surprise | grep "\.c\$" | xargs rm -f; find surprise | grep "\.so\$" | xargs rm -f
-    #     pip install dist/scikit-surprise-1.1.1.tar.gz
-    #     pip install pytest pandas
-
-    #     pytest -v
-    #     conda deactivate
-
-    # - name: Test Python 3.10
-    #   run: |
-    #     set -x
-    #     conda create -n p310 python=3.10 pip -y
-    #     . $CONDA/etc/profile.d/conda.sh  # can't do conda activate otherwise. Adapted from pytorch's workflows.
-    #     conda activate p310
-
-    #     rm -rf build; find surprise | grep "\.c\$" | xargs rm -f; find surprise | grep "\.so\$" | xargs rm -f
-    #     pip install dist/scikit-surprise-1.1.1.tar.gz
-    #     pip install pytest pandas
-
-    #     pytest -v
-    #     conda deactivate
-
-  zob:
+  install-and-test:
 
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
-        python-version: ["3.7", "3.8"]
+        python-version: ["3.7", "3.8", "3.9", "3.10"]
     needs: build
     steps:
     - uses: actions/checkout@v3
@@ -124,15 +67,15 @@ jobs:
       uses: actions/setup-python@v3
       with:
         python-version: ${{ matrix.python-version }}
-    - name: Test Python 3.10
+    - name: Install sdist
       run: |
         set -x
-        pwd
-        ls
+
         rm -rf build; find surprise | grep "\.c\$" | xargs rm -f; find surprise | grep "\.so\$" | xargs rm -f
         python -m pip install --upgrade pip
-        pip install dist/scikit-surprise-1.1.1.tar.gz
-        pip install pytest pandas
+        pip install scikit-surprise-1.1.1.tar.gz
 
+    - name: Run unit tests
+      run: |
+        pip install pytest pandas
         pytest -v
-        conda deactivate
