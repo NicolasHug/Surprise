@@ -41,7 +41,6 @@ jobs:
         python setup.py sdist
 
         conda deactivate  # can't find pytest otherwise LOL
-        pytest -v
 
     - name: Test Python 3.7
       run: |
