@@ -33,6 +33,7 @@ jobs:
       run: |
         set -x
         conda create -n p37 python=3.7 pip -y
+        conda init
         conda activate p37
         pip install numpy cython pytest pandas
 
