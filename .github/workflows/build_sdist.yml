@@ -34,6 +34,7 @@ jobs:
     - name: Build sdist
       run: |
         set -x
+        pwd
         conda create -n build_env python=3.7 pip -y
         . $CONDA/etc/profile.d/conda.sh  # can't do conda activate otherwise. Adapted from pytorch's workflows.
         conda activate build_env
@@ -118,11 +119,9 @@ jobs:
     - name: Test Python 3.10
       run: |
         set -x
-        conda create -n p310 python=3.10 pip -y
-        . $CONDA/etc/profile.d/conda.sh  # can't do conda activate otherwise. Adapted from pytorch's workflows.
-        conda activate p310
-
+        pwd
         rm -rf build; find surprise | grep "\.c\$" | xargs rm -f; find surprise | grep "\.so\$" | xargs rm -f
+        python -m pip install --upgrade pip
         pip install dist/scikit-surprise-1.1.1.tar.gz
         pip install pytest pandas
 
