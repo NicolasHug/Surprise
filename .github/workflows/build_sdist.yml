@@ -22,11 +22,6 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
-    - uses: actions/upload-artifact@v3
-      with:
-        name: the-sdist
-        path: dist/scikit-surprise-1.1.1.tar.gz
-
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v3
       with:
@@ -50,6 +45,11 @@ jobs:
         python setup.py sdist
 
         conda deactivate
+    - uses: actions/upload-artifact@v3
+      with:
+        name: the-sdist
+        path: dist/scikit-surprise-1.1.1.tar.gz
+
 
     # - name: Test Python 3.7
     #   run: |
