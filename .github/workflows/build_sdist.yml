@@ -42,7 +42,7 @@ jobs:
 
     - uses: actions/upload-artifact@v3
       with:
-        name: the-sdist
+        name: the-sdist-${{ matrix.force-min-dep }}
         path: dist/scikit-surprise-1.1.1.tar.gz
 
   install-and-test:
@@ -52,12 +52,13 @@ jobs:
       fail-fast: false
       matrix:
         python-version: ["3.7", "3.8", "3.9", "3.10"]
+        force-min-dep: [true, false]
     needs: build
     steps:
     - uses: actions/checkout@v3
     - uses: actions/download-artifact@v3
       with:
-        name: the-sdist
+        name: the-sdist-${{ matrix.force-min-dep }}
 
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v3
