@@ -128,6 +128,7 @@ jobs:
       run: |
         set -x
         pwd
+        ls
         rm -rf build; find surprise | grep "\.c\$" | xargs rm -f; find surprise | grep "\.so\$" | xargs rm -f
         python -m pip install --upgrade pip
         pip install dist/scikit-surprise-1.1.1.tar.gz
