@@ -103,7 +103,7 @@ LINK = {
 np.random.seed(0)
 random.seed(0)
 
-dataset = "ml-100k"
+dataset = "ml-1m"
 data = Dataset.load_builtin(dataset)
 kf = KFold(random_state=0)  # folds will be the same for all algorithms.
 
