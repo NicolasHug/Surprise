@@ -41,19 +41,15 @@ class SlopeOne(AlgoBase):
 
     def fit(self, trainset):
 
-        n_items = trainset.n_items
+        cdef int n_items = trainset.n_items
 
         # Number of users having rated items i and j: |U_ij|
-        cdef np.ndarray[np.int_t, ndim=2] freq
+        cdef long [:, ::1] freq = np.zeros((trainset.n_items, trainset.n_items), np.int_)
         # Deviation from item i to item j: mean(r_ui - r_uj for u in U_ij)
-        cdef np.ndarray[np.double_t, ndim=2] dev
-
+        cdef double [:, ::1] dev = np.zeros((trainset.n_items, trainset.n_items), np.double)
         cdef int u, i, j, r_ui, r_uj
 
         AlgoBase.fit(self, trainset)
-
-        freq = np.zeros((trainset.n_items, trainset.n_items), np.int_)
-        dev = np.zeros((trainset.n_items, trainset.n_items), np.double)
 
         # Computation of freq and dev arrays.
         for u, u_ratings in trainset.ur.items():
