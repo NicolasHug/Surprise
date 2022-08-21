@@ -186,13 +186,13 @@ class CoClustering(AlgoBase):
         cdef double global_mean = self.trainset.global_mean
 
         # Initialize everything to zero
-        count_cltr_u = np.zeros(self.n_cltr_u, np.int)
-        count_cltr_i = np.zeros(self.n_cltr_i, np.int)
-        count_cocltr = np.zeros((self.n_cltr_u, self.n_cltr_i), np.int)
+        count_cltr_u = np.zeros(self.n_cltr_u, np.int_)
+        count_cltr_i = np.zeros(self.n_cltr_i, np.int_)
+        count_cocltr = np.zeros((self.n_cltr_u, self.n_cltr_i), np.int_)
 
-        sum_cltr_u = np.zeros(self.n_cltr_u, np.int)
-        sum_cltr_i = np.zeros(self.n_cltr_i, np.int)
-        sum_cocltr = np.zeros((self.n_cltr_u, self.n_cltr_i), np.int)
+        sum_cltr_u = np.zeros(self.n_cltr_u, np.int_)
+        sum_cltr_i = np.zeros(self.n_cltr_i, np.int_)
+        sum_cocltr = np.zeros((self.n_cltr_u, self.n_cltr_i), np.int_)
 
         avg_cltr_u = np.zeros(self.n_cltr_u, np.double)
         avg_cltr_i = np.zeros(self.n_cltr_i, np.double)
