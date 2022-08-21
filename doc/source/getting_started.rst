@@ -37,7 +37,7 @@ The result should be as follows (actual values may vary due to randomization):
 
 The :meth:`load_builtin() <surprise.dataset.Dataset.load_builtin>` method will
 offer to download the `movielens-100k dataset
-<http://grouplens.org/datasets/movielens/>`_ if it has not already been
+<https://grouplens.org/datasets/movielens/>`_ if it has not already been
 downloaded, and it will save it in the ``.surprise_data`` folder in your home
 directory (you can also choose to save it :ref:`somewhere else <data_folder>`).
 
@@ -253,7 +253,7 @@ comes to the rescue.  Given a ``dict`` of parameters, this class exhaustively
 tries all the combinations of parameters and reports the best parameters for any
 accuracy measure (averaged over the different splits). It is heavily inspired
 from scikit-learn's `GridSearchCV
-<http://scikit-learn.org/stable/modules/generated/sklearn.model
+<https://scikit-learn.org/stable/modules/generated/sklearn.model
 _selection.GridSearchCV.html>`_.
 
 Here is an example where we try different values for parameters ``n_epochs``,

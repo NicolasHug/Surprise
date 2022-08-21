@@ -223,7 +223,7 @@ class GridSearchCV(BaseSearchCV):
     algorithm on various combinations of parameters, over a cross-validation
     procedure. This is useful for finding the best set of parameters for a
     prediction algorithm. It is analogous to `GridSearchCV
-    <http://scikit-learn.org/stable/modules/generated/sklearn.
+    <https://scikit-learn.org/stable/modules/generated/sklearn.
     model_selection.GridSearchCV.html>`_ from scikit-learn.
 
     See an example in the :ref:`User Guide <tuning_algorithm_parameters>`.
@@ -345,7 +345,7 @@ class RandomizedSearchCV(BaseSearchCV):
     combinatorial approach, RandomizedSearchCV samples randomly from the
     parameter space. This is useful for finding the best set of parameters
     for a prediction algorithm, especially using a coarse to fine approach.
-    It is analogous to `RandomizedSearchCV <http://scikit-learn.org/stable/
+    It is analogous to `RandomizedSearchCV <https://scikit-learn.org/stable/
     modules/generated/sklearn.model_selection.RandomizedSearchCV.html>`_ from
     scikit-learn.
 

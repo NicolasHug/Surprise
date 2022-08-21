@@ -128,7 +128,7 @@ API Changes
 
 * param_grid for GridSearch is now slightly different for dict parameters (see
   note on [the
-  docs](http://surprise.readthedocs.io/en/stable/getting_started.html#tune-algorithm-parameters-with-gridsearch)).
+  docs](https://surprise.readthedocs.io/en/stable/getting_started.html#tune-algorithm-parameters-with-gridsearch)).
 
 VERSION 1.0.3
 =============

@@ -32,7 +32,7 @@ from surprise.reader import Reader  # noqa
 def main():
     class MyParser(argparse.ArgumentParser):
         """A parser which prints the help message when an error occurs. Taken from
-        http://stackoverflow.com/questions/4042452/display-help-message-with-python-argparse-when-script-is-called-without-any-argu."""  # noqa
+        https://stackoverflow.com/questions/4042452/display-help-message-with-python-argparse-when-script-is-called-without-any-argu."""  # noqa
 
         def error(self, message):
             sys.stderr.write("error: %s\n" % message)
@@ -46,7 +46,7 @@ def main():
         + "or a custom dataset, and you can choose to automatically split the "
         + "dataset into folds, or manually specify train and test files. "
         + "Please refer to the documentation page "
-        + "(http://surprise.readthedocs.io/) for more details.",
+        + "(https://surprise.readthedocs.io/) for more details.",
         epilog="""Example:\n
         surprise -algo SVD -params "{'n_epochs': 5, 'verbose': True}"
         -load-builtin ml-100k -n-folds 3""",
