@@ -1,5 +1,10 @@
 # This workflow builds the sdist on 3.8 and then installs that same sdist on
 # clean envs from all python versions, then runs tests.
+# We also try to replace numpy with oldest-supported-numpy as install-time
+# dependency (install-time == installing from the sdist with the .c files
+# present). I'm not sure this is the intended use for the package, but this is
+# the only way I can find to test on an "old" version of numpy, instead of the
+# latest available like the regular `numpy>=X` constraint would do.
 
 name: Build sdist and test
 

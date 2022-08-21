@@ -10,10 +10,16 @@ Update changelog and contributors list. If you ever change the
 `requirements[_dev].txt`, also update the hardcoded numpy version here down
 below. Or find a way to always keep both consistent.
 
-Check that tests run correctly for 36 and 27 and doc compiles without warning
-(make clean first).
+Check that tests run correctly and doc compiles without warning (make clean
+first).
 
 change __version__ in setup.py to new version name.
+
+UPDATE: as of https://github.com/NicolasHug/Surprise/pull/425 the sdist is built
+on 3.8 by GA, so maybe it's best to just get the sdist artifact from the job
+instead of doing it manually. I'm keeping the instructions down below just for
+ref. Note: should uploade the "false" sdist; false == with `numpy>=` constraint,
+not with `oldest-supported-numpy`.
 
 Clean up. Ideally this should be part of setup.py clean but whatever
     rm -r build; rm -r dist; find surprise | grep "\.c\$" | xargs rm; find surprise | grep "\.so\$" | xargs rm
