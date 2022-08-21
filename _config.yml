@@ -3,17 +3,17 @@ title: Surprise
 tagline: 'A Python scikit for recommender systems.'
 description: 'A simple Python library for building and testing recommender systems.'
 sidebar_desc: 'A Python scikit for recommender systems.'
-url: http://surpriselib.com
+url: https://surpriselib.com
 baseurl:
 
 author:
   name: Nicolas Hug
   github: https://github.com/nicolashug
-  perso: http://nicolas-hug.com
+  perso: https://nicolas-hug.com
 
 # Custom vars
 version: 1.0.0
-docs_url: 'http://surprise.readthedocs.io'
+docs_url: 'https://surprise.readthedocs.io'
 github:
   repo: 'https://github.com/NicolasHug/Surprise'
 
