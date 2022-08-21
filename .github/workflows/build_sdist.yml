@@ -1,0 +1,87 @@
+# This workflow builds the sdist on 3.8 and then installs that same sdist on
+# clean envs from all python versions, then runs tests.
+# We also try to replace numpy with oldest-supported-numpy as install-time
+# dependency (install-time == installing from the sdist with the .c files
+# present). I'm not sure this is the intended use for the package, but this is
+# the only way I can find to test on an "old" version of numpy, instead of the
+# latest available like the regular `numpy>=X` constraint would do.
+
+name: Build sdist and test
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        use-oldest-numpy: [true, false]
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Set up Python 3.8
+      uses: actions/setup-python@v3
+      with:
+        python-version: "3.8"
+
+    - name: Force min dep
+      if: ${{ matrix.use-oldest-numpy}}
+      run: |
+        sed -i "s/numpy.*/oldest-supported-numpy/g" requirements.txt
+        cat requirements*.txt
+
+    - name: Build sdist
+      run: |
+        set -x
+        python -m pip install --upgrade pip
+        pip install -r requirements_dev.txt
+        pip freeze
+
+        python setup.py sdist
+
+    - uses: actions/upload-artifact@v3
+      with:
+        name: the-sdist-${{ matrix.use-oldest-numpy }}
+        path: dist/scikit-surprise-1.1.1.tar.gz
+
+  install-and-test:
+
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.8", "3.9", "3.10"]
+        use-oldest-numpy : [true, false]
+    needs: build
+    steps:
+    - uses: actions/checkout@v3
+    - uses: actions/download-artifact@v3
+      with:
+        name: the-sdist-${{ matrix.use-oldest-numpy}}
+
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v3
+      with:
+        python-version: ${{ matrix.python-version }}
+
+    - name: Install sdist
+      run: |
+        set -x
+
+        python -m pip install --upgrade pip
+        pip install scikit-surprise-1.1.1.tar.gz -v
+
+    - name: Pip freeze
+      run: |
+        pip freeze
+
+    - name: Run unit tests
+      run: |
+        pip install pytest pandas
+        pytest -v

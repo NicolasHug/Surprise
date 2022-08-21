@@ -1,11 +1,11 @@
-# Requirements file for development
-Cython>=0.24.1
-joblib>=0.11
-numpy>=1.11.2
+# Lower bounds for deps are as in scikit-learn in Aug 22, 1.2.dev
+Cython>=0.29.24
+joblib>=1.0.0
+numpy>=1.17.3  # also in setup.py
+scipy>=1.3.2
 pandas
-pytest>=3.0.3
-scipy>=1.0.0
-sphinx>=1.4.9
+pytest
+sphinx
 sphinx_rtd_theme
 sphinxcontrib-bibtex
 sphinxcontrib-spelling
