@@ -10,27 +10,29 @@ Update changelog and contributors list. If you ever change the
 `requirements[_dev].txt`, also update the hardcoded numpy version here down
 below. Or find a way to always keep both consistent.
 
-Check that tests run correctly and doc compiles without warning (make clean
-first).
+Basic local checks:
+- tests run correctly
+- doc compiles without warning (make clean first).
 
-change __version__ in setup.py to new version name.
+Check that the latest RTD build was OK: https://readthedocs.org/projects/surprise/builds/
 
-UPDATE: as of https://github.com/NicolasHug/Surprise/pull/425 the sdist is built
-on 3.8 by GA, so maybe it's best to just get the sdist artifact from the job
-instead of doing it manually. I'm keeping the instructions down below just for
-ref. Note: should uploade the "false" sdist; false == with `numpy>=` constraint,
-not with `oldest-supported-numpy`.
+Change __version__ in setup.py to new version name. Also update the hardcoded
+version in build_sdist.yml, otherwise the GA jobs will fail.
 
-Clean up. Ideally this should be part of setup.py clean but whatever
-    rm -r build; rm -r dist; find surprise | grep "\.c\$" | xargs rm; find surprise | grep "\.so\$" | xargs rm
+The sdist is built on 3.8 by GA:
+- check the sdist building process. It should compile pyx files and the C files
+  should be included in the archive
+- check the install jobs. Look for compilation warnings. Make sure Cython isn't
+  needed and only C files are compiled.
+- check test jobs for warnings etc.
+
+It's best to just get the sdist artifact from the job instead of re-building it
+locally. Get the "false" sdist: false == with `numpy>=` constraint, not with
+`oldest-supported-numpy`. We don't want `oldest-supported-numpy` as the uploaded
+sdist because it's more restrictive.
 
 Then upload to test pypi:
-    mktmpenv (Python version should not matter)
-    pip install numpy cython twine
-    python setup.py sdist
-    # Then check the content of the sdist, it should include the `.c` files
-    # Also check that it installs locally on other clean envs.
-    twine upload dist/blabla.tar.gz -r testpypi
+    twine upload blabla.tar.gz -r testpypi
 
 Check that install works on testpypi, then upload to pypi and check again.
 to install from testpypi:
