@@ -101,7 +101,10 @@ def test_nearest_neighbors():
     "algo, expected_rmse",
     [
         (BaselineOnly(), 1.0268524031297395),
-        (KNNBasic(), 1.1337265249554591),
+        (KNNBasic(sim_options={"name": "cosine"}), 1.1495072745332722),
+        (KNNBasic(sim_options={"name": "msd"}), 1.1337265249554591),
+        (KNNBasic(sim_options={"name": "pearson"}), 1.1218719178944856),
+        (KNNBasic(sim_options={"name": "pearson_baseline"}), 1.1242139598121241),
         (KNNWithMeans(), 1.1043129441881696),
         (KNNBaseline(), 1.0700718041752253),
         (KNNWithZScore(), 1.11179436167853),
@@ -119,4 +122,5 @@ def test_sanity_checks(u1_ml100k, pkf, algo, expected_rmse):
     trainset, testset = next(pkf.split(u1_ml100k))
     algo.fit(trainset)
     predictions = algo.test(testset)
+    assert not all(pred.details["was_impossible"] for pred in predictions)
     assert accuracy.rmse(predictions, verbose=False) == expected_rmse
