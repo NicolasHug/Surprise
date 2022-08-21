@@ -201,19 +201,19 @@ Contributors
 The following persons have contributed to [Surprise](http://surpriselib.com):
 
 ashtou, bobbyinfj, caoyi, Олег Демиденко, Charles-Emmanuel Dias, dmamylin,
-Lauriane Ducasse, Marc Feger, franckjay, Lukas Galke, Tim Gates,
-Pierre-François Gimenez, Zachary Glassman, Jeff Hale, Nicolas Hug, Janniks,
-jyesawtellrickson, Doruk Kilitcioglu, Ravi Raju Krishna, Hengji Liu, Maher
-Malaeb, Manoj K, James McNeilis, Naturale0, nju-luke, Jay Qi, Lucas Rebscher,
-Skywhat, David Stevens, TrWestdoor, Victor Wang, Mike Lee Williams, Jay Wong,
-Chenchen Xu, YaoZh1918.
+Lauriane Ducasse, Marc Feger, franckjay, Lukas Galke, Tim Gates, Pierre-François
+Gimenez, Zachary Glassman, Jeff Hale, Nicolas Hug, Janniks, jyesawtellrickson,
+Doruk Kilitcioglu, Ravi Raju Krishna, lapidshay, Hengji Liu, Ravi Makhija, Maher
+Malaeb, Manoj K, James McNeilis, Naturale0, nju-luke, Pierre-Louis Pécheux, Jay
+Qi, Lucas Rebscher, Skywhat, Hercules Smith, David Stevens, Vesna Tanko,
+TrWestdoor, Victor Wang, Mike Lee Williams, Jay Wong, Chenchen Xu, YaoZh1918.
 
 Thanks a lot :) !
 
 Development Status
 ------------------
 
-Starting from version 1.1.0 (September 19), I will only maintain the package,
+Starting from version 1.1.0 (September 2019), I will only maintain the package,
 provide bugfixes, and perhaps sometimes perf improvements. I have less time to
 dedicate to it now, so I'm unabe to consider new features.
 

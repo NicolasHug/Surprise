@@ -1,3 +1,22 @@
+VERSION 1.1.2
+=============
+
+Date: TBD
+This version requires Python >= 3.8.
+
+Enhancements
+------------
+* Significantly improve performance of SVD (~5X) and SVDpp (~10X) - by Hercules Smith
+* Minor improvements to similarity computations
+
+Bug Fixes
+---------
+
+* Fixed 'rank_test_fcp' order in grid search's `cv_results`
+* Handle 0 ratings and avoid ZeroDivisionError in NMF
+* (Hopefully) fixes various numpy and Cython compatibility issues with different
+  Python versions (particularly 3.10)
+
 VERSION 1.1.1
 =============
 
@@ -49,6 +68,7 @@ Date: 22/04/18
 Enhancements
 ------------
 
+* Added new RandomizedSearchCV by David Stevens
 * Added verbose option to algorithms using a similarity matrix or baseline
   computation, to avoid unwanted printed messages.
 * When PredictionImpossible is raised, the prediction is now deferred to
