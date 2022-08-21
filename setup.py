@@ -91,31 +91,39 @@ cmdclass = {}
 
 ext = ".pyx" if USE_CYTHON else ".c"
 
+include_dirs = [np.get_include()]
+define_macros = [("NPY_NO_DEPRECATED_API", "NPY_1_7_API_VERSION")]
+
 extensions = [
     Extension(
         "surprise.similarities",
         ["surprise/similarities" + ext],
-        include_dirs=[np.get_include()],
+        include_dirs=include_dirs,
+        define_macros=define_macros,
     ),
     Extension(
         "surprise.prediction_algorithms.matrix_factorization",
         ["surprise/prediction_algorithms/matrix_factorization" + ext],
-        include_dirs=[np.get_include()],
+        include_dirs=include_dirs,
+        define_macros=define_macros,
     ),
     Extension(
         "surprise.prediction_algorithms.optimize_baselines",
         ["surprise/prediction_algorithms/optimize_baselines" + ext],
-        include_dirs=[np.get_include()],
+        include_dirs=include_dirs,
+        define_macros=define_macros,
     ),
     Extension(
         "surprise.prediction_algorithms.slope_one",
         ["surprise/prediction_algorithms/slope_one" + ext],
-        include_dirs=[np.get_include()],
+        include_dirs=include_dirs,
+        define_macros=define_macros,
     ),
     Extension(
         "surprise.prediction_algorithms.co_clustering",
         ["surprise/prediction_algorithms/co_clustering" + ext],
-        include_dirs=[np.get_include()],
+        include_dirs=include_dirs,
+        define_macros=define_macros,
     ),
 ]
 
