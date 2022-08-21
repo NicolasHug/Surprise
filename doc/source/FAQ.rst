@@ -106,9 +106,9 @@ further analyzed or compared with other algorithms, using pandas dataframes.
 Some examples are given in the two following notebooks:
 
     * `Dumping and analysis of the KNNBasic algorithm
-      <http://nbviewer.jupyter.org/github/NicolasHug/Surprise/tree/master/examples/notebooks/KNNBasic_analysis.ipynb/>`_.
+      <https://nbviewer.jupyter.org/github/NicolasHug/Surprise/tree/master/examples/notebooks/KNNBasic_analysis.ipynb/>`_.
     * `Comparison of two algorithms
-      <http://nbviewer.jupyter.org/github/NicolasHug/Surprise/tree/master/examples/notebooks/Compare.ipynb/>`_.
+      <https://nbviewer.jupyter.org/github/NicolasHug/Surprise/tree/master/examples/notebooks/Compare.ipynb/>`_.
 
 How to build my own prediction algorithm
 ----------------------------------------

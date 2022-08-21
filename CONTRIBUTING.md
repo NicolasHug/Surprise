@@ -43,7 +43,7 @@ again.
 Running and writing tests
 -------------------------
 
-Our testing tool is [pytest](http://doc.pytest.org/en/latest/). Running the tests is as
+Our testing tool is [pytest](https://doc.pytest.org/en/latest/). Running the tests is as
 simple as running
 
     pytest
