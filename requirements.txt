@@ -1,5 +1,4 @@
 # Lower bound for deps is as in scikit-learn in Aug 22, 1.2.dev
 joblib>=1.0.0
-#numpy>=1.14.5
-oldest-supported-numpy
+numpy>=1.17.3  # also in setup.py
 scipy>=1.3.2

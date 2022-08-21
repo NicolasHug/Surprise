@@ -15,8 +15,6 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
-      matrix:
-        force-min-dep: [true, false]
 
     steps:
     - uses: actions/checkout@v3
@@ -24,12 +22,6 @@ jobs:
       uses: actions/setup-python@v3
       with:
         python-version: "3.8"
-
-    - name: Force min dep
-      if: ${{ matrix.force-min-dep }}
-      run: |
-        sed -i "s/>/=/g" requirements*.txt
-        cat requirements*.txt
 
     - name: Build sdist
       run: |
@@ -42,7 +34,7 @@ jobs:
 
     - uses: actions/upload-artifact@v3
       with:
-        name: the-sdist-${{ matrix.force-min-dep }}
+        name: the-sdist
         path: dist/scikit-surprise-1.1.1.tar.gz
 
   install-and-test:
@@ -52,13 +44,12 @@ jobs:
       fail-fast: false
       matrix:
         python-version: ["3.8", "3.9", "3.10"]
-        force-min-dep: [true, false]
     needs: build
     steps:
     - uses: actions/checkout@v3
     - uses: actions/download-artifact@v3
       with:
-        name: the-sdist-${{ matrix.force-min-dep }}
+        name: the-sdist
 
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v3
