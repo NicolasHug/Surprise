@@ -113,7 +113,7 @@ Here are the average RMSE, MAE and total execution time of various algorithms
 (with their default parameters) on a 5-fold cross-validation procedure. The
 datasets are the [Movielens](https://grouplens.org/datasets/movielens/) 100k and
 1M datasets. The folds are the same for all the algorithms. All experiments are
-run on a notebook with Intel Core i5 7th gen (2.5 GHz) and 8Go RAM.  The code
+run on a laptop with an intel i5 11th Gen 2.60GHz. The code
 for generating these tables can be found in the [benchmark
 example](https://github.com/NicolasHug/Surprise/tree/master/examples/benchmark.py).
 
