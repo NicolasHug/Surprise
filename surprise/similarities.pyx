@@ -67,7 +67,7 @@ def cosine(n_x, yr, min_support):
     cdef int min_sprt = min_support
 
     prods = np.zeros((n_x, n_x), np.double)
-    freq = np.zeros((n_x, n_x), np.int_)
+    freq = np.zeros((n_x, n_x), np.int)
     sqi = np.zeros((n_x, n_x), np.double)
     sqj = np.zeros((n_x, n_x), np.double)
     sim = np.zeros((n_x, n_x), np.double)
@@ -140,7 +140,7 @@ def msd(n_x, yr, min_support):
     cdef int min_sprt = min_support
 
     sq_diff = np.zeros((n_x, n_x), np.double)
-    freq = np.zeros((n_x, n_x), np.int_)
+    freq = np.zeros((n_x, n_x), np.int)
     sim = np.zeros((n_x, n_x), np.double)
 
     for y, y_ratings in yr.items():
@@ -216,7 +216,7 @@ def pearson(n_x, yr, min_support):
     cdef double ri, rj
     cdef int min_sprt = min_support
 
-    freq = np.zeros((n_x, n_x), np.int_)
+    freq = np.zeros((n_x, n_x), np.int)
     prods = np.zeros((n_x, n_x), np.double)
     sqi = np.zeros((n_x, n_x), np.double)
     sqj = np.zeros((n_x, n_x), np.double)
@@ -317,7 +317,7 @@ def pearson_baseline(n_x, yr, min_support, global_mean, x_biases, y_biases,
     cdef int min_sprt = min_support
     cdef double global_mean_ = global_mean
 
-    freq = np.zeros((n_x, n_x), np.int_)
+    freq = np.zeros((n_x, n_x), np.int)
     prods = np.zeros((n_x, n_x), np.double)
     sq_diff_i = np.zeros((n_x, n_x), np.double)
     sq_diff_j = np.zeros((n_x, n_x), np.double)

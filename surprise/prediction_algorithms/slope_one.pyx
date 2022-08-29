@@ -52,7 +52,7 @@ class SlopeOne(AlgoBase):
 
         AlgoBase.fit(self, trainset)
 
-        freq = np.zeros((trainset.n_items, trainset.n_items), np.int_)
+        freq = np.zeros((trainset.n_items, trainset.n_items), np.int)
         dev = np.zeros((trainset.n_items, trainset.n_items), np.double)
 
         # Computation of freq and dev arrays.
