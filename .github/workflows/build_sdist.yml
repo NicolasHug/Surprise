@@ -43,7 +43,7 @@ jobs:
         pip install -r requirements_dev.txt
         pip freeze
 
-        python setup.py sdist
+        python setup.py sdist -v
 
     - uses: actions/upload-artifact@v3
       with:
