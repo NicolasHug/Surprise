@@ -126,7 +126,7 @@ def fcp(predictions, verbose=True):
     """Compute FCP (Fraction of Concordant Pairs).
 
     Computed as described in paper `Collaborative Filtering on Ordinal User
-    Feedback <http://www.ijcai.org/Proceedings/13/Papers/449.pdf>`_ by Koren
+    Feedback <https://www.ijcai.org/Proceedings/13/Papers/449.pdf>`_ by Koren
     and Sill, section 5.2.
 
     Args:
