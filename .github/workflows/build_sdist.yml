@@ -43,12 +43,12 @@ jobs:
         pip install -r requirements_dev.txt
         pip freeze
 
-        python setup.py sdist
+        python setup.py sdist -v
 
     - uses: actions/upload-artifact@v3
       with:
         name: the-sdist-${{ matrix.use-oldest-numpy }}
-        path: dist/scikit-surprise-1.1.1.tar.gz
+        path: dist/scikit-surprise-1.1.2.tar.gz
 
   install-and-test:
 
@@ -75,7 +75,7 @@ jobs:
         set -x
 
         python -m pip install --upgrade pip
-        pip install scikit-surprise-1.1.1.tar.gz -v
+        pip install scikit-surprise-1.1.2.tar.gz -v
 
     - name: Pip freeze
       run: |

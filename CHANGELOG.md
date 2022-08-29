@@ -1,3 +1,24 @@
+VERSION 1.1.2
+=============
+
+Date: 29/08/2022
+This version requires Python >= 3.8.
+
+Enhancements
+------------
+
+* Significantly improve performance of SVD (~5X) and SVDpp (~10X) - by [Hercules Smith](https://github.com/ProfHercules)
+* Minor improvements to similarity computations
+* Faster nearest neighbor search
+
+Bug Fixes
+---------
+
+* Fixed 'rank_test_fcp' order in grid search's `cv_results`
+* Handle 0 ratings and avoid ZeroDivisionError in NMF
+* (Hopefully) fixes various numpy and Cython compatibility issues with different
+  Python versions (particularly 3.10)
+
 VERSION 1.1.1
 =============
 
@@ -49,6 +70,7 @@ Date: 22/04/18
 Enhancements
 ------------
 
+* Added new RandomizedSearchCV by [David Stevens](https://github.com/whensbrunch)
 * Added verbose option to algorithms using a similarity matrix or baseline
   computation, to avoid unwanted printed messages.
 * When PredictionImpossible is raised, the prediction is now deferred to
@@ -112,8 +134,8 @@ Enhancements
 ------------
 
 * Added possibility to load a dataset from a pandas dataframe
-* Added Precision and Recall examples to the FAQ (Maher Malaeb)
-* Added a kNN algorithm with normalization by z-score (Hengji Liu)
+* Added Precision and Recall examples to the FAQ ([Maher Malaeb](https://github.com/mahermalaeb))
+* Added a kNN algorithm with normalization by z-score ([Hengji Liu](https://github.com/hengji-liu))
 * kNN algorithms now use heapq instead of list.sort() (computation time
   enhancement for large datasets).
 
@@ -180,7 +202,7 @@ Date: 02/01/17
 Enhancements
 ------------
 
-* Added the GridSearch feature, by Maher
+* Added the GridSearch feature, by [Maher](https://github.com/mahermalaeb)
 * Added a 'clip' option to the predict() method
 * Added NMF algorithm
 * Added entry point for better command line usage.
