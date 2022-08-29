@@ -18,7 +18,7 @@ top-10 prediction for each user.
 .. literalinclude:: ../../examples/top_n_recommendations.py
     :caption: From file ``examples/top_n_recommendations.py``
     :name: top_n_recommendations.py
-    :lines: 8-
+    :lines: 10-
 
 .. _precision_recall_at_k:
 
@@ -42,7 +42,7 @@ As a convention, we set their values to 0 in such cases.
 .. literalinclude:: ../../examples/precision_recall_at_k.py
     :caption: From file ``examples/precision_recall_at_k.py``
     :name: precision_recall_at_k.py
-    :lines: 5-
+    :lines: 7-
 
 .. _get_k_nearest_neighbors:
 
@@ -80,7 +80,7 @@ down to the use of :meth:`get_neighbors()
 .. literalinclude:: ../../examples/k_nearest_neighbors.py
     :caption: From file ``examples/k_nearest_neighbors.py``
     :name: k_nearest_neighbors.py
-    :lines: 9-
+    :lines: 10-
 
 Naturally, the same can be done for users with minor modifications.
 
@@ -97,7 +97,7 @@ serialized. It is then reloaded and can be used again for making predictions:
 .. literalinclude:: ../../examples/serialize_algorithm.py
     :caption: From file ``examples/serialize_algorithm.py``
     :name: serialize_algorithm.py
-    :lines: 7-
+    :lines: 9-
 
 .. _further_analysis:
 
@@ -169,7 +169,7 @@ with the :meth:`test()
 .. literalinclude:: ../../examples/evaluate_on_trainset.py
     :caption: From file ``examples/evaluate_on_trainset.py``
     :name: evaluate_on_trainset.py
-    :lines: 7-21
+    :lines: 9-25
 
 Check out the example file for more usage examples.
 
@@ -187,7 +187,7 @@ done as follows:
 .. literalinclude:: ../../examples/split_data_for_unbiased_estimation.py
     :caption: From file ``examples/split_data_for_unbiased_estimation.py``
     :name: split_data_for_unbiased_estimation.py
-    :lines: 8-
+    :lines: 10-
 
 How to have reproducible experiments
 ------------------------------------

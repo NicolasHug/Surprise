@@ -18,6 +18,11 @@ tutorials illustrating all you can do with  `Surprise
 use-case example. For installation guidelines, please refer to the `project
 page <http://surpriselib.com>`_.
 
+Any kind of feedback/criticism would be greatly appreciated (software design,
+documentation, improvement ideas, spelling mistakes, etc...). Please feel free
+to contribute and send pull requests (see `GitHub page
+<https://github.com/NicolasHug/Surprise>`_)!
+
 
 .. toctree::
    :caption: User Guide

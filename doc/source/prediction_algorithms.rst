@@ -71,11 +71,6 @@ options may be set. For ALS:
   ``10``.  Note that in :cite:`Koren:2010`, what is described is a **single**
   iteration ALS process.
 
-.. literalinclude:: ../../examples/baselines_conf.py
-    :caption: From file ``examples/baselines_conf.py``
-    :name: baselines_als
-    :lines: 15-16
-
 And for SGD:
 
 - ``'reg'``: The regularization parameter of the cost function that is
@@ -85,16 +80,23 @@ And for SGD:
   :math:`\gamma` in :cite:`Koren:2010`.  Default is ``0.005``.
 - ``'n_epochs'``: The number of iteration of the SGD procedure. Default is 20. 
 
-.. literalinclude:: ../../examples/baselines_conf.py
-    :caption: From file ``examples/baselines_conf.py``
-    :name: baselines_sgd
-    :lines: 22-26
-
 .. note::
   For both procedures (ALS and SGD), user and item biases (:math:`b_u` and
   :math:`b_i`) are initialized to zero.
 
-Some similarity measures may use baselines, such as the
+Usage examples:
+
+.. literalinclude:: ../../examples/baselines_conf.py
+    :caption: From file ``examples/baselines_conf.py``
+    :name: baselines_als
+    :lines: 19-25
+
+.. literalinclude:: ../../examples/baselines_conf.py
+    :caption: From file ``examples/baselines_conf.py``
+    :name: baselines_sgd
+    :lines: 30-34
+
+Note that some similarity measures may use baselines, such as the
 :func:`pearson_baseline <surprise.similarities.pearson_baseline>` similarity.
 Configuration works just the same, whether the baselines are used in the actual
 prediction :math:`\hat{r}_{ui}` or not:
@@ -102,7 +104,7 @@ prediction :math:`\hat{r}_{ui}` or not:
 .. literalinclude:: ../../examples/baselines_conf.py
     :caption: From file ``examples/baselines_conf.py``
     :name: baselines_als_pearson_sim
-    :lines: 32-37
+    :lines: 40-44
 
 
 This leads us to similarity measure configuration, which we will review right
@@ -137,12 +139,12 @@ Usage examples:
 .. literalinclude:: ../../examples/similarity_conf.py
     :caption: From file ``examples/similarity_conf.py``
     :name: sim_conf_cos
-    :lines: 15-19
+    :lines: 18-21
 
 .. literalinclude:: ../../examples/similarity_conf.py
     :caption: From file ``examples/similarity_conf.py``
     :name: sim_conf_pearson_baseline
-    :lines: 24-25
+    :lines: 26-29
 
 .. seealso::
     The :mod:`similarities <surprise.similarities>` module.

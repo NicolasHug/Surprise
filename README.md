@@ -173,10 +173,8 @@ License and reference
 
 This project is licensed under the [BSD
 3-Clause](https://opensource.org/licenses/BSD-3-Clause) license, so it can be
-used for pretty much everything, including commercial applications.
-
-I'd love to know how Surprise is useful to you. Please don't hesitate to open
-an issue and describe how you use it!
+used for pretty much everything, including commercial applications. Please let
+us know how [Surprise](http://surpriselib.com) is useful to you!
 
 Please make sure to cite the
 [paper](https://joss.theoj.org/papers/10.21105/joss.02174) if you use
@@ -213,11 +211,9 @@ Thanks a lot :) !
 Development Status
 ------------------
 
-Starting from version 1.1.0 (September 19), I will only maintain the package,
-provide bugfixes, and perhaps sometimes perf improvements. I have less time to
-dedicate to it now, so I'm unabe to consider new features.
+Starting from version 1.1.0 (September 19), we will only maintain the
+package and provide bugfixes. No new features will be considered.
 
-For bugs, issues or questions about [Surprise](http://surpriselib.com), please
-avoid sending me emails; I will most likely not be able to answer). Please use
-the GitHub [project page](https://github.com/NicolasHug/Surprise) instead, so
-that others can also benefit from it.
+For bugs, issues or questions about [Surprise](http://surpriselib.com),
+please use the GitHub [project page](https://github.com/NicolasHug/Surprise).
+Please don't send emails (we will not answer).
