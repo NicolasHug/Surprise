@@ -6,7 +6,7 @@ The model_selection package
 Surprise provides various tools to run cross-validation procedures and search
 the best parameters for a prediction algorithm. The tools presented here are
 all heavily inspired from the excellent `scikit learn
-<https://scikit-learn.org/stable/modules/classes.html#module-sklearn.model_selection>`_
+<http://scikit-learn.org/stable/modules/classes.html#module-sklearn.model_selection>`_
 library.
 
 

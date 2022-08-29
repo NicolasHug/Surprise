@@ -6,9 +6,9 @@ Users may use both *built-in* and user-defined datasets (see the
 :ref:`getting_started` page for examples). Right now, three built-in datasets
 are available:
 
-* The `movielens-100k <https://grouplens.org/datasets/movielens/>`_ dataset.
-* The `movielens-1m <https://grouplens.org/datasets/movielens/>`_ dataset.
-* The `Jester <https://eigentaste.berkeley.edu/dataset/>`_ dataset 2.
+* The `movielens-100k <http://grouplens.org/datasets/movielens/>`_ dataset.
+* The `movielens-1m <http://grouplens.org/datasets/movielens/>`_ dataset.
+* The `Jester <http://eigentaste.berkeley.edu/dataset/>`_ dataset 2.
 
 Built-in datasets can all be loaded (or downloaded if you haven't already)
 using the :meth:`Dataset.load_builtin` method.

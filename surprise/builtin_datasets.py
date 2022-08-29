@@ -37,21 +37,21 @@ BuiltinDataset = namedtuple("BuiltinDataset", ["url", "path", "reader_params"])
 
 BUILTIN_DATASETS = {
     "ml-100k": BuiltinDataset(
-        url="https://files.grouplens.org/datasets/movielens/ml-100k.zip",
+        url="http://files.grouplens.org/datasets/movielens/ml-100k.zip",
         path=join(get_dataset_dir(), "ml-100k/ml-100k/u.data"),
         reader_params=dict(
             line_format="user item rating timestamp", rating_scale=(1, 5), sep="\t"
         ),
     ),
     "ml-1m": BuiltinDataset(
-        url="https://files.grouplens.org/datasets/movielens/ml-1m.zip",
+        url="http://files.grouplens.org/datasets/movielens/ml-1m.zip",
         path=join(get_dataset_dir(), "ml-1m/ml-1m/ratings.dat"),
         reader_params=dict(
             line_format="user item rating timestamp", rating_scale=(1, 5), sep="::"
         ),
     ),
     "jester": BuiltinDataset(
-        url="https://eigentaste.berkeley.edu/dataset/archive/jester_dataset_2.zip",
+        url="http://eigentaste.berkeley.edu/dataset/archive/jester_dataset_2.zip",
         path=join(get_dataset_dir(), "jester/jester_ratings.dat"),
         reader_params=dict(line_format="user item rating", rating_scale=(-10, 10)),
     ),

@@ -8,15 +8,15 @@
 Welcome to Surprise' documentation!
 ===================================
 
-`Surprise <https://surpriselib.com>`_  is an easy-to-use Python `scikit
+`Surprise <http://surpriselib.com>`_  is an easy-to-use Python `scikit
 <https://projects.scipy.org/scikits.html>`_ for recommender systems.
 
-If you're new to `Surprise <https://surpriselib.com>`_, we invite you to take a
+If you're new to `Surprise <http://surpriselib.com>`_, we invite you to take a
 look at the :ref:`getting_started` guide, where you'll find a series of
 tutorials illustrating all you can do with  `Surprise
-<https://surpriselib.com>`_. You can also check out the :ref:`FAQ` for many
+<http://surpriselib.com>`_. You can also check out the :ref:`FAQ` for many
 use-case example. For installation guidelines, please refer to the `project
-page <https://surpriselib.com>`_.
+page <http://surpriselib.com>`_.
 
 
 .. toctree::

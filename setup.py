@@ -141,7 +141,7 @@ setup(
     long_description=long_description,
     long_description_content_type="text/markdown",
     version=__version__,
-    url="https://surpriselib.com",
+    url="http://surpriselib.com",
     license="GPLv3+",
     classifiers=[
         "Development Status :: 5 - Production/Stable",

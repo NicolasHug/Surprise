@@ -42,7 +42,7 @@ algos = (
 )
 
 # ugly dict to map algo names and datasets to their markdown links in the table
-stable = "https://surprise.readthedocs.io/en/stable/"
+stable = "http://surprise.readthedocs.io/en/stable/"
 LINK = {
     "SVD": "[{}]({})".format(
         "SVD",
@@ -91,10 +91,10 @@ LINK = {
         + "basic_algorithms.html#surprise.prediction_algorithms.random_pred.NormalPredictor",
     ),
     "ml-100k": "[{}]({})".format(
-        "Movielens 100k", "https://grouplens.org/datasets/movielens/100k"
+        "Movielens 100k", "http://grouplens.org/datasets/movielens/100k"
     ),
     "ml-1m": "[{}]({})".format(
-        "Movielens 1M", "https://grouplens.org/datasets/movielens/1m"
+        "Movielens 1M", "http://grouplens.org/datasets/movielens/1m"
     ),
 }
 
