@@ -38,5 +38,5 @@ jobs:
         make html
     - uses: actions/upload-artifact@v3
       with:
-        name: the-docs
+        name: my-artifact
         path: doc/build/html

@@ -1,7 +1,7 @@
-# This workflow will run the benchmark suite
+# This workflow will install Python dependencies and run tests with a variety of Python versions
 # For more information see: https://help.github.com/actions/language-and-framework-guides/using-python-with-github-actions
 
-name: Benchmark
+name: Unit tests
 
 on:
   push:
@@ -16,7 +16,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: ["3.9"]
+        python-version: ["3.7", "3.8", "3.9", "3.10"]
 
     steps:
     - uses: actions/checkout@v3
@@ -27,11 +27,11 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
+        python -m pip install pytest
         pip install -r requirements_dev.txt
-        pip install tabulate
     - name: Install Surprise
       run: |
         python -m pip install -e .
-    - name: Run Benchmarks
+    - name: Test with pytest
       run: |
-        yes | python examples/benchmark.py
+        pytest -v

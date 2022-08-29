@@ -6,33 +6,18 @@ from setuptools import Extension, find_packages, setup
 """
 Release instruction:
 
-Update changelog and contributors list. If you ever change the
-`requirements[_dev].txt`, also update the hardcoded numpy version here down
-below. Or find a way to always keep both consistent.
+Upate changelog and contributors list.
 
-Basic local checks:
-- tests run correctly
-- doc compiles without warning (make clean first).
+Check that tests run correctly for 36 and 27 and doc compiles without warning
+(make clean first).
 
-Check that the latest RTD build was OK: https://readthedocs.org/projects/surprise/builds/
+change __version__ in setup.py to new version name.
 
-Change __version__ in setup.py to new version name. Also update the hardcoded
-version in build_sdist.yml, otherwise the GA jobs will fail.
-
-The sdist is built on 3.8 by GA:
-- check the sdist building process. It should compile pyx files and the C files
-  should be included in the archive
-- check the install jobs. Look for compilation warnings. Make sure Cython isn't
-  needed and only C files are compiled.
-- check test jobs for warnings etc.
-
-It's best to just get the sdist artifact from the job instead of re-building it
-locally. Get the "false" sdist: false == with `numpy>=` constraint, not with
-`oldest-supported-numpy`. We don't want `oldest-supported-numpy` as the uploaded
-sdist because it's more restrictive.
-
-Then upload to test pypi:
-    twine upload blabla.tar.gz -r testpypi
+First upload to test pypi:
+    mktmpenv (Python version should not matter)
+    pip install numpy cython twine
+    python setup.py sdist
+    twine upload dist/blabla.tar.gz -r testpypi
 
 Check that install works on testpypi, then upload to pypi and check again.
 to install from testpypi:
@@ -60,12 +45,12 @@ Then, maybe, celebrate.
 
 from setuptools import dist  # Install numpy right now
 
-dist.Distribution().fetch_build_eggs(["numpy>=1.17.3"])
+dist.Distribution().fetch_build_eggs(["numpy>=1.11.2"])
 
 try:
     import numpy as np
 except ImportError:
-    exit("Please install numpy>=1.17.3 first.")
+    exit("Please install numpy>=1.11.2 first.")
 
 try:
     from Cython.Build import cythonize
@@ -85,7 +70,12 @@ with open(path.join(here, "README.md"), encoding="utf-8") as f:
 
 # get the dependencies and installs
 with open(path.join(here, "requirements.txt"), encoding="utf-8") as f:
-    install_requires = [line.strip() for line in f.read().split("\n")]
+    all_reqs = f.read().split("\n")
+
+install_requires = [x.strip() for x in all_reqs if "git+" not in x]
+dependency_links = [
+    x.strip().replace("git+", "") for x in all_reqs if x.startswith("git+")
+]
 
 cmdclass = {}
 
@@ -120,8 +110,7 @@ extensions = [
 ]
 
 if USE_CYTHON:
-    # See https://cython.readthedocs.io/en/latest/src/userguide/source_files_and_compilation.html#distributing-cython-modules
-    extensions = cythonize(
+    ext_modules = cythonize(
         extensions,
         compiler_directives={
             "language_level": 3,
@@ -132,6 +121,8 @@ if USE_CYTHON:
         },
     )
     cmdclass.update({"build_ext": build_ext})
+else:
+    ext_modules = extensions
 
 setup(
     name="scikit-surprise",
@@ -159,8 +150,9 @@ setup(
     packages=find_packages(exclude=["tests*"]),
     python_requires=">=3.7",
     include_package_data=True,
-    ext_modules=extensions,
+    ext_modules=ext_modules,
     cmdclass=cmdclass,
     install_requires=install_requires,
+    dependency_links=dependency_links,
     entry_points={"console_scripts": ["surprise = surprise.__main__:main"]},
 )
