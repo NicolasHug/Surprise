@@ -413,7 +413,7 @@ class SVDpp(AlgoBase):
         # item factors
         cdef double [:, ::1] qi = rng.normal(self.init_mean, self.init_std_dev, size=(trainset.n_items, self.n_factors))
         # item implicit factors
-        cdef double [:, ::1] yj = rng.normal(self.init_mean, self.init_std_dev, size=(trainset.n_items, self.n_factors))
+        cdef np.ndarray[np.double_t, ndim=2] yj = rng.normal(self.init_mean, self.init_std_dev, size=(trainset.n_items, self.n_factors))
 
         cdef double [::1] u_impl_fdb = np.zeros(self.n_factors, dtype=np.double)
 
@@ -516,7 +516,7 @@ class SVDpp(AlgoBase):
         self.bi = bi
         self.pu = pu
         self.qi = qi
-        self.yj = np.asarray(yj)
+        self.yj = yj
 
     def estimate(self, u, i):
 

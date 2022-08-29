@@ -25,8 +25,8 @@ def baseline_als(self):
     # see also https://www.youtube.com/watch?v=gCaOa3W9kM0&t=32m55s
     # (Alex Smola on RS, ML Class 10-701)
 
-    cdef double [::1] bu = np.zeros(self.trainset.n_users)
-    cdef double [::1] bi = np.zeros(self.trainset.n_items)
+    cdef np.ndarray[np.double_t] bu = np.zeros(self.trainset.n_users)
+    cdef np.ndarray[np.double_t] bi = np.zeros(self.trainset.n_items)
 
     cdef int u, i
     cdef double r, err, dev_i, dev_u
@@ -50,7 +50,7 @@ def baseline_als(self):
                 dev_u += r - global_mean - bi[i]
             bu[u] = dev_u / (reg_u + len(self.trainset.ur[u]))
 
-    return np.asarray(bu), np.asarray(bi)
+    return bu, bi
 
 
 def baseline_sgd(self):
@@ -63,8 +63,8 @@ def baseline_sgd(self):
         A tuple ``(bu, bi)``, which are users and items baselines.
     """
 
-    cdef double [::1] bu = np.zeros(self.trainset.n_users)
-    cdef double [::1] bi = np.zeros(self.trainset.n_items)
+    cdef np.ndarray[np.double_t] bu = np.zeros(self.trainset.n_users)
+    cdef np.ndarray[np.double_t] bi = np.zeros(self.trainset.n_items)
 
     cdef int u, i
     cdef double r, err
@@ -80,4 +80,4 @@ def baseline_sgd(self):
             bu[u] += lr * (err - reg * bu[u])
             bi[i] += lr * (err - reg * bi[i])
 
-    return np.asarray(bu), np.asarray(bi)
+    return bu, bi
