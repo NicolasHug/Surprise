@@ -1,10 +1,11 @@
 [![GitHub version](https://badge.fury.io/gh/nicolashug%2FSurprise.svg)](https://badge.fury.io/gh/nicolashug%2FSurprise)
 [![Documentation Status](https://readthedocs.org/projects/surprise/badge/?version=stable)](https://surprise.readthedocs.io/en/stable/?badge=stable)
-[![python versions](https://img.shields.io/badge/python-3.8+-blue.svg)](https://surpriselib.com)
+[![Build Status](https://travis-ci.org/NicolasHug/Surprise.svg?branch=master)](https://travis-ci.org/NicolasHug/Surprise)
+[![python versions](https://img.shields.io/badge/python-2.7%2C%203.5%2C%203.6-blue.svg)](https://surpriselib.com)
 [![License](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)
 [![DOI](https://joss.theoj.org/papers/10.21105/joss.02174/status.svg)](https://doi.org/10.21105/joss.02174)
 
-[![logo](./logo_black.svg)](https://surpriselib.com)
+[![logo](logo_black.svg)](https://surpriselib.com)
 
 Overview
 --------
