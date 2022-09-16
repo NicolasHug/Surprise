@@ -6,10 +6,10 @@ import random as rd
 import shutil
 import sys
 
+from pkg_resources import get_distribution
 import numpy as np
 
 import surprise.dataset as dataset
-from surprise import __version__
 from surprise.builtin_datasets import get_dataset_dir
 from surprise.dataset import Dataset
 from surprise.model_selection import cross_validate, KFold, PredefinedKFold
@@ -175,7 +175,12 @@ def main():
         help="Remove the " + get_dataset_dir() + " directory and exit.",
     )
 
-    parser.add_argument("-v", "--version", action="version", version=__version__)
+    parser.add_argument(
+        "-v",
+        "--version",
+        action="version",
+        version=get_distribution("scikit-surprise").version,
+    )
 
     args = parser.parse_args()
 
