@@ -1,3 +1,13 @@
+VERSION 1.1.3
+=============
+
+Date: 23/08/2022
+
+Bug Fixes
+---------
+
+* Fixed a serialization bug (introduced in 1.1.2) that would make `dump()` fail.
+
 VERSION 1.1.2
 =============
 
