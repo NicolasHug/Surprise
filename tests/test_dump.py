@@ -4,11 +4,11 @@
 import random
 import tempfile
 
-from surprise import BaselineOnly, dump
+from surprise import dump
 from surprise.model_selection import PredefinedKFold
 
 
-def test_dump(u1_ml100k):
+def test_dump(u1_ml100k, dumpable_algorithm):
     """Train an algorithm, compute its predictions then dump them.
     Ensure that the predictions that are loaded back are the correct ones, and
     that the predictions of the dumped algorithm are also equal to the other
@@ -18,7 +18,7 @@ def test_dump(u1_ml100k):
 
     trainset, testset = next(PredefinedKFold().split(u1_ml100k))
 
-    algo = BaselineOnly()
+    algo = dumpable_algorithm()
     algo.fit(trainset)
     predictions = algo.test(testset)
 

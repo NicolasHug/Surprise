@@ -117,6 +117,11 @@ extensions = [
         ["surprise/prediction_algorithms/co_clustering" + ext],
         include_dirs=[np.get_include()],
     ),
+    Extension(
+        "surprise.prediction_algorithms.pickle.util",
+        ["surprise/prediction_algorithms/pickle/util" + ext],
+        include_dirs=[np.get_include()],
+    ),
 ]
 
 if USE_CYTHON:

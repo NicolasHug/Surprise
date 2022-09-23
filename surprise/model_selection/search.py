@@ -4,8 +4,8 @@ from itertools import product
 import numpy as np
 from joblib import delayed, Parallel
 
-from ..dataset import DatasetUserFolds
-from ..utils import get_rng
+from surprise.dataset import DatasetUserFolds
+from surprise.utils import get_rng
 
 from .split import get_cv
 from .validation import fit_and_score

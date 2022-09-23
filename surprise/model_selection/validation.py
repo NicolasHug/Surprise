@@ -8,7 +8,7 @@ import time
 import numpy as np
 from joblib import delayed, Parallel
 
-from .. import accuracy
+from surprise import accuracy
 
 from .split import get_cv
 

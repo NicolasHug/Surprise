@@ -9,6 +9,8 @@ import pytest
 
 from surprise import Dataset, Reader
 from surprise.model_selection import PredefinedKFold
+from surprise.prediction_algorithms.baseline_only import BaselineOnly
+from surprise.prediction_algorithms.pickle import PickableKNNBasic, PickableKNNWithMeans, PickableKNNBaseline, PickableKNNWithZScore
 
 
 @pytest.fixture
@@ -51,3 +53,8 @@ def small_ml():
 @pytest.fixture
 def pkf():
     return PredefinedKFold()
+
+
+@pytest.fixture(params=[BaselineOnly, PickableKNNBasic, PickableKNNWithMeans, PickableKNNBaseline, PickableKNNWithZScore])
+def dumpable_algorithm(request):
+    return request.param

@@ -9,7 +9,7 @@ from libc.math cimport sqrt
 
 from .algo_base import AlgoBase
 from .predictions import PredictionImpossible
-from ..utils import get_rng
+from surprise.utils import get_rng
 
 import cython
 from libc.stdlib cimport malloc, free

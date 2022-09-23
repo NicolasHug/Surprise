@@ -29,6 +29,7 @@ from .matrix_factorization import NMF, SVD, SVDpp
 from .predictions import Prediction, PredictionImpossible
 from .random_pred import NormalPredictor
 from .slope_one import SlopeOne
+from .pickle import PickableKNNBasic
 
 __all__ = [
     "AlgoBase",
@@ -37,6 +38,7 @@ __all__ = [
     "KNNBasic",
     "KNNBaseline",
     "KNNWithMeans",
+    "PickableKNNBasic",
     "SVD",
     "SVDpp",
     "NMF",

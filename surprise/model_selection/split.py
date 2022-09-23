@@ -31,7 +31,7 @@ from math import ceil, floor
 
 import numpy as np
 
-from ..utils import get_rng
+from surprise.utils import get_rng
 
 
 def get_cv(cv):
