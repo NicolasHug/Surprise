@@ -84,7 +84,7 @@ def cosine(int n_x, yr, int min_support):
 
             sim[xj, xi] = sim[xi, xj]
 
-    return sim
+    return np.asarray(sim)
 
 
 def msd(int n_x, yr, int min_support):
@@ -149,7 +149,7 @@ def msd(int n_x, yr, int min_support):
 
             sim[xj, xi] = sim[xi, xj]
 
-    return sim
+    return np.asarray(sim)
 
 
 def pearson(int n_x, yr, int min_support):
@@ -232,7 +232,7 @@ def pearson(int n_x, yr, int min_support):
 
             sim[xj, xi] = sim[xi, xj]
 
-    return sim
+    return np.asarray(sim)
 
 
 def pearson_baseline(
@@ -328,4 +328,4 @@ def pearson_baseline(
 
             sim[xj, xi] = sim[xi, xj]
 
-    return sim
+    return np.asarray(sim)
