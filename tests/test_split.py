@@ -18,7 +18,7 @@ from surprise.model_selection import (
 from surprise.model_selection.split import get_cv
 
 
-np.random.seed(1)
+np.random.seed(1)  # This is bad
 
 
 def test_KFold(toy_data):
@@ -187,9 +187,13 @@ def test_train_test_split(toy_data):
     # Test random_state parameter
     # If random_state is None, you get different split each time (conditioned
     # by rng of course)
-    _, testset_a = train_test_split(toy_data, random_state=None)
-    _, testset_b = train_test_split(toy_data, random_state=None)
-    assert testset_a != testset_b
+
+    testsets = set()
+    # TODO: all  other tests should use similar logic instead of just 1 single try
+    for _ in range(30):
+        _, testset = train_test_split(toy_data, random_state=None)
+        testsets.add(tuple(testset))
+    assert len(testsets) > 1
 
     # Repeated called to split when random_state is set lead to the same folds
     _, testset_a = train_test_split(toy_data, random_state=1)
