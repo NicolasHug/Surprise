@@ -39,6 +39,8 @@ to install from testpypi:
 pip install --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple scikit-surprise  # noqa
 Doesn't hurt to check that the tests pass after installing from testpypi.
 
+If not already done, sync gh-pages with the master's README
+
 push new release tag on github (commit last changes first if needed):
     git tag vX.Y.Z
     git push --tags
@@ -75,7 +77,7 @@ except ImportError:
 else:
     USE_CYTHON = True
 
-__version__ = "1.1.2"
+__version__ = "1.1.3"
 
 here = path.abspath(path.dirname(__file__))
 

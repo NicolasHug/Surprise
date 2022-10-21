@@ -244,10 +244,11 @@ class SVD(AlgoBase):
                     pu[u, f] += lr_pu * (err * qif - reg_pu * puf)
                     qi[i, f] += lr_qi * (err * puf - reg_qi * qif)
 
-        self.bu = bu
-        self.bi = bi
-        self.pu = pu
-        self.qi = qi
+        self.bu = np.asarray(bu)
+        self.bi = np.asarray(bi)
+        self.pu = np.asarray(pu)
+        self.qi = np.asarray(qi)
+    
 
     def estimate(self, u, i):
         # Should we cythonize this as well?
@@ -512,10 +513,10 @@ class SVDpp(AlgoBase):
         else:
             free(Iu)
 
-        self.bu = bu
-        self.bi = bi
-        self.pu = pu
-        self.qi = qi
+        self.bu = np.asarray(bu)
+        self.bi = np.asarray(bi)
+        self.pu = np.asarray(pu)
+        self.qi = np.asarray(qi)
         self.yj = np.asarray(yj)
 
     def estimate(self, u, i):
@@ -741,10 +742,10 @@ class NMF(AlgoBase):
                         item_denom[i, f] += n_ratings * reg_qi * qi[i, f]
                         qi[i, f] *= item_num[i, f] / item_denom[i, f]
 
-        self.bu = bu
-        self.bi = bi
-        self.pu = pu
-        self.qi = qi
+        self.bu = np.asarray(bu)
+        self.bi = np.asarray(bi)
+        self.pu = np.asarray(pu)
+        self.qi = np.asarray(qi)
 
     def estimate(self, u, i):
         # Should we cythonize this as well?

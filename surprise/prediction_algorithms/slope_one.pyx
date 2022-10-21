@@ -64,8 +64,8 @@ class SlopeOne(AlgoBase):
                 dev[i, j] /= freq[i, j]
                 dev[j, i] = -dev[i, j]
 
-        self.freq = freq
-        self.dev = dev
+        self.freq = np.asarray(freq)
+        self.dev = np.asarray(dev)
 
         # mean ratings of all users: mu_u
         self.user_mean = [np.mean([r for (_, r) in trainset.ur[u]])
