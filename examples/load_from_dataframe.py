@@ -17,7 +17,7 @@ ratings_dict = {
 }
 df = pd.DataFrame(ratings_dict)
 
-# A reader is still needed but only the rating_scale param is requiered.
+# A reader is still needed but only the rating_scale param is required.
 reader = Reader(rating_scale=(1, 5))
 
 # The columns must correspond to user id, item id and ratings (in that order).
