@@ -19,13 +19,6 @@ def get_dataset_dir():
     folder = os.environ.get(
         "SURPRISE_DATA_FOLDER", os.path.expanduser("~") + "/.surprise_data/"
     )
-    try:
-        os.makedirs(folder)
-    except OSError as e:
-        if e.errno != errno.EEXIST:
-            # reraise exception if folder does not exist and creation failed.
-            raise
-
     return folder
 
 
@@ -59,6 +52,13 @@ BUILTIN_DATASETS = {
 
 
 def download_builtin_dataset(name):
+    folder = get_dataset_dir()
+    try:
+        os.makedirs(folder)
+    except OSError as e:
+        if e.errno != errno.EEXIST:
+            # reraise exception if folder does not exist and creation failed.
+            raise
 
     dataset = BUILTIN_DATASETS[name]
 
