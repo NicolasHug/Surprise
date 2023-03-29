@@ -1,5 +1,3 @@
-from pkg_resources import get_distribution
-
 from . import dump, model_selection
 from .builtin_datasets import get_dataset_dir
 
@@ -46,5 +44,3 @@ __all__ = [
     "get_dataset_dir",
     "model_selection",
 ]
-
-__version__ = get_distribution("scikit-surprise").version
