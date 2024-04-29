@@ -30,7 +30,7 @@ jobs:
         pip install -r requirements_dev.txt
     - name: Install Surprise
       run: |
-        python -m pip install -e . -vvv  # Not sure it's needed but whatevs
+        python -m pip install -e . -vvv --no-use-pep517  # Not sure it's needed but whatevs
     - name: Run linters and formatters
       run: |
         chmod +x lint.sh
