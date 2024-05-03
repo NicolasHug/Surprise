@@ -1,7 +1,6 @@
-from codecs import open
 from os import path
 
-from setuptools import Extension, find_packages, setup
+from setuptools import Extension, setup
 
 """
 Release instruction:
@@ -60,7 +59,6 @@ In the mean time, upload to conda:
 Then, maybe, celebrate.
 """
 
-from setuptools import dist
 import numpy as np
 
 from Cython.Build import cythonize
