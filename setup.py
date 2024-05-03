@@ -110,7 +110,4 @@ extensions = cythonize(
 )
 cmdclass.update({"build_ext": build_ext})
 
-setup(
-    ext_modules=extensions,
-    cmdclass=cmdclass
-)
+setup(ext_modules=extensions, cmdclass=cmdclass)
