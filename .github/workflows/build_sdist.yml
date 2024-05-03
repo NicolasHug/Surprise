@@ -48,7 +48,7 @@ jobs:
     - uses: actions/upload-artifact@v4
       with:
         name: the-sdist-${{ matrix.use-oldest-numpy }}
-        path: dist/scikit-surprise-*
+        path: dist/scikit_surprise-*
 
   install-and-test:
 
@@ -75,7 +75,7 @@ jobs:
         set -x
 
         python -m pip install --upgrade pip
-        pip install "`ls dist/scikit-surprise-*.tar.gz`[test]" -v
+        pip install "`ls dist/scikit_surprise-*.tar.gz`[test]" -v
 
     - name: Pip freeze
       run: |
