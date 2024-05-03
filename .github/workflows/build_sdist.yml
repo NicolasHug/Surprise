@@ -76,8 +76,6 @@ jobs:
         set -x
 
         python -m pip install --upgrade pip
-        ls
-        ls dist
         pip install "`ls dist/scikit_surprise*.tar.gz`[test]" -v
 
     - name: Pip freeze
