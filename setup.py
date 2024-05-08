@@ -1,13 +1,8 @@
-from codecs import open
-from os import path
-
-from setuptools import Extension, find_packages, setup
-
 """
 Release instruction:
 
-Update changelog and contributors list. If you ever change the
-`requirements[_dev].txt`, also update the hardcoded numpy version here down
+Update changelog and contributors list. If you ever change
+`pyproject.toml`, `requirements_dev.txt`, also update the hardcoded numpy version here down
 below. Or find a way to always keep both consistent.
 
 Basic local checks:
@@ -16,7 +11,7 @@ Basic local checks:
 
 Check that the latest RTD build was OK: https://readthedocs.org/projects/surprise/builds/
 
-Change __version__ in setup.py to new version name. Also update the hardcoded
+Change __version__ in pyproject.toml to new version name. Also update the hardcoded
 version in build_sdist.yml, otherwise the GA jobs will fail.
 
 The sdist is built on 3.8 by GA:
@@ -60,9 +55,7 @@ In the mean time, upload to conda:
 Then, maybe, celebrate.
 """
 
-from setuptools import dist  # Install numpy right now
-
-dist.Distribution().fetch_build_eggs(["numpy>=1.17.3"])
+from setuptools import Extension, setup
 
 try:
     import numpy as np
@@ -71,25 +64,10 @@ except ImportError:
 
 try:
     from Cython.Build import cythonize
-    from Cython.Distutils import build_ext
 except ImportError:
     USE_CYTHON = False
 else:
     USE_CYTHON = True
-
-__version__ = "1.1.3"
-
-here = path.abspath(path.dirname(__file__))
-
-# Get the long description from README.md
-with open(path.join(here, "README.md"), encoding="utf-8") as f:
-    long_description = f.read()
-
-# get the dependencies and installs
-with open(path.join(here, "requirements.txt"), encoding="utf-8") as f:
-    install_requires = [line.strip() for line in f.read().split("\n")]
-
-cmdclass = {}
 
 ext = ".pyx" if USE_CYTHON else ".c"
 
@@ -121,9 +99,9 @@ extensions = [
     ),
 ]
 
-if USE_CYTHON:
+setup(
     # See https://cython.readthedocs.io/en/latest/src/userguide/source_files_and_compilation.html#distributing-cython-modules
-    extensions = cythonize(
+    extensions=cythonize(
         extensions,
         compiler_directives={
             "language_level": 3,
@@ -133,35 +111,4 @@ if USE_CYTHON:
             "nonecheck": False,
         },
     )
-    cmdclass.update({"build_ext": build_ext})
-
-setup(
-    name="scikit-surprise",
-    author="Nicolas Hug",
-    author_email="contact@nicolas-hug.com",
-    description=("An easy-to-use library for recommender systems."),
-    long_description=long_description,
-    long_description_content_type="text/markdown",
-    version=__version__,
-    url="https://surpriselib.com",
-    license="GPLv3+",
-    classifiers=[
-        "Development Status :: 5 - Production/Stable",
-        "Intended Audience :: Developers",
-        "Intended Audience :: Education",
-        "Intended Audience :: Science/Research",
-        "Topic :: Scientific/Engineering",
-        "License :: OSI Approved :: BSD License",
-        "Programming Language :: Python :: 3.8",
-        "Programming Language :: Python :: 3.9",
-        "Programming Language :: Python :: 3.10",
-    ],
-    keywords="recommender recommendation system",
-    packages=find_packages(exclude=["tests*"]),
-    python_requires=">=3.8",
-    include_package_data=True,
-    ext_modules=extensions,
-    cmdclass=cmdclass,
-    install_requires=install_requires,
-    entry_points={"console_scripts": ["surprise = surprise.__main__:main"]},
 )
