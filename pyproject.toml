@@ -19,7 +19,7 @@ classifiers = [
   "Programming Language :: Python :: 3.9",
   "Programming Language :: Python :: 3.10",
 ]
-license = { "text" = "GPLv3+" }
+license = { "file" = "LICENSE.md" }
 dependencies = [
   # Lower bounds for deps are as in scikit-learn in Aug 22, 1.2.dev
   "joblib>=1.0.0",
