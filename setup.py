@@ -5,9 +5,8 @@ from setuptools import Extension, setup
 """
 Release instruction:
 
-Update changelog and contributors list. If you ever change the
-`requirements[_dev].txt`, also update the hardcoded numpy version here down
-below. Or find a way to always keep both consistent.
+Update changelog and contributors list. If you ever change the dependencies in
+`pyproject.toml`, also update the hardcoded numpy version under [build-system] -> requires
 
 Basic local checks:
 - tests run correctly
