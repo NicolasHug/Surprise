@@ -43,7 +43,7 @@ jobs:
         pip install build
         pip freeze
 
-        python -m build .
+        python -m build . --sdist
 
     - uses: actions/upload-artifact@v4
       with:
