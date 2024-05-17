@@ -1,4 +1,4 @@
-name: Create sdist, install and test
+name: Create sdist install and test
 
 on:
   push:
