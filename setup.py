@@ -1,6 +1,7 @@
-from os import path
-
 from setuptools import Extension, setup
+
+import numpy as np
+from Cython.Build import cythonize
 
 """
 Release instruction:
@@ -58,42 +59,50 @@ In the mean time, upload to conda:
 Then, maybe, celebrate.
 """
 
-import numpy as np
+# This prevents Cython from using deprecated numpy C APIs
+define_macros = [("NPY_NO_DEPRECATED_API", "NPY_1_7_API_VERSION")]
 
-from Cython.Build import cythonize
-from Cython.Distutils import build_ext
-
-here = path.abspath(path.dirname(__file__))
-
-cmdclass = {}
-
-ext = ".pyx"
+# We're using numpy C APIs in our Cython code so Cython will generate C code
+# that requires the numpy headers. We need to tell the compiler where to find
+# those headers.
+# If you remove this and compilation still works, don't get fooled: it's
+# probably only because the numpy headers are available in the default locations
+# like /usr/include/numpy/ so they get found. But that wouldn't necessarily be
+# the case on other users' machines building the sdist.
+include_dirs = [np.get_include()]
 
 extensions = [
     Extension(
-        "surprise.similarities",
-        ["surprise/similarities" + ext],
-        include_dirs=[np.get_include()],
+        # name is where the .so will be placed, i.e. where the module will be
+        # importable from.
+        name="surprise.similarities",
+        sources=["surprise/similarities.pyx"],
+        include_dirs=include_dirs,
+        define_macros=define_macros,
     ),
     Extension(
-        "surprise.prediction_algorithms.matrix_factorization",
-        ["surprise/prediction_algorithms/matrix_factorization" + ext],
-        include_dirs=[np.get_include()],
+        name="surprise.prediction_algorithms.matrix_factorization",
+        sources=["surprise/prediction_algorithms/matrix_factorization.pyx"],
+        include_dirs=include_dirs,
+        define_macros=define_macros,
     ),
     Extension(
-        "surprise.prediction_algorithms.optimize_baselines",
-        ["surprise/prediction_algorithms/optimize_baselines" + ext],
-        include_dirs=[np.get_include()],
+        name="surprise.prediction_algorithms.optimize_baselines",
+        sources=["surprise/prediction_algorithms/optimize_baselines.pyx"],
+        include_dirs=include_dirs,
+        define_macros=define_macros,
     ),
     Extension(
-        "surprise.prediction_algorithms.slope_one",
-        ["surprise/prediction_algorithms/slope_one" + ext],
-        include_dirs=[np.get_include()],
+        name="surprise.prediction_algorithms.slope_one",
+        sources=["surprise/prediction_algorithms/slope_one.pyx"],
+        include_dirs=include_dirs,
+        define_macros=define_macros,
     ),
     Extension(
-        "surprise.prediction_algorithms.co_clustering",
-        ["surprise/prediction_algorithms/co_clustering" + ext],
-        include_dirs=[np.get_include()],
+        name="surprise.prediction_algorithms.co_clustering",
+        sources=["surprise/prediction_algorithms/co_clustering.pyx"],
+        include_dirs=include_dirs,
+        define_macros=define_macros,
     ),
 ]
 
@@ -107,6 +116,5 @@ extensions = cythonize(
         "nonecheck": False,
     },
 )
-cmdclass.update({"build_ext": build_ext})
 
-setup(ext_modules=extensions, cmdclass=cmdclass)
+setup(ext_modules=extensions)
