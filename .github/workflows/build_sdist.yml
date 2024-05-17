@@ -31,7 +31,7 @@ jobs:
 
         python -m build . --sdist
 
-        tar -tf "dist/scikit_surprise* | grep "\.c$"
+        tar -tf "dist/scikit_surprise*" | grep "\.c$"
         if [ $? -ne 1 ]; then
           echo "There are some c files in the sdist!!"
           exit 1
