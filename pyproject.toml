@@ -1,7 +1,3 @@
-[build-system]
-requires = ["setuptools", "wheel", "Cython>=3.0.10", "oldest-supported-numpy"]
-build-backend = "setuptools.build_meta"
-
 [project]
 name = "scikit-surprise"
 authors = [{ name = "Nicolas Hug", email = "contact@nicolas-hug.com" }]
@@ -18,6 +14,8 @@ classifiers = [
   "Programming Language :: Python :: 3.8",
   "Programming Language :: Python :: 3.9",
   "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
 ]
 license = { "file" = "LICENSE.md" }
 dependencies = [
@@ -39,10 +37,9 @@ surprise = "surprise.__main__:main"
 homepage = "https://surpriselib.com"
 repository = "https://github.com/NicolasHug/Surprise"
 
-
-
-[tool.setuptools]
-include-package-data = true
+[build-system]
+requires = ["setuptools>=61.0.0", "wheel", "Cython>=3.0.10", "oldest-supported-numpy"]
+build-backend = "setuptools.build_meta"
 
 [tool.setuptools.dynamic]
 version = { attr = "surprise.__version__"}
@@ -50,8 +47,5 @@ readme = { content-type = "text/markdown", file = [
   "README.md",
 ]}
 
-
 [tool.setuptools.packages.find]
 exclude = ["tests*"]
-
-
