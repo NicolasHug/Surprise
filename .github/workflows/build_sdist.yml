@@ -21,25 +21,19 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        use-oldest-numpy: [true, false]
+        python-version: ["3.8", "3.9", "3.10", "3.11", "3.12"]
 
     steps:
     - uses: actions/checkout@v4
-    - name: Set up Python 3.8
+    - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v5
       with:
-        python-version: "3.8"
-
-    - name: Force min dep
-      if: ${{ matrix.use-oldest-numpy}}
-      run: |
-        sed -i "s/numpy.*/oldest-supported-numpy/g" requirements.txt
-        cat requirements*.txt
+        python-version: ${{ matrix.python-version }}
 
     - name: Build sdist
       run: |
         set -x
-        python -m pip install --upgrade pip
+        pip install --upgrade pip
         pip install build
         pip freeze
 
@@ -47,7 +41,7 @@ jobs:
 
     - uses: actions/upload-artifact@v4
       with:
-        name: the-sdist-${{ matrix.use-oldest-numpy }}
+        name: the-sdist-${{ matrix.python-version }}
         path: dist/scikit_surprise*
 
   install-and-test:
@@ -56,14 +50,13 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: ["3.8", "3.9", "3.10"]
-        use-oldest-numpy : [true, false]
+        python-version: ["3.8", "3.9", "3.10", "3.11", "3.12"]
     needs: build
     steps:
     - uses: actions/checkout@v4
     - uses: actions/download-artifact@v4
       with:
-        name: the-sdist-${{ matrix.use-oldest-numpy}}
+        name: the-sdist-${{ matrix.python-version }}
         path: dist/
 
     - name: Set up Python ${{ matrix.python-version }}
@@ -75,7 +68,7 @@ jobs:
       run: |
         set -x
 
-        python -m pip install --upgrade pip
+        pip install --upgrade pip
         pip install "`ls dist/scikit_surprise*.tar.gz`[test]" -v
 
     - name: Pip freeze
