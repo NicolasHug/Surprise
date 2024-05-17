@@ -69,7 +69,7 @@ jobs:
         set -x
 
         pip install --upgrade pip
-        pip install dist/scikit_surprise-1.1.4.tar.gz`[test]" -v
+        pip install dist/scikit_surprise-1.1.4.tar.gz -v
 
     - name: Pip freeze
       run: |
@@ -77,4 +77,5 @@ jobs:
 
     - name: Run unit tests
       run: |
+        pip install pandas pytest  # Or just use pip install ...[test] ?
         pytest -v
