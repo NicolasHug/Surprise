@@ -48,4 +48,4 @@ readme = { content-type = "text/markdown", file = [
 ]}
 
 [tool.setuptools.packages.find]
-exclude = ["tests*"]
+exclude = ["tests*", "doc*", "examples*",]

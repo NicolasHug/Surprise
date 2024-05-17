@@ -4,10 +4,20 @@ import numpy as np
 from Cython.Build import cythonize
 
 """
+Prior to relying on PEP517/518 and using pyproject.toml, this setup.py used to
+be an unintelligible mess. The main reason being that there were no clear
+distinction between run-time and build-time dependencies, and since we didn't
+want to make Cython a run-time dep, we had to enable a way to install the sdist
+from the .c files instead of from the .pyx file.
+Anyways. Now Cython is a build-time dep, not a run-time dep.
+
+Creating the sdist still involves compiling the .pyx into .c because we're
+executing this file. This is unnecessary but it doesn't matter. The .c files are
+excluded from the sdist (in MANIFEST.in) anyway.
+
 Release instruction:
 
-Update changelog and contributors list. If you ever change the dependencies in
-`pyproject.toml`, also update the hardcoded numpy version under [build-system] -> requires
+Update changelog and contributors list. 
 
 Basic local checks:
 - tests run correctly
@@ -15,23 +25,19 @@ Basic local checks:
 
 Check that the latest RTD build was OK: https://readthedocs.org/projects/surprise/builds/
 
-Change __version__ in setup.py to new version name. Also update the hardcoded
+Change __version__ in __init__.py to new version name. Also update the hardcoded
 version in build_sdist.yml, otherwise the GA jobs will fail.
 
-The sdist is built on 3.8 by GA:
-- check the sdist building process. It should compile pyx files and the C files
-  should be included in the archive
-- check the install jobs. Look for compilation warnings. Make sure Cython isn't
-  needed and only C files are compiled.
+The sdist is built on Python 3.8. It should be installable from all Python
+versions.
+- check the sdist building process. It will (unnecessarily) compily the .pyx
+  files and the .c files should be excluded from the archive.
+- check the install jobs. This will compile the .pyx files again as well as the
+  .c files. Look for compilation warnings.
 - check test jobs for warnings etc.
 
-It's best to just get the sdist artifact from the job instead of re-building it
-locally. Get the "false" sdist: false == with `numpy>=` constraint, not with
-`oldest-supported-numpy`. We don't want `oldest-supported-numpy` as the uploaded
-sdist because it's more restrictive.
-
-Then upload to test pypi:
-    twine upload blabla.tar.gz -r testpypi
+Download the sdist from the CI job then upload it to test pypi: twine upload
+blabla.tar.gz -r testpypi
 
 Check that install works on testpypi, then upload to pypi and check again.
 to install from testpypi:
