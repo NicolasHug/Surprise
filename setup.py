@@ -31,7 +31,7 @@ version in build_sdist.yml, otherwise the GA jobs will fail.
 The sdist is built on Python 3.8. It should be installable from all Python
 versions.
 - check the sdist building process. It will (unnecessarily) compily the .pyx
-  files and the .c files should be excluded from the archive.
+  files and the .c files should be excluded from the archive, this is checked.
 - check the install jobs. This will compile the .pyx files again as well as the
   .c files. Look for compilation warnings.
 - check test jobs for warnings etc.
