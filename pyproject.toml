@@ -1,0 +1,51 @@
+[project]
+name = "scikit-surprise"
+authors = [{ name = "Nicolas Hug", email = "contact@nicolas-hug.com" }]
+description = "An easy-to-use library for recommender systems."
+requires-python = ">=3.8"
+keywords = [ "recommender", "recommendation system" ]
+classifiers = [
+  "Development Status :: 5 - Production/Stable",
+  "Intended Audience :: Developers",
+  "Intended Audience :: Education",
+  "Intended Audience :: Science/Research",
+  "Topic :: Scientific/Engineering",
+  "License :: OSI Approved :: BSD License",
+  "Programming Language :: Python :: 3.8",
+  "Programming Language :: Python :: 3.9",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+]
+license = { "file" = "LICENSE.md" }
+dependencies = [
+  # Lower bounds for deps are as in scikit-learn in May 2024, 1.6.dev0
+  "joblib>=1.2.0",
+  "numpy>=1.19.5",
+  "scipy>=1.6.0"
+]
+dynamic = ["version", "readme"]
+
+[project.optional-dependencies]
+test = ["pytest", "pandas"]
+docs = ["sphinx", "sphinx_rtd_theme", "sphinxcontrib-bibtex", "sphinxcontrib-spelling"]
+
+[project.scripts]
+surprise = "surprise.__main__:main"
+
+[project.urls]
+homepage = "https://surpriselib.com"
+repository = "https://github.com/NicolasHug/Surprise"
+
+[build-system]
+requires = ["setuptools>=61.0.0", "wheel", "Cython>=3.0.10", "oldest-supported-numpy"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.dynamic]
+version = { attr = "surprise.__version__"}
+readme = { content-type = "text/markdown", file = [
+  "README.md",
+]}
+
+[tool.setuptools.packages.find]
+exclude = ["tests*", "doc*", "examples*",]

@@ -1,12 +1,6 @@
 # This workflow builds the sdist on 3.8 and then installs that same sdist on
-# clean envs from all python versions, then runs tests.
-# We also try to replace numpy with oldest-supported-numpy as install-time
-# dependency (install-time == installing from the sdist with the .c files
-# present). I'm not sure this is the intended use for the package, but this is
-# the only way I can find to test on an "old" version of numpy, instead of the
-# latest available like the regular `numpy>=X` constraint would do.
 
-name: Build sdist and test
+name: Create sdist install and test
 
 on:
   push:
@@ -20,8 +14,6 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
-      matrix:
-        use-oldest-numpy: [true, false]
 
     steps:
     - uses: actions/checkout@v4
@@ -30,25 +22,19 @@ jobs:
       with:
         python-version: "3.8"
 
-    - name: Force min dep
-      if: ${{ matrix.use-oldest-numpy}}
-      run: |
-        sed -i "s/numpy.*/oldest-supported-numpy/g" requirements.txt
-        cat requirements*.txt
-
     - name: Build sdist
       run: |
         set -x
-        python -m pip install --upgrade pip
-        pip install -r requirements_dev.txt
+        pip install --upgrade pip
+        pip install build
         pip freeze
 
-        python setup.py sdist -v
+        python -m build . --sdist
 
     - uses: actions/upload-artifact@v4
       with:
-        name: the-sdist-${{ matrix.use-oldest-numpy }}
-        path: dist/scikit-surprise-1.1.3.tar.gz
+        name: the-sdist
+        path: dist/scikit_surprise*
 
   install-and-test:
 
@@ -56,14 +42,14 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: ["3.8", "3.9", "3.10"]
-        use-oldest-numpy : [true, false]
+        python-version: ["3.8", "3.9", "3.10", "3.11", "3.12"]
     needs: build
     steps:
     - uses: actions/checkout@v4
     - uses: actions/download-artifact@v4
       with:
-        name: the-sdist-${{ matrix.use-oldest-numpy}}
+        name: the-sdist
+        path: dist/
 
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v5
@@ -74,8 +60,8 @@ jobs:
       run: |
         set -x
 
-        python -m pip install --upgrade pip
-        pip install scikit-surprise-1.1.3.tar.gz -v
+        pip install --upgrade pip
+        pip install dist/scikit_surprise-1.1.4.dev0.tar.gz -v
 
     - name: Pip freeze
       run: |
@@ -83,5 +69,5 @@ jobs:
 
     - name: Run unit tests
       run: |
-        pip install pytest pandas
+        pip install pandas pytest  # Or just use pip install ...[test] ?
         pytest -v

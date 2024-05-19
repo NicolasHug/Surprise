@@ -1,14 +1,24 @@
-from codecs import open
-from os import path
+from setuptools import Extension, setup
 
-from setuptools import Extension, find_packages, setup
+import numpy as np
+from Cython.Build import cythonize
 
 """
+Prior to relying on PEP517/518 and using pyproject.toml, this setup.py used to
+be an unintelligible mess. The main reason being that there were no clear
+distinction between run-time and build-time dependencies, and since we didn't
+want to make Cython a run-time dep, we had to enable a way to install the sdist
+from the .c files instead of from the .pyx file.
+Anyways. Now Cython is a build-time dep, not a run-time dep, since installing
+from the sdist happens in an isolated env.
+
+Creating the sdist still involves compiling the .pyx into .c because we're
+executing this file. This is unnecessary but it doesn't matter. The .c files are
+excluded from the sdist (in MANIFEST.in) anyway.
+
 Release instruction:
 
-Update changelog and contributors list. If you ever change the
-`requirements[_dev].txt`, also update the hardcoded numpy version here down
-below. Or find a way to always keep both consistent.
+Update changelog and contributors list. 
 
 Basic local checks:
 - tests run correctly
@@ -16,23 +26,19 @@ Basic local checks:
 
 Check that the latest RTD build was OK: https://readthedocs.org/projects/surprise/builds/
 
-Change __version__ in setup.py to new version name. Also update the hardcoded
+Change __version__ in __init__.py to new version name. Also update the hardcoded
 version in build_sdist.yml, otherwise the GA jobs will fail.
 
-The sdist is built on 3.8 by GA:
-- check the sdist building process. It should compile pyx files and the C files
-  should be included in the archive
-- check the install jobs. Look for compilation warnings. Make sure Cython isn't
-  needed and only C files are compiled.
+The sdist is built on Python 3.8. It should be installable from all Python
+versions.
+- check the sdist building process. It will (unnecessarily) compily the .pyx
+  files and the .c files should be excluded from the archive.
+- check the install jobs. This will compile the .pyx files again as well as the
+  .c files. Look for compilation warnings.
 - check test jobs for warnings etc.
 
-It's best to just get the sdist artifact from the job instead of re-building it
-locally. Get the "false" sdist: false == with `numpy>=` constraint, not with
-`oldest-supported-numpy`. We don't want `oldest-supported-numpy` as the uploaded
-sdist because it's more restrictive.
-
-Then upload to test pypi:
-    twine upload blabla.tar.gz -r testpypi
+Download the sdist from the CI job then upload it to test pypi: twine upload
+blabla.tar.gz -r testpypi
 
 Check that install works on testpypi, then upload to pypi and check again.
 to install from testpypi:
@@ -60,108 +66,62 @@ In the mean time, upload to conda:
 Then, maybe, celebrate.
 """
 
-from setuptools import dist  # Install numpy right now
+# This prevents Cython from using deprecated numpy C APIs
+define_macros = [("NPY_NO_DEPRECATED_API", "NPY_1_7_API_VERSION")]
 
-dist.Distribution().fetch_build_eggs(["numpy>=1.17.3"])
-
-try:
-    import numpy as np
-except ImportError:
-    exit("Please install numpy>=1.17.3 first.")
-
-try:
-    from Cython.Build import cythonize
-    from Cython.Distutils import build_ext
-except ImportError:
-    USE_CYTHON = False
-else:
-    USE_CYTHON = True
-
-__version__ = "1.1.3"
-
-here = path.abspath(path.dirname(__file__))
-
-# Get the long description from README.md
-with open(path.join(here, "README.md"), encoding="utf-8") as f:
-    long_description = f.read()
-
-# get the dependencies and installs
-with open(path.join(here, "requirements.txt"), encoding="utf-8") as f:
-    install_requires = [line.strip() for line in f.read().split("\n")]
-
-cmdclass = {}
-
-ext = ".pyx" if USE_CYTHON else ".c"
+# We're using numpy C APIs in our Cython code so Cython will generate C code
+# that requires the numpy headers. We need to tell the compiler where to find
+# those headers.
+# If you remove this and compilation still works, don't get fooled: it's
+# probably only because the numpy headers are available in the default locations
+# like /usr/include/numpy/ so they get found. But that wouldn't necessarily be
+# the case on other users' machines building the sdist.
+include_dirs = [np.get_include()]
 
 extensions = [
     Extension(
-        "surprise.similarities",
-        ["surprise/similarities" + ext],
-        include_dirs=[np.get_include()],
+        # name is where the .so will be placed, i.e. where the module will be
+        # importable from.
+        name="surprise.similarities",
+        sources=["surprise/similarities.pyx"],
+        include_dirs=include_dirs,
+        define_macros=define_macros,
     ),
     Extension(
-        "surprise.prediction_algorithms.matrix_factorization",
-        ["surprise/prediction_algorithms/matrix_factorization" + ext],
-        include_dirs=[np.get_include()],
+        name="surprise.prediction_algorithms.matrix_factorization",
+        sources=["surprise/prediction_algorithms/matrix_factorization.pyx"],
+        include_dirs=include_dirs,
+        define_macros=define_macros,
     ),
     Extension(
-        "surprise.prediction_algorithms.optimize_baselines",
-        ["surprise/prediction_algorithms/optimize_baselines" + ext],
-        include_dirs=[np.get_include()],
+        name="surprise.prediction_algorithms.optimize_baselines",
+        sources=["surprise/prediction_algorithms/optimize_baselines.pyx"],
+        include_dirs=include_dirs,
+        define_macros=define_macros,
     ),
     Extension(
-        "surprise.prediction_algorithms.slope_one",
-        ["surprise/prediction_algorithms/slope_one" + ext],
-        include_dirs=[np.get_include()],
+        name="surprise.prediction_algorithms.slope_one",
+        sources=["surprise/prediction_algorithms/slope_one.pyx"],
+        include_dirs=include_dirs,
+        define_macros=define_macros,
     ),
     Extension(
-        "surprise.prediction_algorithms.co_clustering",
-        ["surprise/prediction_algorithms/co_clustering" + ext],
-        include_dirs=[np.get_include()],
+        name="surprise.prediction_algorithms.co_clustering",
+        sources=["surprise/prediction_algorithms/co_clustering.pyx"],
+        include_dirs=include_dirs,
+        define_macros=define_macros,
     ),
 ]
 
-if USE_CYTHON:
-    # See https://cython.readthedocs.io/en/latest/src/userguide/source_files_and_compilation.html#distributing-cython-modules
-    extensions = cythonize(
-        extensions,
-        compiler_directives={
-            "language_level": 3,
-            "boundscheck": False,
-            "wraparound": False,
-            "initializedcheck": False,
-            "nonecheck": False,
-        },
-    )
-    cmdclass.update({"build_ext": build_ext})
-
-setup(
-    name="scikit-surprise",
-    author="Nicolas Hug",
-    author_email="contact@nicolas-hug.com",
-    description=("An easy-to-use library for recommender systems."),
-    long_description=long_description,
-    long_description_content_type="text/markdown",
-    version=__version__,
-    url="https://surpriselib.com",
-    license="GPLv3+",
-    classifiers=[
-        "Development Status :: 5 - Production/Stable",
-        "Intended Audience :: Developers",
-        "Intended Audience :: Education",
-        "Intended Audience :: Science/Research",
-        "Topic :: Scientific/Engineering",
-        "License :: OSI Approved :: BSD License",
-        "Programming Language :: Python :: 3.8",
-        "Programming Language :: Python :: 3.9",
-        "Programming Language :: Python :: 3.10",
-    ],
-    keywords="recommender recommendation system",
-    packages=find_packages(exclude=["tests*"]),
-    python_requires=">=3.8",
-    include_package_data=True,
-    ext_modules=extensions,
-    cmdclass=cmdclass,
-    install_requires=install_requires,
-    entry_points={"console_scripts": ["surprise = surprise.__main__:main"]},
+extensions = cythonize(
+    extensions,
+    compiler_directives={
+        "language_level": 3,
+        "boundscheck": False,
+        "wraparound": False,
+        "initializedcheck": False,
+        "nonecheck": False,
+    },
 )
+
+setup(ext_modules=extensions)
