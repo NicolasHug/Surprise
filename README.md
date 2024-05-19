@@ -200,12 +200,13 @@ Contributors
 
 The following persons have contributed to [Surprise](https://surpriselib.com):
 
-ashtou, bobbyinfj, caoyi, Олег Демиденко, Charles-Emmanuel Dias, dmamylin,
-Lauriane Ducasse, Marc Feger, franckjay, Lukas Galke, Tim Gates, Pierre-François
-Gimenez, Zachary Glassman, Jeff Hale, Nicolas Hug, Janniks, jyesawtellrickson,
-Doruk Kilitcioglu, Ravi Raju Krishna, lapidshay, Hengji Liu, Ravi Makhija, Maher
-Malaeb, Manoj K, James McNeilis, Naturale0, nju-luke, Pierre-Louis Pécheux, Jay
-Qi, Lucas Rebscher, Skywhat, Hercules Smith, David Stevens, Vesna Tanko,
+ashtou, Abhishek Bhatia, bobbyinfj, caoyi, Chieh-Han Chen,  Raphael-Dayan, Олег
+Демиденко, Charles-Emmanuel Dias, dmamylin, Lauriane Ducasse, Marc Feger,
+franckjay, Lukas Galke, Tim Gates, Pierre-François Gimenez, Zachary Glassman,
+Jeff Hale, Nicolas Hug, Janniks, jyesawtellrickson, Doruk Kilitcioglu, Ravi Raju
+Krishna, lapidshay, Hengji Liu, Ravi Makhija, Maher Malaeb, Manoj K, James
+McNeilis, Naturale0, nju-luke, Pierre-Louis Pécheux, Jay Qi, Lucas Rebscher,
+Craig Rodrigues, Skywhat, Hercules Smith, David Stevens, Vesna Tanko,
 TrWestdoor, Victor Wang, Mike Lee Williams, Jay Wong, Chenchen Xu, YaoZh1918.
 
 Thanks a lot :) !
