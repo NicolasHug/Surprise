@@ -9,7 +9,8 @@ be an unintelligible mess. The main reason being that there were no clear
 distinction between run-time and build-time dependencies, and since we didn't
 want to make Cython a run-time dep, we had to enable a way to install the sdist
 from the .c files instead of from the .pyx file.
-Anyways. Now Cython is a build-time dep, not a run-time dep.
+Anyways. Now Cython is a build-time dep, not a run-time dep, since installing
+from the sdist happens in an isolated env.
 
 Creating the sdist still involves compiling the .pyx into .c because we're
 executing this file. This is unnecessary but it doesn't matter. The .c files are
@@ -31,7 +32,7 @@ version in build_sdist.yml, otherwise the GA jobs will fail.
 The sdist is built on Python 3.8. It should be installable from all Python
 versions.
 - check the sdist building process. It will (unnecessarily) compily the .pyx
-  files and the .c files should be excluded from the archive, this is checked.
+  files and the .c files should be excluded from the archive.
 - check the install jobs. This will compile the .pyx files again as well as the
   .c files. Look for compilation warnings.
 - check test jobs for warnings etc.
