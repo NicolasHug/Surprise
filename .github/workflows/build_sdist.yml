@@ -61,7 +61,7 @@ jobs:
         set -x
 
         pip install --upgrade pip
-        pip install dist/scikit_surprise-1.1.4.dev0.tar.gz -v
+        pip install dist/scikit_surprise-1.1.4.tar.gz -v
 
     - name: Pip freeze
       run: |

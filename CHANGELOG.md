@@ -1,3 +1,15 @@
+VERSION 1.1.4
+=============
+
+Date: 05/2024
+
+Enhancements
+------------
+
+* Rely on `pyproject.toml` for packaging to avoid numpy and Cython build-time
+  dependency issues
+* Support Python 3.12
+
 VERSION 1.1.3
 =============
 
