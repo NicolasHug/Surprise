@@ -31,6 +31,7 @@ jobs:
         pip install -r requirements.txt
     - name: Build docs
       run: |
+        cd doc
         make clean
         make html
     - uses: actions/upload-artifact@v4
