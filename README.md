@@ -149,10 +149,8 @@ example](https://github.com/NicolasHug/Surprise/tree/master/examples/benchmark.p
 Installation
 ------------
 
-With pip (you'll need [numpy](https://www.numpy.org/), and a C compiler. Windows
-users might prefer using conda):
+With pip (you'll need a C compiler. Windows users might prefer using conda):
 
-    $ pip install numpy
     $ pip install scikit-surprise
 
 With conda:
@@ -163,10 +161,9 @@ For the latest version, you can also clone the repo and build the source
 (you'll first need [Cython](https://cython.org/) and
 [numpy](https://www.numpy.org/)):
 
-    $ pip install numpy cython
     $ git clone https://github.com/NicolasHug/surprise.git
     $ cd surprise
-    $ python setup.py install
+    $ pip install .
 
 License and reference
 ---------------------

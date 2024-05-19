@@ -25,19 +25,13 @@ Before submitting a new pull request, please make sure that:
 Set up
 ------
 
-It's highly recommended to use a virtual environment. All the packages needed
-for the development of Surprise (sphinx, flake8, etc...) can be installed by
-running
+Clone the repo then:
 
-    pip install -r requirements_dev.txt
-
-Then, you can install your local copy of the repo:
-
-    pip install -e .
+    pip install -e .  # the --no-build-isolation flag might help
 
 Any change to the code should now be immediately reflected during execution. If
 you're modifying Cython code (`.pyx` files), you'll need to compile the code in
-order to see the changes. This can be achieved by running `pip install -e .`
+order to see the changes. This can be achieved by running the command above
 again.
 
 Running and writing tests
@@ -60,6 +54,7 @@ Building the docs locally
 The docs can be compiled with
 
     cd doc
+    pip install -r requirements.txt
     make html
 
 You can check the results in `doc/build/html`. Please make sure that the docs
