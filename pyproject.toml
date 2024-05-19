@@ -26,10 +26,6 @@ dependencies = [
 ]
 dynamic = ["version", "readme"]
 
-[project.optional-dependencies]
-test = ["pytest", "pandas"]
-docs = ["sphinx", "sphinx_rtd_theme", "sphinxcontrib-bibtex", "sphinxcontrib-spelling"]
-
 [project.scripts]
 surprise = "surprise.__main__:main"
 
