@@ -6,6 +6,7 @@ the :mod:`co_clustering` module includes the :class:`CoClustering` algorithm.
 
 
 cimport numpy as np  # noqa
+np.import_array()  # noqa
 import numpy as np
 
 from .algo_base import AlgoBase

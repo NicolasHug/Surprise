@@ -61,7 +61,10 @@ jobs:
         set -x
 
         pip install --upgrade pip
+        pip install "numpy==2.0.0rc2"
+        python -c "import numpy; print(f'{numpy.__version__ = }')"
         pip install dist/scikit_surprise-1.1.4.tar.gz -v
+        python -c "import numpy; print(f'{numpy.__version__ = }')"
 
     - name: Pip freeze
       run: |

@@ -6,6 +6,7 @@ the :mod:`slope_one` module includes the :class:`SlopeOne` algorithm.
 
 
 cimport numpy as np  # noqa
+np.import_array()  # noqa
 import numpy as np
 
 from .algo_base import AlgoBase
