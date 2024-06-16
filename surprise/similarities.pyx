@@ -17,6 +17,7 @@ Available similarity measures:
 
 
 cimport numpy as np  # noqa
+np.import_array()  # noqa
 import numpy as np
 from libc.math cimport sqrt
 
