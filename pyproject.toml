@@ -21,7 +21,7 @@ license = { "file" = "LICENSE.md" }
 dependencies = [
   # Lower bounds for deps are as in scikit-learn in May 2024, 1.6.dev0
   "joblib>=1.2.0",
-  "numpy>=1.19.5",
+  "numpy>=1.19.5,<2.0.0",
   "scipy>=1.6.0"
 ]
 dynamic = ["version", "readme"]
