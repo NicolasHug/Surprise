@@ -19,6 +19,7 @@ Available similarity measures:
 cimport numpy as np  # noqa
 import numpy as np
 from libc.math cimport sqrt
+from libc.stdint cimport int64_t
 
 
 def cosine(int n_x, yr, int min_support):
@@ -51,15 +52,15 @@ def cosine(int n_x, yr, int min_support):
     """
 
     # sum (r_xy * r_x'y) for common ys
-    cdef double [:, ::1] prods = np.zeros((n_x, n_x), np.double)
+    cdef double [:, ::1] prods = np.zeros((n_x, n_x), dtype=np.float64)
     # number of common ys
-    cdef long [:, ::1] freq = np.zeros((n_x, n_x), np.int_)
+    cdef int64_t [:, ::1] freq = np.zeros((n_x, n_x), dtype=np.int64)
     # sum (r_xy ^ 2) for common ys
-    cdef double [:, ::1] sqi = np.zeros((n_x, n_x), np.double)
+    cdef double [:, ::1] sqi = np.zeros((n_x, n_x), dtype=np.float64)
     # sum (r_x'y ^ 2) for common ys
-    cdef double [:, ::1] sqj = np.zeros((n_x, n_x), np.double)
+    cdef double [:, ::1] sqj = np.zeros((n_x, n_x), dtype=np.float64)
     # the similarity matrix
-    cdef double [:, ::1] sim = np.zeros((n_x, n_x), np.double)
+    cdef double [:, ::1] sim = np.zeros((n_x, n_x), dtype=np.float64)
 
     cdef int xi, xj, y
     cdef double ri, rj
@@ -122,11 +123,11 @@ def msd(int n_x, yr, int min_support):
     """
 
     # sum (r_xy - r_x'y)**2 for common ys
-    cdef double [:, ::1] sq_diff = np.zeros((n_x, n_x), np.double)
+    cdef double [:, ::1] sq_diff = np.zeros((n_x, n_x), dtype=np.float64)
     # number of common ys
-    cdef long [:, ::1] freq = np.zeros((n_x, n_x), np.int_)
+    cdef int64_t [:, ::1] freq = np.zeros((n_x, n_x), dtype=np.int64)
     # the similarity matrix
-    cdef double [:, ::1] sim = np.zeros((n_x, n_x), np.double)
+    cdef double [:, ::1] sim = np.zeros((n_x, n_x), dtype=np.float64)
 
     cdef int xi, xj
     cdef double ri, rj
@@ -186,19 +187,19 @@ def pearson(int n_x, yr, int min_support):
 
     """
     # number of common ys
-    cdef long [:, ::1] freq = np.zeros((n_x, n_x), np.int_)
+    cdef int64_t [:, ::1] freq = np.zeros((n_x, n_x), dtype=np.int64)
     # sum (r_xy * r_x'y) for common ys
-    cdef double [:, ::1] prods = np.zeros((n_x, n_x), np.double)
+    cdef double [:, ::1] prods = np.zeros((n_x, n_x), dtype=np.float64)
     # sum (rxy ^ 2) for common ys
-    cdef double [:, ::1] sqi = np.zeros((n_x, n_x), np.double)
+    cdef double [:, ::1] sqi = np.zeros((n_x, n_x), dtype=np.float64)
     # sum (rx'y ^ 2) for common ys
-    cdef double [:, ::1] sqj = np.zeros((n_x, n_x), np.double)
+    cdef double [:, ::1] sqj = np.zeros((n_x, n_x), dtype=np.float64)
     # sum (rxy) for common ys
-    cdef double [:, ::1] si = np.zeros((n_x, n_x), np.double)
+    cdef double [:, ::1] si = np.zeros((n_x, n_x), dtype=np.float64)
     # sum (rx'y) for common ys
-    cdef double [:, ::1] sj = np.zeros((n_x, n_x), np.double)
+    cdef double [:, ::1] sj = np.zeros((n_x, n_x), dtype=np.float64)
     # the similarity matrix
-    cdef double [:, ::1] sim = np.zeros((n_x, n_x), np.double)
+    cdef double [:, ::1] sim = np.zeros((n_x, n_x), dtype=np.float64)
 
     cdef int xi, xj, y, n
     cdef double ri, rj, num, denum
@@ -286,15 +287,15 @@ def pearson_baseline(
     """
 
     # number of common ys
-    cdef long [:, ::1] freq = np.zeros((n_x, n_x), np.int_)
+    cdef int64_t [:, ::1] freq = np.zeros((n_x, n_x), dtype=np.int64)
     # sum (r_xy - b_xy) * (r_x'y - b_x'y) for common ys
-    cdef double [:, ::1] prods = np.zeros((n_x, n_x), np.double)
+    cdef double [:, ::1] prods = np.zeros((n_x, n_x), dtype=np.float64)
     # sum (r_xy - b_xy)**2 for common ys
-    cdef double [:, ::1] sq_diff_i = np.zeros((n_x, n_x), np.double)
+    cdef double [:, ::1] sq_diff_i = np.zeros((n_x, n_x), dtype=np.float64)
     # sum (r_x'y - b_x'y)**2 for common ys
-    cdef double [:, ::1] sq_diff_j = np.zeros((n_x, n_x), np.double)
+    cdef double [:, ::1] sq_diff_j = np.zeros((n_x, n_x), dtype=np.float64)
     # the similarity matrix
-    cdef double [:, ::1] sim = np.zeros((n_x, n_x), np.double)
+    cdef double [:, ::1] sim = np.zeros((n_x, n_x), dtype=np.float64)
 
     cdef int y, xi, xj
     cdef double ri, rj, diff_i, diff_j, partial_bias

@@ -7,6 +7,7 @@ the :mod:`slope_one` module includes the :class:`SlopeOne` algorithm.
 
 cimport numpy as np  # noqa
 import numpy as np
+from libc.stdint cimport int64_t
 
 from .algo_base import AlgoBase
 from .predictions import PredictionImpossible
@@ -44,9 +45,9 @@ class SlopeOne(AlgoBase):
         cdef int n_items = trainset.n_items
 
         # Number of users having rated items i and j: |U_ij|
-        cdef long [:, ::1] freq = np.zeros((trainset.n_items, trainset.n_items), np.int_)
+        cdef int64_t [:, ::1] freq = np.zeros((trainset.n_items, trainset.n_items), dtype=np.int64)
         # Deviation from item i to item j: mean(r_ui - r_uj for u in U_ij)
-        cdef double [:, ::1] dev = np.zeros((trainset.n_items, trainset.n_items), np.double)
+        cdef double [:, ::1] dev = np.zeros((trainset.n_items, trainset.n_items), dtype=np.float64)
         cdef int u, i, j, r_ui, r_uj
 
         AlgoBase.fit(self, trainset)

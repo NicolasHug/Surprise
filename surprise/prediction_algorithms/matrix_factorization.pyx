@@ -193,9 +193,9 @@ class SVD(AlgoBase):
         rng = get_rng(self.random_state)
 
         # user biases
-        cdef double [::1] bu = np.zeros(trainset.n_users, dtype=np.double)
+        cdef double [::1] bu = np.zeros(trainset.n_users, dtype=np.float64)
         # item biases
-        cdef double [::1] bi = np.zeros(trainset.n_items, dtype=np.double)
+        cdef double [::1] bi = np.zeros(trainset.n_items, dtype=np.float64)
         # user factors
         cdef double [:, ::1] pu = rng.normal(self.init_mean, self.init_std_dev, size=(trainset.n_users, self.n_factors))
         # item factors
@@ -406,9 +406,9 @@ class SVDpp(AlgoBase):
         rng = get_rng(self.random_state)
 
         # user biases
-        cdef double [::1] bu = np.zeros(trainset.n_users, dtype=np.double)
+        cdef double [::1] bu = np.zeros(trainset.n_users, dtype=np.float64)
         # item biases
-        cdef double [::1] bi = np.zeros(trainset.n_items, dtype=np.double)
+        cdef double [::1] bi = np.zeros(trainset.n_items, dtype=np.float64)
         # user factors
         cdef double [:, ::1] pu = rng.normal(self.init_mean, self.init_std_dev, size=(trainset.n_users, self.n_factors))
         # item factors
@@ -416,7 +416,7 @@ class SVDpp(AlgoBase):
         # item implicit factors
         cdef double [:, ::1] yj = rng.normal(self.init_mean, self.init_std_dev, size=(trainset.n_items, self.n_factors))
 
-        cdef double [::1] u_impl_fdb = np.zeros(self.n_factors, dtype=np.double)
+        cdef double [::1] u_impl_fdb = np.zeros(self.n_factors, dtype=np.float64)
 
         cdef int u, i, j, f, k, Iu_length
         cdef int max_Iu_length = 0
@@ -668,8 +668,8 @@ class NMF(AlgoBase):
         cdef double [:, ::1] qi = rng.uniform(self.init_low, self.init_high, size=(trainset.n_items, self.n_factors))
 
         # user and item biases
-        cdef double [::1] bu = np.zeros(trainset.n_users, dtype=np.double)
-        cdef double [::1] bi = np.zeros(trainset.n_items, dtype=np.double)
+        cdef double [::1] bu = np.zeros(trainset.n_users, dtype=np.float64)
+        cdef double [::1] bi = np.zeros(trainset.n_items, dtype=np.float64)
 
         cdef int u, i, f
         cdef int n_factors = self.n_factors
@@ -683,10 +683,10 @@ class NMF(AlgoBase):
         cdef double global_mean = self.trainset.global_mean
 
         # auxiliary matrices used in optimization process
-        cdef double [:, ::1] user_num = np.zeros((trainset.n_users, n_factors))
-        cdef double [:, ::1] user_denom = np.zeros((trainset.n_users, n_factors))
-        cdef double [:, ::1] item_num = np.zeros((trainset.n_items, n_factors))
-        cdef double [:, ::1] item_denom = np.zeros((trainset.n_items, n_factors))
+        cdef double [:, ::1] user_num = np.zeros((trainset.n_users, n_factors), dtype=np.float64)
+        cdef double [:, ::1] user_denom = np.zeros((trainset.n_users, n_factors), dtype=np.float64)
+        cdef double [:, ::1] item_num = np.zeros((trainset.n_items, n_factors), dtype=np.float64)
+        cdef double [:, ::1] item_denom = np.zeros((trainset.n_items, n_factors), dtype=np.float64)
 
 
         if not self.biased:
