@@ -67,7 +67,8 @@ Then, maybe, celebrate.
 """
 
 # This prevents Cython from using deprecated numpy C APIs
-define_macros = [("NPY_NO_DEPRECATED_API", "NPY_1_7_API_VERSION")]
+# Updated to NPY_1_19_API_VERSION for NumPy 2 compatibility
+define_macros = [("NPY_NO_DEPRECATED_API", "NPY_1_19_API_VERSION")]
 
 # We're using numpy C APIs in our Cython code so Cython will generate C code
 # that requires the numpy headers. We need to tell the compiler where to find

@@ -73,19 +73,19 @@ class CoClustering(AlgoBase):
         AlgoBase.fit(self, trainset)
 
         # User and item means
-        cdef np.ndarray[np.double_t] user_mean
-        cdef np.ndarray[np.double_t] item_mean
+        cdef np.ndarray[np.float64_t] user_mean
+        cdef np.ndarray[np.float64_t] item_mean
 
         # User and items clusters
-        cdef np.ndarray[np.int_t] cltr_u
-        cdef np.ndarray[np.int_t] cltr_i
+        cdef np.ndarray[np.int64_t] cltr_u
+        cdef np.ndarray[np.int64_t] cltr_i
 
         # Average rating of user clusters, item clusters and co-clusters
-        cdef np.ndarray[np.double_t] avg_cltr_u
-        cdef np.ndarray[np.double_t] avg_cltr_i
-        cdef np.ndarray[np.double_t, ndim=2] avg_cocltr
+        cdef np.ndarray[np.float64_t] avg_cltr_u
+        cdef np.ndarray[np.float64_t] avg_cltr_i
+        cdef np.ndarray[np.float64_t, ndim=2] avg_cocltr
 
-        cdef np.ndarray[np.double_t] errors
+        cdef np.ndarray[np.float64_t] errors
         cdef int u, i, r, uc, ic
         cdef double est
 
@@ -154,8 +154,8 @@ class CoClustering(AlgoBase):
 
         return self
 
-    def compute_averages(self, np.ndarray[np.int_t] cltr_u,
-                         np.ndarray[np.int_t] cltr_i):
+    def compute_averages(self, np.ndarray[np.int64_t] cltr_u,
+                         np.ndarray[np.int64_t] cltr_i):
         """Compute cluster averages.
 
         Args:
@@ -168,19 +168,19 @@ class CoClustering(AlgoBase):
         """
 
         # Number of entities in user clusters, item clusters and co-clusters.
-        cdef np.ndarray[np.int_t] count_cltr_u
-        cdef np.ndarray[np.int_t] count_cltr_i
-        cdef np.ndarray[np.int_t, ndim=2] count_cocltr
+        cdef np.ndarray[np.int64_t] count_cltr_u
+        cdef np.ndarray[np.int64_t] count_cltr_i
+        cdef np.ndarray[np.int64_t, ndim=2] count_cocltr
 
         # Sum of ratings for entities in each cluster
-        cdef np.ndarray[np.int_t] sum_cltr_u
-        cdef np.ndarray[np.int_t] sum_cltr_i
-        cdef np.ndarray[np.int_t, ndim=2] sum_cocltr
+        cdef np.ndarray[np.int64_t] sum_cltr_u
+        cdef np.ndarray[np.int64_t] sum_cltr_i
+        cdef np.ndarray[np.int64_t, ndim=2] sum_cocltr
 
         # The averages of each cluster (what will be returned)
-        cdef np.ndarray[np.double_t] avg_cltr_u
-        cdef np.ndarray[np.double_t] avg_cltr_i
-        cdef np.ndarray[np.double_t, ndim=2] avg_cocltr
+        cdef np.ndarray[np.float64_t] avg_cltr_u
+        cdef np.ndarray[np.float64_t] avg_cltr_i
+        cdef np.ndarray[np.float64_t, ndim=2] avg_cocltr
 
         cdef int u, i, r, uc, ic
         cdef double global_mean = self.trainset.global_mean

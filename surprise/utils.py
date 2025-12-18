@@ -14,7 +14,8 @@ def get_rng(random_state):
     seed. If it's already an rng, return it.
     """
     if random_state is None:
-        return np.random.mtrand._rand
+        # NumPy 2 compatibility: use RandomState() instead of mtrand._rand
+        return np.random.RandomState()
     elif isinstance(random_state, (numbers.Integral, np.integer)):
         return np.random.RandomState(random_state)
     if isinstance(random_state, np.random.RandomState):
