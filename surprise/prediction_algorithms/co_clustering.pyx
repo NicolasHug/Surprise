@@ -73,26 +73,28 @@ class CoClustering(AlgoBase):
         AlgoBase.fit(self, trainset)
 
         # User and item means
-        cdef np.ndarray[np.double_t] user_mean
-        cdef np.ndarray[np.double_t] item_mean
+        cdef double [::1] user_mean
+        cdef double [::1] item_mean
 
         # User and items clusters
-        cdef np.ndarray[np.int_t] cltr_u
-        cdef np.ndarray[np.int_t] cltr_i
+        cdef long [::1] cltr_u
+        cdef long [::1] cltr_i
 
         # Average rating of user clusters, item clusters and co-clusters
-        cdef np.ndarray[np.double_t] avg_cltr_u
-        cdef np.ndarray[np.double_t] avg_cltr_i
-        cdef np.ndarray[np.double_t, ndim=2] avg_cocltr
+        cdef double [::1] avg_cltr_u
+        cdef double [::1] avg_cltr_i
+        cdef double [:, ::1] avg_cocltr
 
-        cdef np.ndarray[np.double_t] errors
-        cdef int u, i, r, uc, ic
-        cdef double est
+        cdef double [::1] errors
+        cdef int u, i, uc, ic
+        cdef double est, r
 
         # Randomly assign users and items to intial clusters
         rng = get_rng(self.random_state)
-        cltr_u = rng.randint(self.n_cltr_u, size=trainset.n_users)
-        cltr_i = rng.randint(self.n_cltr_i, size=trainset.n_items)
+        _cltr_u = rng.randint(self.n_cltr_u, size=trainset.n_users)
+        _cltr_i = rng.randint(self.n_cltr_i, size=trainset.n_items)
+        cltr_u = _cltr_u.astype(np.int64)
+        cltr_i = _cltr_i.astype(np.int64)
 
         # Compute user and item means
         user_mean = np.zeros(self.trainset.n_users, np.double)
@@ -110,8 +112,9 @@ class CoClustering(AlgoBase):
                 print("Processing epoch {}".format(epoch))
 
             # Update averages of clusters
-            avg_cltr_u, avg_cltr_i, avg_cocltr = self.compute_averages(cltr_u,
-                                                                       cltr_i)
+            avg_cltr_u, avg_cltr_i, avg_cocltr = compute_averages(self,
+                                                                  cltr_u,
+                                                                  cltr_i)
             # set user cluster to the one that minimizes squarred error of all
             # the user's ratings.
             for u in self.trainset.all_users():
@@ -139,102 +142,21 @@ class CoClustering(AlgoBase):
                 cltr_i[i] = np.argmin(errors)
 
         # Compute averages one last time as clusters may have change
-        avg_cltr_u, avg_cltr_i, avg_cocltr = self.compute_averages(cltr_u,
-                                                                   cltr_i)
+        avg_cltr_u, avg_cltr_i, avg_cocltr = compute_averages(self,
+                                                              cltr_u,
+                                                              cltr_i)
         # Set cdefed arrays as attributes as they are needed for prediction
-        self.cltr_u = cltr_u
-        self.cltr_i = cltr_i
+        self.cltr_u = np.asarray(cltr_u)
+        self.cltr_i = np.asarray(cltr_i)
 
-        self.user_mean = user_mean
-        self.item_mean = item_mean
+        self.user_mean = np.asarray(user_mean)
+        self.item_mean = np.asarray(item_mean)
 
-        self.avg_cltr_u = avg_cltr_u
-        self.avg_cltr_i = avg_cltr_i
-        self.avg_cocltr = avg_cocltr
+        self.avg_cltr_u = np.asarray(avg_cltr_u)
+        self.avg_cltr_i = np.asarray(avg_cltr_i)
+        self.avg_cocltr = np.asarray(avg_cocltr)
 
         return self
-
-    def compute_averages(self, np.ndarray[np.int_t] cltr_u,
-                         np.ndarray[np.int_t] cltr_i):
-        """Compute cluster averages.
-
-        Args:
-            cltr_u: current user clusters
-            cltr_i: current item clusters
-
-        Returns:
-            Three arrays: averages of user clusters, item clusters and
-            co-clusters.
-        """
-
-        # Number of entities in user clusters, item clusters and co-clusters.
-        cdef np.ndarray[np.int_t] count_cltr_u
-        cdef np.ndarray[np.int_t] count_cltr_i
-        cdef np.ndarray[np.int_t, ndim=2] count_cocltr
-
-        # Sum of ratings for entities in each cluster
-        cdef np.ndarray[np.int_t] sum_cltr_u
-        cdef np.ndarray[np.int_t] sum_cltr_i
-        cdef np.ndarray[np.int_t, ndim=2] sum_cocltr
-
-        # The averages of each cluster (what will be returned)
-        cdef np.ndarray[np.double_t] avg_cltr_u
-        cdef np.ndarray[np.double_t] avg_cltr_i
-        cdef np.ndarray[np.double_t, ndim=2] avg_cocltr
-
-        cdef int u, i, r, uc, ic
-        cdef double global_mean = self.trainset.global_mean
-
-        # Initialize everything to zero
-        count_cltr_u = np.zeros(self.n_cltr_u, np.int_)
-        count_cltr_i = np.zeros(self.n_cltr_i, np.int_)
-        count_cocltr = np.zeros((self.n_cltr_u, self.n_cltr_i), np.int_)
-
-        sum_cltr_u = np.zeros(self.n_cltr_u, np.int_)
-        sum_cltr_i = np.zeros(self.n_cltr_i, np.int_)
-        sum_cocltr = np.zeros((self.n_cltr_u, self.n_cltr_i), np.int_)
-
-        avg_cltr_u = np.zeros(self.n_cltr_u, np.double)
-        avg_cltr_i = np.zeros(self.n_cltr_i, np.double)
-        avg_cocltr = np.zeros((self.n_cltr_u, self.n_cltr_i), np.double)
-
-        # Compute counts and sums for every cluster.
-        for u, i, r in self.trainset.all_ratings():
-            uc = cltr_u[u]
-            ic = cltr_i[i]
-
-            count_cltr_u[uc] += 1
-            count_cltr_i[ic] += 1
-            count_cocltr[uc, ic] += 1
-
-            sum_cltr_u[uc] += r
-            sum_cltr_i[ic] += r
-            sum_cocltr[uc, ic] += r
-
-        # Then set the averages for users...
-        for uc in range(self.n_cltr_u):
-            if count_cltr_u[uc]:
-                avg_cltr_u[uc] = sum_cltr_u[uc] / count_cltr_u[uc]
-            else:
-                avg_cltr_u[uc] = global_mean
-
-        # ... for items
-        for ic in range(self.n_cltr_i):
-            if count_cltr_i[ic]:
-                avg_cltr_i[ic] = sum_cltr_i[ic] / count_cltr_i[ic]
-            else:
-                avg_cltr_i[ic] = global_mean
-
-        # ... and for co-clusters
-        for uc in range(self.n_cltr_u):
-            for ic in range(self.n_cltr_i):
-                if count_cocltr[uc, ic]:
-                    avg_cocltr[uc, ic] = (sum_cocltr[uc, ic] /
-                                          count_cocltr[uc, ic])
-                else:
-                    avg_cocltr[uc, ic] = global_mean
-
-        return avg_cltr_u, avg_cltr_i, avg_cocltr
 
     def estimate(self, u, i):
 
@@ -249,14 +171,99 @@ class CoClustering(AlgoBase):
 
         # I doubt cdefing makes any difference here as cython has no clue about
         # arrays self.stuff... But maybe?
-        cdef int _u = u
-        cdef int _i = i
-        cdef int uc = self.cltr_u[_u]
-        cdef int ic = self.cltr_i[_i]
-        cdef double est
+        _u = u
+        _i = i
+        uc = self.cltr_u[_u]
+        ic = self.cltr_i[_i]
 
         est = (self.avg_cocltr[uc, ic] +
                self.user_mean[_u] - self.avg_cltr_u[uc] +
                self.item_mean[_i] - self.avg_cltr_i[ic])
 
         return est
+
+
+def compute_averages(self, cltr_u, cltr_i):
+    """Compute cluster averages.
+
+    Args:
+        cltr_u: current user clusters
+        cltr_i: current item clusters
+
+    Returns:
+        Three arrays: averages of user clusters, item clusters and
+        co-clusters.
+    """
+
+    cdef long [::1] _cltr_u = cltr_u
+    cdef long [::1] _cltr_i = cltr_i
+
+    # Number of entities in user clusters, item clusters and co-clusters.
+    cdef long [::1] count_cltr_u
+    cdef long [::1] count_cltr_i
+    cdef long [:, ::1] count_cocltr
+
+    # Sum of ratings for entities in each cluster
+    cdef double [::1] sum_cltr_u
+    cdef double [::1] sum_cltr_i
+    cdef double [:, ::1] sum_cocltr
+
+    # The averages of each cluster (what will be returned)
+    cdef double [::1] avg_cltr_u
+    cdef double [::1] avg_cltr_i
+    cdef double [:, ::1] avg_cocltr
+
+    cdef int u, i, uc, ic
+    cdef double r
+    cdef double global_mean = self.trainset.global_mean
+
+    # Initialize everything to zero
+    count_cltr_u = np.zeros(self.n_cltr_u, np.int64)
+    count_cltr_i = np.zeros(self.n_cltr_i, np.int64)
+    count_cocltr = np.zeros((self.n_cltr_u, self.n_cltr_i), np.int64)
+
+    sum_cltr_u = np.zeros(self.n_cltr_u, np.double)
+    sum_cltr_i = np.zeros(self.n_cltr_i, np.double)
+    sum_cocltr = np.zeros((self.n_cltr_u, self.n_cltr_i), np.double)
+
+    avg_cltr_u = np.zeros(self.n_cltr_u, np.double)
+    avg_cltr_i = np.zeros(self.n_cltr_i, np.double)
+    avg_cocltr = np.zeros((self.n_cltr_u, self.n_cltr_i), np.double)
+
+    # Compute counts and sums for every cluster.
+    for u, i, r in self.trainset.all_ratings():
+        uc = _cltr_u[u]
+        ic = _cltr_i[i]
+
+        count_cltr_u[uc] += 1
+        count_cltr_i[ic] += 1
+        count_cocltr[uc, ic] += 1
+
+        sum_cltr_u[uc] += r
+        sum_cltr_i[ic] += r
+        sum_cocltr[uc, ic] += r
+
+    # Then set the averages for users...
+    for uc in range(self.n_cltr_u):
+        if count_cltr_u[uc]:
+            avg_cltr_u[uc] = sum_cltr_u[uc] / count_cltr_u[uc]
+        else:
+            avg_cltr_u[uc] = global_mean
+
+    # ... for items
+    for ic in range(self.n_cltr_i):
+        if count_cltr_i[ic]:
+            avg_cltr_i[ic] = sum_cltr_i[ic] / count_cltr_i[ic]
+        else:
+            avg_cltr_i[ic] = global_mean
+
+    # ... and for co-clusters
+    for uc in range(self.n_cltr_u):
+        for ic in range(self.n_cltr_i):
+            if count_cocltr[uc, ic]:
+                avg_cocltr[uc, ic] = (sum_cocltr[uc, ic] /
+                                      count_cocltr[uc, ic])
+            else:
+                avg_cocltr[uc, ic] = global_mean
+
+    return avg_cltr_u, avg_cltr_i, avg_cocltr
