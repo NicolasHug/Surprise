@@ -27,6 +27,7 @@ jobs:
     - name: Install Surprise with docs dependencies
       run: |
         pip install --upgrade pip
+        pip install -e .
         cd doc
         pip install -r requirements.txt
     - name: Build docs

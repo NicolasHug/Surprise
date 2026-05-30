@@ -1,6 +1,7 @@
 """Module for testing the dump module."""
 
 
+import os
 import random
 import tempfile
 
@@ -49,28 +50,40 @@ def test_dump(algo, u1_ml100k):
 
     trainset, testset = next(PredefinedKFold().split(u1_ml100k))
 
-    with tempfile.NamedTemporaryFile() as tmp_file:
-        dump.dump(tmp_file.name, algo=algo)
-        dump.load(tmp_file.name)
+    fd, tmp_path = tempfile.mkstemp()
+    os.close(fd)
+    try:
+        dump.dump(tmp_path, algo=algo)
+        dump.load(tmp_path)
+    finally:
+        os.remove(tmp_path)
 
     algo.fit(trainset)
     predictions = algo.test(testset)
 
-    with tempfile.NamedTemporaryFile() as tmp_file:
-        dump.dump(tmp_file.name, predictions, algo)
-        predictions_dumped, algo_dumped = dump.load(tmp_file.name)
+    fd, tmp_path = tempfile.mkstemp()
+    os.close(fd)
+    try:
+        dump.dump(tmp_path, predictions, algo)
+        predictions_dumped, algo_dumped = dump.load(tmp_path)
 
         assert predictions == predictions_dumped
 
         predictions_algo_dumped = algo_dumped.test(testset)
         if not isinstance(algo, NormalPredictor):  # predictions are random
             assert predictions == predictions_algo_dumped
+    finally:
+        os.remove(tmp_path)
 
 
 def test_dump_nothing():
     """Ensure that by default None objects are dumped."""
-    with tempfile.NamedTemporaryFile() as tmp_file:
-        dump.dump(tmp_file.name)
-        predictions, algo = dump.load(tmp_file.name)
+    fd, tmp_path = tempfile.mkstemp()
+    os.close(fd)
+    try:
+        dump.dump(tmp_path)
+        predictions, algo = dump.load(tmp_path)
         assert predictions is None
         assert algo is None
+    finally:
+        os.remove(tmp_path)
