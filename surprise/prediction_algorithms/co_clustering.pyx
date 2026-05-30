@@ -91,8 +91,8 @@ class CoClustering(AlgoBase):
 
         # Randomly assign users and items to intial clusters
         rng = get_rng(self.random_state)
-        cltr_u = rng.randint(self.n_cltr_u, size=trainset.n_users)
-        cltr_i = rng.randint(self.n_cltr_i, size=trainset.n_items)
+        cltr_u = rng.randint(self.n_cltr_u, size=trainset.n_users).astype(np.intp)
+        cltr_i = rng.randint(self.n_cltr_i, size=trainset.n_items).astype(np.intp)
 
         # Compute user and item means
         user_mean = np.zeros(self.trainset.n_users, np.double)
