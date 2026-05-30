@@ -19,7 +19,7 @@ jobs:
     - uses: actions/checkout@v4
 
     - name: Build wheels
-      uses: pypa/cibuildwheel@v3
+      uses: pypa/cibuildwheel@v3.4.1
       env:
         CIBW_BUILD: "cp310-* cp311-* cp312-* cp313-* cp313t-* cp314-* cp314t-*"
         CIBW_SKIP: "*-win32 *-manylinux_i686 *-musllinux*"
