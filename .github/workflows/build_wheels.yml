@@ -13,22 +13,15 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, macos-latest, macos-13, windows-latest]
+        os: [ubuntu-latest, ubuntu-24.04-arm, macos-latest, windows-latest]
 
     steps:
     - uses: actions/checkout@v4
-
-    - name: Set up QEMU for aarch64
-      if: runner.os == 'Linux'
-      uses: docker/setup-qemu-action@v3
-      with:
-        platforms: arm64
 
     - name: Build wheels
       uses: pypa/cibuildwheel@v3.4.1
       env:
         CIBW_SKIP: "*-win32 *-manylinux_i686 *-musllinux*"
-        CIBW_ARCHS_LINUX: "x86_64 aarch64"
         CIBW_TEST_REQUIRES: "pytest pandas"
         CIBW_TEST_COMMAND: "pytest {project}/tests -v"
 
