@@ -1,0 +1,39 @@
+name: Minimum dependency versions
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+jobs:
+  min-deps:
+
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Set up Python 3.10
+      uses: actions/setup-python@v5
+      with:
+        python-version: "3.10"
+
+    - name: Install with minimum dependency versions
+      run: |
+        set -x
+        pip install --upgrade pip
+        pip install -e .
+        pip install joblib==1.4.0 numpy==1.24.1 scipy==1.10.0
+        pip install pandas pytest
+
+    - name: Verify pinned versions
+      run: |
+        python -c "import joblib; assert joblib.__version__ == '1.4.0'"
+        python -c "import numpy; assert numpy.__version__ == '1.24.1'"
+        python -c "import scipy; assert scipy.__version__ == '1.10.0'"
+
+    - name: Run unit tests
+      run: |
+        pytest -v

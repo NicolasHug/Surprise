@@ -1,3 +1,11 @@
+VERSION 1.1.5
+=============
+
+Date: 05/2026
+
+* Fix numpy 2 support issues
+* Support 3.10 from 3.14, with 3.13t and 3.14t
+
 VERSION 1.1.4
 =============
 

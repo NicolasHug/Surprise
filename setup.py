@@ -26,8 +26,7 @@ Basic local checks:
 
 Check that the latest RTD build was OK: https://readthedocs.org/projects/surprise/builds/
 
-Change __version__ in __init__.py to new version name. Also update the hardcoded
-version in build_sdist.yml, otherwise the GA jobs will fail.
+Change __version__ in __init__.py to new version name.
 
 The sdist is built on Python 3.8. It should be installable from all Python
 versions.

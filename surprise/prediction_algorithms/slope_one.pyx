@@ -44,7 +44,7 @@ class SlopeOne(AlgoBase):
         cdef int n_items = trainset.n_items
 
         # Number of users having rated items i and j: |U_ij|
-        cdef long [:, ::1] freq = np.zeros((trainset.n_items, trainset.n_items), np.int_)
+        cdef long [:, ::1] freq = np.zeros((trainset.n_items, trainset.n_items), np.intp)
         # Deviation from item i to item j: mean(r_ui - r_uj for u in U_ij)
         cdef double [:, ::1] dev = np.zeros((trainset.n_items, trainset.n_items), np.double)
         cdef int u, i, j, r_ui, r_uj
