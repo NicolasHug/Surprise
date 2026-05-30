@@ -61,13 +61,15 @@ def cosine(int n_x, yr, int min_support):
     # the similarity matrix
     cdef double [:, ::1] sim = np.zeros((n_x, n_x), np.double)
 
-    cdef int xi, xj, y
+    cdef int xi, xj, y, i
     cdef double ri, rj
     cdef int min_sprt = min_support
 
-    for y, y_ratings in yr.items():
-        for xi, ri in y_ratings:
-            for xj, rj in y_ratings:
+    sorted_yr = { y : sorted(y_ratings, key = lambda x: x[0]) for y, y_ratings in yr.items() }
+
+    for y, y_ratings in sorted_yr.items():
+        for i, (xi, ri) in enumerate(y_ratings):
+            for xj, rj in y_ratings[i + 1:]:
                 freq[xi, xj] += 1
                 prods[xi, xj] += ri * rj
                 sqi[xi, xj] += ri**2
@@ -128,13 +130,15 @@ def msd(int n_x, yr, int min_support):
     # the similarity matrix
     cdef double [:, ::1] sim = np.zeros((n_x, n_x), np.double)
 
-    cdef int xi, xj
+    cdef int xi, xj, i
     cdef double ri, rj
     cdef int min_sprt = min_support
 
-    for y, y_ratings in yr.items():
-        for xi, ri in y_ratings:
-            for xj, rj in y_ratings:
+    sorted_yr = { y : sorted(y_ratings, key = lambda x: x[0]) for y, y_ratings in yr.items() }
+
+    for y, y_ratings in sorted_yr.items():
+        for i, (xi, ri) in enumerate(y_ratings):
+            for xj, rj in y_ratings[i + 1:]:
                 sq_diff[xi, xj] += (ri - rj)**2
                 freq[xi, xj] += 1
 
@@ -200,13 +204,15 @@ def pearson(int n_x, yr, int min_support):
     # the similarity matrix
     cdef double [:, ::1] sim = np.zeros((n_x, n_x), np.double)
 
-    cdef int xi, xj, y, n
+    cdef int xi, xj, y, n, i
     cdef double ri, rj, num, denum
     cdef int min_sprt = min_support
 
-    for y, y_ratings in yr.items():
-        for xi, ri in y_ratings:
-            for xj, rj in y_ratings:
+    sorted_yr = { y : sorted(y_ratings, key = lambda x: x[0]) for y, y_ratings in yr.items() }
+
+    for y, y_ratings in sorted_yr.items():
+        for i, (xi, ri) in enumerate(y_ratings):
+            for xj, rj in y_ratings[i + 1:]:
                 prods[xi, xj] += ri * rj
                 freq[xi, xj] += 1
                 sqi[xi, xj] += ri**2
@@ -296,7 +302,7 @@ def pearson_baseline(
     # the similarity matrix
     cdef double [:, ::1] sim = np.zeros((n_x, n_x), np.double)
 
-    cdef int y, xi, xj
+    cdef int y, xi, xj, i
     cdef double ri, rj, diff_i, diff_j, partial_bias
     cdef int min_sprt = min_support
     cdef double global_mean_ = global_mean
@@ -305,10 +311,12 @@ def pearson_baseline(
     # is 1, so that's OK.
     min_sprt = max(2, min_sprt)
 
-    for y, y_ratings in yr.items():
+    sorted_yr = { y : sorted(y_ratings, key = lambda x: x[0]) for y, y_ratings in yr.items() }
+
+    for y, y_ratings in sorted_yr.items():
         partial_bias = global_mean_ + y_biases[y]
-        for xi, ri in y_ratings:
-            for xj, rj in y_ratings:
+        for i, (xi, ri) in enumerate(y_ratings):
+            for xj, rj in y_ratings[i + 1:]:
                 freq[xi, xj] += 1
                 diff_i = (ri - (partial_bias + x_biases[xi]))
                 diff_j = (rj - (partial_bias + x_biases[xj]))
