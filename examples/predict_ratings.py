@@ -17,8 +17,8 @@ algo = KNNBasic()
 algo.fit(trainset)
 
 # we can now query for specific predicions
-uid = str(196)  # raw user id (as in the ratings file). They are **strings**!
-iid = str(302)  # raw item id (as in the ratings file). They are **strings**!
+uid = trainset.to_raw_uid(196)  # raw user id (as in the ratings file). They are **strings**! Do not use str() causing issues of having the same estimation for different ids.
+iid = trainset.to_raw_iid(302)  # raw item id (as in the ratings file). They are **strings**!
 
 # get a prediction for specific users and items.
 pred = algo.predict(uid, iid, r_ui=4, verbose=True)
