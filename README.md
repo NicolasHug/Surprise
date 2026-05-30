@@ -149,7 +149,7 @@ example](https://github.com/NicolasHug/Surprise/tree/master/examples/benchmark.p
 Installation
 ------------
 
-With pip (you'll need a C compiler. Windows users might prefer using conda):
+With pip:
 
     $ pip install scikit-surprise
 
