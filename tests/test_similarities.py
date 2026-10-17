@@ -211,3 +211,18 @@ def test_pearson_baseline_sim():
         for j in range(i + 1, n_x):
             if i != 1 and j != 2:
                 assert sim[i, j] == 0
+
+
+def test_cosine_zero_ratings():
+    """Cosine similarity should handle zero ratings without division by zero."""
+    
+    yr = {
+        0: [(0, 0), (1, 0)]
+    }
+
+    sim = sims.cosine(2, yr, min_support=1)
+
+    assert sim[0, 0] == 1
+    assert sim[1, 1] == 1
+    assert sim[0, 1] == 0
+    assert sim[1, 0] == 0
