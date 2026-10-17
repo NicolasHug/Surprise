@@ -80,7 +80,11 @@ def cosine(int n_x, yr, int min_support):
                 sim[xi, xj] = 0
             else:
                 denum = sqrt(sqi[xi, xj] * sqj[xi, xj])
-                sim[xi, xj] = prods[xi, xj] / denum
+
+                if denum == 0:
+                    sim[xi, xj] = 0
+                else:
+                    sim[xi, xj] = prods[xi, xj] / denum
 
             sim[xj, xi] = sim[xi, xj]
 
