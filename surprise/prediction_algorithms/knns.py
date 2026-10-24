@@ -374,12 +374,19 @@ class KNNWithZScore(SymmetricAlgo):
         self.means = np.zeros(self.n_x)
         self.sigmas = np.zeros(self.n_x)
         # when certain sigma is 0, use overall sigma
-        self.overall_sigma = np.std([r for (_, _, r) in self.trainset.all_ratings()])
-
-        for x, ratings in self.xr.items():
-            self.means[x] = np.mean([r for (_, r) in ratings])
-            sigma = np.std([r for (_, r) in ratings])
-            self.sigmas[x] = self.overall_sigma if sigma == 0.0 else sigma
+        all_ratings = [r for (_, _, r) in self.trainset.all_ratings()]
+        self.overall_sigma = np.std(all_ratings)
+        if all_ratings and all(r == all_ratings[0] for r in all_ratings):
+            # Use exact means and one scale throughout for constant ratings.
+            # Separate reductions can otherwise amplify decimal roundoff.
+            self.overall_sigma = 1.0
+            self.means.fill(all_ratings[0])
+            self.sigmas.fill(1.0)
+        else:
+            for x, ratings in self.xr.items():
+                self.means[x] = np.mean([r for (_, r) in ratings])
+                sigma = np.std([r for (_, r) in ratings])
+                self.sigmas[x] = self.overall_sigma if sigma == 0.0 else sigma
 
         self.sim = self.compute_similarities()
 
