@@ -213,7 +213,7 @@ Development Status
 
 Starting from version 1.1.0 (September 2019), I will only maintain the package,
 provide bugfixes, and perhaps sometimes perf improvements. I have less time to
-dedicate to it now, so I'm unabe to consider new features.
+dedicate to it now, so I'm unable to consider new features.
 
 For bugs, issues or questions about [Surprise](https://surpriselib.com), please
 avoid sending me emails; I will most likely not be able to answer). Please use
